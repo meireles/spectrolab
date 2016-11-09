@@ -120,7 +120,7 @@ plot(spec, lwd = 0.75, lty = 1, col = "grey25")
 
 # Stand along quantile plot
 plot_quantile(spec, total_prob = 0.8, 
-              col = rgb(1, 0, 0, 0.5), border = TRUE)
+              col = rgb(1, 0, 0, 0.5), lwd = 0.5, border = TRUE)
 
 # Combined quantile and individual spctra plot
 plot(spec, lwd = 0.25, lty = 1, col = "grey50")
@@ -146,14 +146,16 @@ w[1:5]
 dim(spec)
 ```
 
+If you really need the raw reclectance, you can retrieve it with the `reflectance()` function. This is not recomended though.
+
 ## Subsetting spectra
 
 You can subset the `spectra` using a notation *similar* to the `[ i , j]` function used in matrices and data.frames. The first argument in `[ i, ]` matches *sample names*, whereas the second argument `[ , j ]` matches the *wavelength names*. Here are some important differences between how `[` works in matrices and in `specrta`:
 
-  * `x[ 1:3 , ]`      will keep the first three samples of `x`. 
-  * `x[ "sp_1" , ]`   keeps **all** entries in `x` where sample names match `"sp_1"`
-  * `x[  , 800:900 ]` will keep wavelengths between `800` and `900`.
-  * `x[  , 1:5 ]`     will **fail**!. wavelengths cannot be subset by index!
+  - `x[ 1:3 , ]` will keep the first three samples of `x`. 
+  - `x[ "sp_1" , ]` keeps **all** entries in `x` where sample names match `"sp_1"`
+  - `x[  , 800:900 ]` will keep wavelengths between `800` and `900`.
+  - `x[  , 1:5 ] ` will **fail**!. wavelengths cannot be subset by index!
  
 ```{r, error=TRUE}
 # Subset spectra to all entries where sample_name matches "species_8"

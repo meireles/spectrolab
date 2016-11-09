@@ -41,11 +41,11 @@ as.spectra.data.frame = function(x){
 }
 
 
-#' Convert to matrix
-#' @export
-as.matrix = function(x) {
-    UseMethod("as.matrix")
-}
+# #' Convert to matrix
+# #' @export
+# as.matrix = function(x, ...) {
+#     UseMethod("as.matrix")
+# }
 
 #' Convert spectra to matrix
 #'

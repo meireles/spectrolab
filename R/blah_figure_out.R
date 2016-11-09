@@ -14,7 +14,7 @@ is_spectra = function(spec){
 
 #' Title
 #'
-#' @param spec
+#' @param spec spectra object to be vector normalized
 #'
 #' @return
 #' @export
@@ -23,11 +23,31 @@ normalize_spectra = function(spec){
     if( !is_spectra(spec) ){
         stop("Object must be of class spectra")
     }
-
-    spec_squared    = reflectance(spec) * reflectance(spec)
-    magnitudes      = sqrt( rowSums(spec_squared) )
-    spec[]          = i_reflectance(spec_squared / magnitudes)
+    refl            = reflectance(spec)
+    refl_squared    = refl * refl
+    vec_ones        = rep.int(1L, ncol(refl_squared))
+    spec_sq_rowsum  = refl_squared %*% vec_ones
+    #magnitudes      = sqrt( rowSums(refl_squared) )
+    magnitudes      = as.vector(sqrt( spec_sq_rowsum ))
+    spec[]          = i_reflectance(refl / magnitudes)
     spec$magnitudes = magnitudes
     spec
 }
+
+
+# #' Vector normalize spectra
+# #'
+# #' @param x martrix with spectra to be converted. Rows must be individual samples.
+# #' Columns must be labeled with the corrspondent wavelength.
+# #'
+# #' @return A list containing the converted matrix and a vector of magnitudes
+# normalize_spectra = function(x) {
+#     x = as.matrix(x)
+#     y = rep.int(1, ncol(x_squared))
+#     x_squared   = x * x
+#     s_sq_rowsum = x_squared %*% y
+#     magnitudes  = as.vector(sqrt(s_sq_rowsum))
+#     return(list(normalized_spectra = x / magnitudes, magnitudes = magnitudes))
+# }
+
 

@@ -65,7 +65,7 @@ plot(spec, lwd = 0.75, lty = 1, col = "grey25")
 
 # Stand along quantile plot
 plot_quantile(spec, total_prob = 0.8, 
-              col = rgb(1, 0, 0, 0.5), border = TRUE)
+              col = rgb(1, 0, 0, 0.5), lwd = 0.5, border = TRUE)
 
 # Combined quantile and individual spctra plot
 plot(spec, lwd = 0.25, lty = 1, col = "grey50")

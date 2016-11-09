@@ -7,7 +7,7 @@
 normalize_spectra(spec)
 }
 \arguments{
-\item{spec}{}
+\item{spec}{spectra object to be vector normalized}
 }
 \description{
 Title
