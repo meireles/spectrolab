@@ -4,7 +4,7 @@
 #' @export
 #'
 #' @examples
-`+.spectra` = function(){message("Inder Sucks!")}
+`+.spectra` = function(){message("math_overload")}
 
 #' Title
 #'
@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @examples
-`-.spectra` = function(){message("Inder Sucks!")}
+`-.spectra` = function(){message("math_overload")}
 
 #' Title
 #'
@@ -20,7 +20,7 @@
 #' @export
 #'
 #' @examples
-`*.spectra` = function(){message("Inder Sucks!")}
+`*.spectra` = function(){message("math_overload")}
 
 #' Title
 #'
@@ -28,7 +28,7 @@
 #' @export
 #'
 #' @examples
-`/.spectra` = function(){message("Inder Sucks!")}
+`/.spectra` = function(){message("math_overload")}
 
 #' Title
 #'
@@ -36,4 +36,4 @@
 #' @export
 #'
 #' @examples
-`%*%.spectra` = function(){message("Inder Sucks!")}
+`%*%.spectra` = function(){message("math_overload")}
