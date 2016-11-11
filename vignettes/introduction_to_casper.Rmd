@@ -29,31 +29,31 @@ library("casper")
 ## Reading spectra and creating a `spectra` object
 
 
-### First, explore the example dataset `spec_example`
+### First, explore the example dataset `spec_matrix_example`
 
-As already stated, `casper` comes with limited IO capabilities. To illustrate how to create a `spectra` object, we will use an example dataset called `spec_example` which is in `matrix` format. Samples are in rows, and wavelengths in columns, and the first column is the sample name (in this case, a species name). The column names match wavelength labels. I tried to format `spec_example` to mimic the is typical result of a `read.csv` command.
+As already stated, `casper` comes with limited IO capabilities. To illustrate how to create a `spectra` object, we will use an example dataset called `spec_matrix_example`. Samples are in rows, and wavelengths in columns, and the first column is the sample name (in this case, a species name). The column names match wavelength labels. I tried to format `spec_matrix_example` to  typical result of a `read.csv` command.
 
 ```{r}
 # Example spectral dataset in matrix format.
-spec_example[1:4, 1:3]
+spec_matrix_example[1:4, 1:3]
 
 # Note that this is NOT a spectra object.
 # You can verify this by asking what class `spec_example` is.
-class(spec_example)
+class(spec_matrix_example)
 
 # An alternative is to use casper's `is_spectra()` function.
-is_spectra(spec_example)
+is_spectra(spec_matrix_example)
 ```
 
 ### Constructing a `spectra` object
 
 The `spectra` class holds the essential information used in spectral dataset: reflectance, wavelengths, etc. The class has a bunch of requirements in terms of both format and values, for instance, relative reflectance must be between 0 and 1.
 
-If your data is in a matrix with the same format as `spec_example` (check above for details), you can construct a `spectra` object by calling the `as.spectra()` function.
+If your data is in a matrix with the same format as `spec_matrix_example` (check above for details), you can construct a `spectra` object by calling the `as.spectra()` function.
 
 ```{r}
 # Make a spectra object if you have a matrix in the right format
-spec = casper::as.spectra(spec_example)
+spec = casper::as.spectra(spec_matrix_example)
 
 # Did it work?
 is_spectra(spec)
@@ -64,7 +64,7 @@ Alternativelly, you can create a `spectra` object using the more flexible `spect
 ```{r}
 # (1) Create a reflectance matrix.
 #     In this case, by removing the species column
-rf = spec_example[ , -1 ]
+rf = spec_matrix_example[ , -1 ]
 
 # Check the result
 rf[1:4, 1:3]
@@ -79,13 +79,13 @@ wl[1:6]
 # (3) Create a vector with sample labels that match
 #     the reflectance matrix rows.
 #     In this case, use the first colum of spec_example
-sn = spec_example[ , 1] 
+sn = spec_matrix_example[ , 1] 
 
 # Check the result
 sn[1:6]
 
 # Finally, construct the spectra object using the `spectra` constructor
-spec = spectra(reflectance = rf, wavelengths = wl, sample_names = sn)
+spec = spectra(reflectance = rf, wavelengths = wl, names = sn)
 
 # And hopefully this worked fine
 is_spectra(spec)
@@ -93,11 +93,11 @@ is_spectra(spec)
 
 ### Converting a `spectra` object into a matrix
 
-It is possible to convert a `spectra` object to a matrix format, using the `as.matrix()` function. `casper` will (1) place wavelength in columns, assigning wavelength labels to `colnames`, and (2) samples in rows, assigning sample names to `rownames`. Since `R` imposes strict on column and row name formats (e.g. no duplicates), `as.matrix()` tries to fix potential dimname issues by default (see the argument `fix_dimnames`).
+It is possible to convert a `spectra` object to a matrix format, using the `as.matrix()` function. `casper` will (1) place wavelength in columns, assigning wavelength labels to `colnames`, and (2) samples in rows, assigning sample names to `rownames`. Since `R` imposes strict on column name formats and sometimes on row names too, `as.matrix()` will try to fix potential dimname issues if `fix_names != "none"`.
 
 ```{r, error=TRUE}
 # Make a matrix from a `spectra` object
-spec_as_mat = as.matrix(spec, fix_dimnames = TRUE)
+spec_as_mat = as.matrix(spec, fix_names = "none")
 spec_as_mat[1:4, 1:3]
 ```
 
@@ -112,6 +112,8 @@ The workhorse function for plotting `spectra` is `plot()`. It will jointly plot 
 
 You can also plot the quantile of a `spectra` object with `plot_quantile()`. It's second argument, `total_prob`, is the total "mass" that the quantile encompasses. For instance, a `total_prob = 0.95` covers 95% of the variation in the `spectra` object; i.e. it is the `0.025 to 0.975` quantile. The quantile plot can stand alone or be added to a current plot if `add = TRUE`.
 
+Last but not least, you can also shade spectral regions with the `plot_spec_regions()` function. `casper` provides a `default_spec_regions` matrix as an example, but you obviously can cistomize it for your needs.
+
 ```{r, fig.height=2.5, fig.width=8}
 par(mfrow = c(1, 3))
 
@@ -123,19 +125,21 @@ plot_quantile(spec, total_prob = 0.8,
               col = rgb(1, 0, 0, 0.5), lwd = 0.5, border = TRUE)
 
 # Combined quantile and individual spctra plot
+# With an added bonus of shading 4 spectral regions
 plot(spec, lwd = 0.25, lty = 1, col = "grey50")
 plot_quantile(spec, total_prob = 0.8, 
               col = rgb(1, 0, 0, 0.25), add = TRUE, border = FALSE)
+plot_spec_regions(spec, regions = default_spec_regions, add = TRUE)
 ```
 
 ## Querying
 
-`casper` lets you query the `spectra` object and get summary infomation. You can easly get sample names with `sample_names()` and wavelength labels with `wavelengths()`. It is also possible to recover the 
+`casper` lets you query the `spectra` object and get summary infomation. You can easly get sample names with `names()` and wavelength labels with `wavelengths()`. It is also possible to recover the 
 
 ```{r}
 # Get the vector of all sample names
 # Note that duplicate sample names are permitted
-n = sample_names(spec)
+n = names(spec)
 n[1:5]
 
 # Or get the vector of wavelengths
@@ -157,7 +161,7 @@ You can subset the `spectra` using a notation *similar* to the `[ i , j]` functi
   - `x[  , 800:900 ]` will keep wavelengths between `800` and `900`.
   - `x[  , 1:5 ] ` will **fail**!. wavelengths cannot be subset by index!
  
-```{r, error=TRUE}
+```{r, error=TRUE, fig.height=3, fig.width=4, fig.align="center"}
 # Subset spectra to all entries where sample_name matches "species_8"
 spec_sp8 = spec[ "species_8", ]
 
@@ -165,6 +169,13 @@ spec_sp8 = spec[ "species_8", ]
 spec_sp8 = spec_sp8[ , 400:700 ]
 
 dim(spec_sp8)
+
+# This subset should still plot just fine
+plot(spec_sp8, col = "red", main = "Visible spectra for species 8",
+     cex.main = 0.8, cex.axis = 0.75)
+
+plot_quantile(spec, total_prob = 1.0, add = TRUE, 
+              col = rgb(0.2, 0.2, 0.2, 0.2), border = FALSE)
 ```
 
 ```{r, error=TRUE}
@@ -181,11 +192,33 @@ spec_sp8[ , 2 ]
 
 ## Manipulating samples and wavelength labels
 
+You may want to edit certain simple attributes of `spectra`, such as make all sample names uppercase. This is easlily attainable in `casper`
+
 ```{r}
-#x1 = spec[ "species_8", ]
-#plot(spec[ "species_8", ], lwd = 1, lty = 1, col = "red4", add = TRUE)
-#dim(x1)
+spec_new = spec
+
+# Replace names with an uppercase version
+names(spec_new) = toupper(names(spec_new))
+
+# Check the results
+names(spec_new)[1:5]
 ```
 
-## Updating sample names or wavelength labels
+You may want to fiddle with the reflectance itself. This is easy to do, but there are some constraints. For example. `casper` will not allow you to have negative reflectance values or values greater than 1.
+
+```{r,  fig.height=3, fig.width=4, fig.align="center"}
+# Scale reflectance by 0.75
+spec_new[] = reflectance(spec_new) * 0.75
+
+# Plot the results
+plot(spec, col = "blue", lwd = 0.75, cex.axis = 0.75)
+plot(spec_new, col = "orange", lwd = 0.75, add = TRUE)
+```
+
+However, `casper` will throw an error if you try to perform an illegal operation to reflectance, for instance 
+
+```{r, error=TRUE}
+# Trying to add 1.0 to all reflectance values will fail.
+spec_new[] = reflectance(spec_new) + 1.0
+```
 

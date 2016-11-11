@@ -4,10 +4,16 @@
 \alias{wavelengths}
 \title{Get wavelength labels from spectra}
 \usage{
-wavelengths(spec)
+wavelengths(spec, return_num = TRUE)
 }
 \arguments{
-\item{spec}{Spectra object}
+\item{spec}{spectra object}
+
+\item{return_num}{boolean. return vector of numeric values (default).
+otherwise, a vector of strings is returned}
+}
+\value{
+vector of wavelengths. numeric if `return_num` = TRUE (default).
 }
 \description{
 Get wavelength labels from spectra

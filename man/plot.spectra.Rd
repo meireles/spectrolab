@@ -5,7 +5,7 @@
 \title{Plot spectra}
 \usage{
 \method{plot}{spectra}(spec, ylab = "Reflectance", xlab = "Wavelength",
-  col = "black", lty = 2, type = "l", ...)
+  col = "black", lty = 1, type = "l", ...)
 }
 \arguments{
 \item{spec}{spectra object}
@@ -16,7 +16,9 @@
 
 \item{col}{line color. defaults to "black"}
 
-\item{lty}{line type. defaults to 2}
+\item{lty}{line type. defaults to 1}
+
+\item{type}{type of plot. meant to take either line "l" or no plotting "n"}
 
 \item{...}{other arguments passed to matplot}
 }

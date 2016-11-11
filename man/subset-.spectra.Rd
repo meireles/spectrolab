@@ -7,7 +7,9 @@
 \method{[}{spectra}(this, i, j) <- value
 }
 \arguments{
-\item{j}{}
+\item{i}{sample name}
+
+\item{j}{wavelength}
 }
 \description{
 Assign reflectance vlaues to spectra

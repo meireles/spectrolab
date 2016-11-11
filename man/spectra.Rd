@@ -4,14 +4,14 @@
 \alias{spectra}
 \title{Create a spectra object}
 \usage{
-spectra(reflectance, wavelengths, sample_names)
+spectra(reflectance, wavelengths, names)
 }
 \arguments{
 \item{reflectance}{N by M numeric matrix. N samples in rows. values between 0 and 1.}
 
 \item{wavelengths}{wavelength names in vector of length M}
 
-\item{sample_names}{sample names in vector of length N}
+\item{names}{sample names in vector of length N}
 }
 \value{
 spectra object

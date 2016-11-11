@@ -9,6 +9,9 @@ reflectance(spec)
 \arguments{
 \item{spec}{spectra object}
 }
+\value{
+matrix with samples in rows and wavelengths in columns
+}
 \description{
 Get the reflectance from spectra
 }

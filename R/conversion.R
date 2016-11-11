@@ -41,28 +41,37 @@ as.spectra.data.frame = function(x){
 }
 
 
-#' Convert to matrix
-#' @export
-as.matrix = function(x, ...) {
-    UseMethod("as.matrix")
-}
+# #' Convert to matrix
+# #' @export
+# as.matrix = function(x, ...) {
+#     UseMethod("as.matrix")
+# }
 
 #' Convert spectra to matrix
 #'
 #' @param spec spectra object
-#' @param fix_dimnames boolean. if true (default), names are normalized with name.names()
+#' @param fix_names Use make.names to normalize names. Pick one: "none" "row" "col" "both".
 #'
 #' @return matrix of spectral reflectance. columns are wavelengths and rows are samples
 #' @export
-as.matrix.spectra = function(spec, fix_dimnames = TRUE){
+as.matrix.spectra = function(spec, fix_names = "none") {
     r = reflectance(spec)
-    s = sample_names(spec)
+    s = names(spec)
     w = wavelengths(spec)
+    o = c("none", "row", "col", "both")
 
-    if(fix_dimnames){
+    if( length(intersect(fix_names, o)) != 1 ){
+        stop("fix_names must be one of these options: ", o)
+    }
+
+    if(fix_names %in% c("row", "both")){
         s = sapply(s, make.names, unique = TRUE)
+    }
+
+    if(fix_names %in% c("col", "both")){
         w = sapply(w, make.names, unique = TRUE)
     }
+
     dimnames(r) = list(s, w)
     r
 }

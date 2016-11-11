@@ -1,26 +1,42 @@
-#' Is the umber a whole number?
+################################################################################
+# Spectra functions
+################################################################################
+
+#' Verify if object are spectra
 #'
-#' @param x numbers
+#' @param spec any object
 #'
 #' @return boolean
-i_is_whole = function(x){
-    as.integer(x) == x
+#' @export
+is_spectra = function(spec){
+    inherits(spec, "spectra")
 }
 
-#' Is number compatible with being an index?
+#' Title
 #'
-#' @param x numeric values
-#' @param max_length max acceptable values for x
-#' @param verbose get warnings?
+#' @param spec spectra object to be vector normalized
 #'
 #' @return
-i_is_index = function(x, max_length, verbose = FALSE){
-    if(!verbose){
-        w = suppressWarnings(i_is_whole(x))
-    } else {
-        w = i_is_whole(x)
+#' @export
+normalize_spectra = function(spec){
+
+    if( !is_spectra(spec) ){
+        stop("Object must be of class spectra")
     }
 
-    p = (x > 0 && x <= round(max_length, digits = 0) )
-    all(w) && all(p)
+    refl            = reflectance(spec)
+    refl_squared    = refl * refl
+    vec_ones        = rep.int(1L, ncol(refl_squared))
+    spec_sq_rowsum  = refl_squared %*% vec_ones
+    #magnitudes      = sqrt( rowSums(refl_squared) )
+    magnitudes      = as.vector(sqrt(spec_sq_rowsum))
+
+    # normalize and construct a `spectra` object
+    spec[] = i_reflectance(refl / magnitudes)
+
+    # add a magnitute attribute to the`spectra` object
+    spec$magnitudes = magnitudes
+
+    # return
+    spec
 }

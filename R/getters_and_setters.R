@@ -4,7 +4,7 @@
 #'
 #' Subset operations based on samples (first argument) will match either sample
 #' names or indexes, in that order. That is, if you subset x[1:2 , ] and your
-#' sample names contain 1 and 2, you will get the spectra with sample_names %in%
+#' sample names contain 1 and 2, you will get the spectra with names %in%
 #' c(1, 2) and not (at least necessarily) the first and second samples in the
 #' `spectra` object.
 #'
@@ -19,8 +19,8 @@
     if(missing(i)){
         r_match = seq(nrow(this$reflectance))
     } else {
-        r_match    = which(this$sample_names %in% i)
-        r_no_match = setdiff(i, this$sample_names)
+        r_match    = which(this$names %in% i)
+        r_no_match = setdiff(i, this$names)
 
         if( length(r_no_match) != 0 || length(r_no_match) == length(i) ){
             if( i_is_index(i, dim(this)[1])) {
@@ -45,7 +45,7 @@
     ## when nsample = 1
     this$reflectance  = this$reflectance[ r_match , c_match, drop = FALSE ]
     this$wavelengths  = this$wavelengths[ c_match ]
-    this$sample_names = this$sample_names[ r_match ]
+    this$names        = this$names[ r_match ]
 
     this
 }
@@ -53,8 +53,8 @@
 
 #' Assign reflectance vlaues to spectra
 #'
-#' @param i
-#' @param j
+#' @param i sample name
+#' @param j wavelength
 #'
 #' @return
 #' @export
@@ -67,18 +67,16 @@
 # reflectance
 ########################################
 
-
 #' Get the reflectance from spectra
 #'
 #' @param spec spectra object
 #'
-#' @return
+#' @return matrix with samples in rows and wavelengths in columns
 #' @export
 reflectance = function(spec){
     if( !is_spectra(spec) ){
         stop("Object must be of class spectra")
     }
-
     spec$reflectance
 }
 
@@ -94,7 +92,8 @@ reflectance = function(spec){
         stop("Object must be of class spectra")
     }
 
-    stop("Reflectance cannot be assigned to.\nPlease use the spec[] <- fuction instead")
+    stop("reflectance() does not allow assignment.
+         Please use the x[] <- fuction instead")
 }
 
 
@@ -107,44 +106,44 @@ reflectance = function(spec){
 #'
 #' @param spec A spectra object
 #'
-#' @return
+#' @return vector of sample names
 #' @export
-sample_names = function(spec){
-    if( !is_spectra(spec) ){
-        stop("Object must be of class spectra")
-    }
+names.spectra = function(spec){
+    # if( !is_spectra(spec) ){
+    #     stop("Object must be of class spectra")
+    # }
 
-    spec$sample_names
+    spec$names
 }
 
 
 #' Set sample names in spectra
 #'
-#' @param spec Spectra object
+#' @param spec spectra object to have their sample names modified
 #'
-#' @return
+#' @return nothing. called for its side effect.
 #' @export
-`sample_names<-` = function(spec, value){
-    if( !is_spectra(spec) ){
-        stop("Object must be of class spectra")
-    }
+`names<-.spectra` = function(spec, value){
+    # if( !is_spectra(spec) ){
+    #     stop("Object must be of class spectra")
+    # }
 
     ## Length of samples in spec
-    nsampl = length(spec$sample_names)
+    nsampl = length(spec$names)
 
     ## Make copy of spec
     spec_p = spec
 
     ## Assign sample names
-    spec_p$sample_names = value
+    spec_p$names = value
 
     ## Construct sample names using internal constructor. This should:
-    ##  (1) check for all requirements of sample_names, including length
+    ##  (1) check for all requirements of names, including length
     ##  (2) throw if requirements are not met.
-    new_name = i_sample_names(spec_p$sample_names, nsampl)
+    new_name = i_names(spec_p$names, nsampl)
 
     ## Assign new names to spec object
-    spec$sample_names = new_name
+    spec$names = new_name
 
     ## Return
     spec
@@ -156,15 +155,21 @@ sample_names = function(spec){
 
 #' Get wavelength labels from spectra
 #'
-#' @param spec Spectra object
-#'
-#' @return
+#' @param spec spectra object
+#' @param return_num boolean. return vector of numeric values (default).
+#'                   otherwise, a vector of strings is returned
+#' @return vector of wavelengths. numeric if `return_num` = TRUE (default).
 #' @export
-wavelengths = function(spec){
+wavelengths = function(spec, return_num = TRUE){
     if( !is_spectra(spec) ){
         stop("Object must be of class spectra")
     }
-    spec$wavelengths
+
+    if(return_num){
+        return( as.numeric(spec$wavelengths) )
+    } else {
+        return( as.character(spec$wavelengths) )
+    }
 }
 
 

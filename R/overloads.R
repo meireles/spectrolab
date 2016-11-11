@@ -5,7 +5,7 @@
 #' @return tuple of integers. c("n_samples", "n_wavelengths")
 #' @export
 dim.spectra = function(spec){
-    c("n_samples"     = length(spec$sample_names),
+    c("n_samples"     = length(spec$names),
       "n_wavelengths" = length(spec$wavelengths))
 }
 
@@ -50,7 +50,7 @@ quantile.spectra = function(spec,
     ## Return spectra quantile object
     r = spectra(reflectance  = y,
                 wavelengths  = spec$wavelengths,
-                sample_names = probs)
+                names = probs)
     class(r) = c(class(r), "spec_quantile")
     r
 }

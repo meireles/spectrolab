@@ -14,10 +14,10 @@ plot_quantile(spec, total_prob = 0.95, col = rgb(0, 0, 0, 0.1),
 
 \item{col}{Polygon color}
 
-\item{add}{If add = FALSE (default), a new plot ir created. Otherwise
-(add = T), the polygon is added to the current plot.}
+\item{add}{If add = FALSE (default), a new plot is created. Otherwise
+(add = T), the quantile is added to the current plot.}
 
-\item{...}{Other parameters passed to polygon}
+\item{...}{Other parameters passed to polygon()}
 }
 \value{
 nothing. called for its side effect

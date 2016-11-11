@@ -14,7 +14,7 @@
 ## -- wavelengths: (1) numerical vector
 ##                 (2) of length M
 ##
-## -- sample_names: (1) character vector
+## -- names: (1) character vector
 ##                  (2) of length N
 ##
 
@@ -79,7 +79,7 @@ i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = TRU
 #' @param nsample Integer of expected number of samples. If NULL (default) checking is skipped.
 #'
 #' @return vector of sample names
-i_sample_names = function(x, nsample = NULL){
+i_names = function(x, nsample = NULL){
     if(! is.vector(x)) {
         stop("Sample names must be in a vector")
     }
@@ -120,20 +120,17 @@ i_wavelengths = function(x, nwavelengths = NULL){
 #'
 #' @param reflectance N by M numeric matrix. N samples in rows. values between 0 and 1.
 #' @param wavelengths wavelength names in vector of length M
-#' @param sample_names sample names in vector of length N
+#' @param names sample names in vector of length N
 #'
 #' @return spectra object
 #' @export
-spectra = function(reflectance, wavelengths, sample_names){
+spectra = function(reflectance, wavelengths, names){
     wl_l  = length(wavelengths)
-    spl_l = length(sample_names)
+    spl_l = length(names)
 
     structure(list(
         reflectance  = i_reflectance(reflectance, nwavelengths = wl_l, nsample = spl_l),
         wavelengths  = i_wavelengths(wavelengths),
-        sample_names = i_sample_names(sample_names)
+        names = i_names(names)
     ), class = c("spectra"))
 }
-
-################################################################################
-#x = spectra(matrix(rbeta(200, 1,1), nrow = 10), wavelengths = c(seq(201, 220)), sample_names = 1:10)

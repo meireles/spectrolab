@@ -17,7 +17,7 @@ Subsets spectra objects by samples (rows) or wavelengths (columns).
 \details{
 Subset operations based on samples (first argument) will match either sample
 names or indexes, in that order. That is, if you subset x[1:2 , ] and your
-sample names contain 1 and 2, you will get the spectra with sample_names %in%
+sample names contain 1 and 2, you will get the spectra with names %in%
 c(1, 2) and not (at least necessarily) the first and second samples in the
 `spectra` object.
 }
