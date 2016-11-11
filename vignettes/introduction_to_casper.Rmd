@@ -9,11 +9,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The goal of `casper` is first and foremost to provide a `spectra` class for `R` that exposes a standard interface and patafrom that allows  other `R` packages to build on. The package will provide very basic IO, plotting and conversion functionality, but that is about it. `casper` is implemented with ease of use in mind, but shouldn't slow you down.
+The goal of `casper` is to provide a `spectra` class for `R` that exposes a standard interface and create a patafrom that allows other `R` packages to build on. The package will provide basic IO, plotting and conversion functionality, but that is about it. `casper` is implemented with ease of use in mind, but it should not slow you down.
 
 ## Installing and loading `casper`
 
-The best way to get `casper` is to install it directly from the [_github repository_](www.github.com/meireles/casper). You will need the `devtools` package to do it though.
+The best way to get `casper` is to install it directly from the [_github repository_](www.github.com/meireles/casper). You will need the `devtools` package to do it.
 
 ```{r, eval=FALSE}
 library("devtools")
@@ -28,28 +28,25 @@ library("casper")
 
 ## Reading spectra and creating a `spectra` object
 
-
 ### First, explore the example dataset `spec_matrix_example`
 
-As already stated, `casper` comes with limited IO capabilities. To illustrate how to create a `spectra` object, we will use an example dataset called `spec_matrix_example`. Samples are in rows, and wavelengths in columns, and the first column is the sample name (in this case, a species name). The column names match wavelength labels. I tried to format `spec_matrix_example` to  typical result of a `read.csv` command.
+`casper` comes with limited IO capabilities. To illustrate how to create a `spectra` object, we will use an example dataset called `spec_matrix_example`. Samples are in rows, and wavelengths in columns, and the first column is the sample name (in this case, a species name). The column names match wavelength labels. I tried to format `spec_matrix_example` as a typical spectral dataset in `csv` format.
 
 ```{r}
 # Example spectral dataset in matrix format.
 spec_matrix_example[1:4, 1:3]
 
-# Note that this is NOT a spectra object.
-# You can verify this by asking what class `spec_example` is.
-class(spec_matrix_example)
+# Note that this is NOT a spectra object. You can verify this by either asking what class `spec_example` is or using casper's `is_spectra()` function.
 
-# An alternative is to use casper's `is_spectra()` function.
+class(spec_matrix_example)
 is_spectra(spec_matrix_example)
 ```
 
 ### Constructing a `spectra` object
 
-The `spectra` class holds the essential information used in spectral dataset: reflectance, wavelengths, etc. The class has a bunch of requirements in terms of both format and values, for instance, relative reflectance must be between 0 and 1.
+The `spectra` class holds the essential information used in spectral dataset: reflectance, wavelengths, etc. The class has a bunch of requirements in terms of both format and values. For instance, relative reflectance must be between 0 and 1.
 
-If your data is in a matrix with the same format as `spec_matrix_example` (check above for details), you can construct a `spectra` object by calling the `as.spectra()` function.
+If your data is in a matrix with the same format as `spec_matrix_example` (check previous section for details), you can construct a `spectra` object by calling the `as.spectra()` function.
 
 ```{r}
 # Make a spectra object if you have a matrix in the right format
@@ -59,7 +56,7 @@ spec = casper::as.spectra(spec_matrix_example)
 is_spectra(spec)
 ```
 
-Alternativelly, you can create a `spectra` object using the more flexible `spectra()` constructor, which takes three arguments: (1) a reflectance matrix, (2) the wavelength numbers and (3) the sample names.
+Alternativelly, you can create a `spectra` object using the more flexible `spectra()` constructor, which takes three arguments: (1) a reflectance matrix, (2) a vector of wavelengths and (3) the sample names.
 
 ```{r}
 # (1) Create a reflectance matrix.
@@ -74,15 +71,15 @@ rf[1:4, 1:3]
 wl = colnames(rf)
 
 # Check the result
-wl[1:6]
+wl[1:4]
 
 # (3) Create a vector with sample labels that match
 #     the reflectance matrix rows.
-#     In this case, use the first colum of spec_example
+#     In this case, use the first colum of spec_matrix_example
 sn = spec_matrix_example[ , 1] 
 
 # Check the result
-sn[1:6]
+sn[1:4]
 
 # Finally, construct the spectra object using the `spectra` constructor
 spec = spectra(reflectance = rf, wavelengths = wl, names = sn)
@@ -93,7 +90,7 @@ is_spectra(spec)
 
 ### Converting a `spectra` object into a matrix
 
-It is possible to convert a `spectra` object to a matrix format, using the `as.matrix()` function. `casper` will (1) place wavelength in columns, assigning wavelength labels to `colnames`, and (2) samples in rows, assigning sample names to `rownames`. Since `R` imposes strict on column name formats and sometimes on row names too, `as.matrix()` will try to fix potential dimname issues if `fix_names != "none"`.
+It is possible to convert a `spectra` object to a matrix format, using the `as.matrix()` function. `casper` will (1) place wavelengths in columns, assigning wavelength labels to `colnames`, and (2) samples in rows, assigning sample names to `rownames`. Since `R` imposes strict on column name formats and sometimes on row names, `as.matrix()` will try to fix potential dimname issues if `fix_names != "none"`.
 
 ```{r, error=TRUE}
 # Make a matrix from a `spectra` object
@@ -102,9 +99,9 @@ spec_as_mat[1:4, 1:3]
 ```
 
 
-# Exploring `spectra` object
+# Exploring a `spectra` object
 
-`casper` exposes a few ways to plot and query spectral data in `spectra` format. 
+`casper` exposes a few ways to plot and query spectral data in `spectra` format. TODO ... 
 
 ## Plotting
 
@@ -112,21 +109,21 @@ The workhorse function for plotting `spectra` is `plot()`. It will jointly plot 
 
 You can also plot the quantile of a `spectra` object with `plot_quantile()`. It's second argument, `total_prob`, is the total "mass" that the quantile encompasses. For instance, a `total_prob = 0.95` covers 95% of the variation in the `spectra` object; i.e. it is the `0.025 to 0.975` quantile. The quantile plot can stand alone or be added to a current plot if `add = TRUE`.
 
-Last but not least, you can also shade spectral regions with the `plot_spec_regions()` function. `casper` provides a `default_spec_regions` matrix as an example, but you obviously can cistomize it for your needs.
+Last but not least, you can also shade spectral regions with the `plot_spec_regions()` function. `casper` provides a `default_spec_regions` matrix as an example, but you obviously can customize it for your needs.
 
 ```{r, fig.height=2.5, fig.width=8}
 par(mfrow = c(1, 3))
 
 # Simple spectra plot
-plot(spec, lwd = 0.75, lty = 1, col = "grey25")
+plot(spec, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
 
 # Stand along quantile plot
-plot_quantile(spec, total_prob = 0.8, 
+plot_quantile(spec, total_prob = 0.8, main = "80% spectral quantile", 
               col = rgb(1, 0, 0, 0.5), lwd = 0.5, border = TRUE)
 
 # Combined quantile and individual spctra plot
 # With an added bonus of shading 4 spectral regions
-plot(spec, lwd = 0.25, lty = 1, col = "grey50")
+plot(spec, lwd = 0.25, lty = 1, col = "grey50", "Spectra, quantile and regions")
 plot_quantile(spec, total_prob = 0.8, 
               col = rgb(1, 0, 0, 0.25), add = TRUE, border = FALSE)
 plot_spec_regions(spec, regions = default_spec_regions, add = TRUE)
@@ -150,49 +147,61 @@ w[1:5]
 dim(spec)
 ```
 
-If you really need the raw reclectance, you can retrieve it with the `reflectance()` function. This is not recomended though.
+If you really need the raw reclectance, you can retrieve it with the `reflectance()` function.
 
 ## Subsetting spectra
 
-You can subset the `spectra` using a notation *similar* to the `[ i , j]` function used in matrices and data.frames. The first argument in `[ i, ]` matches *sample names*, whereas the second argument `[ , j ]` matches the *wavelength names*. Here are some important differences between how `[` works in matrices and in `specrta`:
+You can subset the `spectra` using a notation *similar* to the `[ i , j]` function used in matrices and data.frames. The first argument in `[ i, ]` matches *sample names*, whereas the second argument `[ , j ]` matches the *wavelength names*. Here are some examples of how `[` works in `specrta`:
 
-  - `x[ 1:3 , ]` will keep the first three samples of `x`. 
+  - `x[ 1:3 , ]` will keep the first three samples of `x`. I.e. `1:3` are indexes.
   - `x[ "sp_1" , ]` keeps **all** entries in `x` where sample names match `"sp_1"`
   - `x[  , 800:900 ]` will keep wavelengths between `800` and `900`.
-  - `x[  , 1:5 ] ` will **fail**!. wavelengths cannot be subset by index!
- 
-```{r, error=TRUE, fig.height=3, fig.width=4, fig.align="center"}
+  - `x[  , 1:5 ] ` will **fail**!. *wavelengths __cannot__ be subset by index!*
+
+```{r, fig.height=2.5, fig.width=6, fig.align="center"}
 # Subset spectra to all entries where sample_name matches "species_8"
 spec_sp8 = spec[ "species_8", ]
+
+# Check the results
+dim(spec_sp8)
+
+# Plotting the seubset result should work just fine
+par(mfrow = c(1, 2), cex.main = 0.8, cex.axis = 0.6, cex.lab = 0.8)
+
+plot(spec_sp8, col = "red", main = "Species 8 spectra")
+plot_quantile(spec, total_prob = 1.0, add = TRUE,  col = rgb(0.2, 0.2, 0.2, 0.2), border = FALSE)
+plot_spec_regions(spec_sp8, default_spec_regions, col = rgb(1, 0.5, 0, 0.1), add = TRUE)
 
 # And maybe further subset to the visible wavelengths only
 spec_sp8 = spec_sp8[ , 400:700 ]
 
-dim(spec_sp8)
-
 # This subset should still plot just fine
-plot(spec_sp8, col = "red", main = "Visible spectra for species 8",
-     cex.main = 0.8, cex.axis = 0.75)
-
-plot_quantile(spec, total_prob = 1.0, add = TRUE, 
-              col = rgb(0.2, 0.2, 0.2, 0.2), border = FALSE)
+plot(spec_sp8, col = "red", main = "Visible spectra for species 8")
+plot_quantile(spec, total_prob = 1.0, add = TRUE,  col = rgb(0.2, 0.2, 0.2, 0.2), border = FALSE)
 ```
 
+Note that you can (1) subset samples using indexes and (2) use character or numeric to subset wavelengths. As said before, you cannot use indexes to subset wavelengths though.
+
 ```{r, error=TRUE}
-# Note that you can subset by wavelength using numerics or characters.
+# Subset samples by index should work. It is also OK to subset by wavelength 
+# using numerics or characters.
 reflectance(spec_sp8[ 1 , "405"]) == reflectance(spec_sp8[ 1 , 405])
 
-# But you CANNOT use indexes to subset wavelengths!
-# Something that is obvioulsy an index will fail. For instance, using 2 instead of 401
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+# But remember that you CANNOT use indexes to subset wavelengths!
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+
+# Something that is obvioulsy an index, like using 2 instead of 401 (the 2nd band), will fail.
 spec_sp8[ , 2 ]
 
-# However, if you use 2000:2001 you will NOT get the two last bands, but instead
-# wavelengths "2000" and "2001".Bottomline, be careful not to use indexes!
+# However, `casper` canot detect if you meant to get the two last bands when
+# you use 2000:2001. It will assume that you wanted wavelengths "2000" and "2001"
+# Bottomline, be very careful not to use indexes to subset wavelengths!
 ```
 
 ## Manipulating samples and wavelength labels
 
-You may want to edit certain simple attributes of `spectra`, such as make all sample names uppercase. This is easlily attainable in `casper`
+You may want to edit certain simple attributes of `spectra`, such as make all sample names uppercase. This is easlily attainable in `casper`:
 
 ```{r}
 spec_new = spec
@@ -204,7 +213,7 @@ names(spec_new) = toupper(names(spec_new))
 names(spec_new)[1:5]
 ```
 
-You may want to fiddle with the reflectance itself. This is easy to do, but there are some constraints. For example. `casper` will not allow you to have negative reflectance values or values greater than 1.
+You may want to fiddle with the reflectance itself. This is easy to do, but there are some constraints. For example, `casper` will not allow you to have negative reflectance values or values greater than 1.
 
 ```{r,  fig.height=3, fig.width=4, fig.align="center"}
 # Scale reflectance by 0.75
