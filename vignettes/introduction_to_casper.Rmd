@@ -2,9 +2,9 @@
 title: "Introduction to casper"
 author: "Jose Eduardo Meireles"
 date: "`r Sys.Date()`"
-output: rmarkdown::pdf_document
+output:  rmarkdown::pdf_document
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Introduction to casper}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -230,4 +230,3 @@ However, `casper` will throw an error if you try to perform an illegal operation
 # Trying to add 1.0 to all reflectance values will fail.
 spec_new[] = reflectance(spec_new) + 1.0
 ```
-
