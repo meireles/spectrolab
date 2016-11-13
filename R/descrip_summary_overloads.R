@@ -16,7 +16,11 @@ dim.spectra = function(spec){
 #' @return nothing. called for side effect
 #' @export
 print.spectra = function(spec){
-    print.default(spec)
+    d = dim(spec)
+    r = range(wavelengths(spec))
+    cat("spectra object", "\n")
+    cat("number of samples:", d[1],"\n")
+    cat("wavelength range: ", r[1], " to ", r[2], " (", d[2], " bands)" ,"\n", sep = "")
 }
 
 
