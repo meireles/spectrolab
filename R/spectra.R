@@ -75,14 +75,17 @@ i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = TRU
 
 #' Construct sample names vector in the appropriate format
 #'
-#' @param x vector of labels
+#' @param x vector of labels. numeric or character
 #' @param nsample Integer of expected number of samples. If NULL (default) checking is skipped.
 #'
 #' @return vector of sample names
 i_names = function(x, nsample = NULL){
-    if(! is.vector(x)) {
-        stop("Sample names must be in a vector")
+
+    if( ! is.null(dim(x)) ){
+        stop("Sample names must be one dimensional")
     }
+
+    x = as.character(unlist(x))
 
     if( !is.null(nsample) && nsample != length(x) ){
         stop("The length of x must be the same as nsample")
