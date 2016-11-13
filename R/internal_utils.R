@@ -13,7 +13,7 @@ i_is_whole = function(x){
 #' @param max_length max acceptable values for x
 #' @param verbose get warnings?
 #'
-#' @return
+#' @return boolean
 i_is_index = function(x, max_length, quiet = TRUE){
     if(quiet){
         w = suppressWarnings(i_is_whole(x))

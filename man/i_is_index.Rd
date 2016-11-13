@@ -13,6 +13,9 @@ i_is_index(x, max_length, quiet = TRUE)
 
 \item{verbose}{get warnings?}
 }
+\value{
+boolean
+}
 \description{
 Are numbers compatible with being an index?
 }

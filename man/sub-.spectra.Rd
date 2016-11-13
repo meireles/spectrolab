@@ -2,7 +2,7 @@
 % Please edit documentation in R/getters_and_setters.R
 \name{[.spectra}
 \alias{[.spectra}
-\title{Subsets a spectra object.}
+\title{Subsets a spectra object}
 \usage{
 \method{[}{spectra}(this, i, j, verbose = FALSE)
 }
@@ -11,8 +11,11 @@
 
 \item{j}{Wavelength labels, as numeric or characeter. Do not use indexes.}
 }
+\value{
+spectra object
+}
 \description{
-Subsets spectra objects by samples (rows) or wavelengths (columns).
+Subsets spectra objects by sample names (rows) or wavelengths (columns).
 }
 \details{
 Subset operations based on samples (first argument) will match either sample

@@ -12,11 +12,11 @@ is_spectra = function(spec){
     inherits(spec, "spectra")
 }
 
-#' Title
+#' Vector normalization of spectra
 #'
 #' @param spec spectra object to be vector normalized
 #'
-#' @return
+#' @return spectra object with normalized spectra
 #' @export
 normalize_spectra = function(spec){
 

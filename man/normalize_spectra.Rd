@@ -2,14 +2,17 @@
 % Please edit documentation in R/utils.R
 \name{normalize_spectra}
 \alias{normalize_spectra}
-\title{Title}
+\title{Vector normalization of spectra}
 \usage{
 normalize_spectra(spec)
 }
 \arguments{
 \item{spec}{spectra object to be vector normalized}
 }
+\value{
+spectra object with normalized spectra
+}
 \description{
-Title
+Vector normalization of spectra
 }
 

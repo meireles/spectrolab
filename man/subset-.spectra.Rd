@@ -11,6 +11,9 @@
 
 \item{j}{wavelength}
 }
+\value{
+nothing. modifies spectra as side effect
+}
 \description{
 Assign reflectance vlaues to spectra
 }

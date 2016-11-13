@@ -1,6 +1,6 @@
-#' Subsets a spectra object.
+#' Subsets a spectra object
 #'
-#' Subsets spectra objects by samples (rows) or wavelengths (columns).
+#' Subsets spectra objects by sample names (rows) or wavelengths (columns).
 #'
 #' Subset operations based on samples (first argument) will match either sample
 #' names or indexes, in that order. That is, if you subset x[1:2 , ] and your
@@ -11,7 +11,7 @@
 #' @param i Sample names (preffered) or index.
 #' @param j Wavelength labels, as numeric or characeter. Do not use indexes.
 #'
-#' @return
+#' @return spectra object
 #' @export
 `[.spectra` = function(this, i, j, verbose = FALSE){
 
@@ -56,7 +56,7 @@
 #' @param i sample name
 #' @param j wavelength
 #'
-#' @return
+#' @return nothing. modifies spectra as side effect
 #' @export
 `[<-.spectra` = function(this, i, j, value){
     this$reflectance[i, j] = i_reflectance(value)
@@ -109,10 +109,6 @@ reflectance = function(spec){
 #' @return vector of sample names
 #' @export
 names.spectra = function(spec){
-    # if( !is_spectra(spec) ){
-    #     stop("Object must be of class spectra")
-    # }
-
     spec$names
 }
 
@@ -124,9 +120,6 @@ names.spectra = function(spec){
 #' @return nothing. called for its side effect.
 #' @export
 `names<-.spectra` = function(spec, value){
-    # if( !is_spectra(spec) ){
-    #     stop("Object must be of class spectra")
-    # }
 
     ## Length of samples in spec
     nsampl = length(spec$names)
