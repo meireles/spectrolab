@@ -70,7 +70,7 @@ plot_quantile(spec, total_prob = 0.8, main = "80% spectral quantile",
 plot(spec, lwd = 0.25, lty = 1, col = "grey50", "Spectra, quantile and regions")
 plot_quantile(spec, total_prob = 0.8, 
               col = rgb(1, 0, 0, 0.25), add = TRUE, border = FALSE)
-plot_spec_regions(spec, regions = default_spec_regions, add = TRUE)
+plot_spec_regions(spec, regions = default_spec_regions(), add = TRUE)
 
 ## ------------------------------------------------------------------------
 # Get the vector of all sample names
@@ -97,7 +97,7 @@ par(mfrow = c(1, 2), cex.main = 0.8, cex.axis = 0.6, cex.lab = 0.8)
 
 plot(spec_sp8, col = "red", main = "Species 8 spectra")
 plot_quantile(spec, total_prob = 1.0, add = TRUE,  col = rgb(0.2, 0.2, 0.2, 0.2), border = FALSE)
-plot_spec_regions(spec_sp8, default_spec_regions, col = rgb(1, 0.5, 0, 0.1), add = TRUE)
+plot_spec_regions(spec_sp8, default_spec_regions(), col = rgb(1, 0.5, 0, 0.1), add = TRUE)
 
 # And maybe further subset to the visible wavelengths only
 spec_sp8 = spec_sp8[ , 400:700 ]

@@ -134,6 +134,6 @@ spectra = function(reflectance, wavelengths, names){
     structure(list(
         reflectance  = i_reflectance(reflectance, nwavelengths = wl_l, nsample = spl_l),
         wavelengths  = i_wavelengths(wavelengths),
-        names = i_names(names)
+        names        = i_names(names)
     ), class = c("spectra"))
 }

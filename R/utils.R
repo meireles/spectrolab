@@ -28,7 +28,6 @@ normalize_spectra = function(spec){
     refl_squared    = refl * refl
     vec_ones        = rep.int(1L, ncol(refl_squared))
     spec_sq_rowsum  = refl_squared %*% vec_ones
-    #magnitudes      = sqrt( rowSums(refl_squared) )
     magnitudes      = as.vector(sqrt(spec_sq_rowsum))
 
     # normalize and construct a `spectra` object
