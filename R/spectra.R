@@ -101,7 +101,7 @@ i_names = function(x, nsample = NULL){
 #' @param nwavelengths Integer of expected number of wavelengths. If NULL (default) checking is skipped.
 #'
 #' @return vector of wavelengths
-i_wavelengths = function(x, nwavelengths = NULL){
+i_wavelengths = function(x, nwavelengths = NULL) {
     if(! is.vector(x)) {
         stop("Wavelengths names must be in a vector")
     }
@@ -110,9 +110,18 @@ i_wavelengths = function(x, nwavelengths = NULL){
         stop("The length of x must be the same as nwavelengths")
     }
 
-    as.character(x)
-}
+    if(any(duplicated(x))){
+        stop("Wavelengths cannot have duplicated values.")
+    }
 
+    x = suppressWarnings(as.numeric(x))
+    n = is.na(x)
+    if( any(n) ){
+        stop("Wavelength cannot be converted to numeric: ", x[n])
+    }
+
+    x
+}
 
 #' Construct a metadata data.frame in the appropriate format
 i_meta = function(x, nsample, ...){
