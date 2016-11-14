@@ -1,3 +1,5 @@
+[![Travis-CI Build Status](https://travis-ci.org/meireles/casper.svg?branch=master)](https://travis-ci.org/meireles/casper)
+
 `casper` package
 ================
 
