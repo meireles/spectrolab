@@ -15,7 +15,7 @@
 ##                 (2) of length M
 ##
 ## -- names: (1) character vector
-##                  (2) of length N
+##           (2) of length N
 ##
 
 ################################################################################
@@ -113,27 +113,46 @@ i_wavelengths = function(x, nwavelengths = NULL){
     as.character(x)
 }
 
+
+#' Construct a metadata data.frame in the appropriate format
+i_meta = function(x, nsample, ...){
+    x = as.data.frame(x, ...)
+
+    if( nsample != nrow(x) ){
+        stop("The number of columns of meta must be the same as nsample")
+    }
+
+    x
+}
+
+
 ########################################
 # Public constructor interface
 ########################################
 
 #' Create a spectra object
 #'
-#'
-#'
 #' @param reflectance N by M numeric matrix. N samples in rows. values between 0 and 1.
 #' @param wavelengths wavelength names in vector of length M
 #' @param names sample names in vector of length N
+#' @param meta spectra metadata. defaults to NULL. Must be either of length or nrow
+#'             equals to the number of samples (i.e. nrow(reflectance) or length(names) )
 #'
 #' @return spectra object
 #' @export
-spectra = function(reflectance, wavelengths, names){
+spectra = function(reflectance, wavelengths, names, meta = NULL, ...) {
     wl_l  = length(wavelengths)
     spl_l = length(names)
 
-    structure(list(
-        reflectance  = i_reflectance(reflectance, nwavelengths = wl_l, nsample = spl_l),
-        wavelengths  = i_wavelengths(wavelengths),
-        names        = i_names(names)
-    ), class = c("spectra"))
+    s = list( reflectance  = i_reflectance(reflectance,
+                                           nwavelengths = wl_l,
+                                           nsample = spl_l),
+              wavelengths  = i_wavelengths(wavelengths),
+              names        = i_names(names))
+
+    if( ! is.null(meta) ){
+        s["meta"] = i_meta(meta, nsample = spl_l, ...)
+    }
+
+    structure(s, class = c("spectra"))
 }
