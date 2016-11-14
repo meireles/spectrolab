@@ -133,7 +133,8 @@ names(spec_new)[1:5]
 
 ## ----  fig.height=3, fig.width=4, fig.align="center"---------------------
 # Scale reflectance by 0.75
-spec_new[] = reflectance(spec_new) * 0.75
+# spec_new[] = reflectance(spec_new) * 0.75
+spec_new = spec_new * 0.75
 
 # Plot the results
 plot(spec, col = "blue", lwd = 0.75, cex.axis = 0.75)
