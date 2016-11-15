@@ -6,8 +6,8 @@
 ###### remove start and end of spectrum ####
 clip.svc <- function (spec){
   range <- seq(400,2400,1)
-  return (clipspec <- spec[,as.numeric(names(spec)) %in% range])
-  
+  return (clipspec <- spec[,names(spec) %in% range])
+
 }
 
 #### ALL EXCLUSION FUNCTIONS WORK ON SPECTRA SCALED TO 0-1 reflectance
@@ -15,7 +15,7 @@ clip.svc <- function (spec){
 
 excl.hilo.svc <- function(x){
   sub_spec <- subset(x,x$`761`>0.30 & x$`761`<0.65)
-  
+
 }
 
 ### bad measurements high in vis
@@ -42,7 +42,7 @@ excl.dip.nir.svc <- function (x) {
 excl.minidip.nir.svc <- function (x) {
   sub_spec <- subset(x, abs(x$`780` - x$`760`) < 0.013)
 }
-  
+
 ### exclude spectra shifted up ###
 excl.ups.svc <- function (x) {
   sub_spec <- subset(x, x$`670` < 0.15)
