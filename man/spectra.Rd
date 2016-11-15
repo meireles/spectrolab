@@ -4,7 +4,7 @@
 \alias{spectra}
 \title{Create a spectra object}
 \usage{
-spectra(reflectance, wavelengths, names)
+spectra(reflectance, wavelengths, names, meta = NULL, ...)
 }
 \arguments{
 \item{reflectance}{N by M numeric matrix. N samples in rows. values between 0 and 1.}
@@ -12,6 +12,9 @@ spectra(reflectance, wavelengths, names)
 \item{wavelengths}{wavelength names in vector of length M}
 
 \item{names}{sample names in vector of length N}
+
+\item{meta}{spectra metadata. defaults to NULL. Must be either of length or nrow
+equals to the number of samples (i.e. nrow(reflectance) or length(names) )}
 }
 \value{
 spectra object
