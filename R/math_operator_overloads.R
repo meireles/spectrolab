@@ -60,7 +60,18 @@ Ops.spectra = function(e1, e2) {
 }
 
 
-#' Matrix multiplication
+#' Default matrix multiplication
+#' @export
+`%*%.default` = .Primitive("%*%")
+
+
+#' Matrix multiplication S3 method
+#' @export
+`%*%` = function(x, ...){
+    UseMethod("%*%", x)
+}
+
+#' Matrix multiplication for spectra class
 #'
 #' @param e1
 #' @param e2
@@ -68,13 +79,17 @@ Ops.spectra = function(e1, e2) {
 #' @return
 #' @export
 `%*%.spectra` = function(e1, e2){
-    stop("Not implemented")
-    # w = c(class(e1), class(e2))
-    # w = which(w == "spectra")
-    #
-    # if(w == 1){
-    #     reflectance(e1) %*% e2
-    # } else {
-    #     reflectance(e2) %*% e1
-    # }
+    is_spec   = c(is_spectra(e1), is_spectra(e2))
+    w_is_spec = which(is_spec)
+    s_is_spec = length(w_is_spec) == 1L
+
+    if(s_is_spec) {
+        if(w_is_spec == 1) {
+            reflectance(e1) %*% e2
+        } else {
+            e1 %*% reflectance(e2)
+        }
+    } else {
+        reflectance(e1) %*% reflectance(e2)
+    }
 }
