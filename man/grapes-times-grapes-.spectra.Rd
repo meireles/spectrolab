@@ -4,7 +4,7 @@
 \alias{\%*\%.spectra}
 \title{Matrix multiplication}
 \usage{
-\method{\%*\%}{spectra}(e1, e2)
+"\%*\%.spectra"(e1, e2)
 }
 \arguments{
 \item{e2}{}

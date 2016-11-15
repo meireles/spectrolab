@@ -1,7 +1,4 @@
-library(devtools)
-
-devtools::install_github("annakat/spectrolab")
-library(spectrolab)
+devtools::load_all(".")
 
 ### Inspecting original spectra
 spec <- read.svc(myfolder, read = T)
@@ -13,7 +10,7 @@ plot(spec_s)  ### to fix: duplicated wavelengthts
 
 ##### Typical workfow ###
 #### Jump corrected spectra ###
-spec <- read.svc("./inst/extdata/", filename = T)
+spec <- jump.corr.svc("./inst/extdata/", filename = T)
 spec <- smoo.nirswir.svc(spec)
 spec <- smoo.visnir.svc(spec)
 spec_s <- as.spectra(spec)
