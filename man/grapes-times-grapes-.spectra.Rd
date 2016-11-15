@@ -2,7 +2,7 @@
 % Please edit documentation in R/math_operator_overloads.R
 \name{\%*\%.spectra}
 \alias{\%*\%.spectra}
-\title{Matrix multiplication}
+\title{Matrix multiplication for spectra class}
 \usage{
 \method{\%*\%}{spectra}(e1, e2)
 }
@@ -10,6 +10,6 @@
 \item{e2}{}
 }
 \description{
-Matrix multiplication
+Matrix multiplication for spectra class
 }
 

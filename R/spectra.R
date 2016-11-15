@@ -16,7 +16,6 @@
 ##
 ## -- names: (1) character vector
 ##           (2) of length N
-##
 
 ################################################################################
 # Internal constructor helper for each spectra component

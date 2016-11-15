@@ -79,7 +79,6 @@ Ops.spectra = function(e1, e2) {
 #' @return
 #' @export
 `%*%.spectra` = function(e1, e2){
-
     is_spec   = c(is_spectra(e1), is_spectra(e2))
     w_is_spec = which(is_spec)
     s_is_spec = length(w_is_spec) == 1L

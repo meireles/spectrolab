@@ -2,11 +2,11 @@
 % Please edit documentation in R/math_operator_overloads.R
 \name{\%*\%}
 \alias{\%*\%}
-\title{title}
+\title{Matrix multiplication S3 method}
 \usage{
 x \%*\% ...
 }
 \description{
-title
+Matrix multiplication S3 method
 }
 

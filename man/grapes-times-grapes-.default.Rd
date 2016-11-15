@@ -2,11 +2,11 @@
 % Please edit documentation in R/math_operator_overloads.R
 \name{\%*\%.default}
 \alias{\%*\%.default}
-\title{title}
+\title{Default matrix multiplication}
 \usage{
 \method{\%*\%}{default}()
 }
 \description{
-title
+Default matrix multiplication
 }
 
