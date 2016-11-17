@@ -5,15 +5,15 @@
 ## ---- eval=F-------------------------------------------------------------
 #  library("spectrolab")
 
-## ---- eval=FALSE---------------------------------------------------------
-#  # Read .sig files
-#  myfolder <- system.file("extdata", "Acer_example", package = "spectrolab")
-#  Acer_spectra <- read.svc(myfolder, read = T, filename = T)
-#  
-#  # Note that this is NOT a spectra object. You can verify this by either asking what class `Acer_spectra` is or using spectrolab's `is_spectra()` function.
-#  
-#  class(Acer_spectra)
-#  is_spectra(Acer_spectra)
+## ------------------------------------------------------------------------
+# Read .sig files
+myfolder <- system.file("extdata", "Acer_example", package = "spectrolab")
+Acer_spectra <- read_spec(myfolder, read = T, filename = T) 
+
+# Note that this is NOT a spectra object. You can verify this by either asking what class `Acer_spectra` is or using spectrolab's `is_spectra()` function.
+
+class(Acer_spectra)
+is_spectra(Acer_spectra)
 
 ## ---- eval=F-------------------------------------------------------------
 #  # Make a spectra object if you have a matrix in the right format
@@ -62,7 +62,7 @@ spec_as_mat = as.matrix(spec, fix_names = "none")
 spec_as_mat[1:4, 1:3]
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  # For convenience, `jump.corr.svc` reads raw data, so there is no need for running `read.svc` fist. Similar to `read.svc` you only need to point `jump.corr.svc` to the folder containing your .sig files.
+#  # For convenience, `jump.corr.svc` reads raw data, so there is no need for running `read_spec` fist. Similar to `read_spec` you only need to point `jump.corr.svc` to the folder containing your .sig files.
 #  myfolder <- system.file("extdata", "Acer_example", package = "spectrolab")
 #  Acer_juco <- jump.corr.svc(myfolder, filename = T)
 

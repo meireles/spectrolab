@@ -2,7 +2,6 @@
 #'
 #' Function to read filenames and wavelengths from .sig files
 #'
-#'
 #' @param inputdir Input directory containing .sig files.
 #' Higher level directories are supported.
 #' @param inclbad Logical. Should files flagged "bad" be included?
@@ -11,19 +10,19 @@
 #' @return The output is a dataframe.
 #' @examples
 #' \dontrun{
-#' read.filenames.svc("path_to_your_folder")
-#' read.wvl.svc("path_to_your_folder")
+#' read_filenames("path_to_your_folder")
+#' read_wvl("path_to_your_folder")
 #' }
-#' @name filenames.wvl.svc
+#' @name filenames_wvl
 NULL
 
 ## NULL
 
 ###### 10-18-2016 ##########################
 ##### READ FILENAMES ######
-#' @rdname filenames.wvl.svc
+#' @rdname filenames_wvl
 
-read.filenames.svc <- function (inputdir, inclbad=FALSE, inclwr=FALSE) {
+read_filenames <- function (inputdir, inclbad=FALSE, inclwr=FALSE) {
   if (inclbad==TRUE & inclwr==TRUE) {
     files <- dir(inputdir, recursive=TRUE, full.names=FALSE, pattern="\\.sig$")
   } else {
@@ -44,9 +43,9 @@ read.filenames.svc <- function (inputdir, inclbad=FALSE, inclwr=FALSE) {
 
 
 #### READ WAVELENGTHS ###
-#' @rdname filenames.wvl.svc
+#' @rdname filenames_wvl
 
-read.wvl.svc <- function (inputdir) {
+read_wvl <- function (inputdir) {
   indir <- dir(inputdir, recursive=TRUE, full.names=TRUE, pattern="\\.sig$")[1]
   wvl <- read.delim(indir, sep=" ",header=F, skip=25)[,1]
   return(wvl)

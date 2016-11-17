@@ -12,7 +12,7 @@
 
 <meta name="author" content="Jose Eduardo Meireles, Anna K. Schweiger" />
 
-<meta name="date" content="2016-11-15" />
+<meta name="date" content="2016-11-16" />
 
 <title>Introduction to spectrolab</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Introduction to spectrolab</h1>
 <h4 class="author"><em>Jose Eduardo Meireles, Anna K. Schweiger</em></h4>
-<h4 class="date"><em>2016-11-15</em></h4>
+<h4 class="date"><em>2016-11-16</em></h4>
 
 
 
@@ -91,12 +91,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>First you will want to read the raw data files.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Read .sig files</span>
 myfolder &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;Acer_example&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;spectrolab&quot;</span>)
-Acer_spectra &lt;-<span class="st"> </span><span class="kw">read.svc</span>(myfolder, <span class="dt">read =</span> T, <span class="dt">filename =</span> T) 
+Acer_spectra &lt;-<span class="st"> </span><span class="kw">read_spec</span>(myfolder, <span class="dt">read =</span> T, <span class="dt">filename =</span> T) 
 
 <span class="co"># Note that this is NOT a spectra object. You can verify this by either asking what class `Acer_spectra` is or using spectrolab's `is_spectra()` function.</span>
 
-<span class="kw">class</span>(Acer_spectra)
-<span class="kw">is_spectra</span>(Acer_spectra)</code></pre></div>
+<span class="kw">class</span>(Acer_spectra)</code></pre></div>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">is_spectra</span>(Acer_spectra)</code></pre></div>
+<pre><code>## [1] FALSE</code></pre>
 </div>
 <div id="constructing-a-spectra-object" class="section level3">
 <h3>Constructing a <code>spectra</code> object</h3>
@@ -159,7 +161,7 @@ spec_as_mat =<span class="st"> </span><span class="kw">as.matrix</span>(spec, <s
 <div id="jump-correction" class="section level3">
 <h3>Jump correction</h3>
 <p>The <code>jump corrector</code> removes the VIS/NIR and NIR/SWIR overlap regions. In principle, the algorithm searches for the wavelengths of closest approach in both overlap regions, where it cuts the spectrum into three pieces, removes the overlap and finds a multiplier to paste the junks back together. As a convention, the NIR regions is left unchanged.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># For convenience, `jump.corr.svc` reads raw data, so there is no need for running `read.svc` fist. Similar to `read.svc` you only need to point `jump.corr.svc` to the folder containing your .sig files. </span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># For convenience, `jump.corr.svc` reads raw data, so there is no need for running `read_spec` fist. Similar to `read_spec` you only need to point `jump.corr.svc` to the folder containing your .sig files. </span>
 myfolder &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;Acer_example&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;spectrolab&quot;</span>)
 Acer_juco &lt;-<span class="st"> </span><span class="kw">jump.corr.svc</span>(myfolder, <span class="dt">filename =</span> T)</code></pre></div>
 </div>

@@ -14,14 +14,14 @@
 #' @return The output is a dataframe.
 #' @examples
 #' \dontrun{
-#' read.svc("path_to_your_folder")
+#' read_spec("path_to_your_folder")
 #' }
-
+#' @export
 
 ###### 10-18-2016 ##########################
 ##### READ SVC DATA ############### only 2 cases implemented: GOOD, WR&BAD
 
-read.svc <- function (inputdir, inclbad=FALSE, inclwr=FALSE, read=FALSE,
+read_spec <- function (inputdir, inclbad=FALSE, inclwr=FALSE, read=FALSE,
                       filename=TRUE) {
   if (inclbad & inclwr) {
     files <- dir(inputdir, recursive=TRUE, full.names=TRUE, pattern="\\.sig$")
@@ -42,10 +42,10 @@ read.svc <- function (inputdir, inclbad=FALSE, inclwr=FALSE, read=FALSE,
     files <- as.data.frame(t(do.call (cbind, lapply (temp, function (x) read.delim (x, sep=" ", skip=25, header=F)
                                                      [,c(7)]))))
     files <- files/100
-    wave <- read.wvl.svc(inputdir)
+    wave <- read_wvl(inputdir)
     names(files) <- wave
     if(filename==TRUE){
-      ID <- read.filenames.svc(inputdir, inclbad = T, inclwr = T)
+      ID <- read_filenames(inputdir, inclbad = T, inclwr = T)
       files <- cbind(ID, files)
     }
   } else if (read==TRUE) {
@@ -54,10 +54,10 @@ read.svc <- function (inputdir, inclbad=FALSE, inclwr=FALSE, read=FALSE,
     files <- as.data.frame(t(do.call (cbind, lapply (temp, function (x) read.delim (x, sep=" ", skip=25, header=F)
                                                      [,c(7)]))))
     files <- files/100
-    wave <- read.wvl.svc(inputdir)
+    wave <- read_wvl(inputdir)
     names(files) <- wave
     if(filename==TRUE){
-      ID <- read.filenames.svc(inputdir)
+      ID <- read_filenames(inputdir)
       files <- cbind(ID, files)
     }
   }
@@ -67,10 +67,10 @@ read.svc <- function (inputdir, inclbad=FALSE, inclwr=FALSE, read=FALSE,
     files <- as.data.frame(t(do.call (cbind, lapply (temp, function (x) read.delim (x, sep=" ", skip=25, header=F)
                                                      [,c(7)]))))
     files <- files/100
-    wave <- read.wvl.svc(inputdir)
+    wave <- read_wvl(inputdir)
     names(files) <- wave
     if(filename==TRUE){
-      ID <- read.filenames.svc(inputdir, inclbad = T)
+      ID <- read_filenames(inputdir, inclbad = T)
       files <- cbind(ID, files)
     }
   }
@@ -80,10 +80,10 @@ read.svc <- function (inputdir, inclbad=FALSE, inclwr=FALSE, read=FALSE,
     files <- as.data.frame(t(do.call (cbind, lapply (temp, function (x) read.delim (x, sep=" ", skip=25, header=F)
                                                      [,c(7)]))))
     files <- files/100
-    wave <- read.wvl.svc(inputdir)
+    wave <- read_wvl(inputdir)
     names(files) <- wave
     if(filename==TRUE){
-      ID <- read.filenames.svc(inputdir, inclwr = T)
+      ID <- read_filenames(inputdir, inclwr = T)
       files <- cbind(ID, files)
     }
   }
