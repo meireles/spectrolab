@@ -109,9 +109,9 @@ i_wavelengths = function(x, nwavelengths = NULL) {
         stop("The length of x must be the same as nwavelengths")
     }
 
-    if(any(duplicated(x))){
-        stop("Wavelengths cannot have duplicated values")
-    }
+    # if(any(duplicated(x))){
+    #     stop("Wavelengths cannot have duplicated values")
+    # }
 
     x = suppressWarnings(as.numeric(x))
     n = is.na(x)
