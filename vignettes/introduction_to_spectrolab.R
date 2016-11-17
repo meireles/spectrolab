@@ -8,16 +8,27 @@
 ## ------------------------------------------------------------------------
 # Read .sig files
 myfolder <- system.file("extdata", "Acer_example", package = "spectrolab")
-Acer_spectra <- read_spec(myfolder, read = T, filename = T) 
+Acer_spectra <- read_spec(myfolder, read = T, filename = F) 
 
 # Note that this is NOT a spectra object. You can verify this by either asking what class `Acer_spectra` is or using spectrolab's `is_spectra()` function.
 
 class(Acer_spectra)
 is_spectra(Acer_spectra)
 
+## ------------------------------------------------------------------------
+
+plot_rawspec(Acer_spectra,1,5)
+
+
+## ------------------------------------------------------------------------
+# The function `jump_corr()` reads raw data, so there is no need for running `read_spec` fist. Similar to `read_spec` you only need to point `jump` to the folder containing your .sig files. 
+myfolder <- system.file("extdata", "Acer_example", package = "spectrolab")
+Acer_juco <- jump_corr(myfolder, filename = T)
+
 ## ---- eval=F-------------------------------------------------------------
 #  # Make a spectra object if you have a matrix in the right format
-#  spec <- spectrolab::as.spectra(Acer_spectra)
+#  # Here we remove the first column containing the filename
+#  spec <- spectrolab::as.spectra(Acer_juco[,-1])
 #  
 #  # Did it work?
 #  is_spectra(spec)
@@ -25,7 +36,7 @@ is_spectra(Acer_spectra)
 ## ---- eval=F-------------------------------------------------------------
 #  # (1) Create a reflectance matrix.
 #  #     In this case, by removing the sample ID column
-#  rf <- Acer_spectra[, -1]
+#  rf <- Acer_juco[, -1]
 #  
 #  # Check the result
 #  rf[1:4, 1:3]
@@ -40,7 +51,7 @@ is_spectra(Acer_spectra)
 #  # (3) Create a vector with sample labels that match
 #  #     the reflectance matrix rows.
 #  #     In this case, use the first colum of spec_matrix_example
-#  sn <- Acer_spectra[, 1]
+#  sn <- Acer_juco[, 1]
 #  
 #  # Check the result
 #  sn[1:4]
@@ -54,47 +65,17 @@ is_spectra(Acer_spectra)
 ## ---- eval=F-------------------------------------------------------------
 #  plot(spec)
 #  
-#  ### A warning message is displayed because raw SVC data have duplicated wavelenghts at the sensor overlap regions
-
-## ---- error=TRUE---------------------------------------------------------
-# Make a matrix from a `spectra` object
-spec_as_mat = as.matrix(spec, fix_names = "none")
-spec_as_mat[1:4, 1:3]
-
-## ---- eval=FALSE---------------------------------------------------------
-#  # For convenience, `jump.corr.svc` reads raw data, so there is no need for running `read_spec` fist. Similar to `read_spec` you only need to point `jump.corr.svc` to the folder containing your .sig files.
-#  myfolder <- system.file("extdata", "Acer_example", package = "spectrolab")
-#  Acer_juco <- jump.corr.svc(myfolder, filename = T)
-
-## ---- eval=FALSE---------------------------------------------------------
-#  Acer_jucoclip <- clip.svc(Acer_juco)
-
-## ---- eval=FALSE---------------------------------------------------------
-#  ### Smooth only VIS/NIR or NIR/SWIR
-#  Acer_smoo1 <- smoo.visnir.svc(Acer_juco)
-#  Acer_smoo2 <- smoo.nirswir.svc(Acer_juco)
-#  
-#  ### Smooth both regions
-#  Acer_smoo <- smoo.nirswir.svc(Acer_smoo1)
-#  ### Same result
-#  Acer_smoo <- smoo.visnir.svc(Acer_smoo2)
-
-## ---- eval=FALSE---------------------------------------------------------
-#  ### Some common examples, see `excl.` for more.
-#  ### Exclude spectra with reflectances at the 'NIR shoulder' @ 761 nm <0.3 or >0.65
-#  Acer_excl <- excl.hilo.svc(Acer_jucoclip)
-#  
-#  ### Exclude spectra with high reflectances in VIS: @ 450 nm >0.2 or @400 nm >0.15
-#  Acer_excl <- excl.hi.vis.svc(Acer_jucoclip)
-#  Acer_excl <- excl.hi.start.svc(Acer_jucoclip)
-#  
-#  ### Exclude spectra with dips in NIR: @800 - @770 >0.02 ###
-#  Acer_excl <- excl.dip.nir.svc(Acer_jucoclip)
 
 ## ---- fig.height=2.5, fig.width=8, eval=F--------------------------------
-#  par(mfrow = c(1, 3))
+#  
+#  # Example spectral dataset in matrix format.
+#  spec_matrix_example[1:4, 1:3]
+#  
+#  # Make 'spectra' object
+#  spec <- as.spectra(spec_matrix_example)
 #  
 #  # Simple spectra plot
+#  par(mfrow = c(1, 3))
 #  plot(spec, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
 #  
 #  # Stand along quantile plot
@@ -128,12 +109,21 @@ spec_as_mat[1:4, 1:3]
 #  # Check the results
 #  dim(spec_sp8)
 #  
-#  # Plotting the seubset result should work just fine
+#  # Plotting the subset result should work just fine
 #  par(mfrow = c(1, 2), cex.main = 0.8, cex.axis = 0.6, cex.lab = 0.8)
 #  
 #  plot(spec_sp8, col = "red", main = "Species 8 spectra")
 #  plot_quantile(spec, total_prob = 1.0, add = TRUE,  col = rgb(0.2, 0.2, 0.2, 0.2), border = FALSE)
 #  plot_spec_regions(spec_sp8, default_spec_regions(), col = rgb(1, 0.5, 0, 0.1), add = TRUE)
+#  
+#  
+#  ### Clip spectra
+#  
+#  Next, you probably want to exclude the noisy regions at the beginning and end of the spectrum. This can easily be done by limiting the wavelength range in your `spectra` object.
+#  
+#  spec_clip <-  spec[ , 400:2400]
+#  
+#  plot(spec_clip)
 #  
 #  # And maybe further subset to the visible wavelengths only
 #  spec_sp8 = spec_sp8[ , 400:700 ]
@@ -179,4 +169,31 @@ spec_sp8[ , 2 ]
 ## ---- error=TRUE---------------------------------------------------------
 # Trying to add 1.0 to all reflectance values will fail.
 spec_new[] = reflectance(spec_new) + 1.0
+
+## ---- error=TRUE---------------------------------------------------------
+# Make a matrix from a `spectra` object
+spec_as_mat = as.matrix(spec, fix_names = "none")
+spec_as_mat[1:4, 1:3]
+
+## ---- eval=FALSE---------------------------------------------------------
+#  ### Smooth only VIS/NIR or NIR/SWIR
+#  Acer_smoo1 <- smoo.visnir.svc(Acer_juco)
+#  Acer_smoo2 <- smoo.nirswir.svc(Acer_juco)
+#  
+#  ### Smooth both regions
+#  Acer_smoo <- smoo.nirswir.svc(Acer_smoo1)
+#  ### Same result
+#  Acer_smoo <- smoo.visnir.svc(Acer_smoo2)
+
+## ---- eval=FALSE---------------------------------------------------------
+#  ### Some common examples, see `excl.` for more.
+#  ### Exclude spectra with reflectances at the 'NIR shoulder' @ 761 nm <0.3 or >0.65
+#  Acer_excl <- excl.hilo.svc(Acer_jucoclip)
+#  
+#  ### Exclude spectra with high reflectances in VIS: @ 450 nm >0.2 or @400 nm >0.15
+#  Acer_excl <- excl.hi.vis.svc(Acer_jucoclip)
+#  Acer_excl <- excl.hi.start.svc(Acer_jucoclip)
+#  
+#  ### Exclude spectra with dips in NIR: @800 - @770 >0.02 ###
+#  Acer_excl <- excl.dip.nir.svc(Acer_jucoclip)
 

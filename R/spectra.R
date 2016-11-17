@@ -110,7 +110,7 @@ i_wavelengths = function(x, nwavelengths = NULL) {
     }
 
     if(any(duplicated(x))){
-        stop("Wavelengths cannot have duplicated values.")
+        stop("Wavelengths cannot have duplicated values")
     }
 
     x = suppressWarnings(as.numeric(x))

@@ -1,8 +1,17 @@
 devtools::load_all(".")
 
 ### Inspecting original spectra
-spec <- read.svc(myfolder, read = T)
-spec_s <- as.spectra(spec)
+spec <- read_spec("./inst/extdata/Acer_example/", read = T, filename = T)
+plot_rawspec(spec,1,2)
+
+as.numeric(names(spec[,-1])[505:525])
+
+spec <- jump_corr(myfolder, filename = T)
+
+as.numeric(names(spec))
+
+spec <- as.spectra(spec)
+
 is_spectra(spec_s)
 plot(spec_s)  ### to fix: duplicated wavelengthts
 
@@ -10,7 +19,7 @@ plot(spec_s)  ### to fix: duplicated wavelengthts
 
 ##### Typical workfow ###
 #### Jump corrected spectra ###
-spec <- jump.corr.svc("./inst/extdata/", filename = T)
+
 spec <- smoo.nirswir.svc(spec)
 spec <- smoo.visnir.svc(spec)
 spec_s <- as.spectra(spec)
