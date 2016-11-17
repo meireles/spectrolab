@@ -109,6 +109,7 @@ i_wavelengths = function(x, nwavelengths = NULL) {
         stop("The length of x must be the same as nwavelengths")
     }
 
+    ## Duplicates should be OK.
     # if(any(duplicated(x))){
     #     stop("Wavelengths cannot have duplicated values")
     # }
