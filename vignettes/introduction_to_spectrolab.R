@@ -20,10 +20,11 @@
 #  plot_rawspec(Acer_spectra,1,5)
 #  
 
-## ------------------------------------------------------------------------
-# The function `jump_corr()` reads raw data, so there is no need for running `read_spec` fist. Similar to `read_spec` you only need to point `jump` to the folder containing your .sig files. 
-myfolder <- system.file("extdata", "Acer_example", package = "spectrolab")
-Acer_juco <- jump_corr(myfolder, filename = T)
+## ---- eval=F-------------------------------------------------------------
+#  # The function `jump_corr()` reads raw data, so there is no need for running `read_spec` fist. Similar to `read_spec` you only need to point `jump` to the folder containing your .sig files.
+#  
+#  myfolder <- system.file("extdata", "Acer_example", package = "spectrolab")
+#  Acer_juco <- jump_corr(myfolder, filename = T)
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  ### Smooth only VIS/NIR or NIR/SWIR
@@ -179,14 +180,13 @@ spec_as_mat[1:4, 1:3]
 ## ---- eval=FALSE---------------------------------------------------------
 #  ### Some common examples, see `excl.` for more.
 #  ### Exclude spectra with reflectances at the 'NIR shoulder' @ 761 nm <0.3 or >0.65
-#  Acer_excl <- excl.hilo.svc(Acer_juco)
+#  Acer_excl <- exclhilo_spec(Acer_juco)
 #  
-#  ### Exclude spectra with high reflectances in VIS: @ 450 nm >0.2 or @400 nm >0.15
-#  Acer_excl <- excl.hi.vis.svc(Acer_juco)
-#  Acer_excl <- excl.hi.start.svc(Acer_juco)
+#  ### Exclude spectra with high reflectances in VIS: @ 450 nm >0.2
+#  Acer_excl <- exclhivis_spec(Acer_juco)
 #  
 #  ### Exclude spectra with dips in NIR: @800 - @770 >0.02 ###
-#  Acer_excl <- excl.dip.nir.svc(Acer_juco)
+#  Acer_excl <- excldipnir_spec(Acer_juco)
 #  
 #  ### Create spectra object and plot
 #  Acer_corr <- as.spectra (Acer_excl)

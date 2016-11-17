@@ -105,9 +105,9 @@ Acer_spectra &lt;-<span class="st"> </span><span class="kw">read_spec</span>(myf
 <h3>Jump correction</h3>
 <p>The jump corrector removes the VIS/NIR and NIR/SWIR overlap regions. In principle, the algorithm searches for the wavelengths of closest approach in both overlap regions, cuts the spectrum into three pieces, removes the overlap and finds a multiplier to paste the junks back together. As a convention, the NIR regions is left unchanged.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The function `jump_corr()` reads raw data, so there is no need for running `read_spec` fist. Similar to `read_spec` you only need to point `jump` to the folder containing your .sig files. </span>
+
 myfolder &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;Acer_example&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;spectrolab&quot;</span>)
 Acer_juco &lt;-<span class="st"> </span><span class="kw">jump_corr</span>(myfolder, <span class="dt">filename =</span> T)</code></pre></div>
-<pre><code>## Loading required package: RcppArmadillo</code></pre>
 </div>
 <div id="smoothing-at-overlap-regions" class="section level3">
 <h3>Smoothing at overlap regions</h3>
@@ -284,17 +284,16 @@ spec_as_mat =<span class="st"> </span><span class="kw">as.matrix</span>(spec, <s
 </div>
 <div id="excluding-bad-spectra" class="section level2">
 <h2>Excluding bad spectra</h2>
-<p>The <code>spectrolab</code> package comes with a couple of functions to exclude bad spectra. However, thus far the functions only accept data.frames, such as <code>Acer juco</code>. So at this point, a typical workflow would involve inspecting the raw spectra with <code>plot_rawspec</code>, removing bad spectra, and plotting again, until the output looks fine. Then a <code>spectra</code> object can be constructed with <code>as.spectra</code>.</p>
+<p>The <code>spectrolab</code> package comes with a couple of functions to exclude bad spectra. However, thus far the functions only accept data.frames, such as Acer_juco, the result from the initial jump correction. At this point, a typical workflow would involve inspecting the raw spectra with <code>plot_rawspec</code>, removing bad spectra, and plotting again, until the output looks fine. Then a <code>spectra</code> object can be constructed with <code>as.spectra</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">### Some common examples, see `excl.` for more.
 ### Exclude spectra with reflectances at the 'NIR shoulder' @ 761 nm &lt;0.3 or &gt;0.65 
-Acer_excl &lt;-<span class="st"> </span><span class="kw">excl.hilo.svc</span>(Acer_juco)
+Acer_excl &lt;-<span class="st"> </span><span class="kw">exclhilo_spec</span>(Acer_juco)
 
-### Exclude spectra with high reflectances in VIS: @ 450 nm &gt;0.2 or @400 nm &gt;0.15
-Acer_excl &lt;-<span class="st"> </span><span class="kw">excl.hi.vis.svc</span>(Acer_juco)
-Acer_excl &lt;-<span class="st"> </span><span class="kw">excl.hi.start.svc</span>(Acer_juco)
+### Exclude spectra with high reflectances in VIS: @ 450 nm &gt;0.2 
+Acer_excl &lt;-<span class="st"> </span><span class="kw">exclhivis_spec</span>(Acer_juco)
 
 ### Exclude spectra with dips in NIR: @800 - @770 &gt;0.02 ###
-Acer_excl &lt;-<span class="st"> </span><span class="kw">excl.dip.nir.svc</span>(Acer_juco)
+Acer_excl &lt;-<span class="st"> </span><span class="kw">excldipnir_spec</span>(Acer_juco)
 
 ### Create spectra object and plot
 Acer_corr &lt;-<span class="st"> </span><span class="kw">as.spectra</span> (Acer_excl)
