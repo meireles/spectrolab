@@ -47,7 +47,7 @@ is_spectra(Acer_spectra)
 
 You can take inspect the raw data with `plot_rawspec()`. 
 
-```{r}
+```{r, eval=F}
 
 plot_rawspec(Acer_spectra,1,5)
 

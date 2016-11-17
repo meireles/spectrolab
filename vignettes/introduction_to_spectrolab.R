@@ -5,20 +5,20 @@
 ## ---- eval=F-------------------------------------------------------------
 #  library("spectrolab")
 
-## ------------------------------------------------------------------------
-# Read .sig files
-myfolder <- system.file("extdata", "Acer_example", package = "spectrolab")
-Acer_spectra <- read_spec(myfolder, read = T, filename = F) 
+## ----eval=F--------------------------------------------------------------
+#  # Read .sig files
+#  myfolder <- system.file("extdata", "Acer_example", package = "spectrolab")
+#  Acer_spectra <- read_spec(myfolder, read = T, filename = F)
+#  
+#  # Note that this is NOT a spectra object. You can verify this by either asking what class `Acer_spectra` is or using spectrolab's `is_spectra()` function.
+#  
+#  class(Acer_spectra)
+#  is_spectra(Acer_spectra)
 
-# Note that this is NOT a spectra object. You can verify this by either asking what class `Acer_spectra` is or using spectrolab's `is_spectra()` function.
-
-class(Acer_spectra)
-is_spectra(Acer_spectra)
-
-## ------------------------------------------------------------------------
-
-plot_rawspec(Acer_spectra,1,5)
-
+## ---- eval=F-------------------------------------------------------------
+#  
+#  plot_rawspec(Acer_spectra,1,5)
+#  
 
 ## ------------------------------------------------------------------------
 # The function `jump_corr()` reads raw data, so there is no need for running `read_spec` fist. Similar to `read_spec` you only need to point `jump` to the folder containing your .sig files. 

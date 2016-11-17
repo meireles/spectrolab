@@ -13,11 +13,12 @@
 #' Higher level directories are supported.
 #' @param filename Logical. Should the filename be included as the first column?
 #' @return The output is a dataframe.
+#' @export
 #' @examples
 #' \dontrun{
 #' jump_corr("path_to_your_folder", filename=TRUE)
 #' }
-#' @export
+
 
 jump_corr <- function (path, filename=FALSE) {
   dat <- read_spec(path, read = T, filename = F)
