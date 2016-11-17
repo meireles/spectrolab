@@ -25,6 +25,16 @@
 myfolder <- system.file("extdata", "Acer_example", package = "spectrolab")
 Acer_juco <- jump_corr(myfolder, filename = T)
 
+## ---- eval=FALSE---------------------------------------------------------
+#  ### Smooth only VIS/NIR or NIR/SWIR
+#  Acer_smoo1 <- smoo.visnir.svc(Acer_juco)
+#  Acer_smoo2 <- smoo.nirswir.svc(Acer_juco)
+#  
+#  ### Smooth both regions
+#  Acer_smoo <- smoo.nirswir.svc(Acer_smoo1)
+#  ### Same result
+#  Acer_smoo <- smoo.visnir.svc(Acer_smoo2)
+
 ## ---- eval=F-------------------------------------------------------------
 #  # Make a spectra object if you have a matrix in the right format
 #  # Here we remove the first column containing the filename
@@ -103,8 +113,15 @@ Acer_juco <- jump_corr(myfolder, filename = T)
 #  dim(spec)
 
 ## ---- fig.height=2.5, fig.width=6, fig.align="center", eval=F------------
-#  # Subset spectra to all entries where sample_name matches "species_8"
-#  spec_sp8 = spec[ "species_8", ]
+#  
+#  ### Subset wavelength regions
+#  spec_clip <-  spec[ , 400:2400]
+#  
+#  ### Check the result
+#  plot(spec_clip)
+#  
+#  # Subset spectra to all entries where sample_name matches "species_8" and wavelength regions
+#  spec_sp8 = spec[ "species_8", 400:2400]
 #  
 #  # Check the results
 #  dim(spec_sp8)
@@ -115,22 +132,6 @@ Acer_juco <- jump_corr(myfolder, filename = T)
 #  plot(spec_sp8, col = "red", main = "Species 8 spectra")
 #  plot_quantile(spec, total_prob = 1.0, add = TRUE,  col = rgb(0.2, 0.2, 0.2, 0.2), border = FALSE)
 #  plot_spec_regions(spec_sp8, default_spec_regions(), col = rgb(1, 0.5, 0, 0.1), add = TRUE)
-#  
-#  
-#  ### Clip spectra
-#  
-#  Next, you probably want to exclude the noisy regions at the beginning and end of the spectrum. This can easily be done by limiting the wavelength range in your `spectra` object.
-#  
-#  spec_clip <-  spec[ , 400:2400]
-#  
-#  plot(spec_clip)
-#  
-#  # And maybe further subset to the visible wavelengths only
-#  spec_sp8 = spec_sp8[ , 400:700 ]
-#  
-#  # This subset should still plot just fine
-#  plot(spec_sp8, col = "red", main = "Visible spectra for species 8")
-#  plot_quantile(spec, total_prob = 1.0, add = TRUE,  col = rgb(0.2, 0.2, 0.2, 0.2), border = FALSE)
 
 ## ---- error=TRUE---------------------------------------------------------
 # Subset samples by index should work. It is also OK to subset by wavelength 
@@ -176,24 +177,18 @@ spec_as_mat = as.matrix(spec, fix_names = "none")
 spec_as_mat[1:4, 1:3]
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  ### Smooth only VIS/NIR or NIR/SWIR
-#  Acer_smoo1 <- smoo.visnir.svc(Acer_juco)
-#  Acer_smoo2 <- smoo.nirswir.svc(Acer_juco)
-#  
-#  ### Smooth both regions
-#  Acer_smoo <- smoo.nirswir.svc(Acer_smoo1)
-#  ### Same result
-#  Acer_smoo <- smoo.visnir.svc(Acer_smoo2)
-
-## ---- eval=FALSE---------------------------------------------------------
 #  ### Some common examples, see `excl.` for more.
 #  ### Exclude spectra with reflectances at the 'NIR shoulder' @ 761 nm <0.3 or >0.65
-#  Acer_excl <- excl.hilo.svc(Acer_jucoclip)
+#  Acer_excl <- excl.hilo.svc(Acer_juco)
 #  
 #  ### Exclude spectra with high reflectances in VIS: @ 450 nm >0.2 or @400 nm >0.15
-#  Acer_excl <- excl.hi.vis.svc(Acer_jucoclip)
-#  Acer_excl <- excl.hi.start.svc(Acer_jucoclip)
+#  Acer_excl <- excl.hi.vis.svc(Acer_juco)
+#  Acer_excl <- excl.hi.start.svc(Acer_juco)
 #  
 #  ### Exclude spectra with dips in NIR: @800 - @770 >0.02 ###
-#  Acer_excl <- excl.dip.nir.svc(Acer_jucoclip)
+#  Acer_excl <- excl.dip.nir.svc(Acer_juco)
+#  
+#  ### Create spectra object and plot
+#  Acer_corr <- as.spectra (Acer_excl)
+#  plot(Acer_corr)
 
