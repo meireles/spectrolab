@@ -9,10 +9,11 @@
 #'                           Example: "BAD"
 #' @param outside_01_action what to do with values outside 0 and 1? Options are
 #'                          "NA", which replaces those values with NA or
-#'                          "round", which sets negative values to 0 and >1 to 1.
+#'                          "round", which sets negative values to 0 and \>1 to 1.
 #' @param ... nothing yet
 #'
-#' @return a single `spectra` or a list of `spectra` (in case files had diff number of wavelengths)
+#' @return a single `spectra` or a list of `spectra` (in case files had diff
+#'         number of wavelengths)
 #' @export
 read_spectra = function(path,
                           format,
@@ -113,7 +114,8 @@ read_spectra = function(path,
 #' Intenral parser for SVC .sig files
 #'
 #' @param file_paths paths for .sig files, already parsed by `read_spectra`
-#' @param include_white_ref NOT USED YET, but should read the wite reference from each `.sig` file
+#' @param include_white_ref NOT USED YET, but should read the wite reference
+#'                          from each `.sig` file
 #' @param outside_01_fun function to deal with reflectance values outside 0.1.
 #' @param ... NOT USED YET
 #'

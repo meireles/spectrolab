@@ -7,7 +7,12 @@
 \method{\%*\%}{spectra}(e1, e2)
 }
 \arguments{
-\item{e2}{}
+\item{e1}{lhs}
+
+\item{e2}{rhs}
+}
+\value{
+matrix product
 }
 \description{
 Matrix multiplication for spectra class

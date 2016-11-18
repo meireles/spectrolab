@@ -1,5 +1,5 @@
 # library("testthat")
-# library("casper")
+# library("spectrolab")
 #
 # context("Spectra names i_names() ctor")
 #

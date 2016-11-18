@@ -1,9 +1,9 @@
 #' Operator overloading for spectra
 #'
-#' @param e1
-#' @param e2
+#' @param e1 lhs
+#' @param e2 rhs
 #'
-#' @return
+#' @return operators on spectra
 #' @export
 Ops.spectra = function(e1, e2) {
     mathop = c("+", "-", "*", "/", "^")
@@ -73,10 +73,10 @@ Ops.spectra = function(e1, e2) {
 
 #' Matrix multiplication for spectra class
 #'
-#' @param e1
-#' @param e2
+#' @param e1 lhs
+#' @param e2 rhs
 #'
-#' @return
+#' @return matrix product
 #' @export
 `%*%.spectra` = function(e1, e2){
     is_spec   = c(is_spectra(e1), is_spectra(e2))

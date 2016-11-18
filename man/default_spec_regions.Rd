@@ -6,6 +6,9 @@
 \usage{
 default_spec_regions()
 }
+\value{
+matrix with default_spec_regions
+}
 \description{
 return default spectral regions matrix
 }
