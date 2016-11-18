@@ -1,3 +1,33 @@
+i_match_ij_spectra = function(this, i = NULL, j = NULL){
+    ## subset by samples i.e. rows
+    if(is.null(i)){
+        r_match = seq(nrow(this$reflectance))
+    } else {
+        r_match    = which(this$names %in% i)
+        r_no_match = setdiff(i, this$names)
+
+        if( length(r_no_match) != 0 || length(r_no_match) == length(i) ){
+            if( i_is_index(i, dim(this)["n_samples"]) ) {
+                r_match = as.integer(i)
+            } else {
+                stop("Sample subscript out of bounds: \n", r_no_match)
+            }
+        }
+    }
+
+    ## subset by wavelength. i.e. columns
+    if(is.null(j)){
+        c_match = seq(ncol(this$reflectance))
+    } else {
+        c_match = match(j, this$wavelengths)
+        if(any(is.na(c_match))){
+            stop("Wavelength subscript out of bounds. Use wavelength labels instead of raw indices.")
+        }
+    }
+    list(r_idx = r_match, c_idx = c_match)
+}
+
+
 #' Subsets a spectra object
 #'
 #' Subsets spectra objects by sample names (rows) or wavelengths (columns).
@@ -15,37 +45,16 @@
 #' @export
 `[.spectra` = function(this, i, j, verbose = FALSE){
 
-    ## subset by samples i.e. rows
-    if(missing(i)){
-        r_match = seq(nrow(this$reflectance))
-    } else {
-        r_match    = which(this$names %in% i)
-        r_no_match = setdiff(i, this$names)
+    if(missing(i)){ i = NULL }
+    if(missing(j)){ j = NULL }
 
-        if( length(r_no_match) != 0 || length(r_no_match) == length(i) ){
-            if( i_is_index(i, dim(this)[1])) {
-                r_match = as.integer(i)
-            } else {
-                stop("Sample subscript out of bounds: \n", r_no_match)
-            }
-        }
-    }
-
-    ## subset by wavelength. i.e. columns
-    if(missing(j)){
-        c_match = seq(ncol(this$reflectance))
-    } else {
-        c_match = match(j, this$wavelengths)
-        if(any(is.na(c_match))){
-            stop("Wavelength subscript out of bounds. Use wavelength labels instead of raw indices.")
-        }
-    }
+    m = i_match_ij_spectra(this = this, i = i, j = j)
 
     ## subset. drop = false is needed to return a matrix instead of vec
     ## when nsample = 1
-    this$reflectance  = this$reflectance[ r_match , c_match, drop = FALSE ]
-    this$wavelengths  = this$wavelengths[ c_match ]
-    this$names        = this$names[ r_match ]
+    this$reflectance  = this$reflectance[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ]
+    this$wavelengths  = this$wavelengths[ m[["c_idx"]] ]
+    this$names        = this$names[ m[["r_idx"]] ]
 
     this
 }
@@ -59,8 +68,17 @@
 #' @return nothing. modifies spectra as side effect
 #' @export
 `[<-.spectra` = function(this, i, j, value){
-    enforce01 = attr(this, "enforce01")
-    this$reflectance[i, j] = i_reflectance(value, enforce01 = enforce01)
+    if(missing(i)){ i = NULL }
+    if(missing(j)){ j = NULL }
+    m = i_match_ij_spectra(this = this, i = i, j = j)
+    l = lapply(m, length)
+    e = attr(this$reflectance, "enforce01")
+
+    if(is_spectra(value)){
+        value = reflectance(value)
+    }
+
+    this$reflectance[ m[["r_idx"]], m[["c_idx"]] ] = i_reflectance(value, nwavelengths = l[["c_idx"]], nsample = l[["r_idx"]], enforce01 = e)
     this
 }
 
