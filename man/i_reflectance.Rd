@@ -16,11 +16,10 @@ If NULL (default) checking is skipped.}
 If NULL (default) checking is skipped.}
 
 \item{enforce01}{Boolean. enforce reflectance to be between 0.0 and 1.0?
-Defaults to TRUE}
+Defaults to NULL, which ends up defaulting to FALSE internally}
 }
 \value{
-data conformable to relative reflectance: numeric matrix of
-        values between 0.0 and 1.0.
+data conformable to relative reflectance: numeric matrix
 }
 \description{
 Construct reflectance matrix in the appropriate format
