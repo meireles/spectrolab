@@ -1,4 +1,3 @@
-
 #' Read files from various formats into `spectra`
 #'
 #' @param path Path to directory or input files
@@ -9,19 +8,19 @@
 #'                           Example: "BAD"
 #' @param outside_01_action what to do with values outside 0 and 1? Options are
 #'                          "NA", which replaces those values with NA or
-#'                          "round", which sets negative values to 0 and \>1 to 1.
+#'                          "nothing" (default).
 #' @param ... nothing yet
 #'
 #' @return a single `spectra` or a list of `spectra` (in case files had diff
 #'         number of wavelengths)
 #' @export
 read_spectra = function(path,
-                          format,
-                          include_white_ref  = FALSE,
-                          recursive          = FALSE,
-                          exclude_if_matches = NULL,
-                          outside_01_action  = "round",  #"round" or "NA"
-                          ...) {
+                        format,
+                        include_white_ref  = FALSE,
+                        recursive          = FALSE,
+                        exclude_if_matches = NULL,
+                        outside_01_action  = "nothing", # "NA"
+                        ...) {
 
     #########################################
     ## match formats
@@ -81,13 +80,16 @@ read_spectra = function(path,
     #########################################
     ## define behaviour refl outside 01
     #########################################
-    if(outside_01_action == "round"){
-        fix_out01 = function(x){
-            x[ x < 0.0] = 0.0
-            x[ x > 1.0] = 1.0
-            x
-            }
-    } else if (outside_01_action %in% c("NA", "na", NA) ){
+    # if(outside_01_action == "round"){
+    #     fix_out01 = function(x){
+    #         x[ x < 0.0] = 0.0
+    #         x[ x > 1.0] = 1.0
+    #         x
+    #     }
+    if(outside_01_action == "nothing"){
+            fix_out01 = function(x){ x }
+
+    } else if (outside_01_action %in% c("NA", "na", NA) ) {
         fix_out01 = function(x){
             x[ x < 0.0 || x > 1.0] = NA
             x
@@ -155,7 +157,8 @@ i_read_sig = function(file_paths,
     if(length(spec) > 1){
         warning("Returning a list of `spectra` beause some files\n
                 had different number of bands.")
+        return(spec)
     } else {
-        spec[[1]]
+        return(spec[[1]])
     }
 }

@@ -5,7 +5,7 @@
 \title{Read files from various formats into `spectra`}
 \usage{
 read_spectra(path, format, include_white_ref = FALSE, recursive = FALSE,
-  exclude_if_matches = NULL, outside_01_action = "round", ...)
+  exclude_if_matches = NULL, outside_01_action = "nothing", ...)
 }
 \arguments{
 \item{path}{Path to directory or input files}
@@ -21,7 +21,7 @@ Example: "BAD"}
 
 \item{outside_01_action}{what to do with values outside 0 and 1? Options are
 "NA", which replaces those values with NA or
-"round", which sets negative values to 0 and \>1 to 1.}
+"nothing" (default).}
 
 \item{...}{nothing yet}
 }
