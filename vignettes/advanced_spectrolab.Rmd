@@ -63,7 +63,7 @@ names(spec)       = toupper(names(spec))
 Reflectances are set using the `[` notation. For instance:
 
 ```{r}
-spec[1, 400:500] = 0.5
+spec[1, 400:1200] = spec[1, 400:1200] * 2
 plot(spec)
 ```
 
