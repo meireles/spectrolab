@@ -9,7 +9,8 @@ i_read_sig(file_paths, include_white_ref, outside_01_fun, ...)
 \arguments{
 \item{file_paths}{paths for .sig files, already parsed by `read_spectra`}
 
-\item{include_white_ref}{NOT USED YET, but should read the wite reference from each `.sig` file}
+\item{include_white_ref}{NOT USED YET, but should read the wite reference
+from each `.sig` file}
 
 \item{outside_01_fun}{function to deal with reflectance values outside 0.1.}
 

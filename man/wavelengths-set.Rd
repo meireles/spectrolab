@@ -9,6 +9,9 @@ wavelengths(spec) <- value
 \arguments{
 \item{spec}{Spectra object}
 }
+\value{
+nothing. called for its side effect.
+}
 \description{
 Set sample names in spectra
 }

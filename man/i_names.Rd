@@ -9,7 +9,8 @@ i_names(x, nsample = NULL)
 \arguments{
 \item{x}{vector of labels. numeric or character}
 
-\item{nsample}{Integer of expected number of samples. If NULL (default) checking is skipped.}
+\item{nsample}{Integer of expected number of samples.
+If NULL (default) checking is skipped.}
 }
 \value{
 vector of sample names

@@ -21,12 +21,13 @@ Example: "BAD"}
 
 \item{outside_01_action}{what to do with values outside 0 and 1? Options are
 "NA", which replaces those values with NA or
-"round", which sets negative values to 0 and >1 to 1.}
+"round", which sets negative values to 0 and \>1 to 1.}
 
 \item{...}{nothing yet}
 }
 \value{
-a single `spectra` or a list of `spectra` (in case files had diff number of wavelengths)
+a single `spectra` or a list of `spectra` (in case files had diff
+        number of wavelengths)
 }
 \description{
 Read files from various formats into `spectra`

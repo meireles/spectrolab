@@ -1,3 +1,10 @@
+#' Get indexes for spectra object
+#'
+#' @param this spectra
+#' @param i sample names or indices
+#' @param j wavelengths, not indices
+#'
+#' @return list if row indices and colimn indices
 i_match_ij_spectra = function(this, i = NULL, j = NULL){
     ## subset by samples i.e. rows
     if(is.null(i)){
@@ -34,7 +41,7 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 #'
 #' Subset operations based on samples (first argument) will match either sample
 #' names or indexes, in that order. That is, if you subset x[1:2 , ] and your
-#' sample names contain 1 and 2, you will get the spectra with names %in%
+#' sample names contain 1 and 2, you will get the spectra with names in
 #' c(1, 2) and not (at least necessarily) the first and second samples in the
 #' `spectra` object.
 #'
@@ -189,7 +196,7 @@ wavelengths = function(spec, return_num = TRUE){
 #'
 #' @param spec Spectra object
 #'
-#' @return
+#' @return nothing. called for its side effect.
 #' @export
 `wavelengths<-` = function(spec, value){
     if( !is_spectra(spec) ){
