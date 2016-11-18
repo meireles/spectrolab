@@ -59,7 +59,8 @@
 #' @return nothing. modifies spectra as side effect
 #' @export
 `[<-.spectra` = function(this, i, j, value){
-    this$reflectance[i, j] = i_reflectance(value)
+    enforce01 = attr(this, "enforce01")
+    this$reflectance[i, j] = i_reflectance(value, enforce01 = enforce01)
     this
 }
 

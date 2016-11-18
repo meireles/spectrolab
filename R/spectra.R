@@ -34,7 +34,11 @@
 #' @return data conformable to relative reflectance: numeric matrix of
 #'         values between 0.0 and 1.0.
 #'
-i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = TRUE) {
+i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = NULL) {
+
+    if(is.null(enforce01)) {
+        enforce01 = TRUE
+    }
 
     ## test if x dimensions conform to nwavelengths and nsample
     if(is.vector(x)) {
@@ -66,6 +70,9 @@ i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = TRU
 
     ## Clean up matrix dimensio names
     dimnames(x) = NULL
+
+    ## add enforce01 attribute
+    attr(x, which = "enforce01") = enforce01
 
     ## Return
     x
@@ -149,13 +156,20 @@ i_meta = function(x, nsample, ...){
 #'
 #' @return spectra object
 #' @export
-spectra = function(reflectance, wavelengths, names, meta = NULL, ...) {
+spectra = function(reflectance,
+                   wavelengths,
+                   names,
+                   meta = NULL,
+                   enforce01 = TRUE,
+                   ...){
+
     wl_l  = length(wavelengths)
     spl_l = length(names)
 
     s = list( reflectance  = i_reflectance(reflectance,
                                            nwavelengths = wl_l,
-                                           nsample = spl_l),
+                                           nsample = spl_l,
+                                           enforce01 = enforce01),
               wavelengths  = i_wavelengths(wavelengths),
               names        = i_names(names))
 
