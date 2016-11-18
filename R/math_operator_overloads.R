@@ -59,11 +59,9 @@ Ops.spectra = function(e1, e2) {
     }
 }
 
-
 #' Default matrix multiplication
 #' @export
 `%*%.default` = .Primitive("%*%")
-
 
 #' Matrix multiplication S3 method
 #' @export
