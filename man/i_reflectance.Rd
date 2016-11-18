@@ -4,7 +4,7 @@
 \alias{i_reflectance}
 \title{Implementation of s3 class for spectra}
 \usage{
-i_reflectance(x, nwavelengths = NULL, nsample = NULL, enforce01 = TRUE)
+i_reflectance(x, nwavelengths = NULL, nsample = NULL, enforce01 = NULL)
 }
 \arguments{
 \item{x}{numeric matrix, dataframe or vector (in case of single spectrum)}
