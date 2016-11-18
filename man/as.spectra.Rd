@@ -7,7 +7,9 @@
 as.spectra(x)
 }
 \arguments{
-\item{x}{matrix or dataframe. See details for format requirements}
+\item{x}{matrix or dataframe. Samples are in rows and wavelengths in columns.
+First column must be the sample label and the remaining columns must
+hold reflectance data.}
 }
 \value{
 spectra object

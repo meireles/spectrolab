@@ -4,7 +4,7 @@
 \alias{spectra}
 \title{Create a spectra object}
 \usage{
-spectra(reflectance, wavelengths, names, meta = NULL, ...)
+spectra(reflectance, wavelengths, names, meta = NULL, enforce01 = TRUE, ...)
 }
 \arguments{
 \item{reflectance}{N by M numeric matrix. N samples in rows. values between 0 and 1.}

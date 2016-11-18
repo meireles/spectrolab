@@ -100,5 +100,3 @@ excldropnir_spec <- function (x) {
 exclvisnirjump_spec <- function (x) {
   sub_spec <- subset(x, abs(x$`1100` - x$`900`) < 0.025)
 }
-
-
