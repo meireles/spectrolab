@@ -1,4 +1,4 @@
-library(testthat)
-library(casper)
+library("testthat")
+library("spectrolab")
 
-test_check("casper")
+test_check("spectrolab")
