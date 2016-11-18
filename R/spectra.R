@@ -27,14 +27,20 @@
 #' to reflectance, which is a numeric matrix
 #'
 #' @param x numeric matrix, dataframe or vector (in case of single spectrum)
-#' @param nwavelengths Integer of expected number of wavelengths. If NULL (default) checking is skipped.
-#' @param nsample Integer of expected number of samples.  If NULL (default) checking is skipped.
-#' @param enforce01 Boolean. enforce reflectance to be between 0.0 and 1.0? Defaults to TRUE
-#'
+#' @param nwavelengths Integer of expected number of wavelengths.
+#'                     If NULL (default) checking is skipped.
+#' @param nsample Integer of expected number of samples.
+#'                If NULL (default) checking is skipped.
+#' @param enforce01 Boolean. enforce reflectance to be between 0.0 and 1.0?
+#'                  Defaults to TRUE
 #' @return data conformable to relative reflectance: numeric matrix of
 #'         values between 0.0 and 1.0.
 #'
-i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = TRUE) {
+i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = NULL) {
+
+    if(is.null(enforce01)) {
+        enforce01 = TRUE
+    }
 
     ## test if x dimensions conform to nwavelengths and nsample
     if(is.vector(x)) {
@@ -67,6 +73,9 @@ i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = TRU
     ## Clean up matrix dimensio names
     dimnames(x) = NULL
 
+    ## add enforce01 attribute
+    attr(x, which = "enforce01") = enforce01
+
     ## Return
     x
 }
@@ -75,8 +84,8 @@ i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = TRU
 #' Construct sample names vector in the appropriate format
 #'
 #' @param x vector of labels. numeric or character
-#' @param nsample Integer of expected number of samples. If NULL (default) checking is skipped.
-#'
+#' @param nsample Integer of expected number of samples.
+#'                If NULL (default) checking is skipped.
 #' @return vector of sample names
 i_names = function(x, nsample = NULL){
 
@@ -97,7 +106,8 @@ i_names = function(x, nsample = NULL){
 #' Construct wavelength names in the appropriate format
 #'
 #' @param x vector of wavelengths. numeric or character
-#' @param nwavelengths Integer of expected number of wavelengths. If NULL (default) checking is skipped.
+#' @param nwavelengths Integer of expected number of wavelengths.
+#'                     If NULL (default) checking is skipped.
 #'
 #' @return vector of wavelengths
 i_wavelengths = function(x, nwavelengths = NULL) {
@@ -109,6 +119,7 @@ i_wavelengths = function(x, nwavelengths = NULL) {
         stop("The length of x must be the same as nwavelengths")
     }
 
+    ## Duplicates should be OK.
     # if(any(duplicated(x))){
     #     stop("Wavelengths cannot have duplicated values")
     # }
@@ -140,21 +151,30 @@ i_meta = function(x, nsample, ...){
 
 #' Create a spectra object
 #'
-#' @param reflectance N by M numeric matrix. N samples in rows. values between 0 and 1.
+#' @param reflectance N by M numeric matrix. N samples in rows.
+#'                    values between 0 and 1.
 #' @param wavelengths wavelength names in vector of length M
 #' @param names sample names in vector of length N
 #' @param meta spectra metadata. defaults to NULL. Must be either of length or nrow
-#'             equals to the number of samples (i.e. nrow(reflectance) or length(names) )
+#'             equals to the number of samples (nrow(reflectance) or length(names))
+#' @param enforce01 Force reflectance to be between 0 and 1. defaults to TRUE
 #'
 #' @return spectra object
 #' @export
-spectra = function(reflectance, wavelengths, names, meta = NULL, ...) {
+spectra = function(reflectance,
+                   wavelengths,
+                   names,
+                   meta = NULL,
+                   enforce01 = TRUE,
+                   ...){
+
     wl_l  = length(wavelengths)
     spl_l = length(names)
 
     s = list( reflectance  = i_reflectance(reflectance,
                                            nwavelengths = wl_l,
-                                           nsample = spl_l),
+                                           nsample = spl_l,
+                                           enforce01 = enforce01),
               wavelengths  = i_wavelengths(wavelengths),
               names        = i_names(names))
 

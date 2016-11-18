@@ -74,6 +74,8 @@ plot_quantile = function(spec,
 
 
 #' return default spectral regions matrix
+#'
+#' @return matrix with default_spec_regions
 #' @export
 default_spec_regions = function(){
     cbind("VIS"   = c(begin = 400,  end = 700),

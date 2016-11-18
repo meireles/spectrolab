@@ -4,16 +4,19 @@
 \alias{i_reflectance}
 \title{Implementation of s3 class for spectra}
 \usage{
-i_reflectance(x, nwavelengths = NULL, nsample = NULL, enforce01 = TRUE)
+i_reflectance(x, nwavelengths = NULL, nsample = NULL, enforce01 = NULL)
 }
 \arguments{
 \item{x}{numeric matrix, dataframe or vector (in case of single spectrum)}
 
-\item{nwavelengths}{Integer of expected number of wavelengths. If NULL (default) checking is skipped.}
+\item{nwavelengths}{Integer of expected number of wavelengths.
+If NULL (default) checking is skipped.}
 
-\item{nsample}{Integer of expected number of samples.  If NULL (default) checking is skipped.}
+\item{nsample}{Integer of expected number of samples.
+If NULL (default) checking is skipped.}
 
-\item{enforce01}{Boolean. enforce reflectance to be between 0.0 and 1.0? Defaults to TRUE}
+\item{enforce01}{Boolean. enforce reflectance to be between 0.0 and 1.0?
+Defaults to TRUE}
 }
 \value{
 data conformable to relative reflectance: numeric matrix of

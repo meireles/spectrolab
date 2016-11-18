@@ -7,7 +7,12 @@
 \method{Ops}{spectra}(e1, e2)
 }
 \arguments{
-\item{e2}{}
+\item{e1}{lhs}
+
+\item{e2}{rhs}
+}
+\value{
+operators on spectra
 }
 \description{
 Operator overloading for spectra

@@ -1,7 +1,8 @@
 #' Convert matrix or data frame to spectra
 #'
-#' @param x matrix or dataframe. See details for format requirements
-#'
+#' @param x matrix or dataframe. Samples are in rows and wavelengths in columns.
+#'          First column must be the sample label and the remaining columns must
+#'          hold reflectance data.
 #' @return spectra object
 #' @export
 as.spectra = function(x){
@@ -50,9 +51,10 @@ as.spectra.data.frame = function(x){
 #' Convert spectra to matrix
 #'
 #' @param spec spectra object
-#' @param fix_names Use make.names to normalize names. Pick one: "none" "row" "col" "both".
-#'
-#' @return matrix of spectral reflectance. columns are wavelengths and rows are samples
+#' @param fix_names Use make.names to normalize names?
+#'                  Pick one: "none" "row" "col" "both".
+#' @return matrix of spectral reflectance. columns are wavelengths and rows are
+#'         samples
 #' @export
 as.matrix.spectra = function(spec, fix_names = "none") {
     r = reflectance(spec)

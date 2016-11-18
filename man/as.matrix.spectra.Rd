@@ -9,10 +9,12 @@
 \arguments{
 \item{spec}{spectra object}
 
-\item{fix_names}{Use make.names to normalize names. Pick one: "none" "row" "col" "both".}
+\item{fix_names}{Use make.names to normalize names?
+Pick one: "none" "row" "col" "both".}
 }
 \value{
-matrix of spectral reflectance. columns are wavelengths and rows are samples
+matrix of spectral reflectance. columns are wavelengths and rows are
+        samples
 }
 \description{
 Convert spectra to matrix

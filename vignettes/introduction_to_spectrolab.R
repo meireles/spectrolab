@@ -2,23 +2,43 @@
 #  library("devtools")
 #  install_github("annakat/spectrolab")
 
-## ---- eval=F-------------------------------------------------------------
+## ---- eval=FALSE---------------------------------------------------------
 #  library("spectrolab")
 
-## ----eval=F--------------------------------------------------------------
-#  # Read .sig files
-#  myfolder <- system.file("extdata", "Acer_example", package = "spectrolab")
-#  Acer_spectra <- read_spec(myfolder, read = T, filename = F)
+## ---- eval=FALSE---------------------------------------------------------
 #  
-#  # Note that this is NOT a spectra object. You can verify this by either asking what class `Acer_spectra` is or using spectrolab's `is_spectra()` function.
+#  # dir_path is the directory where our example datasets live
+#  dir_path = system.file("extdata", "Acer_example", package = "spectrolab")
 #  
-#  class(Acer_spectra)
-#  is_spectra(Acer_spectra)
+#  # read .sig files
+#  acer_spectra = read_spectra(path = dir_path, format = "sig")
+#  
+#  # Note that `acer_spectra` is a `spectra` object. You can ensure that is true
+#  # using spectrolab's `is_spectra()` function.
+#  
+#  is_spectra(acer_spectra)
 
-## ---- eval=F-------------------------------------------------------------
+## ---- eval=FALSE---------------------------------------------------------
+#  # simply print the object
+#  acer_spectra
 #  
-#  plot_rawspec(Acer_spectra,1,5)
+#  # Get a vector with the dataset dimension.
+#  dim(acer_spectra)
 #  
+#  # and plot the spectra
+#  plot(acer_spectra)
+
+## ---- eval=FALSE---------------------------------------------------------
+#  spec = spec_matrix_example
+#  
+#  # Check out the format of the matrix
+#  spec[1:3, 1:4]
+#  
+#  # To convert it to spectra, simply run:
+#  spec_from_matrix = as.spectra(spec)
+#  
+#  # And again you can plot it to make sure erything worked ok
+#  plot(spec)
 
 ## ---- eval=F-------------------------------------------------------------
 #  # The function `jump_corr()` reads raw data, so there is no need for running `read_spec` fist. Similar to `read_spec` you only need to point `jump` to the folder containing your .sig files.
@@ -77,28 +97,21 @@
 #  plot(spec)
 #  
 
-## ---- fig.height=2.5, fig.width=8, eval=F--------------------------------
-#  
-#  # Example spectral dataset in matrix format.
-#  spec_matrix_example[1:4, 1:3]
-#  
-#  # Make 'spectra' object
-#  spec <- as.spectra(spec_matrix_example)
-#  
-#  # Simple spectra plot
-#  par(mfrow = c(1, 3))
-#  plot(spec, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
-#  
-#  # Stand along quantile plot
-#  plot_quantile(spec, total_prob = 0.8, main = "80% spectral quantile",
-#                col = rgb(1, 0, 0, 0.5), lwd = 0.5, border = TRUE)
-#  
-#  # Combined quantile and individual spctra plot
-#  # With an added bonus of shading 4 spectral regions
-#  plot(spec, lwd = 0.25, lty = 1, col = "grey50", "Spectra, quantile and regions")
-#  plot_quantile(spec, total_prob = 0.8,
-#                col = rgb(1, 0, 0, 0.25), add = TRUE, border = FALSE)
-#  plot_spec_regions(spec, regions = default_spec_regions(), add = TRUE)
+## ---- fig.height=2.5, fig.width=8, error=TRUE----------------------------
+# Simple spectra plot
+par(mfrow = c(1, 3))
+plot(spec, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
+
+# Stand along quantile plot
+plot_quantile(spec, total_prob = 0.8, main = "80% spectral quantile", 
+              col = rgb(1, 0, 0, 0.5), lwd = 0.5, border = TRUE)
+
+# Combined quantile and individual spctra plot
+# With an added bonus of shading 4 spectral regions
+plot(spec, lwd = 0.25, lty = 1, col = "grey50", "Spectra, quantile and regions")
+plot_quantile(spec, total_prob = 0.8, 
+              col = rgb(1, 0, 0, 0.25), add = TRUE, border = FALSE)
+plot_spec_regions(spec, regions = default_spec_regions(), add = TRUE)
 
 ## ---- eval=F-------------------------------------------------------------
 #  # Get the vector of all sample names
