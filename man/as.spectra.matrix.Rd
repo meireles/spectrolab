@@ -6,6 +6,12 @@
 \usage{
 \method{as.spectra}{matrix}(x)
 }
+\arguments{
+\item{x}{matrix}
+}
+\value{
+spectra object
+}
 \description{
 Convert matrix to spectra
 }

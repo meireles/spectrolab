@@ -6,6 +6,12 @@
 \usage{
 \method{as.spectra}{data.frame}(x)
 }
+\arguments{
+\item{x}{data.frame}
+}
+\value{
+spectra object
+}
 \description{
 Convert data.frame to spectra
 }

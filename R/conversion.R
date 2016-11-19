@@ -10,6 +10,8 @@ as.spectra = function(x){
 }
 
 #' Convert matrix to spectra
+#' @param x matrix
+#' @return spectra object
 #' @export
 as.spectra.matrix = function(x){
     r = x[ , -1 ]
@@ -20,6 +22,9 @@ as.spectra.matrix = function(x){
 }
 
 #' Convert data.frame to spectra
+#' @param x data.frame
+#' @return spectra object
+#'
 #' @export
 as.spectra.data.frame = function(x){
     r = x[ , -1 ]
