@@ -4,7 +4,8 @@
 \alias{spectra}
 \title{Create a spectra object}
 \usage{
-spectra(reflectance, wavelengths, names, meta = NULL, enforce01 = TRUE, ...)
+spectra(reflectance, wavelengths, names, meta = NULL, enforce01 = FALSE,
+  ...)
 }
 \arguments{
 \item{reflectance}{N by M numeric matrix. N samples in rows.
@@ -17,7 +18,7 @@ values between 0 and 1.}
 \item{meta}{spectra metadata. defaults to NULL. Must be either of length or nrow
 equals to the number of samples (nrow(reflectance) or length(names))}
 
-\item{enforce01}{Force reflectance to be between 0 and 1. defaults to TRUE}
+\item{enforce01}{Force reflectance to be between 0 and 1. defaults to FALSE}
 }
 \value{
 spectra object
