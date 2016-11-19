@@ -1,4 +1,6 @@
-#' Test if argument is a whole number
+#' Is whole number?
+#'
+#' \code{i_is_whole} Tests if x is (are) whole numbers
 #'
 #' @param x single value or vector of numbers
 #'
@@ -7,11 +9,13 @@ i_is_whole = function(x){
     as.integer(x) == x
 }
 
-#' Are numbers compatible with being an index?
+#' Compatible with being an index?
+#'
+#' \code{i_is_index} Tests if x is (are) fir the requirements of being indices
 #'
 #' @param x numeric values
 #' @param max_length max acceptable values for x
-#' @param verbose get warnings?
+#' @param quiet get warnings?
 #'
 #' @return boolean
 i_is_index = function(x, max_length, quiet = TRUE){
@@ -27,9 +31,11 @@ i_is_index = function(x, max_length, quiet = TRUE){
 }
 
 
-#' Get plot boundaries in user sapce
+#' Find plot boundaries in user sapce
 #'
-#' @param return_mat boolean. return a matrix? defaults to FALSE
+#' \code{i_plot_boundaries} gets plot boundaries in user sapce as matrix or vec
+#'
+#' @param return_mat return a matrix instead of vector? defaults to FALSE
 #'
 #' @return vector or matrix, depending on return_mat value
 i_plot_boundaries = function(return_mat = FALSE) {
