@@ -1,7 +1,4 @@
-[![Build Status -- master](https://travis-ci.org/meireles/spectrolab.svg?branch=master)](https://travis-ci.org/meireles/spectrolab)
-
-[![Build Status -- dev](https://travis-ci.org/meireles/spectrolab.svg?branch=dev)](https://travis-ci.org/meireles/spectrolab)
-
+[![Build Status](https://travis-ci.org/meireles/spectrolab.svg?branch=master)](https://travis-ci.org/meireles/spectrolab)
 
 # spectrolab
 
