@@ -2,17 +2,17 @@
 % Please edit documentation in R/descrip_summary_overloads.R
 \name{print.spectra}
 \alias{print.spectra}
-\title{Prints spectra object}
+\title{Print spectra}
 \usage{
-\method{print}{spectra}(spec)
+\method{print}{spectra}(x)
 }
 \arguments{
-\item{spec}{spectra object}
+\item{x}{spectra object}
 }
 \value{
 nothing. called for side effect
 }
 \description{
-Prints spectra object
+\code{print} prints to the console basic information about the spectra obj
 }
 
