@@ -26,11 +26,7 @@ Assuming that everything went smoothly, you should be able to load `spectrolab` 
 library("spectrolab")
 ```
 
-## Reading spectra
-
-Assume you have a directory with several .sig files, an example can be found in the folder `Acer_example`. During your measurment campaign you might have flagged filenames of obviously bad measurements with "bad" and white reference measurements with "WR", but don't worry if you have not. We can take care of filtering out bad and reference measurements later.
-
-### Reading raw spectra: example with `.sig` files
+## Reading spectra: example with `.sig` files
 
 You can read raw spectra files using the function `read_spectra()`. As of now, only files in the `.sig` (Spectra Vista) can be read direcly, but other formats are in the works.
 You can pass a vector of filenames to `read_spectra()`, but it is usually easier to pass the path for the folder where all your data is. 
@@ -41,7 +37,7 @@ You can pass a vector of filenames to `read_spectra()`, but it is usually easier
 dir_path = system.file("extdata", "Acer_example", package = "spectrolab")
 
 # read .sig files
-acer_spectra = read_spectra(path = dir_path, format = "sig")
+acer_spectra = read_spectra(path = dir_path, format ="sig")
 
 # Note that `acer_spectra` is a `spectra` object. You can ensure that is true
 # using spectrolab's `is_spectra()` function.
@@ -62,10 +58,21 @@ dim(acer_spectra)
 plot(acer_spectra)
 ```
 
+You notice that `Acer_example` contains white reference measurement (the horizontal line around 1) and one measurement where something obviously went wrong (a dip at the NIR shoulder). During the measurement campaign those two measurement were flagged with "_WR" and "_BAD". With  `read_spectra()` it's easy to exclude flagged measurements. 
+
+```{r, eval=FALSE}
+
+# use `exclude_if_matches` to excluded flagged files
+acer_spectra <- read_spectra(path = dir_path, format ="sig",   exclude_if_matches = c("BAD","WR"))
+
+# check result
+plot(acer_spectra)
+```
+Flagging "unusual" files during a measurement campaign is a very good idea, as it clearly helps you to quickly sort through your files when it comes to processing. However, you can also exclude "unusual" files lateron. We show you some options in section `Excluding "unusual" spectra`. 
+
 ### Create spectra from a matrix
 
-If you already have your spectra in a matrix, you can use the function `as.spectra()` to convert it to a `spectra` object. The matrix **must** be in a very specific format, so **read carefully!**. Samples must be in rows and wavelengths in columns. The first column must be a sample label, i.e. a species name. Column names must be the wavelength labels.
-We included an example of a matrix like that names `spec_matrix_example`.
+If you already have your spectra in a matrix, you can use the function `as.spectra()` to convert it to a `spectra` object. The matrix **must** be in a very specific format, so **read carefully!**. Samples must be in rows and wavelengths in columns. The first column must be a sample label. In case you are as terrified as I am of loosing metadata for 100's of thousands of measurements consider including "all" crucial sample information in the filename (`species_plotID_plantID`). Column names must be the wavelength labels. We included an example of a matrix like that named `spec_matrix_example`.
 
 ```{r, eval=FALSE}
 spec = spec_matrix_example
@@ -80,12 +87,9 @@ spec_from_matrix = as.spectra(spec)
 plot(spec)
 ```
 
-
-You see that the sensor overlap regions were preserved when the data was acquired, resulting in duplicated wavelenghts and a "jump" between the VIS/NIR and NIR/SWIR regions. To construct a `spectra` object, you need to first run the jump corrector by calling `jump_corr()`.
-
 ### Jump correction
 
-The jump corrector removes the VIS/NIR and NIR/SWIR overlap regions. In principle, the algorithm searches for the wavelengths of closest approach in both overlap regions, cuts the spectrum into three pieces, removes the overlap and finds a multiplier to paste the junks back together. As a convention, the NIR regions is left unchanged.  
+Some instruments allow you to preserve the sensor overlap regions. This results in duplicated wavelenghts and a "jump" between the VIS/NIR and NIR/SWIR regions. The `jump corrector` removes the overlap regions between VIS/NIR and NIR/SWIR, respectively and adjusts the spectral regions to allow a smooth transition, while keeping as information as possible. In principle, the algorithm searches for the wavelengths of closest approach in both overlap regions, cuts the spectrum into three pieces, removes the overlap and finds a multiplier to paste the junks back together. No additional smoothing is applied. As a convention, the NIR regions is left unchanged.  
 
 ```{r, eval=F}
 # The function `jump_corr()` reads raw data, so there is no need for running `read_spec` fist. Similar to `read_spec` you only need to point `jump` to the folder containing your .sig files. 
@@ -304,7 +308,7 @@ spec_as_mat[1:4, 1:3]
 ```
 
 
-## Excluding bad spectra
+## Excluding "unusual" spectra
 
 The `spectrolab` package comes with a couple of functions to exclude bad spectra. However, thus far the functions only accept data.frames, such as Acer_juco, the result from the initial jump correction. At this point, a typical workflow would involve inspecting the raw spectra with `plot_rawspec`, removing bad spectra, and plotting again, until the output looks fine. Then a `spectra` object can be constructed with `as.spectra`.
 

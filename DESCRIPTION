@@ -22,3 +22,4 @@ Suggests: knitr,
     rmarkdown,
     testthat
 VignetteBuilder: knitr
+Imports: prospectr

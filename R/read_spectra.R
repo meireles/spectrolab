@@ -69,7 +69,8 @@ read_spectra = function(path,
     if(!is.null(exclude_if_matches)){
         #bad_tag = paste0("\\.", exclude_if_matches, "$")
         bad_tag = exclude_if_matches
-        m       = grepl(pattern = bad_tag, i_path)
+        # m       = grepl(pattern = bad_tag, i_path)
+        m <- grepl(paste(bad_tag,collapse="|"), i_path)
         i_path  = i_path[!m]
     }
 
