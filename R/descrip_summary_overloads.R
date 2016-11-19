@@ -13,13 +13,14 @@ dim.spectra = function(x){
 
 #' Print spectra
 #'
-#' \code{print} prints to the console basic information about the spectra obj
+#' \code{print} prints basic information about the spectra obj to the console
 #'
 #' @param x spectra object
+#' @param ... other arguments passed to print. not implemented for spectra
 #'
 #' @return nothing. called for side effect
 #' @export
-print.spectra = function(x){
+print.spectra = function(x, ...){
     d = dim(x)
     r = range(wavelengths(x))
     cat("spectra object", "\n")
@@ -35,9 +36,11 @@ print.spectra = function(x){
 #' @param probs Probabilities to compute quantiles.
 #'              Must be a vector of numerics between 0.0 and 1.0.
 #'              Defaults to c(0.025, 0.25, 0.5, 0.75, 0.975)
+#' @param ... other arguments passed to quantile. not implemented for spectra
 #' @return spectra object with one spectrum for each prob
 quantile.spectra = function(x,
-                            probs = c(0.025, 0.25, 0.5, 0.75, 0.975)){
+                            probs = c(0.025, 0.25, 0.5, 0.75, 0.975),
+                            ...){
 
     ## probs must be between 0 and 1
     if( any(probs < 0.0) || any(probs > 1.0) ){

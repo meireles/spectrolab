@@ -4,7 +4,7 @@
 \alias{quantile.spectra}
 \title{Compute spectra quantiles}
 \usage{
-\method{quantile}{spectra}(x, probs = c(0.025, 0.25, 0.5, 0.75, 0.975))
+\method{quantile}{spectra}(x, probs = c(0.025, 0.25, 0.5, 0.75, 0.975), ...)
 }
 \arguments{
 \item{x}{spectra object}
@@ -12,6 +12,8 @@
 \item{probs}{Probabilities to compute quantiles.
 Must be a vector of numerics between 0.0 and 1.0.
 Defaults to c(0.025, 0.25, 0.5, 0.75, 0.975)}
+
+\item{...}{other arguments passed to quantile. not implemented for spectra}
 }
 \value{
 spectra object with one spectrum for each prob

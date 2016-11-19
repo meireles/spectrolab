@@ -4,15 +4,17 @@
 \alias{print.spectra}
 \title{Print spectra}
 \usage{
-\method{print}{spectra}(x)
+\method{print}{spectra}(x, ...)
 }
 \arguments{
 \item{x}{spectra object}
+
+\item{...}{other arguments passed to print. not implemented for spectra}
 }
 \value{
 nothing. called for side effect
 }
 \description{
-\code{print} prints to the console basic information about the spectra obj
+\code{print} prints basic information about the spectra obj to the console
 }
 
