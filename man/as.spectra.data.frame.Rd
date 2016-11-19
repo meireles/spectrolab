@@ -4,13 +4,7 @@
 \alias{as.spectra.data.frame}
 \title{Convert data.frame to spectra}
 \usage{
-as.spectra.data.frame(x)
-}
-\arguments{
-\item{x}{data.frame}
-}
-\value{
-spectra object
+\method{as.spectra}{data.frame}(x)
 }
 \description{
 Convert data.frame to spectra

@@ -6,20 +6,11 @@
 #' @return spectra object
 #' @export
 as.spectra = function(x){
-    if( is.matrix(x) ){
-        return( as.spectra.matrix(x) )
-    } else if ( is.data.frame(x) ){
-        return( as.spectra.data.frame(x) )
-    } else {
-        stop("Not implemented. Check ?as.spectra")
-    }
+    UseMethod("as.spectra", x)
 }
 
 #' Convert matrix to spectra
-#'
-#' @param x matrix
-#'
-#' @return spectra object
+#' @export
 as.spectra.matrix = function(x){
     r = x[ , -1 ]
     w = colnames(r)
@@ -29,10 +20,7 @@ as.spectra.matrix = function(x){
 }
 
 #' Convert data.frame to spectra
-#'
-#' @param x data.frame
-#'
-#' @return spectra object
+#' @export
 as.spectra.data.frame = function(x){
     r = x[ , -1 ]
     w = colnames(r)
@@ -40,13 +28,6 @@ as.spectra.data.frame = function(x){
 
     spectra(r, w, s)
 }
-
-
-# #' Convert to matrix
-# #' @export
-# as.matrix = function(x, ...) {
-#     UseMethod("as.matrix")
-# }
 
 #' Convert spectra to matrix
 #'
