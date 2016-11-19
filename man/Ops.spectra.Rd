@@ -2,7 +2,7 @@
 % Please edit documentation in R/math_operator_overloads.R
 \name{Ops.spectra}
 \alias{Ops.spectra}
-\title{Arithmatic operators for spectra}
+\title{Arithmetic operators for spectra}
 \usage{
 \method{Ops}{spectra}(e1, e2)
 }
@@ -16,6 +16,6 @@ Depends on the operator. c("+", "-", "*", "/", "^") return spectra
         c("==", "!=", "<", "<=", ">=", ">") return boolean matrices
 }
 \description{
-Overloads arithmatic operators for spectra using `Ops.`
+Overloads arithmetic operators for spectra using `Ops.`
 }
 

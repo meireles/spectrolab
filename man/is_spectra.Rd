@@ -2,17 +2,17 @@
 % Please edit documentation in R/utils.R
 \name{is_spectra}
 \alias{is_spectra}
-\title{Verify if object are spectra}
+\title{Is spectra object?}
 \usage{
-is_spectra(spec)
+is_spectra(x)
 }
 \arguments{
-\item{spec}{any object}
+\item{x}{any object}
 }
 \value{
 boolean
 }
 \description{
-Verify if object are spectra
+\code{is_spectra} tests if the argument is a spectra class object
 }
 

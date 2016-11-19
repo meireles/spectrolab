@@ -1,6 +1,6 @@
 #' Plot spectra
 #'
-#' @param spec spectra object
+#' @param x spectra object
 #' @param ylab label for y axis. defaults to "Reflectance"
 #' @param xlab label for x axis. defaults to "Wavelength"
 #' @param col line color. defaults to "black"
@@ -10,7 +10,7 @@
 #'
 #' @return nothing. called for side effect
 #' @export
-plot.spectra = function(spec,
+plot.spectra = function(x,
                         ylab = "Reflectance",
                         xlab = "Wavelength",
                         col  = "black",
@@ -22,15 +22,15 @@ plot.spectra = function(spec,
         warning("spectra plot is likely to work best with type = 'l' or no plotting, i.e. type = 'n' ")
     }
 
-    matplot(x    = spec$wavelengths,
-            y    = t(spec$reflectance),
+    matplot(x    = wavelengths(x),
+            y    = t(reflectance(x)),
             type = type,
             ylab = ylab,
             xlab = xlab,
             lty  = lty,
-            col  = col, ...)
+            col  = col,
+            ...)
 }
-
 
 #' Plot plogygon for spectra quantiles
 #'

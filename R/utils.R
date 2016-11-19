@@ -2,13 +2,15 @@
 # Spectra functions
 ################################################################################
 
-#' Verify if object are spectra
+#' Is spectra object?
 #'
-#' @param spec any object
+#' \code{is_spectra} tests if the argument is a spectra class object
+#'
+#' @param x any object
 #'
 #' @return boolean
 #' @export
-is_spectra = function(spec){
-    inherits(spec, "spectra")
+is_spectra = function(x){
+    inherits(x, "spectra")
 }
 
