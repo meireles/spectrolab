@@ -1,4 +1,4 @@
-#' Jump corrector for SVC data
+#' Jump correction of spectra
 #'
 #' @param spec spectra object with sensor jump between VIS/NIR and NIR/SWIR
 #'
