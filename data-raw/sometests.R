@@ -1,21 +1,20 @@
-devtools::load_all(".")
 
 ### Inspecting original spectra
 spec <- read_spec("./inst/extdata/Acer_example/", read = T, filename = T)
-plot_rawspec(spec,1,2)
+# plot_rawspec(spec,1,2)
+spect <- as.spectra(spec) ### doesnot like duplicated wvls
 
-as.numeric(names(spec[,-1])[505:525])
 
-spec <- jump_corr(myfolder, filename = T)
+### After juco o.k.
+spec <- jump_corr("./inst/extdata/Acer_example/", filename = T)
+spect <- as.spectra(spec)
+
+plot(spect)  ### to fix: duplicated wavelengthts
+
+specn <- normalize_spectra(spect) ### normalise works
+plot(specn)
 
 as.numeric(names(spec))
-
-spec <- as.spectra(spec)
-
-is_spectra(spec_s)
-plot(spec_s)  ### to fix: duplicated wavelengthts
-
-
 
 ##### Typical workfow ###
 #### Jump corrected spectra ###

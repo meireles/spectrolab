@@ -4,7 +4,7 @@
 \alias{as.spectra.matrix}
 \title{Convert matrix to spectra}
 \usage{
-as.spectra.matrix(x)
+\method{as.spectra}{matrix}(x)
 }
 \arguments{
 \item{x}{matrix}
