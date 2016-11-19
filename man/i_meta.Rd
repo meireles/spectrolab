@@ -9,7 +9,9 @@ i_meta(x, nsample, ...)
 \arguments{
 \item{x}{data.frame}
 
-\item{...}{additional arhuments passed to as.data.frame}
+\item{nsample}{number of samples in spectra}
+
+\item{...}{additional arguments passed to as.data.frame}
 }
 \value{
 data.frame

@@ -2,11 +2,14 @@
 % Please edit documentation in R/math_operator_overloads.R
 \name{\%*\%}
 \alias{\%*\%}
-\title{Matrix multiplication S3 method}
+\title{S3 matrix multiplication method}
 \usage{
 x \%*\% ...
 }
+\arguments{
+\item{x}{input}
+}
 \description{
-Matrix multiplication S3 method
+Defines a generic martix multiplication method
 }
 

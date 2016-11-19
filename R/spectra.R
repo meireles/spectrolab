@@ -119,7 +119,8 @@ i_wavelengths = function(x, nwavelengths = NULL) {
 #' \code{i_meta} constructs a metadata data.frame in the appropriate format
 #'
 #' @param x data.frame
-#' @param ... additional arhuments passed to as.data.frame
+#' @param nsample number of samples in spectra
+#' @param ... additional arguments passed to as.data.frame
 #'
 #' @return data.frame
 i_meta = function(x, nsample, ...){

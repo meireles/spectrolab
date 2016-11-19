@@ -1,9 +1,12 @@
-#' Operator overloading for spectra
+#' Arithmatic operators for spectra
+#'
+#' Overloads arithmatic operators for spectra using `Ops.`
 #'
 #' @param e1 lhs
 #' @param e2 rhs
 #'
-#' @return operators on spectra
+#' @return Depends on the operator. c("+", "-", "*", "/", "^") return spectra
+#'         c("==", "!=", "<", "<=", ">=", ">") return boolean matrices
 #' @export
 Ops.spectra = function(e1, e2) {
     mathop = c("+", "-", "*", "/", "^")
@@ -59,17 +62,32 @@ Ops.spectra = function(e1, e2) {
     }
 }
 
-#' Default matrix multiplication
+#' Matrix multiplication
+#'
+#' Default matrix multiplication operator
+#'
+#' @param x matrix 1
+#' @param y matrix 2
+#'
+#' @return matrix or vector
+#'
 #' @export
 `%*%.default` = .Primitive("%*%")
 
-#' Matrix multiplication S3 method
+#' S3 matrix multiplication method
+#'
+#' Defines a generic martix multiplication method
+#'
+#' @param x input
+#'
 #' @export
 `%*%` = function(x, ...){
     UseMethod("%*%", x)
 }
 
-#' Matrix multiplication for spectra class
+#' spectra matrix multiplication
+#'
+#' Defines matrix multiplication for spectra
 #'
 #' @param e1 lhs
 #' @param e2 rhs
