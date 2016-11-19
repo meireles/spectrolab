@@ -11,7 +11,7 @@
 #  dir_path = system.file("extdata", "Acer_example", package = "spectrolab")
 #  
 #  # read .sig files
-#  acer_spectra = read_spectra(path = dir_path, format = "sig")
+#  acer_spectra = read_spectra(path = dir_path, format ="sig")
 #  
 #  # Note that `acer_spectra` is a `spectra` object. You can ensure that is true
 #  # using spectrolab's `is_spectra()` function.
@@ -26,6 +26,14 @@
 #  dim(acer_spectra)
 #  
 #  # and plot the spectra
+#  plot(acer_spectra)
+
+## ---- eval=FALSE---------------------------------------------------------
+#  
+#  # use `exclude_if_matches` to excluded flagged files
+#  acer_spectra <- read_spectra(path = dir_path, format ="sig",   exclude_if_matches = c("BAD","WR"))
+#  
+#  # check result
 #  plot(acer_spectra)
 
 ## ---- eval=FALSE---------------------------------------------------------
