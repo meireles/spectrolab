@@ -1,30 +1,13 @@
 ################################################################################
-#' Implementation of s3 class for spectra
-#'
-################################################################################
-
-## Spectra class structure and requirements
-##
-## Structure:
-##
-## -- reflectance: (1) numerical matrix
-##                 (2) of dim N samples by M wavelengths
-##                 (3) values between 0.0 and 1.0
-##
-## -- wavelengths: (1) numerical vector
-##                 (2) of length M
-##
-## -- names: (1) character vector
-##           (2) of length N
-
-################################################################################
 # Internal constructor helper for each spectra component
 ################################################################################
 
-#' Construct reflectance matrix in the appropriate format
+#' Internal constructor for reflectance matrix
 #'
-#' Coerces input form different forms into data conformable
-#' to reflectance, which is a numeric matrix
+#' \code{i_reflectance} constructs reflectance matrix in the appropriate format
+#'
+#' Coerces input form different formats into data conformable to reflectance,
+#' which is a numeric matrix with no dimension names.
 #'
 #' @param x numeric matrix, dataframe or vector (in case of single spectrum)
 #' @param nwavelengths Integer of expected number of wavelengths.
@@ -80,7 +63,9 @@ i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = NUL
 }
 
 
-#' Construct sample names vector in the appropriate format
+#' Internal constructor for sample names
+#'
+#' \code{i_names} constructs a sample name vector in the appropriate format
 #'
 #' @param x vector of labels. numeric or character
 #' @param nsample Integer of expected number of samples.
@@ -102,9 +87,11 @@ i_names = function(x, nsample = NULL){
 }
 
 
-#' Construct wavelength names in the appropriate format
+#' Internal wavelength constructor for spectra
 #'
-#' @param x vector of wavelengths. numeric or character
+#' \code{i_wavelengths} constructs wavelength labels in the appropriate format
+#'
+#' @param x vector of wavelengths. Either numeric or character
 #' @param nwavelengths Integer of expected number of wavelengths.
 #'                     If NULL (default) checking is skipped.
 #'
@@ -127,7 +114,14 @@ i_wavelengths = function(x, nwavelengths = NULL) {
     x
 }
 
-#' Construct a metadata data.frame in the appropriate format
+#' Internal metadata constructor for spectra
+#'
+#' \code{i_meta} constructs a metadata data.frame in the appropriate format
+#'
+#' @param x data.frame
+#' @param ... additional arhuments passed to as.data.frame
+#'
+#' @return data.frame
 i_meta = function(x, nsample, ...){
     x = as.data.frame(x, ...)
 
@@ -143,15 +137,18 @@ i_meta = function(x, nsample, ...){
 # Public constructor interface
 ########################################
 
-#' Create a spectra object
+#' Spectra object constructor
 #'
-#' @param reflectance N by M numeric matrix. N samples in rows.
-#'                    values between 0 and 1.
+#' \code{spectra} "manually" creates a spectra object
+#'
+#' @param reflectance N by M numeric matrix. N samples in rows and M wavelengs
+#'                    in columns
 #' @param wavelengths wavelength names in vector of length M
 #' @param names sample names in vector of length N
 #' @param meta spectra metadata. defaults to NULL. Must be either of length or nrow
 #'             equals to the number of samples (nrow(reflectance) or length(names))
 #' @param enforce01 Force reflectance to be between 0 and 1. defaults to FALSE
+#' @param ... additional arguments to metadata creation. not implemented yet
 #'
 #' @return spectra object
 #' @export

@@ -2,14 +2,14 @@
 % Please edit documentation in R/spectra.R
 \name{spectra}
 \alias{spectra}
-\title{Create a spectra object}
+\title{Spectra object constructor}
 \usage{
 spectra(reflectance, wavelengths, names, meta = NULL, enforce01 = FALSE,
   ...)
 }
 \arguments{
-\item{reflectance}{N by M numeric matrix. N samples in rows.
-values between 0 and 1.}
+\item{reflectance}{N by M numeric matrix. N samples in rows and M wavelengs
+in columns}
 
 \item{wavelengths}{wavelength names in vector of length M}
 
@@ -19,11 +19,13 @@ values between 0 and 1.}
 equals to the number of samples (nrow(reflectance) or length(names))}
 
 \item{enforce01}{Force reflectance to be between 0 and 1. defaults to FALSE}
+
+\item{...}{additional arguments to metadata creation. not implemented yet}
 }
 \value{
 spectra object
 }
 \description{
-Create a spectra object
+\code{spectra} "manually" creates a spectra object
 }
 

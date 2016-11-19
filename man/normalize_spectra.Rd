@@ -2,17 +2,17 @@
 % Please edit documentation in R/normalize_spectra.R
 \name{normalize_spectra}
 \alias{normalize_spectra}
-\title{Vector normalization of spectra}
+\title{Vector normalize spectra}
 \usage{
-normalize_spectra(spec)
+normalize_spectra(x)
 }
 \arguments{
-\item{spec}{spectra object to be vector normalized}
+\item{x}{spectra object to be vector normalized}
 }
 \value{
 spectra object with normalized spectra
 }
 \description{
-Vector normalization of spectra
+\code{normalize_spectra} returns a spectra obj with vector normalized reflectances
 }
 

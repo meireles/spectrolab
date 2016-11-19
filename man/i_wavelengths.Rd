@@ -2,12 +2,12 @@
 % Please edit documentation in R/spectra.R
 \name{i_wavelengths}
 \alias{i_wavelengths}
-\title{Construct wavelength names in the appropriate format}
+\title{Internal wavelength constructor for spectra}
 \usage{
 i_wavelengths(x, nwavelengths = NULL)
 }
 \arguments{
-\item{x}{vector of wavelengths. numeric or character}
+\item{x}{vector of wavelengths. Either numeric or character}
 
 \item{nwavelengths}{Integer of expected number of wavelengths.
 If NULL (default) checking is skipped.}
@@ -16,6 +16,6 @@ If NULL (default) checking is skipped.}
 vector of wavelengths
 }
 \description{
-Construct wavelength names in the appropriate format
+\code{i_wavelengths} constructs wavelength labels in the appropriate format
 }
 
