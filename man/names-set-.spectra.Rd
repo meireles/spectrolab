@@ -2,17 +2,19 @@
 % Please edit documentation in R/getters_and_setters.R
 \name{names<-.spectra}
 \alias{names<-.spectra}
-\title{Set sample names in spectra}
+\title{Set spectra sample names}
 \usage{
 \method{names}{spectra}(spec) <- value
 }
 \arguments{
-\item{spec}{spectra object to have their sample names modified}
+\item{spec}{spectra object (lhs)}
+
+\item{value}{values to be assigned (rhs)}
 }
 \value{
 nothing. called for its side effect.
 }
 \description{
-Set sample names in spectra
+\code{names} assigns sample names to lhs
 }
 

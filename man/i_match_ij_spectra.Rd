@@ -2,7 +2,7 @@
 % Please edit documentation in R/getters_and_setters.R
 \name{i_match_ij_spectra}
 \alias{i_match_ij_spectra}
-\title{Get indexes for spectra object}
+\title{Get internal indexes for spectra attributes}
 \usage{
 i_match_ij_spectra(this, i = NULL, j = NULL)
 }
@@ -17,6 +17,6 @@ i_match_ij_spectra(this, i = NULL, j = NULL)
 list if row indices and colimn indices
 }
 \description{
-Get indexes for spectra object
+\code{i_match_ij_spectra} gets position matching if the relfectance matrix
 }
 

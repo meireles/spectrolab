@@ -7,14 +7,18 @@
 \method{[}{spectra}(this, i, j) <- value
 }
 \arguments{
+\item{this}{spectra object (lhs)}
+
 \item{i}{sample name}
 
 \item{j}{wavelength}
+
+\item{value}{value to be asigned (rhs)}
 }
 \value{
 nothing. modifies spectra as side effect
 }
 \description{
-Assign reflectance vlaues to spectra
+\code{`[<-`} assigns the rhs values to spectra
 }
 
