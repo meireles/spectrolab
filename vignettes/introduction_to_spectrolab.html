@@ -143,7 +143,7 @@ spec_from_matrix &lt;-<span class="st"> </span><span class="kw">as.spectra</span
 <span class="co"># With an added bonus of shading 4 spectral regions</span>
 <span class="kw">plot</span>(spec_from_matrix, <span class="dt">lwd =</span> <span class="fl">0.25</span>, <span class="dt">lty =</span> <span class="dv">1</span>, <span class="dt">col =</span> <span class="st">&quot;grey50&quot;</span>, <span class="st">&quot;Spectra, quantile and regions&quot;</span>)</code></pre></div>
 <pre><code>## Error in plot(spec_from_matrix, lwd = 0.25, lty = 1, col = &quot;grey50&quot;, &quot;Spectra, quantile and regions&quot;): object 'spec_from_matrix' not found</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_quantile</span>(spec_from_matrix, <span class="dt">total_prob =</span> <span class="fl">0.8</span>, <span class="dt">col =</span> <span class="kw">rgb</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.25</span>), <span class="dt">border =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_quantile</span>(spec_from_matrix, <span class="dt">total_prob =</span> <span class="fl">0.8</span>, <span class="dt">col =</span> <span class="kw">rgb</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.25</span>), <span class="dt">border =</span> <span class="ot">FALSE</span>, <span class="dt">add=</span><span class="ot">TRUE</span>)</code></pre></div>
 <pre><code>## Error in inherits(x, &quot;spectra&quot;): object 'spec_from_matrix' not found</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_spec_regions</span>(spec_from_matrix, <span class="dt">regions =</span> <span class="kw">default_spec_regions</span>(), <span class="dt">add =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <pre><code>## Error in inherits(x, &quot;spectra&quot;): object 'spec_from_matrix' not found</code></pre>
@@ -153,15 +153,15 @@ spec_from_matrix &lt;-<span class="st"> </span><span class="kw">as.spectra</span
 <p><code>spectrolab</code> lets you query the <code>spectra</code> object and get summary infomation. You can easly get sample names with <code>names()</code> and wavelength labels with <code>wavelengths()</code>. It is also possible to recover the</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Get the vector of all sample names</span>
 <span class="co"># Note that duplicate sample names are permitted</span>
-n =<span class="st"> </span><span class="kw">names</span>(spec)
+n =<span class="st"> </span><span class="kw">names</span>(spec_from_matrix)
 n[<span class="dv">1</span>:<span class="dv">5</span>]
 
 <span class="co"># Or get the vector of wavelengths</span>
-w =<span class="st"> </span><span class="kw">wavelengths</span>(spec)
+w =<span class="st"> </span><span class="kw">wavelengths</span>(spec_from_matrix)
 w[<span class="dv">1</span>:<span class="dv">5</span>]
 
 <span class="co"># You can also get the dimensions of your `spectra` object</span>
-<span class="kw">dim</span>(spec)</code></pre></div>
+<span class="kw">dim</span>(spec_from_matrix)</code></pre></div>
 <p>If you need the reclectance, you can retrieve it with the <code>reflectance()</code> function.</p>
 </div>
 <div id="subsetting-spectra" class="section level2">
@@ -175,13 +175,13 @@ w[<span class="dv">1</span>:<span class="dv">5</span>]
 </ul>
 <p>For example, you can exclude the noisy regions at the beginning and end of the spectrum and subset the data to specific entries.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">### Subset wavelength regions 
-acer_clip &lt;-<span class="st">  </span>acer_juco[ , <span class="dv">400</span>:<span class="dv">2400</span>]
+spec_sub &lt;-<span class="st">  </span>spec_from_matrix[ , <span class="dv">400</span>:<span class="dv">700</span>]
 
 ### Check the result
-<span class="kw">plot</span>(spec_from_matrix)
+<span class="kw">plot</span>(spec_sub)
 
 <span class="co"># Subset spectra to all entries where sample_name matches &quot;species_8&quot; and wavelength regions </span>
-spec_sp8 =<span class="st"> </span>spec[ <span class="st">&quot;species_8&quot;</span>, <span class="dv">400</span>:<span class="dv">2400</span>]
+spec_sp8 =<span class="st"> </span>spec_from_matrix[ <span class="st">&quot;species_8&quot;</span>, ]
 
 <span class="co"># Check the results</span>
 <span class="kw">dim</span>(spec_sp8)
@@ -190,11 +190,10 @@ spec_sp8 =<span class="st"> </span>spec[ <span class="st">&quot;species_8&quot;<
 <span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="dt">cex.main =</span> <span class="fl">0.8</span>, <span class="dt">cex.axis =</span> <span class="fl">0.6</span>, <span class="dt">cex.lab =</span> <span class="fl">0.8</span>)
 
 <span class="kw">plot</span>(spec_sp8, <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">main =</span> <span class="st">&quot;Species 8 spectra&quot;</span>)
-<span class="kw">plot_quantile</span>(spec, <span class="dt">total_prob =</span> <span class="fl">1.0</span>, <span class="dt">add =</span> <span class="ot">TRUE</span>,  <span class="dt">col =</span> <span class="kw">rgb</span>(<span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.2</span>), <span class="dt">border =</span> <span class="ot">FALSE</span>)
+<span class="kw">plot_quantile</span>(spec_from_matrix, <span class="dt">total_prob =</span> <span class="fl">1.0</span>, <span class="dt">add =</span> <span class="ot">TRUE</span>,  <span class="dt">col =</span> <span class="kw">rgb</span>(<span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.2</span>), <span class="dt">border =</span> <span class="ot">FALSE</span>)
 <span class="kw">plot_spec_regions</span>(spec_sp8, <span class="kw">default_spec_regions</span>(), <span class="dt">col =</span> <span class="kw">rgb</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="fl">0.1</span>), <span class="dt">add =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <p>Note that you can (1) subset samples using indexes and (2) use character or numeric to subset wavelengths. As said before, you cannot use indexes to subset wavelengths though.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subset samples by index should work. It is also OK to subset by wavelength </span>
-<span class="co"># using numerics or characters.</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subset samples by index should work. It is also okay to subset by wavelength using numerics or characters.</span>
 <span class="kw">reflectance</span>(spec_sp8[ <span class="dv">1</span> , <span class="st">&quot;405&quot;</span>]) ==<span class="st"> </span><span class="kw">reflectance</span>(spec_sp8[ <span class="dv">1</span> , <span class="dv">405</span>])</code></pre></div>
 <pre><code>## Error in inherits(x, &quot;spectra&quot;): object 'spec_sp8' not found</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#</span>
@@ -202,7 +201,7 @@ spec_sp8 =<span class="st"> </span>spec[ <span class="st">&quot;species_8&quot;<
 <span class="co">#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#</span>
 
 <span class="co"># Something that is obvioulsy an index, like using 2 instead of 401 (the 2nd band), will fail.</span>
-spec_sp8[ , <span class="dv">2</span> ]</code></pre></div>
+spec_sp8[ , <span class="dv">2</span>]</code></pre></div>
 <pre><code>## Error in eval(expr, envir, enclos): object 'spec_sp8' not found</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># However, `spectrolab` canot detect if you meant to get the two last bands when</span>
 <span class="co"># you use 2000:2001. It will assume that you wanted wavelengths &quot;2000&quot; and &quot;2001&quot;</span>
@@ -211,20 +210,20 @@ spec_sp8[ , <span class="dv">2</span> ]</code></pre></div>
 <div id="manipulating-samples-and-wavelength-labels" class="section level2">
 <h2>Manipulating samples and wavelength labels</h2>
 <p>You may want to edit certain simple attributes of <code>spectra</code>, such as make all sample names uppercase. This is easlily attainable in <code>spectrolab</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">spec_new =<span class="st"> </span>spec
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">spec_new &lt;-<span class="st"> </span>spec_from_matrix
 
 <span class="co"># Replace names with an uppercase version</span>
-<span class="kw">names</span>(spec_new) =<span class="st"> </span><span class="kw">toupper</span>(<span class="kw">names</span>(spec_new))
+<span class="kw">names</span>(spec_new) &lt;-<span class="st"> </span><span class="kw">toupper</span>(<span class="kw">names</span>(spec_new))
 
 <span class="co"># Check the results</span>
 <span class="kw">names</span>(spec_new)[<span class="dv">1</span>:<span class="dv">5</span>]</code></pre></div>
 <p>You may want to fiddle with the reflectance itself. This is easy to do, but there are some constraints. For example, <code>spectrolab</code> will not allow you to have negative reflectance values or values greater than 1.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Scale reflectance by 0.75</span>
 <span class="co"># spec_new[] = reflectance(spec_new) * 0.75</span>
-spec_new =<span class="st"> </span>spec_new *<span class="st"> </span><span class="fl">0.75</span>
+spec_new &lt;-<span class="st"> </span>spec_new *<span class="st"> </span><span class="fl">0.75</span>
 
 <span class="co"># Plot the results</span>
-<span class="kw">plot</span>(spec, <span class="dt">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">lwd =</span> <span class="fl">0.75</span>, <span class="dt">cex.axis =</span> <span class="fl">0.75</span>)
+<span class="kw">plot</span>(spec_from_matrix, <span class="dt">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">lwd =</span> <span class="fl">0.75</span>, <span class="dt">cex.axis =</span> <span class="fl">0.75</span>)
 <span class="kw">plot</span>(spec_new, <span class="dt">col =</span> <span class="st">&quot;orange&quot;</span>, <span class="dt">lwd =</span> <span class="fl">0.75</span>, <span class="dt">add =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <p>However, <code>spectrolab</code> will throw an error if you try to perform an illegal operation to reflectance, for instance</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Trying to add 1.0 to all reflectance values will fail.</span>
@@ -234,8 +233,8 @@ spec_new[] =<span class="st"> </span><span class="kw">reflectance</span>(spec_ne
 <h3>Converting a <code>spectra</code> object into a matrix</h3>
 <p>It is possible to convert a <code>spectra</code> object to a matrix format, using the <code>as.matrix()</code> function. <code>spectrolab</code> will (1) place wavelengths in columns, assigning wavelength labels to <code>colnames</code>, and (2) samples in rows, assigning sample names to <code>rownames</code>. Since <code>R</code> imposes strict on column name formats and sometimes on row names, <code>as.matrix()</code> will try to fix potential dimname issues if <code>fix_names != &quot;none&quot;</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Make a matrix from a `spectra` object</span>
-spec_as_mat =<span class="st"> </span><span class="kw">as.matrix</span>(spec, <span class="dt">fix_names =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
-<pre><code>## Error in as.matrix(spec, fix_names = &quot;none&quot;): object 'spec' not found</code></pre>
+spec_as_mat =<span class="st"> </span><span class="kw">as.matrix</span>(spec_from_matrix, <span class="dt">fix_names =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
+<pre><code>## Error in as.matrix(spec_from_matrix, fix_names = &quot;none&quot;): object 'spec_from_matrix' not found</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">spec_as_mat[<span class="dv">1</span>:<span class="dv">4</span>, <span class="dv">1</span>:<span class="dv">3</span>]</code></pre></div>
 <pre><code>## Error in eval(expr, envir, enclos): object 'spec_as_mat' not found</code></pre>
 </div>

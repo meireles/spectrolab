@@ -59,32 +59,32 @@ plot_quantile(spec_from_matrix, total_prob = 0.8, main = "80% spectral quantile"
 # Combined quantile and individual spctra plot
 # With an added bonus of shading 4 spectral regions
 plot(spec_from_matrix, lwd = 0.25, lty = 1, col = "grey50", "Spectra, quantile and regions")
-plot_quantile(spec_from_matrix, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border = FALSE)
+plot_quantile(spec_from_matrix, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border = FALSE, add=TRUE)
 plot_spec_regions(spec_from_matrix, regions = default_spec_regions(), add = TRUE)
 
 ## ---- eval=F-------------------------------------------------------------
 #  # Get the vector of all sample names
 #  # Note that duplicate sample names are permitted
-#  n = names(spec)
+#  n = names(spec_from_matrix)
 #  n[1:5]
 #  
 #  # Or get the vector of wavelengths
-#  w = wavelengths(spec)
+#  w = wavelengths(spec_from_matrix)
 #  w[1:5]
 #  
 #  # You can also get the dimensions of your `spectra` object
-#  dim(spec)
+#  dim(spec_from_matrix)
 
 ## ---- fig.height=2.5, fig.width=6, fig.align="center", eval=F------------
 #  
 #  ### Subset wavelength regions
-#  acer_clip <-  acer_juco[ , 400:2400]
+#  spec_sub <-  spec_from_matrix[ , 400:700]
 #  
 #  ### Check the result
-#  plot(spec_from_matrix)
+#  plot(spec_sub)
 #  
 #  # Subset spectra to all entries where sample_name matches "species_8" and wavelength regions
-#  spec_sp8 = spec[ "species_8", 400:2400]
+#  spec_sp8 = spec_from_matrix[ "species_8", ]
 #  
 #  # Check the results
 #  dim(spec_sp8)
@@ -93,12 +93,11 @@ plot_spec_regions(spec_from_matrix, regions = default_spec_regions(), add = TRUE
 #  par(mfrow = c(1, 2), cex.main = 0.8, cex.axis = 0.6, cex.lab = 0.8)
 #  
 #  plot(spec_sp8, col = "red", main = "Species 8 spectra")
-#  plot_quantile(spec, total_prob = 1.0, add = TRUE,  col = rgb(0.2, 0.2, 0.2, 0.2), border = FALSE)
+#  plot_quantile(spec_from_matrix, total_prob = 1.0, add = TRUE,  col = rgb(0.2, 0.2, 0.2, 0.2), border = FALSE)
 #  plot_spec_regions(spec_sp8, default_spec_regions(), col = rgb(1, 0.5, 0, 0.1), add = TRUE)
 
 ## ---- error=TRUE---------------------------------------------------------
-# Subset samples by index should work. It is also OK to subset by wavelength 
-# using numerics or characters.
+# Subset samples by index should work. It is also okay to subset by wavelength using numerics or characters.
 reflectance(spec_sp8[ 1 , "405"]) == reflectance(spec_sp8[ 1 , 405])
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
@@ -106,17 +105,17 @@ reflectance(spec_sp8[ 1 , "405"]) == reflectance(spec_sp8[ 1 , 405])
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
 
 # Something that is obvioulsy an index, like using 2 instead of 401 (the 2nd band), will fail.
-spec_sp8[ , 2 ]
+spec_sp8[ , 2]
 
 # However, `spectrolab` canot detect if you meant to get the two last bands when
 # you use 2000:2001. It will assume that you wanted wavelengths "2000" and "2001"
 # Bottomline, be very careful not to use indexes to subset wavelengths!
 
 ## ---- eval=F-------------------------------------------------------------
-#  spec_new = spec
+#  spec_new <- spec_from_matrix
 #  
 #  # Replace names with an uppercase version
-#  names(spec_new) = toupper(names(spec_new))
+#  names(spec_new) <- toupper(names(spec_new))
 #  
 #  # Check the results
 #  names(spec_new)[1:5]
@@ -124,10 +123,10 @@ spec_sp8[ , 2 ]
 ## ----  fig.height=3, fig.width=4, fig.align="center", eval=F-------------
 #  # Scale reflectance by 0.75
 #  # spec_new[] = reflectance(spec_new) * 0.75
-#  spec_new = spec_new * 0.75
+#  spec_new <- spec_new * 0.75
 #  
 #  # Plot the results
-#  plot(spec, col = "blue", lwd = 0.75, cex.axis = 0.75)
+#  plot(spec_from_matrix, col = "blue", lwd = 0.75, cex.axis = 0.75)
 #  plot(spec_new, col = "orange", lwd = 0.75, add = TRUE)
 
 ## ---- error=TRUE---------------------------------------------------------
@@ -136,7 +135,7 @@ spec_new[] = reflectance(spec_new) + 1.0
 
 ## ---- error=TRUE---------------------------------------------------------
 # Make a matrix from a `spectra` object
-spec_as_mat = as.matrix(spec, fix_names = "none")
+spec_as_mat = as.matrix(spec_from_matrix, fix_names = "none")
 spec_as_mat[1:4, 1:3]
 
 ## ---- eval=F-------------------------------------------------------------
