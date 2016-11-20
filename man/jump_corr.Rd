@@ -2,7 +2,7 @@
 % Please edit documentation in R/jumpcorr_SVC.R
 \name{jump_corr}
 \alias{jump_corr}
-\title{Jump corrector for SVC data}
+\title{Jump correction of spectra}
 \usage{
 jump_corr(spec)
 }
@@ -13,7 +13,7 @@ jump_corr(spec)
 spectra object: jump corrected and interpolated to 1nm resolution
 }
 \description{
-Jump corrector for SVC data
+Jump correction of spectra
 }
 \examples{
 

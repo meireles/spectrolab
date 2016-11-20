@@ -8,10 +8,10 @@
 ## ---- eval=FALSE---------------------------------------------------------
 #  
 #  # dir_path is the directory where our example datasets live
-#  dir_path = system.file("extdata", "Acer_example", package = "spectrolab")
+#  dir_path <- system.file("extdata", "Acer_example", package = "spectrolab")
 #  
-#  # read .sig files
-#  acer_spectra = read_spectra(path = dir_path, format ="sig")
+#  # Read .sig files
+#  acer_spectra <- read_spectra(path = dir_path, format ="sig")
 #  
 #  # Note that `acer_spectra` is a `spectra` object. You can ensure that is true
 #  # using spectrolab's `is_spectra()` function.
@@ -19,10 +19,10 @@
 #  is_spectra(acer_spectra)
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  # simply print the object
+#  # Simply print the object
 #  acer_spectra
 #  
-#  # Get a vector with the dataset dimension.
+#  # Get a vector with the dataset dimension
 #  dim(acer_spectra)
 #  
 #  # and plot the spectra
@@ -30,96 +30,37 @@
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  
-#  # use `exclude_if_matches` to excluded flagged files
+#  # Use `exclude_if_matches` to excluded flagged files
 #  acer_spectra <- read_spectra(path = dir_path, format ="sig",   exclude_if_matches = c("BAD","WR"))
 #  
-#  # check result
+#  # and check result
 #  plot(acer_spectra)
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  spec = spec_matrix_example
+#  spec <- spec_matrix_example
 #  
 #  # Check out the format of the matrix
 #  spec[1:3, 1:4]
 #  
-#  # To convert it to spectra, simply run:
-#  spec_from_matrix = as.spectra(spec)
+#  # To convert it to spectra, simply run
+#  spec_from_matrix <- as.spectra(spec)
 #  
-#  # And again you can plot it to make sure erything worked ok
-#  plot(spec)
-
-## ---- eval=F-------------------------------------------------------------
-#  # The function `jump_corr()` reads raw data, so there is no need for running `read_spec` fist. Similar to `read_spec` you only need to point `jump` to the folder containing your .sig files.
-#  
-#  myfolder <- system.file("extdata", "Acer_example", package = "spectrolab")
-#  Acer_juco <- jump_corr(myfolder, filename = T)
-
-## ---- eval=FALSE---------------------------------------------------------
-#  ### Smooth only VIS/NIR or NIR/SWIR
-#  Acer_smoo1 <- smoo.visnir.svc(Acer_juco)
-#  Acer_smoo2 <- smoo.nirswir.svc(Acer_juco)
-#  
-#  ### Smooth both regions
-#  Acer_smoo <- smoo.nirswir.svc(Acer_smoo1)
-#  ### Same result
-#  Acer_smoo <- smoo.visnir.svc(Acer_smoo2)
-
-## ---- eval=F-------------------------------------------------------------
-#  # Make a spectra object if you have a matrix in the right format
-#  # Here we remove the first column containing the filename
-#  spec <- spectrolab::as.spectra(Acer_juco[,-1])
-#  
-#  # Did it work?
-#  is_spectra(spec)
-
-## ---- eval=F-------------------------------------------------------------
-#  # (1) Create a reflectance matrix.
-#  #     In this case, by removing the sample ID column
-#  rf <- Acer_juco[, -1]
-#  
-#  # Check the result
-#  rf[1:4, 1:3]
-#  
-#  # (2) Create a vector with wavelength labels that match
-#  #     the reflectance matrix columns.
-#  wl <- colnames(rf)
-#  
-#  # Check the result
-#  wl[1:4]
-#  
-#  # (3) Create a vector with sample labels that match
-#  #     the reflectance matrix rows.
-#  #     In this case, use the first colum of spec_matrix_example
-#  sn <- Acer_juco[, 1]
-#  
-#  # Check the result
-#  sn[1:4]
-#  
-#  # Finally, construct the spectra object using the `spectra` constructor
-#  spec <- spectra(reflectance = rf, wavelengths = wl, names = sn)
-#  
-#  # And hopefully this worked fine
-#  is_spectra(spec)
-
-## ---- eval=F-------------------------------------------------------------
-#  plot(spec)
-#  
+#  # and again you can plot it to make sure everything worked okay
+#  plot(spec_from_matrix)
 
 ## ---- fig.height=2.5, fig.width=8, error=TRUE----------------------------
 # Simple spectra plot
 par(mfrow = c(1, 3))
-plot(spec, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
+plot(spec_from_matrix, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
 
 # Stand along quantile plot
-plot_quantile(spec, total_prob = 0.8, main = "80% spectral quantile", 
-              col = rgb(1, 0, 0, 0.5), lwd = 0.5, border = TRUE)
+plot_quantile(spec_from_matrix, total_prob = 0.8, main = "80% spectral quantile", col = rgb(1, 0, 0, 0.5), lwd = 0.5, border = TRUE)
 
 # Combined quantile and individual spctra plot
 # With an added bonus of shading 4 spectral regions
-plot(spec, lwd = 0.25, lty = 1, col = "grey50", "Spectra, quantile and regions")
-plot_quantile(spec, total_prob = 0.8, 
-              col = rgb(1, 0, 0, 0.25), add = TRUE, border = FALSE)
-plot_spec_regions(spec, regions = default_spec_regions(), add = TRUE)
+plot(spec_from_matrix, lwd = 0.25, lty = 1, col = "grey50", "Spectra, quantile and regions")
+plot_quantile(spec_from_matrix, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border = FALSE)
+plot_spec_regions(spec_from_matrix, regions = default_spec_regions(), add = TRUE)
 
 ## ---- eval=F-------------------------------------------------------------
 #  # Get the vector of all sample names
@@ -137,10 +78,10 @@ plot_spec_regions(spec, regions = default_spec_regions(), add = TRUE)
 ## ---- fig.height=2.5, fig.width=6, fig.align="center", eval=F------------
 #  
 #  ### Subset wavelength regions
-#  spec_clip <-  spec[ , 400:2400]
+#  acer_clip <-  acer_juco[ , 400:2400]
 #  
 #  ### Check the result
-#  plot(spec_clip)
+#  plot(spec_from_matrix)
 #  
 #  # Subset spectra to all entries where sample_name matches "species_8" and wavelength regions
 #  spec_sp8 = spec[ "species_8", 400:2400]
@@ -197,6 +138,29 @@ spec_new[] = reflectance(spec_new) + 1.0
 # Make a matrix from a `spectra` object
 spec_as_mat = as.matrix(spec, fix_names = "none")
 spec_as_mat[1:4, 1:3]
+
+## ---- eval=F-------------------------------------------------------------
+#  # Read Acer example spectra
+#  acer_spectra <- read_spectra(path = dir_path, format ="sig",   exclude_if_matches = c("BAD","WR"))
+#  
+#  # and check result
+#  plot(acer_spectra)
+#  
+#  # Jump correction
+#  acer_juco <- jump_corr(acer_spectra)
+#  
+#  # Looks better!
+#  plot(acer_juco)
+
+## ---- eval=FALSE---------------------------------------------------------
+#  ### Smooth only VIS/NIR or NIR/SWIR
+#  Acer_smoo1 <- smoo.visnir.svc(Acer_juco)
+#  Acer_smoo2 <- smoo.nirswir.svc(Acer_juco)
+#  
+#  ### Smooth both regions
+#  Acer_smoo <- smoo.nirswir.svc(Acer_smoo1)
+#  ### Same result
+#  Acer_smoo <- smoo.visnir.svc(Acer_smoo2)
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  ### Some common examples, see `excl.` for more.

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Jose Eduardo Meireles, Anna K. Schweiger" />
 
-<meta name="date" content="2016-11-19" />
+<meta name="date" content="2016-11-20" />
 
 <title>Introduction to spectrolab</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Introduction to spectrolab</h1>
 <h4 class="author"><em>Jose Eduardo Meireles, Anna K. Schweiger</em></h4>
-<h4 class="date"><em>2016-11-19</em></h4>
+<h4 class="date"><em>2016-11-20</em></h4>
 
 
 
@@ -87,105 +87,44 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2>Reading spectra: example with <code>.sig</code> files</h2>
 <p>You can read raw spectra files using the function <code>read_spectra()</code>. As of now, only files in the <code>.sig</code> (Spectra Vista) can be read direcly, but other formats are in the works. You can pass a vector of filenames to <code>read_spectra()</code>, but it is usually easier to pass the path for the folder where all your data is.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># dir_path is the directory where our example datasets live</span>
-dir_path =<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;Acer_example&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;spectrolab&quot;</span>)
+dir_path &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;Acer_example&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;spectrolab&quot;</span>)
 
-<span class="co"># read .sig files</span>
-acer_spectra =<span class="st"> </span><span class="kw">read_spectra</span>(<span class="dt">path =</span> dir_path, <span class="dt">format =</span><span class="st">&quot;sig&quot;</span>)
+<span class="co"># Read .sig files</span>
+acer_spectra &lt;-<span class="st"> </span><span class="kw">read_spectra</span>(<span class="dt">path =</span> dir_path, <span class="dt">format =</span><span class="st">&quot;sig&quot;</span>)
 
 <span class="co"># Note that `acer_spectra` is a `spectra` object. You can ensure that is true</span>
 <span class="co"># using spectrolab's `is_spectra()` function.</span>
 
 <span class="kw">is_spectra</span>(acer_spectra)</code></pre></div>
 <p>You can inspect the newly read data <code>acer_spectra</code> in several ways. You may want to know how many spectra and how many bands are in there or may want to plot them.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># simply print the object</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Simply print the object</span>
 acer_spectra
 
-<span class="co"># Get a vector with the dataset dimension.</span>
+<span class="co"># Get a vector with the dataset dimension</span>
 <span class="kw">dim</span>(acer_spectra)
 
 <span class="co"># and plot the spectra</span>
 <span class="kw">plot</span>(acer_spectra)</code></pre></div>
-<p>You notice that <code>Acer_example</code> contains white reference measurement (the horizontal line around 1) and one measurement where something obviously went wrong (a dip at the NIR shoulder). During the measurement campaign those two measurement were flagged with “_WR&quot; and “_BAD“. With <code>read_spectra()</code> it’s easy to exclude flagged measurements.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># use `exclude_if_matches` to excluded flagged files</span>
+<p>You notice that <code>Acer_example</code> contains white reference measurement (the horizontal line around 1.0 reflectance) and one measurement obviously bad measurement (the one with the dip at the NIR shoulder). During the measurement campaign those two measurement were flagged with “_WR&quot; and “_BAD“. With <code>read_spectra()</code> it’s easy to exclude flagged measurements.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Use `exclude_if_matches` to excluded flagged files</span>
 acer_spectra &lt;-<span class="st"> </span><span class="kw">read_spectra</span>(<span class="dt">path =</span> dir_path, <span class="dt">format =</span><span class="st">&quot;sig&quot;</span>,   <span class="dt">exclude_if_matches =</span> <span class="kw">c</span>(<span class="st">&quot;BAD&quot;</span>,<span class="st">&quot;WR&quot;</span>))
 
-<span class="co"># check result</span>
+<span class="co"># and check result</span>
 <span class="kw">plot</span>(acer_spectra)</code></pre></div>
-<p>Flagging “unusual” files during a measurement campaign is a very good idea, as it clearly helps you to quickly sort through your files when it comes to processing. However, you can also exclude “unusual” files lateron. We show you some options in section <code>Excluding &quot;unusual&quot; spectra</code>.</p>
+<p>Flagging “unusual” files during a measurement campaign is a very good idea, as it clearly helps you to quickly sort through your files when it comes to processing. However, you can also exclude “unusual” files lateron. We show you some build in options and how to filter out spectra based on your own criteria in section <code>Excluding &quot;unusual&quot; spectra</code> below.</p>
 <div id="create-spectra-from-a-matrix" class="section level3">
 <h3>Create spectra from a matrix</h3>
-<p>If you already have your spectra in a matrix, you can use the function <code>as.spectra()</code> to convert it to a <code>spectra</code> object. The matrix <strong>must</strong> be in a very specific format, so <strong>read carefully!</strong>. Samples must be in rows and wavelengths in columns. The first column must be a sample label. In case you are as terrified as I am of loosing metadata for 100’s of thousands of measurements consider including “all” crucial sample information in the filename (<code>species_plotID_plantID</code>). Column names must be the wavelength labels. We included an example of a matrix like that named <code>spec_matrix_example</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">spec =<span class="st"> </span>spec_matrix_example
+<p>If you already have your spectra in a matrix, you can use the function <code>as.spectra()</code> to convert it to a <code>spectra</code> object. The matrix <strong>must</strong> be in a very specific format, so <strong>read carefully!</strong> Samples must be in rows and wavelengths in columns. The first column must be a sample label or filename. In case you are as terrified as Ms. A of loosing metadata for 100’s of thousands of spectra, consider including “all” crucial sample information in the filename (<code>species_plotID_plantID</code>). Column names must be the wavelength labels. We included an example of a matrix like that named <code>spec_matrix_example</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">spec &lt;-<span class="st"> </span>spec_matrix_example
 
 <span class="co"># Check out the format of the matrix</span>
 spec[<span class="dv">1</span>:<span class="dv">3</span>, <span class="dv">1</span>:<span class="dv">4</span>]
 
-<span class="co"># To convert it to spectra, simply run:</span>
-spec_from_matrix =<span class="st"> </span><span class="kw">as.spectra</span>(spec)
+<span class="co"># To convert it to spectra, simply run</span>
+spec_from_matrix &lt;-<span class="st"> </span><span class="kw">as.spectra</span>(spec)
 
-<span class="co"># And again you can plot it to make sure erything worked ok</span>
-<span class="kw">plot</span>(spec)</code></pre></div>
-</div>
-<div id="jump-correction" class="section level3">
-<h3>Jump correction</h3>
-<p>Some instruments allow you to preserve the sensor overlap regions. This results in duplicated wavelenghts and a “jump” between the VIS/NIR and NIR/SWIR regions. The <code>jump corrector</code> removes the overlap regions between VIS/NIR and NIR/SWIR, respectively and adjusts the spectral regions to allow a smooth transition, while keeping as information as possible. In principle, the algorithm searches for the wavelengths of closest approach in both overlap regions, cuts the spectrum into three pieces, removes the overlap and finds a multiplier to paste the junks back together. No additional smoothing is applied. As a convention, the NIR regions is left unchanged.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The function `jump_corr()` reads raw data, so there is no need for running `read_spec` fist. Similar to `read_spec` you only need to point `jump` to the folder containing your .sig files. </span>
-
-myfolder &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;Acer_example&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;spectrolab&quot;</span>)
-Acer_juco &lt;-<span class="st"> </span><span class="kw">jump_corr</span>(myfolder, <span class="dt">filename =</span> T)</code></pre></div>
-</div>
-<div id="smoothing-at-overlap-regions" class="section level3">
-<h3>Smoothing at overlap regions</h3>
-<p>Depending on your analysis, it can be a good idea to smooth remaining noise at the sensor overlap regions. <code>smoo.visnir.svc</code> uses a moving average between 970 - 1025 nm. <code>smoo.nirswir.svc</code> uses linear interpolation between 1903 - 1917 nm. Note that we DO NOT use additional smoothing when predicting traits from spectra with PLSR models.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">### Smooth only VIS/NIR or NIR/SWIR
-Acer_smoo1 &lt;-<span class="st"> </span><span class="kw">smoo.visnir.svc</span>(Acer_juco)
-Acer_smoo2 &lt;-<span class="st"> </span><span class="kw">smoo.nirswir.svc</span>(Acer_juco)
-
-### Smooth both regions
-Acer_smoo &lt;-<span class="st"> </span><span class="kw">smoo.nirswir.svc</span>(Acer_smoo1)
-### Same result
-Acer_smoo &lt;-<span class="st"> </span><span class="kw">smoo.visnir.svc</span>(Acer_smoo2)</code></pre></div>
-</div>
-<div id="constructing-a-spectra-object" class="section level3">
-<h3>Constructing a <code>spectra</code> object</h3>
-<p>The <code>spectra</code> class holds the essential information used in spectral dataset: reflectance, wavelengths, etc. The class has a bunch of requirements in terms of both format and values. For instance, relative reflectance must be between 0 and 1 and wavelengths can not be duplicated.</p>
-<p>If your data is in a matrix or data.frame with the same format as <code>Acer_juco</code> or <code>Acer_smoo</code> (check previous section for details), you can construct a <code>spectra</code> object by calling the <code>as.spectra()</code> function.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Make a spectra object if you have a matrix in the right format</span>
-<span class="co"># Here we remove the first column containing the filename</span>
-spec &lt;-<span class="st"> </span>spectrolab::<span class="kw">as.spectra</span>(Acer_juco[,-<span class="dv">1</span>])
-
-<span class="co"># Did it work?</span>
-<span class="kw">is_spectra</span>(spec)</code></pre></div>
-<p>Alternativelly, you can create a <code>spectra</code> object using the more flexible <code>spectra()</code> constructor, which takes three arguments: (1) a reflectance matrix, (2) a vector of wavelengths and (3) the sample names.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># (1) Create a reflectance matrix.</span>
-<span class="co">#     In this case, by removing the sample ID column</span>
-rf &lt;-<span class="st"> </span>Acer_juco[, -<span class="dv">1</span>]
-
-<span class="co"># Check the result</span>
-rf[<span class="dv">1</span>:<span class="dv">4</span>, <span class="dv">1</span>:<span class="dv">3</span>]
-
-<span class="co"># (2) Create a vector with wavelength labels that match</span>
-<span class="co">#     the reflectance matrix columns.</span>
-wl &lt;-<span class="st"> </span><span class="kw">colnames</span>(rf)
-
-<span class="co"># Check the result</span>
-wl[<span class="dv">1</span>:<span class="dv">4</span>]
-
-<span class="co"># (3) Create a vector with sample labels that match</span>
-<span class="co">#     the reflectance matrix rows.</span>
-<span class="co">#     In this case, use the first colum of spec_matrix_example</span>
-sn &lt;-<span class="st"> </span>Acer_juco[, <span class="dv">1</span>] 
-
-<span class="co"># Check the result</span>
-sn[<span class="dv">1</span>:<span class="dv">4</span>]
-
-<span class="co"># Finally, construct the spectra object using the `spectra` constructor</span>
-spec &lt;-<span class="st"> </span><span class="kw">spectra</span>(<span class="dt">reflectance =</span> rf, <span class="dt">wavelengths =</span> wl, <span class="dt">names =</span> sn)
-
-<span class="co"># And hopefully this worked fine</span>
-<span class="kw">is_spectra</span>(spec)</code></pre></div>
-<p>You can explore your <code>spectra</code> using <code>plot()</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(spec)</code></pre></div>
+<span class="co"># and again you can plot it to make sure everything worked okay</span>
+<span class="kw">plot</span>(spec_from_matrix)</code></pre></div>
 </div>
 </div>
 <div id="plotting" class="section level2">
@@ -195,21 +134,19 @@ spec &lt;-<span class="st"> </span><span class="kw">spectra</span>(<span class="
 <p>Last but not least, you can also shade spectral regions with the <code>plot_spec_regions()</code> function. <code>spectrolab</code> provides a <code>default_spec_regions()</code> matrix as an example, but you obviously can customize it for your needs.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Simple spectra plot</span>
 <span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>))
-<span class="kw">plot</span>(spec, <span class="dt">lwd =</span> <span class="fl">0.75</span>, <span class="dt">lty =</span> <span class="dv">1</span>, <span class="dt">col =</span> <span class="st">&quot;grey25&quot;</span>, <span class="dt">main =</span> <span class="st">&quot;All Spectra&quot;</span>)</code></pre></div>
-<pre><code>## Error in plot(spec, lwd = 0.75, lty = 1, col = &quot;grey25&quot;, main = &quot;All Spectra&quot;): object 'spec' not found</code></pre>
+<span class="kw">plot</span>(spec_from_matrix, <span class="dt">lwd =</span> <span class="fl">0.75</span>, <span class="dt">lty =</span> <span class="dv">1</span>, <span class="dt">col =</span> <span class="st">&quot;grey25&quot;</span>, <span class="dt">main =</span> <span class="st">&quot;All Spectra&quot;</span>)</code></pre></div>
+<pre><code>## Error in plot(spec_from_matrix, lwd = 0.75, lty = 1, col = &quot;grey25&quot;, main = &quot;All Spectra&quot;): object 'spec_from_matrix' not found</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Stand along quantile plot</span>
-<span class="kw">plot_quantile</span>(spec, <span class="dt">total_prob =</span> <span class="fl">0.8</span>, <span class="dt">main =</span> <span class="st">&quot;80% spectral quantile&quot;</span>, 
-              <span class="dt">col =</span> <span class="kw">rgb</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.5</span>), <span class="dt">lwd =</span> <span class="fl">0.5</span>, <span class="dt">border =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>## Error in inherits(spec, &quot;spectra&quot;): object 'spec' not found</code></pre>
+<span class="kw">plot_quantile</span>(spec_from_matrix, <span class="dt">total_prob =</span> <span class="fl">0.8</span>, <span class="dt">main =</span> <span class="st">&quot;80% spectral quantile&quot;</span>, <span class="dt">col =</span> <span class="kw">rgb</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.5</span>), <span class="dt">lwd =</span> <span class="fl">0.5</span>, <span class="dt">border =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## Error in inherits(x, &quot;spectra&quot;): object 'spec_from_matrix' not found</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Combined quantile and individual spctra plot</span>
 <span class="co"># With an added bonus of shading 4 spectral regions</span>
-<span class="kw">plot</span>(spec, <span class="dt">lwd =</span> <span class="fl">0.25</span>, <span class="dt">lty =</span> <span class="dv">1</span>, <span class="dt">col =</span> <span class="st">&quot;grey50&quot;</span>, <span class="st">&quot;Spectra, quantile and regions&quot;</span>)</code></pre></div>
-<pre><code>## Error in plot(spec, lwd = 0.25, lty = 1, col = &quot;grey50&quot;, &quot;Spectra, quantile and regions&quot;): object 'spec' not found</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_quantile</span>(spec, <span class="dt">total_prob =</span> <span class="fl">0.8</span>, 
-              <span class="dt">col =</span> <span class="kw">rgb</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.25</span>), <span class="dt">add =</span> <span class="ot">TRUE</span>, <span class="dt">border =</span> <span class="ot">FALSE</span>)</code></pre></div>
-<pre><code>## Error in inherits(spec, &quot;spectra&quot;): object 'spec' not found</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_spec_regions</span>(spec, <span class="dt">regions =</span> <span class="kw">default_spec_regions</span>(), <span class="dt">add =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>## Error in inherits(spec, &quot;spectra&quot;): object 'spec' not found</code></pre>
+<span class="kw">plot</span>(spec_from_matrix, <span class="dt">lwd =</span> <span class="fl">0.25</span>, <span class="dt">lty =</span> <span class="dv">1</span>, <span class="dt">col =</span> <span class="st">&quot;grey50&quot;</span>, <span class="st">&quot;Spectra, quantile and regions&quot;</span>)</code></pre></div>
+<pre><code>## Error in plot(spec_from_matrix, lwd = 0.25, lty = 1, col = &quot;grey50&quot;, &quot;Spectra, quantile and regions&quot;): object 'spec_from_matrix' not found</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_quantile</span>(spec_from_matrix, <span class="dt">total_prob =</span> <span class="fl">0.8</span>, <span class="dt">col =</span> <span class="kw">rgb</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.25</span>), <span class="dt">border =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>## Error in inherits(x, &quot;spectra&quot;): object 'spec_from_matrix' not found</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_spec_regions</span>(spec_from_matrix, <span class="dt">regions =</span> <span class="kw">default_spec_regions</span>(), <span class="dt">add =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## Error in inherits(x, &quot;spectra&quot;): object 'spec_from_matrix' not found</code></pre>
 </div>
 <div id="querying" class="section level2">
 <h2>Querying</h2>
@@ -236,12 +173,12 @@ w[<span class="dv">1</span>:<span class="dv">5</span>]
 <li><code>x[  , 800:900 ]</code> will keep wavelengths between <code>800</code> and <code>900</code>.</li>
 <li><code>x[  , 1:5 ]</code> will <strong>fail</strong>!. <em>wavelengths <strong>cannot</strong> be subset by index!</em></li>
 </ul>
-<p>For example, I often want to exclude the noisy regions at the beginning and end of the spectrum and subset the data to specific entries.</p>
+<p>For example, you can exclude the noisy regions at the beginning and end of the spectrum and subset the data to specific entries.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">### Subset wavelength regions 
-spec_clip &lt;-<span class="st">  </span>spec[ , <span class="dv">400</span>:<span class="dv">2400</span>]
+acer_clip &lt;-<span class="st">  </span>acer_juco[ , <span class="dv">400</span>:<span class="dv">2400</span>]
 
 ### Check the result
-<span class="kw">plot</span>(spec_clip)
+<span class="kw">plot</span>(spec_from_matrix)
 
 <span class="co"># Subset spectra to all entries where sample_name matches &quot;species_8&quot; and wavelength regions </span>
 spec_sp8 =<span class="st"> </span>spec[ <span class="st">&quot;species_8&quot;</span>, <span class="dv">400</span>:<span class="dv">2400</span>]
@@ -259,7 +196,7 @@ spec_sp8 =<span class="st"> </span>spec[ <span class="st">&quot;species_8&quot;<
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subset samples by index should work. It is also OK to subset by wavelength </span>
 <span class="co"># using numerics or characters.</span>
 <span class="kw">reflectance</span>(spec_sp8[ <span class="dv">1</span> , <span class="st">&quot;405&quot;</span>]) ==<span class="st"> </span><span class="kw">reflectance</span>(spec_sp8[ <span class="dv">1</span> , <span class="dv">405</span>])</code></pre></div>
-<pre><code>## Error in inherits(spec, &quot;spectra&quot;): object 'spec_sp8' not found</code></pre>
+<pre><code>## Error in inherits(x, &quot;spectra&quot;): object 'spec_sp8' not found</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#</span>
 <span class="co"># But remember that you CANNOT use indexes to subset wavelengths!</span>
 <span class="co">#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#</span>
@@ -292,7 +229,7 @@ spec_new =<span class="st"> </span>spec_new *<span class="st"> </span><span clas
 <p>However, <code>spectrolab</code> will throw an error if you try to perform an illegal operation to reflectance, for instance</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Trying to add 1.0 to all reflectance values will fail.</span>
 spec_new[] =<span class="st"> </span><span class="kw">reflectance</span>(spec_new) +<span class="st"> </span><span class="fl">1.0</span></code></pre></div>
-<pre><code>## Error in inherits(spec, &quot;spectra&quot;): object 'spec_new' not found</code></pre>
+<pre><code>## Error in inherits(x, &quot;spectra&quot;): object 'spec_new' not found</code></pre>
 <div id="converting-a-spectra-object-into-a-matrix" class="section level3">
 <h3>Converting a <code>spectra</code> object into a matrix</h3>
 <p>It is possible to convert a <code>spectra</code> object to a matrix format, using the <code>as.matrix()</code> function. <code>spectrolab</code> will (1) place wavelengths in columns, assigning wavelength labels to <code>colnames</code>, and (2) samples in rows, assigning sample names to <code>rownames</code>. Since <code>R</code> imposes strict on column name formats and sometimes on row names, <code>as.matrix()</code> will try to fix potential dimname issues if <code>fix_names != &quot;none&quot;</code>.</p>
@@ -301,6 +238,33 @@ spec_as_mat =<span class="st"> </span><span class="kw">as.matrix</span>(spec, <s
 <pre><code>## Error in as.matrix(spec, fix_names = &quot;none&quot;): object 'spec' not found</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">spec_as_mat[<span class="dv">1</span>:<span class="dv">4</span>, <span class="dv">1</span>:<span class="dv">3</span>]</code></pre></div>
 <pre><code>## Error in eval(expr, envir, enclos): object 'spec_as_mat' not found</code></pre>
+</div>
+<div id="jump-correction" class="section level3">
+<h3>Jump correction</h3>
+<p>Some instruments allow you to preserve the sensor overlap regions. This results in duplicated wavelenghts and a “jump” between the VIS/NIR and NIR/SWIR regions. The <code>jump corrector</code> removes the overlap regions between the VIS/NIR and NIR/SWIR regions, respectively, and corrects the spectra to allow a smooth transition, while keeping the information as original as possible. In principle, the algorithm searches for the wavelengths of closest approach in both overlap regions, cuts the spectrum into three pieces, removes the overlap and finds a multiplier to paste the junks back together. No additional smoothing is applied. As a convention, the NIR region is left unchanged.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Read Acer example spectra </span>
+acer_spectra &lt;-<span class="st"> </span><span class="kw">read_spectra</span>(<span class="dt">path =</span> dir_path, <span class="dt">format =</span><span class="st">&quot;sig&quot;</span>,   <span class="dt">exclude_if_matches =</span> <span class="kw">c</span>(<span class="st">&quot;BAD&quot;</span>,<span class="st">&quot;WR&quot;</span>))
+
+<span class="co"># and check result</span>
+<span class="kw">plot</span>(acer_spectra)
+
+<span class="co"># Jump correction </span>
+acer_juco &lt;-<span class="st"> </span><span class="kw">jump_corr</span>(acer_spectra)
+
+<span class="co"># Looks better!</span>
+<span class="kw">plot</span>(acer_juco)</code></pre></div>
+</div>
+<div id="smoothing-at-overlap-regions" class="section level3">
+<h3>Smoothing at overlap regions</h3>
+<p>Depending on your analysis, it can be a good idea to smooth remaining noise at the sensor overlap regions. <code>spectrolab</code> comes with two implemented smoothing functions: <code>smoo_visnir</code> uses a moving average between 970 - 1025 nm. <code>smoo_nirswir</code> uses linear interpolation between 1903 - 1917 nm. Note: Ms. A does not do this when predicting traits from spectra.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">### Smooth only VIS/NIR or NIR/SWIR
+Acer_smoo1 &lt;-<span class="st"> </span><span class="kw">smoo.visnir.svc</span>(Acer_juco)
+Acer_smoo2 &lt;-<span class="st"> </span><span class="kw">smoo.nirswir.svc</span>(Acer_juco)
+
+### Smooth both regions
+Acer_smoo &lt;-<span class="st"> </span><span class="kw">smoo.nirswir.svc</span>(Acer_smoo1)
+### Same result
+Acer_smoo &lt;-<span class="st"> </span><span class="kw">smoo.visnir.svc</span>(Acer_smoo2)</code></pre></div>
 </div>
 </div>
 <div id="excluding-unusual-spectra" class="section level2">
