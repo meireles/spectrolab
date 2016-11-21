@@ -36,7 +36,7 @@ jump_corr <- function (spec) {
 
     # interpolate to 1 nm spectral resolution
     library(prospectr)
-    devtools::use_package("prospectr",type = "Imports", pkg=".")
+    devtools::use_package("prospectr",type = "Depends")
     wavi <- c(ceiling(wvl1)[1]:floor(wvl1)[length(wvl1)])
     dat11 <- prospectr::resample (dat1, wvl1, wavi, interpol="spline")
     wvl11 <- wavi
