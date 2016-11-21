@@ -20,6 +20,5 @@ Jump correction of spectra
 \dontrun{
 jump_corr("raw_spectra_Acer")
 }
-
 }
 
