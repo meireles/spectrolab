@@ -250,16 +250,22 @@ acer_spectra &lt;-<span class="st"> </span><span class="kw">read_spectra</span>(
 <span class="co"># Jump correction </span>
 acer_juco &lt;-<span class="st"> </span><span class="kw">jump_corr</span>(acer_spectra)
 
-<span class="co"># Looks better!</span>
+<span class="co"># This looks better!</span>
 <span class="kw">plot</span>(acer_juco)</code></pre></div>
 </div>
 <div id="vector-normalisation" class="section level3">
 <h3>Vector normalisation</h3>
-<p>Treating each spectrum as a vector and standarizing it to unity length is a great way to remove brightness differences between measurements (e.g. due to changing lamp power), while preserving the shape of the spectrum (it’s information content). Vector normalization is implemented in <code>spectrolab</code>’s <code>normalize_spectra()</code> function. Note: If you want to use <em>Ms. A’s</em> trait coefficients, you need to use vector normalized spectra as input.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Perform vector normalization</span>
-acer_vn &lt;-<span class="st"> </span><span class="kw">normalize_spectra</span>(acer_juco)
+<p>Treating each spectrum as a vector and standarizing it to unity length is a great way to remove brightness differences between measurements (e.g. due to changing lamp power), while preserving the shape of the spectrum (it’s information content). Vector normalization is implemented in <code>spectrolab</code>’s <code>normalize_spectra()</code> function. Note: If you want to use <em>Ms. A’s</em> trait coefficients, you need to use vector normalized spectra, limited to the 400 - 2400 nm wavelength range as input.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subset jump corrected spectra to 400 - 2400 nm </span>
+acer_sub &lt;-<span class="st"> </span>acer_juco[, <span class="dv">400</span>:<span class="dv">2400</span>]
 
-<span class="co"># and plot result</span>
+<span class="co"># and check result</span>
+<span class="kw">plot</span>(acer_sub)
+
+<span class="co"># Perform vector normalization</span>
+acer_vn &lt;-<span class="st"> </span><span class="kw">normalize_spectra</span>(acer_sub)
+
+<span class="co"># and check result</span>
 <span class="kw">plot</span>(acer_vn)</code></pre></div>
 </div>
 <div id="smoothing-at-overlap-regions-coming-soon" class="section level3">
