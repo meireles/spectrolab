@@ -35,7 +35,8 @@ jump_corr <- function (spec) {
     wvl3 <- wvlx [which.max(wvlx < cummax(wvlx)):length(wvlx)]
 
     # interpolate to 1 nm spectral resolution
-    devtools::use_package("prospectr",type = "Imports")
+    library(prospectr)
+    devtools::use_package("prospectr",type = "Imports", pkg=".")
     wavi <- c(ceiling(wvl1)[1]:floor(wvl1)[length(wvl1)])
     dat11 <- prospectr::resample (dat1, wvl1, wavi, interpol="spline")
     wvl11 <- wavi
