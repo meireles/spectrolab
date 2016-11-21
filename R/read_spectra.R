@@ -1,7 +1,7 @@
 #' Read files from various formats into `spectra`
 #'
 #' @param path Path to directory or input files
-#' @param format file formats. Currently the only option is "sig" (for SVC).
+#' @param format file formats. Currently the only option is "sig" or "svc" (for SVC).
 #' @param include_white_ref boolean. include white reference. NOT IMPLEMENTED YET
 #' @param recursive read files recursively
 #' @param exclude_if_matches exludes files that match this regular exptession.

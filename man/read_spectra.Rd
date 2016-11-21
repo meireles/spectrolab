@@ -10,7 +10,7 @@ read_spectra(path, format, include_white_ref = FALSE, recursive = FALSE,
 \arguments{
 \item{path}{Path to directory or input files}
 
-\item{format}{file formats. Currently the only option is "sig" (for SVC).}
+\item{format}{file formats. Currently the only option is "sig" or "svc" (for SVC).}
 
 \item{include_white_ref}{boolean. include white reference. NOT IMPLEMENTED YET}
 
