@@ -14,4 +14,4 @@ devtools::install_github("annakat/spectrolab")
 Using `spectrolab`
 --------------
 
-There is a vignette that[introduces the package](https://github.com/annakat/spectrolab/blob/master/vignettes/introduction_to_spectrolab.Rmd).
+There is a vignette that [introduces the package](https://github.com/annakat/spectrolab/blob/master/vignettes/introduction_to_spectrolab.Rmd).
