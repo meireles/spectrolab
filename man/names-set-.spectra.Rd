@@ -4,10 +4,10 @@
 \alias{names<-.spectra}
 \title{Set spectra sample names}
 \usage{
-\method{names}{spectra}(spec) <- value
+\method{names}{spectra}(x) <- value
 }
 \arguments{
-\item{spec}{spectra object (lhs)}
+\item{x}{spectra object (lhs)}
 
 \item{value}{values to be assigned (rhs)}
 }

@@ -4,13 +4,15 @@
 \alias{as.matrix.spectra}
 \title{Convert spectra to matrix}
 \usage{
-\method{as.matrix}{spectra}(spec, fix_names = "none")
+\method{as.matrix}{spectra}(x, fix_names = "none", ...)
 }
 \arguments{
-\item{spec}{spectra object}
+\item{x}{spectra object}
 
 \item{fix_names}{Use make.names to normalize names?
 Pick one: "none" "row" "col" "both".}
+
+\item{...}{does nothing}
 }
 \value{
 matrix of spectral reflectance. columns are wavelengths and rows are

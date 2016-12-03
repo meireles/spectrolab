@@ -155,18 +155,18 @@ names.spectra = function(x){
 #'
 #' \code{names} assigns sample names to lhs
 #'
-#' @param spec spectra object (lhs)
+#' @param x spectra object (lhs)
 #' @param value values to be assigned (rhs)
 #'
 #' @return nothing. called for its side effect.
 #' @export
-`names<-.spectra` = function(spec, value){
+`names<-.spectra` = function(x, value){
 
     ## Length of samples in spec
-    nsampl = length(spec$names)
+    nsampl = length(x$names)
 
     ## Make copy of spec
-    spec_p = spec
+    spec_p = x
 
     ## Assign sample names
     spec_p$names = value
@@ -177,10 +177,10 @@ names.spectra = function(x){
     new_name = i_names(spec_p$names, nsampl)
 
     ## Assign new names to spec object
-    spec$names = new_name
+    x$names = new_name
 
     ## Return
-    spec
+    x
 }
 
 ########################################
