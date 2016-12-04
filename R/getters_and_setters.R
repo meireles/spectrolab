@@ -162,22 +162,11 @@ names.spectra = function(x){
 #' @export
 `names<-.spectra` = function(x, value){
 
-    ## Length of samples in spec
-    nsampl = length(x$names)
-
-    ## Make copy of spec
-    spec_p = x
-
-    ## Assign sample names
-    spec_p$names = value
-
-    ## Construct sample names using internal constructor. This should:
-    ##  (1) check for all requirements of names, including length
+    ## Assign sample names using sample names using internal constructor.
+    ## This should:
+    ##  (1) check for all requirements of names, including length (i.e. nrow(x))
     ##  (2) throw if requirements are not met.
-    new_name = i_names(spec_p$names, nsampl)
-
-    ## Assign new names to spec object
-    x$names = new_name
+    x$names = i_names(value, nrow(x))
 
     ## Return
     x
