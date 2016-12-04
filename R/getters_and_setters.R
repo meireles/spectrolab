@@ -223,22 +223,11 @@ wavelengths = function(x, return_num = TRUE){
         stop("Object must be of class spectra")
     }
 
-    ## Length of samples in spec
-    nwl = length(x$wavelengths)
-
-    ## Make copy of spec
-    spec_p = x
-
-    ## Assign sample names
-    spec_p$wavelengths = value
-
-    ## Construct wavelengths using internal constructor. This should:
-    ##  (1) check for all requirements of wavelengths, including length
+    ## Assign new wavelength values constructed using the internal constructor.
+    ## This should:
+    ##  (1) check for all requirements of wavelengths, including length (i.e. ncol(x) )
     ##  (2) throw if requirements are not met.
-    new_wl = i_wavelengths(spec_p$wavelengths, nwl)
-
-    ## Assign new wavelength to spec object
-    x$wavelengths = new_wl
+    x$wavelengths = i_wavelengths(value, ncol(x))
 
     ## return
     x
