@@ -96,7 +96,7 @@ read_spectra = function(path,
             x
         }
     } else {
-        stop("outside_01_action must be either `round` or `NA`")
+        stop("outside_01_action must be either `nothing` or `NA`")
     }
 
     #############################################################

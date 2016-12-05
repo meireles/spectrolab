@@ -1,3 +1,43 @@
+#' Minimum reflectance
+#'
+#' \code{min} Returns the minimum reflectance value in a spectra object
+#'
+#' @param ... spectra object
+#' @param na.rm boolean. remove NAs? Defaults to FALSE
+#'
+#' @return single numeric value
+#' @export
+min.spectra = function(...,na.rm = FALSE){
+    min(reflectance(...), na.rm = na.rm)
+}
+
+#' Maximum reflectance
+#'
+#' \code{max} Returns the maximum reflectance value in a spectra object
+#'
+#' @param ... spectra object
+#' @param na.rm boolean. remove NAs? Defaults to FALSE
+#'
+#' @return single numeric value
+#' @export
+max.spectra = function(...,na.rm = FALSE){
+    max(reflectance(...), na.rm = na.rm)
+}
+
+#' Range of reflectance values
+#'
+#' \code{range} Returns the range of (min, max) reflectance values in spectra
+#'
+#' @param ... spectra object
+#' @param na.rm boolean. remove NAs? Defaults to FALSE
+#'
+#' @return tuple of numeric values (min, max)
+#' @export
+range.spectra = function(...,na.rm = FALSE){
+    range(reflectance(...), na.rm = na.rm)
+}
+
+
 #' Get dimension of spectra
 #'
 #' \code{dim} returns a vector with number of samples and bands (wavelengths)
