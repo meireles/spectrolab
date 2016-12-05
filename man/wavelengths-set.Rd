@@ -7,7 +7,7 @@
 wavelengths(x) <- value
 }
 \arguments{
-\item{x}{spectra object (rhs)}
+\item{x}{spectra object (lhs)}
 
 \item{value}{rhs}
 }

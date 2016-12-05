@@ -2,9 +2,12 @@
 % Please edit documentation in R/getters_and_setters.R
 \name{reflectance}
 \alias{reflectance}
+\alias{reflectance.spectra}
 \title{Get spectra reflectance}
 \usage{
 reflectance(x)
+
+\method{reflectance}{spectra}(x)
 }
 \arguments{
 \item{x}{spectra object}
@@ -15,4 +18,8 @@ matrix with samples in rows and wavelengths in columns
 \description{
 \code{reflectance} returns the reflectance matrix from spectra
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{spectra}: Get spectra reflectance
+}}
 

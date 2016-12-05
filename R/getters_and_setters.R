@@ -99,6 +99,7 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 # reflectance
 ########################################
 
+
 #' Get spectra reflectance
 #'
 #' \code{reflectance} returns the reflectance matrix from spectra
@@ -108,12 +109,8 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 #' @return matrix with samples in rows and wavelengths in columns
 #' @export
 reflectance = function(x){
-    if( !is_spectra(x) ){
-        stop("Object must be of class spectra")
-    }
-    x$reflectance
+    UseMethod("reflectance")
 }
-
 
 #' Set spectra reflectance
 #'
@@ -125,14 +122,21 @@ reflectance = function(x){
 #' @return nothing. deleted function
 #' @export
 `reflectance<-` = function(x, value){
-    if( !is_spectra(x) ){
-        stop("Object must be of class spectra")
-    }
+    UseMethod("reflectance<-")
+}
 
+
+#' @describeIn reflectance Get spectra reflectance
+reflectance.spectra = function(x){
+    x$reflectance
+}
+
+
+#' @describeIn reflectance<- Get spectra reflectance
+`reflectance<-.spectra` = function(x, value){
     stop("reflectance() does not allow assignment.
          Please use the x[] <- fuction instead")
 }
-
 
 ########################################
 # sample names
@@ -186,10 +190,26 @@ names.spectra = function(x){
 #' @return vector of wavelengths. numeric if `return_num` = TRUE (default).
 #' @export
 wavelengths = function(x, return_num = TRUE){
-    if( !is_spectra(x) ){
-        stop("Object must be of class spectra")
-    }
+    UseMethod("wavelengths")
+}
 
+
+#' Set wavelength labels
+#'
+#' \code{wavelengths} sets wavelength labels of lhs to the rhs values
+#'
+#' @param x spectra object (lhs)
+#' @param value rhs
+#'
+#' @return nothing. called for its side effect.
+#' @export
+`wavelengths<-` = function(x, value){
+    UseMethod("wavelengths<-")
+}
+
+
+#' @describeIn wavelengths Set spectra wavelength labels
+wavelengths.spectra = function(x, return_num = TRUE) {
     if(return_num){
         return( as.numeric(x$wavelengths) )
     } else {
@@ -198,19 +218,8 @@ wavelengths = function(x, return_num = TRUE){
 }
 
 
-#' Set wavelength labels
-#'
-#' \code{wavelengths} sets wavelength labels of lhs to the rhs values
-#'
-#' @param x spectra object (rhs)
-#' @param value rhs
-#'
-#' @return nothing. called for its side effect.
-#' @export
-`wavelengths<-` = function(x, value){
-    if( !is_spectra(x) ){
-        stop("Object must be of class spectra")
-    }
+#' @describeIn wavelengths<- Set spectra wavelength labels
+`wavelengths<-.spectra` = function(x, value){
 
     ## Assign new wavelength values constructed using the internal constructor.
     ## This should:
