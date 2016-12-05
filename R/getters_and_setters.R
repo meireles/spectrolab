@@ -127,12 +127,14 @@ reflectance = function(x){
 
 
 #' @describeIn reflectance Get spectra reflectance
+#' @export
 reflectance.spectra = function(x){
     x$reflectance
 }
 
 
 #' @describeIn reflectance<- Get spectra reflectance
+#' @export
 `reflectance<-.spectra` = function(x, value){
     stop("reflectance() does not allow assignment.
          Please use the x[] <- fuction instead")
@@ -209,6 +211,7 @@ wavelengths = function(x, return_num = TRUE){
 
 
 #' @describeIn wavelengths Set spectra wavelength labels
+#' @export
 wavelengths.spectra = function(x, return_num = TRUE) {
     if(return_num){
         return( as.numeric(x$wavelengths) )
@@ -219,6 +222,7 @@ wavelengths.spectra = function(x, return_num = TRUE) {
 
 
 #' @describeIn wavelengths<- Set spectra wavelength labels
+#' @export
 `wavelengths<-.spectra` = function(x, value){
 
     ## Assign new wavelength values constructed using the internal constructor.
