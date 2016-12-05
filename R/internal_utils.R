@@ -47,3 +47,18 @@ i_plot_boundaries = function(return_mat = FALSE) {
     }
     bounds
 }
+
+
+#' Moving Average
+#'
+#' \code{i_mav} computes the moving average of a vector.
+#'
+#' @param x numeric vector
+#' @param n number of points going into the average
+#' @param sides TODO
+#' @references http://stackoverflow.com/questions/743812/calculating-moving-average-in-r
+#'
+#' @return numeric vector
+i_mav = function(x, n = 5, sides = 2){
+    filter(x, rep(1/n, n), sides = sides)
+}
