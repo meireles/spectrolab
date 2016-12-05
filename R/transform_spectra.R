@@ -1,16 +1,20 @@
 #' Vector normalize spectra
 #'
-#' \code{normalize_spectra} returns a spectra obj with vector normalized reflectances
+#' \code{normalize} returns a spectra obj with vector normalized reflectances
 #'
 #' @param x spectra object to be vector normalized
+#' @param ... nothing
 #'
 #' @return spectra object with normalized spectra
 #' @export
-normalize_spectra = function(x){
+normalize = function(x, ...){
+    UseMethod("normalize")
+}
 
-    if( !is_spectra(x) ){
-        stop("Object must be of class spectra")
-    }
+
+#' @describeIn normalize Vector normalize spectra
+#' @export
+normalize.spectra = function(x, ...){
 
     refl            = reflectance(x)
     refl_squared    = refl * refl
@@ -21,8 +25,9 @@ normalize_spectra = function(x){
     # normalize and construct a `spectra` object
     x[] = i_reflectance(refl / magnitudes)
 
+    # TODO
     # add a magnitute attribute to the`spectra` object
-    # spec$magnitudes = magnitudes
+    # it should go to the metadata data.frame...
 
     # return
     x
