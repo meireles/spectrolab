@@ -59,6 +59,6 @@ i_plot_boundaries = function(return_mat = FALSE) {
 #' @references http://stackoverflow.com/questions/743812/calculating-moving-average-in-r
 #'
 #' @return numeric vector
-i_mav = function(x, n = 5, sides = 2){
-    filter(x, rep(1/n, n), sides = sides)
+i_mav = function(x, n = 3, sides = 2){
+    filter(x, rep( (1/n), n), sides = sides)
 }
