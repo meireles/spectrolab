@@ -65,8 +65,6 @@ i_smooth_spline_spectra = function(x, ...){
           nknots = nknots, ...)
 }
 
-
-
 #' Smooth spectra
 #'
 #' \code{smooth} runs each spectrum by a smoothing and returns the spectra
@@ -76,6 +74,12 @@ i_smooth_spline_spectra = function(x, ...){
 #' @param ... additional parameters passed to \code{smooth.spline}.
 #'
 #' @return a spectra object of with smoothed spectra
+#' @export
+smooth = function(x, method = "spline", ...){
+    UseMethod("smooth")
+}
+
+#' @describeIn smooth Smooth spectra
 #' @export
 smooth.spectra = function(x, method = "spline", ...){
     if(method == "spline") {
@@ -88,8 +92,38 @@ smooth.spectra = function(x, method = "spline", ...){
 }
 
 
-resample.spectra = function(x, new_wl, ...) {
-    NULL
+#' Resample spectra
+#'
+#' \code{resample} returns spectra resampled to new wavelengths using smoothing.
+#' Possible to increase or decrease the spectral resolution.
+#'
+#' @param y spectra object
+#' @param new_x numeric vector of wavelengths to sample from spectra
+#' @param ... additional parameters passed to the \code{smooth.spline} function.
+#'
+#' @return spectra object with resampled spectra
+#' @export
+resample = function(x, new_x, ...) {
+    UseMethod("resample")
 }
 
 
+#' @describeIn resample Resample spectra
+#' @export
+resample.spectra = function(y, new_x, ...) {
+    r = range(wavelengths(y))
+
+    if(min(new_x) < r[1] || max(new_x) > r[2]){
+        stop("New wavelength values must be within the data's range: ", r[1], " to ", r[2])
+    }
+
+    s = i_smooth_spline_spectra(y, ...)
+    f = function(o, p){ predict(o, p)[["y"]] }
+    g = lapply(X = s, FUN = f, p = new_x)
+
+    ## Digging in internal bits of the spectra object, which is NOT GOOD
+    y[["wavelengths"]] = i_wavelengths(new_x)
+    y[["reflectance"]] = i_reflectance( do.call(rbind, g) )
+
+    y
+}
