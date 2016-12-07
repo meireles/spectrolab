@@ -103,7 +103,7 @@ smooth.spectra = function(x, method = "spline", ...){
 #'
 #' @return spectra object with resampled spectra
 #' @export
-resample = function(x, new_x, ...) {
+resample = function(y, new_x, ...) {
     UseMethod("resample")
 }
 

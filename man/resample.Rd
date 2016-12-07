@@ -5,16 +5,16 @@
 \alias{resample.spectra}
 \title{Resample spectra}
 \usage{
-resample(x, new_x, ...)
+resample(y, new_x, ...)
 
 \method{resample}{spectra}(y, new_x, ...)
 }
 \arguments{
+\item{y}{spectra object}
+
 \item{new_x}{numeric vector of wavelengths to sample from spectra}
 
 \item{...}{additional parameters passed to the \code{smooth.spline} function.}
-
-\item{y}{spectra object}
 }
 \value{
 spectra object with resampled spectra
