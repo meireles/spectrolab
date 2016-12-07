@@ -4,10 +4,12 @@
 \alias{wavelengths<-}
 \title{Set wavelength labels}
 \usage{
-wavelengths(x) <- value
+wavelengths(x, unsafe = FALSE) <- value
 }
 \arguments{
 \item{x}{spectra object (lhs)}
+
+\item{unsafe}{boolean. Skip safety check? Defaults to FALSE}
 
 \item{value}{rhs}
 }

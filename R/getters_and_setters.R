@@ -201,11 +201,12 @@ wavelengths = function(x, return_num = TRUE){
 #' \code{wavelengths} sets wavelength labels of lhs to the rhs values
 #'
 #' @param x spectra object (lhs)
+#' @param unsafe boolean. Skip safety check? Defaults to FALSE
 #' @param value rhs
 #'
 #' @return nothing. called for its side effect.
 #' @export
-`wavelengths<-` = function(x, value){
+`wavelengths<-` = function(x, unsafe = FALSE, value){
     UseMethod("wavelengths<-")
 }
 
@@ -223,14 +224,17 @@ wavelengths.spectra = function(x, return_num = TRUE) {
 
 #' @describeIn wavelengths<- Set spectra wavelength labels
 #' @export
-`wavelengths<-.spectra` = function(x, value){
+`wavelengths<-.spectra` = function(x, unsafe = FALSE, value){
 
     ## Assign new wavelength values constructed using the internal constructor.
-    ## This should:
+    ## Unless unsafe == TRUE, this should:
     ##  (1) check for all requirements of wavelengths, including length (i.e. ncol(x) )
     ##  (2) throw if requirements are not met.
-    x$wavelengths = i_wavelengths(value, ncol(x))
-
+    if(unsafe){
+        x$wavelengths = i_wavelengths(value, NULL)
+    } else {
+        x$wavelengths = i_wavelengths(value, ncol(x))
+    }
     ## return
     x
 }
