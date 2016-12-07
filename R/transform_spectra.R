@@ -1,3 +1,7 @@
+################################################################################
+# Vector normalization
+################################################################################
+
 #' Vector normalize spectra
 #'
 #' \code{normalize} returns a spectra obj with vector normalized reflectances
@@ -33,7 +37,9 @@ normalize.spectra = function(x, ...){
     x
 }
 
-
+################################################################################
+# Smoothing functions
+################################################################################
 
 #' Smooth spline functions for spectra
 #'
@@ -79,6 +85,10 @@ smooth = function(x, method = "spline", ...){
     UseMethod("smooth")
 }
 
+#' Smooth function from `stats`
+smooth.default = stats::smooth
+
+
 #' @describeIn smooth Smooth spectra
 #' @export
 smooth.spectra = function(x, method = "spline", ...){
@@ -91,6 +101,9 @@ smooth.spectra = function(x, method = "spline", ...){
     }
 }
 
+################################################################################
+# Resampling spectra
+################################################################################
 
 #' Resample spectra
 #'
@@ -111,19 +124,27 @@ resample = function(y, new_x, ...) {
 #' @describeIn resample Resample spectra
 #' @export
 resample.spectra = function(y, new_x, ...) {
+
+    ## Do not predict points outside the original wavelength range
     r = range(wavelengths(y))
 
     if(min(new_x) < r[1] || max(new_x) > r[2]){
         stop("New wavelength values must be within the data's range: ", r[1], " to ", r[2])
     }
 
+    ## Smooth and predict
     s = i_smooth_spline_spectra(y, ...)
     f = function(o, p){ predict(o, p)[["y"]] }
     g = lapply(X = s, FUN = f, p = new_x)
+    d = i_reflectance( do.call(rbind, g) )
 
-    ## Digging in internal bits of the spectra object, which is NOT GOOD
-    y[["wavelengths"]] = i_wavelengths(new_x)
-    y[["reflectance"]] = i_reflectance( do.call(rbind, g) )
+    ## Wavelength nubmer may change, so using the "safe" setter will fail
+    ## Instead of reaching inside the spectra object, I am using the "unsafe"
+    ## version of the wavelength setter.
+    wavelengths(y, unsafe = TRUE) = new_x
+
+    ## THIS IS BAD. Figure out an "unsafe" version of the reflectance setter
+    y[["reflectance"]] = d
 
     y
 }
