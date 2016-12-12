@@ -15,14 +15,9 @@
 #' @param nsample Integer of expected number of samples.
 #'                If NULL (default) checking is skipped.
 #' @param enforce01 Boolean. enforce reflectance to be between 0.0 and 1.0?
-#'                  Defaults to NULL, which ends up defaulting to FALSE internally
+#'                  Defaults to FALSE
 #' @return data conformable to relative reflectance: numeric matrix
-i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = NULL) {
-
-    # Default enforce01 when param enforce01 == NULL
-    if(is.null(enforce01)) {
-        enforce01 = FALSE
-    }
+i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = FALSE) {
 
     ## test if x dimensions conform to nwavelengths and nsample
     if(is.vector(x)) {

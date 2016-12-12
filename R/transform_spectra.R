@@ -1,4 +1,4 @@
-library("devtools")
+#library("devtools")
 devtools::use_package("parallel")
 
 ################################################################################
