@@ -1,3 +1,6 @@
+library("devtools")
+devtools::use_package("parallel")
+
 ################################################################################
 # Vector normalization
 ################################################################################
@@ -46,11 +49,12 @@ normalize.spectra = function(x, ...){
 #' Gets spline functions for each spectrum in a spectra object
 #'
 #' @param x spectra object
+#' @param parallel boolean. Do computation in parallel? Defaults to TRUE
 #' @param ... additional parameters passed to smooth.spline except nknots, which
 #'            is computed internally
 #'
 #' @return a list of spline functions
-i_smooth_spline_spectra = function(x, ...){
+i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
     if( !is_spectra(x) ){
         stop("Object must be of class spectra")
     }
@@ -64,12 +68,20 @@ i_smooth_spline_spectra = function(x, ...){
     propres = floor(range / resol * scale)
     nknots  = min( propres[propres >= cutres], fullres)
 
-    apply(X      = reflectance(x),
-          MARGIN = 1,
-          FUN    = smooth.spline,
-          x      = wavelengths(x),
-          nknots = nknots, ...)
+    d = reflectance(x)
+    r = lapply( seq.int(nrow(x)), function(y){ d[y, ]})
+    w = wavelengths(x)
+
+    if(parallel) {
+        n = parallel::detectCores()
+        return(parallel::mclapply(r, smooth.spline, x = w, nknots = nknots, mc.cores = n, ...))
+    } else {
+        return(lapply(r, smooth.spline, x = w, nknots = nknots, ...))
+    }
 }
+
+#' Smooth function from `stats`
+smooth.default = stats::smooth
 
 #' Smooth spectra
 #'
@@ -84,10 +96,6 @@ i_smooth_spline_spectra = function(x, ...){
 smooth = function(x, method = "spline", ...){
     UseMethod("smooth")
 }
-
-#' Smooth function from `stats`
-smooth.default = stats::smooth
-
 
 #' @describeIn smooth Smooth spectra
 #' @export

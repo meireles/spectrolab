@@ -22,4 +22,5 @@ Suggests: knitr,
     rmarkdown,
     testthat
 VignetteBuilder: knitr
-Imports: prospectr
+Imports: prospectr,
+    parallel

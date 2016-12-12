@@ -4,10 +4,12 @@
 \alias{i_smooth_spline_spectra}
 \title{Smooth spline functions for spectra}
 \usage{
-i_smooth_spline_spectra(x, ...)
+i_smooth_spline_spectra(x, parallel = TRUE, ...)
 }
 \arguments{
 \item{x}{spectra object}
+
+\item{parallel}{boolean. Do computation in parallel? Defaults to TRUE}
 
 \item{...}{additional parameters passed to smooth.spline except nknots, which
 is computed internally}
