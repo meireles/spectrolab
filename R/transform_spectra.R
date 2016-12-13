@@ -1,4 +1,5 @@
-#library("devtools")
+library("devtools")
+devtools::use_package("devtools")
 devtools::use_package("parallel")
 
 ################################################################################
@@ -53,6 +54,7 @@ normalize.spectra = function(x, ...){
 #' @param ... additional parameters passed to smooth.spline except nknots, which
 #'            is computed internally
 #'
+#' @import parallel
 #' @return a list of spline functions
 i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
     if( !is_spectra(x) ){
