@@ -165,7 +165,9 @@ spectra = function(reflectance,
               wavelengths  = i_wavelengths(wavelengths),
               names        = i_names(names))
 
-    if( ! is.null(meta) ){
+    if( is.null(meta) ){
+        s["meta"] = NULL
+    } else {
         s["meta"] = i_meta(meta, nsample = spl_l, ...)
     }
 
