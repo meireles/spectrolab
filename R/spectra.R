@@ -137,7 +137,7 @@ i_meta = function(x, nsample, ...){
 #'
 #' \code{spectra} "manually" creates a spectra object
 #'
-#' @param reflectance N by M numeric matrix. N samples in rows and M wavelengs
+#' @param reflectance N by M numeric matrix. N samples in rows and M wavelengths
 #'                    in columns
 #' @param wavelengths wavelength names in vector of length M
 #' @param names sample names in vector of length N

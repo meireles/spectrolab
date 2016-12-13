@@ -11,7 +11,7 @@
 
 \item{i}{Sample names (preferred) or index.}
 
-\item{j}{Wavelength labels, as numeric or characeter. Do not use indexes.}
+\item{j}{Wavelength labels, as numeric or character Do not use indexes.}
 }
 \value{
 spectra object

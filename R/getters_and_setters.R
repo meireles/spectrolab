@@ -1,12 +1,12 @@
 #' Get internal indexes for spectra attributes
 #'
-#' \code{i_match_ij_spectra} gets position matching if the relfectance matrix
+#' \code{i_match_ij_spectra} gets position matching if the reflectance matrix
 #'
 #' @param this spectra
 #' @param i sample names or indices
 #' @param j wavelengths, not indices
 #'
-#' @return list if row indices and colimn indices
+#' @return list if row indices and column indices
 i_match_ij_spectra = function(this, i = NULL, j = NULL){
     ## subset by samples i.e. rows
     if(is.null(i)){
@@ -49,7 +49,7 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 #'
 #' @param this spectra object
 #' @param i Sample names (preferred) or index.
-#' @param j Wavelength labels, as numeric or characeter. Do not use indexes.
+#' @param j Wavelength labels, as numeric or character Do not use indexes.
 #'
 #' @return spectra object
 #' @export
@@ -83,14 +83,14 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 }
 
 
-#' Assign reflectance vlaues to spectra
+#' Assign reflectance values to spectra
 #'
 #' \code{`[<-`} assigns the rhs values to spectra
 #'
 #' @param this spectra object (lhs)
 #' @param i sample name
 #' @param j wavelength
-#' @param value value to be asigned (rhs)
+#' @param value value to be assigned (rhs)
 #'
 #' @return nothing. modifies spectra as side effect
 #' @export
@@ -156,7 +156,7 @@ reflectance.spectra = function(x){
 # Reflectance: SIDE EFFECT!
 ########################################
 
-#' Relectance constraint status
+#' reflectance constraint status
 #'
 #' \code{enforce01} gets if a reflectance constraint (0 - 1) is being enforced
 #'
@@ -168,26 +168,26 @@ enforce01 = function(x){
     UseMethod("enforce01")
 }
 
-#' Enforce relectance between 0 and 1
+#' Enforce reflectance between 0 and 1
 #'
-#' \code{enforce01<-} sets or unsets a spectra relcectance constraint (0 - 1)
+#' \code{enforce01<-} sets or unsets a spectra reflectance constraint (0 - 1)
 #'
 #' @param x spectra object
 #' @param value boolean.
 #'
-#' @return nothing. has a **side effect** of changing if a contraint is enforced
+#' @return nothing. has a **side effect** of changing if a constraint is enforced
 #' @export
 `enforce01<-` = function(x, value){
     UseMethod("enforce01<-")
 }
 
-#' @describeIn enforce01 Get relectance constraint status
+#' @describeIn enforce01 Get reflectance constraint status
 #' @export
 enforce01.spectra = function(x){
     attr(x$reflectance, "enforce01")
 }
 
-#' @describeIn enforce01<- Set relectance constraint status
+#' @describeIn enforce01<- Set reflectance constraint status
 #' @export
 `enforce01<-.spectra` = function(x, value){
     if(! is.logical(value)){

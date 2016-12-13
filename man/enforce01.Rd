@@ -3,7 +3,7 @@
 \name{enforce01}
 \alias{enforce01}
 \alias{enforce01.spectra}
-\title{Relectance constraint status}
+\title{reflectance constraint status}
 \usage{
 enforce01(x)
 
@@ -20,6 +20,6 @@ Boolean
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{spectra}: Get relectance constraint status
+\item \code{spectra}: Get reflectance constraint status
 }}
 

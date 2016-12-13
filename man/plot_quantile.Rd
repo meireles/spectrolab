@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting_functions.R
 \name{plot_quantile}
 \alias{plot_quantile}
-\title{Plot plogygon for spectra quantiles}
+\title{Plot polygon for spectra quantiles}
 \usage{
 plot_quantile(spec, total_prob = 0.95, col = rgb(0, 0, 0, 0.1),
   add = FALSE, ...)
@@ -10,7 +10,7 @@ plot_quantile(spec, total_prob = 0.95, col = rgb(0, 0, 0, 0.1),
 \arguments{
 \item{spec}{Spectra object}
 
-\item{total_prob}{Total mass to encompass. Number betwen 0.0 and 1.0}
+\item{total_prob}{Total mass to encompass. Number between 0.0 and 1.0}
 
 \item{col}{Polygon color}
 
@@ -23,6 +23,6 @@ plot_quantile(spec, total_prob = 0.95, col = rgb(0, 0, 0, 0.1),
 nothing. called for its side effect
 }
 \description{
-Plot plogygon for spectra quantiles
+Plot polygon for spectra quantiles
 }
 

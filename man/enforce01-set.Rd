@@ -2,7 +2,7 @@
 % Please edit documentation in R/getters_and_setters.R
 \name{enforce01<-}
 \alias{enforce01<-}
-\title{Enforce relectance between 0 and 1}
+\title{Enforce reflectance between 0 and 1}
 \usage{
 enforce01(x) <- value
 }
@@ -12,9 +12,9 @@ enforce01(x) <- value
 \item{value}{boolean.}
 }
 \value{
-nothing. has a **side effect** of changing if a contraint is enforced
+nothing. has a **side effect** of changing if a constraint is enforced
 }
 \description{
-\code{enforce01<-} sets or unsets a spectra relcectance constraint (0 - 1)
+\code{enforce01<-} sets or unsets a spectra reflectance constraint (0 - 1)
 }
 

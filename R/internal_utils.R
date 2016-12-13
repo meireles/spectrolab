@@ -31,9 +31,9 @@ i_is_index = function(x, max_length, quiet = TRUE){
 }
 
 
-#' Find plot boundaries in user sapce
+#' Find plot boundaries in user space
 #'
-#' \code{i_plot_boundaries} gets plot boundaries in user sapce as matrix or vec
+#' \code{i_plot_boundaries} gets plot boundaries in user space as matrix or vec
 #'
 #' @param return_mat return a matrix instead of vector? defaults to FALSE
 #'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/getters_and_setters.R
 \name{[<-.spectra}
 \alias{[<-.spectra}
-\title{Assign reflectance vlaues to spectra}
+\title{Assign reflectance values to spectra}
 \usage{
 \method{[}{spectra}(this, i, j) <- value
 }
@@ -13,7 +13,7 @@
 
 \item{j}{wavelength}
 
-\item{value}{value to be asigned (rhs)}
+\item{value}{value to be assigned (rhs)}
 }
 \value{
 nothing. modifies spectra as side effect
