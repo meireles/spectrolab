@@ -60,12 +60,26 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 
     m = i_match_ij_spectra(this = this, i = i, j = j)
 
-    ## subset. drop = false is needed to return a matrix instead of vec when nsample = 1
-    this$reflectance  = this$reflectance[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ]
-    this$wavelengths  = this$wavelengths[ m[["c_idx"]] ]
-    this$names        = this$names[ m[["r_idx"]] ]
+    ############################################################################
+    ## Original implementation
+    ##
+    ## must profile. Not good because it doesn't carry over attributes of the
+    ## recletance data. I will try to patch by only re-running the
 
-    this
+    ## subset. drop = false is needed to return a matrix instead of vec when nsample = 1
+    # this$reflectance  = this$reflectance[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ]
+    # this$wavelengths  = this$wavelengths[ m[["c_idx"]] ]
+    # this$names        = this$names[ m[["r_idx"]] ]
+    #
+    # this
+    ############################################################################
+
+    spectra(reflectance = this$reflectance[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ],
+            wavelengths = this$wavelengths[ m[["c_idx"]] ],
+            names       = this$names[ m[["r_idx"]] ],
+            meta        = this$meta[ m[["r_idx"]] ],
+            enforce01   = attr(this$reflectance, "enforce01")
+            )
 }
 
 
@@ -99,7 +113,6 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 # reflectance
 ########################################
 
-
 #' Get spectra reflectance
 #'
 #' \code{reflectance} returns the reflectance matrix from spectra
@@ -114,12 +127,12 @@ reflectance = function(x){
 
 #' Set spectra reflectance
 #'
-#' \code{reflectance} NOT IMPLEMENTED. Use the \code{`[<-`} notation instead.
+#' \code{reflectance} Assigns the rhs to the reflectance of the lhs spectra obj
 #'
 #' @param x spectra object
 #' @param value value to be assigned to the lhs
 #'
-#' @return nothing. deleted function
+#' @return nothing. called for its side effect
 #' @export
 `reflectance<-` = function(x, value){
     UseMethod("reflectance<-")
@@ -136,9 +149,60 @@ reflectance.spectra = function(x){
 #' @describeIn reflectance<- Get spectra reflectance
 #' @export
 `reflectance<-.spectra` = function(x, value){
-    stop("reflectance() does not allow assignment.
-         Please use the x[] <- fuction instead")
+    x[] = value
 }
+
+########################################
+# Reflectance: SIDE EFFECT!
+########################################
+
+#' Relectance constraint status
+#'
+#' \code{enforce01} gets if a reflectance constraint (0 - 1) is being enforced
+#'
+#' @param x spectra object
+#'
+#' @return Boolean
+#' @export
+enforce01 = function(x){
+    UseMethod("enforce01")
+}
+
+#' Enforce relectance between 0 and 1
+#'
+#' \code{enforce01<-} sets or unsets a spectra relcectance constraint (0 - 1)
+#'
+#' @param x spectra object
+#' @param value boolean.
+#'
+#' @return nothing. has a **side effect** of changing if a contraint is enforced
+#' @export
+`enforce01<-` = function(x, value){
+    UseMethod("enforce01<-")
+}
+
+#' @describeIn enforce01 Get relectance constraint status
+#' @export
+enforce01.spectra = function(x){
+    attr(x$reflectance, "enforce01")
+}
+
+#' @describeIn enforce01<- Set relectance constraint status
+#' @export
+`enforce01<-.spectra` = function(x, value){
+    if(! is.logical(value)){
+        stop("value must be boolean")
+    }
+    if(value){
+        if(min(range(x)) < 0 || max(range(x)) > 1.0){
+            stop("Cannot set enforce01 = TRUE because reflectance values outside 0-1 were found. Take care of those refletance values and try again.")
+        }
+    }
+
+    attr(x$reflectance, "enforce01") <- value
+    x
+}
+
 
 ########################################
 # sample names

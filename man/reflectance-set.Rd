@@ -12,9 +12,9 @@ reflectance(x) <- value
 \item{value}{value to be assigned to the lhs}
 }
 \value{
-nothing. deleted function
+nothing. called for its side effect
 }
 \description{
-\code{reflectance} NOT IMPLEMENTED. Use the \code{`[<-`} notation instead.
+\code{reflectance} Assigns the rhs to the reflectance of the lhs spectra obj
 }
 
