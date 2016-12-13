@@ -81,6 +81,7 @@ i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
 }
 
 #' Smooth function from `stats`
+#' @rdname stats::smooth Default smoothing function
 smooth.default = stats::smooth
 
 #' Smooth spectra
