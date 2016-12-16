@@ -2,20 +2,22 @@
 % Please edit documentation in R/getters_and_setters.R
 \name{[.spectra}
 \alias{[.spectra}
-\title{Subsets a spectra object}
+\title{Subset spectra}
 \usage{
-\method{[}{spectra}(this, i, j, verbose = FALSE)
+\method{[}{spectra}(this, i, j)
 }
 \arguments{
-\item{i}{Sample names (preffered) or index.}
+\item{this}{spectra object}
 
-\item{j}{Wavelength labels, as numeric or characeter. Do not use indexes.}
+\item{i}{Sample names (preferred) or index.}
+
+\item{j}{Wavelength labels, as numeric or character Do not use indexes.}
 }
 \value{
 spectra object
 }
 \description{
-Subsets spectra objects by sample names (rows) or wavelengths (columns).
+\code{`[`} Subsets spectra by sample names (rows) or (and) wavelengths (columns)
 }
 \details{
 Subset operations based on samples (first argument) will match either sample

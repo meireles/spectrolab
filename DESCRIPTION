@@ -4,17 +4,17 @@ Title: Class and methods for hyperspectral data
 Version: 0.0.1
 Author: as.person("Jose Eduardo Meireles <meireles@umn.edu> [aut, cre]"), 
     as.person("Anna K. Schweiger <anna.k.schweiger@gmail.com> [aut, cre]")
-Maintainer: Jose Eduardo Meireles <meireles@umn.edu>
+Maintainer: Anna K. Schweiger <anna.k.schweiger@gmail.com>
 Description: Essential functions to process data from portable
     spectrometers. Provides the S3 class `spectra` for spectral data,
-    and methods to access, plot, manipulate data, for perform jump correction,
-    vector normalisation, smoothing at the sensor overlap regions, and
-    filtering out bad measurements. Currently only for SVC (Spectral Vista Inc.).  
-    The goal is to provide a common interface for spectra that other packages can 
+    and methods to access, plot, manipulate data, to perform jump correction,
+    vector normalization, smoothing at the sensor overlap regions, and
+    filtering out bad measurements. Currently only for SVC (Spectral Vista Inc.) data.  
+    Our goal is to provide a common interface for spectra that other packages can 
     build on.
 Depends:
     R (>= 3.2.0)
-License: GPL3
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 5.0.1
@@ -22,3 +22,6 @@ Suggests: knitr,
     rmarkdown,
     testthat
 VignetteBuilder: knitr
+Imports: prospectr,
+    parallel,
+    devtools

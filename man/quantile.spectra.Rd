@@ -2,21 +2,23 @@
 % Please edit documentation in R/descrip_summary_overloads.R
 \name{quantile.spectra}
 \alias{quantile.spectra}
-\title{Compute spectra quantiles by wavelength}
+\title{Compute spectra quantiles}
 \usage{
-\method{quantile}{spectra}(spec, probs = c(0.025, 0.25, 0.5, 0.75, 0.975))
+\method{quantile}{spectra}(x, probs = c(0.025, 0.25, 0.5, 0.75, 0.975), ...)
 }
 \arguments{
-\item{spec}{spectra object}
+\item{x}{spectra object}
 
 \item{probs}{Probabilities to compute quantiles.
 Must be a vector of numerics between 0.0 and 1.0.
 Defaults to c(0.025, 0.25, 0.5, 0.75, 0.975)}
+
+\item{...}{other arguments passed to quantile. not implemented for spectra}
 }
 \value{
 spectra object with one spectrum for each prob
 }
 \description{
-Compute spectra quantiles by wavelength
+\code{quantile} computes quantiles by wavelength and returns them as `spectra`
 }
 

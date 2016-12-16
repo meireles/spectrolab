@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectra.R
 \name{i_names}
 \alias{i_names}
-\title{Construct sample names vector in the appropriate format}
+\title{Internal constructor for sample names}
 \usage{
 i_names(x, nsample = NULL)
 }
@@ -16,6 +16,6 @@ If NULL (default) checking is skipped.}
 vector of sample names
 }
 \description{
-Construct sample names vector in the appropriate format
+\code{i_names} constructs a sample name vector in the appropriate format
 }
 

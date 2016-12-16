@@ -2,17 +2,19 @@
 % Please edit documentation in R/getters_and_setters.R
 \name{reflectance<-}
 \alias{reflectance<-}
-\title{Set reflectance in spectra}
+\title{Set spectra reflectance}
 \usage{
-reflectance(spec) <- value
+reflectance(x) <- value
 }
 \arguments{
-\item{spec}{Spectra object}
+\item{x}{spectra object}
+
+\item{value}{value to be assigned to the lhs}
 }
 \value{
-nothing. deleted function
+nothing. called for its side effect
 }
 \description{
-Set reflectance in spectra
+\code{reflectance} Assigns the rhs to the reflectance of the lhs spectra obj
 }
 

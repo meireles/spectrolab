@@ -2,17 +2,21 @@
 % Please edit documentation in R/getters_and_setters.R
 \name{wavelengths<-}
 \alias{wavelengths<-}
-\title{Set sample names in spectra}
+\title{Set wavelength labels}
 \usage{
-wavelengths(spec) <- value
+wavelengths(x, unsafe = FALSE) <- value
 }
 \arguments{
-\item{spec}{Spectra object}
+\item{x}{spectra object (lhs)}
+
+\item{unsafe}{boolean. Skip safety check? Defaults to FALSE}
+
+\item{value}{rhs}
 }
 \value{
 nothing. called for its side effect.
 }
 \description{
-Set sample names in spectra
+\code{wavelengths} sets wavelength labels of lhs to the rhs values
 }
 

@@ -2,12 +2,15 @@
 % Please edit documentation in R/getters_and_setters.R
 \name{wavelengths}
 \alias{wavelengths}
-\title{Get wavelength labels from spectra}
+\alias{wavelengths.spectra}
+\title{Get spectra wavelength labels}
 \usage{
-wavelengths(spec, return_num = TRUE)
+wavelengths(x, return_num = TRUE)
+
+\method{wavelengths}{spectra}(x, return_num = TRUE)
 }
 \arguments{
-\item{spec}{spectra object}
+\item{x}{spectra object}
 
 \item{return_num}{boolean. return vector of numeric values (default).
 otherwise, a vector of strings is returned}
@@ -16,6 +19,10 @@ otherwise, a vector of strings is returned}
 vector of wavelengths. numeric if `return_num` = TRUE (default).
 }
 \description{
-Get wavelength labels from spectra
+\code{wavelengths} returns a vector of wavelength labels from spectra
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{spectra}: Set spectra wavelength labels
+}}
 

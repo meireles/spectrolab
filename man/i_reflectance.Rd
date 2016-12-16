@@ -2,9 +2,9 @@
 % Please edit documentation in R/spectra.R
 \name{i_reflectance}
 \alias{i_reflectance}
-\title{Implementation of s3 class for spectra}
+\title{Internal constructor for reflectance matrix}
 \usage{
-i_reflectance(x, nwavelengths = NULL, nsample = NULL, enforce01 = NULL)
+i_reflectance(x, nwavelengths = NULL, nsample = NULL, enforce01 = FALSE)
 }
 \arguments{
 \item{x}{numeric matrix, dataframe or vector (in case of single spectrum)}
@@ -16,16 +16,16 @@ If NULL (default) checking is skipped.}
 If NULL (default) checking is skipped.}
 
 \item{enforce01}{Boolean. enforce reflectance to be between 0.0 and 1.0?
-Defaults to NULL, which ends up defaulting to FALSE internally}
+Defaults to FALSE}
 }
 \value{
 data conformable to relative reflectance: numeric matrix
 }
 \description{
-Construct reflectance matrix in the appropriate format
+\code{i_reflectance} constructs reflectance matrix in the appropriate format
 }
 \details{
-Coerces input form different forms into data conformable
-to reflectance, which is a numeric matrix
+Coerces input form different formats into data conformable to reflectance,
+which is a numeric matrix with no dimension names.
 }
 

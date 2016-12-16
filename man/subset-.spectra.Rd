@@ -2,19 +2,23 @@
 % Please edit documentation in R/getters_and_setters.R
 \name{[<-.spectra}
 \alias{[<-.spectra}
-\title{Assign reflectance vlaues to spectra}
+\title{Assign reflectance values to spectra}
 \usage{
 \method{[}{spectra}(this, i, j) <- value
 }
 \arguments{
+\item{this}{spectra object (lhs)}
+
 \item{i}{sample name}
 
 \item{j}{wavelength}
+
+\item{value}{value to be assigned (rhs)}
 }
 \value{
 nothing. modifies spectra as side effect
 }
 \description{
-Assign reflectance vlaues to spectra
+\code{`[<-`} assigns the rhs values to spectra
 }
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/internal_utils.R
 \name{i_is_whole}
 \alias{i_is_whole}
-\title{Test if argument is a whole number}
+\title{Is whole number?}
 \usage{
 i_is_whole(x)
 }
@@ -13,6 +13,6 @@ i_is_whole(x)
 boolean
 }
 \description{
-Test if argument is a whole number
+\code{i_is_whole} Tests if x is (are) whole numbers
 }
 

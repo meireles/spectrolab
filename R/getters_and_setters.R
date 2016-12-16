@@ -1,10 +1,12 @@
-#' Get indexes for spectra object
+#' Get internal indexes for spectra attributes
+#'
+#' \code{i_match_ij_spectra} gets position matching if the reflectance matrix
 #'
 #' @param this spectra
 #' @param i sample names or indices
 #' @param j wavelengths, not indices
 #'
-#' @return list if row indices and colimn indices
+#' @return list if row indices and column indices
 i_match_ij_spectra = function(this, i = NULL, j = NULL){
     ## subset by samples i.e. rows
     if(is.null(i)){
@@ -35,9 +37,9 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 }
 
 
-#' Subsets a spectra object
+#' Subset spectra
 #'
-#' Subsets spectra objects by sample names (rows) or wavelengths (columns).
+#' \code{`[`} Subsets spectra by sample names (rows) or (and) wavelengths (columns)
 #'
 #' Subset operations based on samples (first argument) will match either sample
 #' names or indexes, in that order. That is, if you subset x[1:2 , ] and your
@@ -45,32 +47,50 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 #' c(1, 2) and not (at least necessarily) the first and second samples in the
 #' `spectra` object.
 #'
-#' @param i Sample names (preffered) or index.
-#' @param j Wavelength labels, as numeric or characeter. Do not use indexes.
+#' @param this spectra object
+#' @param i Sample names (preferred) or index.
+#' @param j Wavelength labels, as numeric or character Do not use indexes.
 #'
 #' @return spectra object
 #' @export
-`[.spectra` = function(this, i, j, verbose = FALSE){
+`[.spectra` = function(this, i, j){
 
     if(missing(i)){ i = NULL }
     if(missing(j)){ j = NULL }
 
     m = i_match_ij_spectra(this = this, i = i, j = j)
 
-    ## subset. drop = false is needed to return a matrix instead of vec
-    ## when nsample = 1
-    this$reflectance  = this$reflectance[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ]
-    this$wavelengths  = this$wavelengths[ m[["c_idx"]] ]
-    this$names        = this$names[ m[["r_idx"]] ]
+    ############################################################################
+    ## Original implementation
+    ##
+    ## must profile. Not good because it doesn't carry over attributes of the
+    ## recletance data. I will try to patch by only re-running the
 
-    this
+    ## subset. drop = false is needed to return a matrix instead of vec when nsample = 1
+    # this$reflectance  = this$reflectance[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ]
+    # this$wavelengths  = this$wavelengths[ m[["c_idx"]] ]
+    # this$names        = this$names[ m[["r_idx"]] ]
+    #
+    # this
+    ############################################################################
+
+    spectra(reflectance = this$reflectance[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ],
+            wavelengths = this$wavelengths[ m[["c_idx"]] ],
+            names       = this$names[ m[["r_idx"]] ],
+            meta        = this$meta[ m[["r_idx"]] ],
+            enforce01   = attr(this$reflectance, "enforce01")
+            )
 }
 
 
-#' Assign reflectance vlaues to spectra
+#' Assign reflectance values to spectra
 #'
+#' \code{`[<-`} assigns the rhs values to spectra
+#'
+#' @param this spectra object (lhs)
 #' @param i sample name
 #' @param j wavelength
+#' @param value value to be assigned (rhs)
 #'
 #' @return nothing. modifies spectra as side effect
 #' @export
@@ -93,133 +113,192 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 # reflectance
 ########################################
 
-#' Get the reflectance from spectra
+#' Get spectra reflectance
 #'
-#' @param spec spectra object
+#' \code{reflectance} returns the reflectance matrix from spectra
+#'
+#' @param x spectra object
 #'
 #' @return matrix with samples in rows and wavelengths in columns
 #' @export
-reflectance = function(spec){
-    if( !is_spectra(spec) ){
-        stop("Object must be of class spectra")
-    }
-    spec$reflectance
+reflectance = function(x){
+    UseMethod("reflectance")
 }
 
-
-#' Set reflectance in spectra
+#' Set spectra reflectance
 #'
-#' @param spec Spectra object
+#' \code{reflectance} Assigns the rhs to the reflectance of the lhs spectra obj
 #'
-#' @return nothing. deleted function
+#' @param x spectra object
+#' @param value value to be assigned to the lhs
+#'
+#' @return nothing. called for its side effect
 #' @export
-`reflectance<-` = function(spec, value){
-    if( !is_spectra(spec) ){
-        stop("Object must be of class spectra")
-    }
-
-    stop("reflectance() does not allow assignment.
-         Please use the x[] <- fuction instead")
+`reflectance<-` = function(x, value){
+    UseMethod("reflectance<-")
 }
 
+
+#' @describeIn reflectance Get spectra reflectance
+#' @export
+reflectance.spectra = function(x){
+    x$reflectance
+}
+
+
+#' @describeIn reflectance<- Get spectra reflectance
+#' @export
+`reflectance<-.spectra` = function(x, value){
+    x[] = value
+}
+
+########################################
+# Reflectance: SIDE EFFECT!
+########################################
+
+#' reflectance constraint status
+#'
+#' \code{enforce01} gets if a reflectance constraint (0 - 1) is being enforced
+#'
+#' @param x spectra object
+#'
+#' @return Boolean
+#' @export
+enforce01 = function(x){
+    UseMethod("enforce01")
+}
+
+#' Enforce reflectance between 0 and 1
+#'
+#' \code{enforce01<-} sets or unsets a spectra reflectance constraint (0 - 1)
+#'
+#' @param x spectra object
+#' @param value boolean.
+#'
+#' @return nothing. has a **side effect** of changing if a constraint is enforced
+#' @export
+`enforce01<-` = function(x, value){
+    UseMethod("enforce01<-")
+}
+
+#' @describeIn enforce01 Get reflectance constraint status
+#' @export
+enforce01.spectra = function(x){
+    attr(x$reflectance, "enforce01")
+}
+
+#' @describeIn enforce01<- Set reflectance constraint status
+#' @export
+`enforce01<-.spectra` = function(x, value){
+    if(! is.logical(value)){
+        stop("value must be boolean")
+    }
+    if(value){
+        if(min(range(x)) < 0 || max(range(x)) > 1.0){
+            stop("Cannot set enforce01 = TRUE because reflectance values outside 0-1 were found. Take care of those refletance values and try again.")
+        }
+    }
+
+    attr(x$reflectance, "enforce01") <- value
+    x
+}
 
 
 ########################################
 # sample names
 ########################################
 
-#' Get sample names from spectra
+#' Get spectra sample names
 #'
-#' @param spec A spectra object
+#' \code{names} returns a vector of sample names
+#'
+#' @param x spectra object
 #'
 #' @return vector of sample names
 #' @export
-names.spectra = function(spec){
-    spec$names
+names.spectra = function(x){
+    x$names
 }
 
 
-#' Set sample names in spectra
+#' Set spectra sample names
 #'
-#' @param spec spectra object to have their sample names modified
+#' \code{names} assigns sample names to lhs
+#'
+#' @param x spectra object (lhs)
+#' @param value values to be assigned (rhs)
 #'
 #' @return nothing. called for its side effect.
 #' @export
-`names<-.spectra` = function(spec, value){
+`names<-.spectra` = function(x, value){
 
-    ## Length of samples in spec
-    nsampl = length(spec$names)
-
-    ## Make copy of spec
-    spec_p = spec
-
-    ## Assign sample names
-    spec_p$names = value
-
-    ## Construct sample names using internal constructor. This should:
-    ##  (1) check for all requirements of names, including length
+    ## Assign sample names using sample names using internal constructor.
+    ## This should:
+    ##  (1) check for all requirements of names, including length (i.e. nrow(x))
     ##  (2) throw if requirements are not met.
-    new_name = i_names(spec_p$names, nsampl)
-
-    ## Assign new names to spec object
-    spec$names = new_name
+    x$names = i_names(value, nrow(x))
 
     ## Return
-    spec
+    x
 }
 
 ########################################
 # wavelengths
 ########################################
 
-#' Get wavelength labels from spectra
+#' Get spectra wavelength labels
 #'
-#' @param spec spectra object
+#' \code{wavelengths} returns a vector of wavelength labels from spectra
+#'
+#' @param x spectra object
 #' @param return_num boolean. return vector of numeric values (default).
 #'                   otherwise, a vector of strings is returned
 #' @return vector of wavelengths. numeric if `return_num` = TRUE (default).
 #' @export
-wavelengths = function(spec, return_num = TRUE){
-    if( !is_spectra(spec) ){
-        stop("Object must be of class spectra")
-    }
+wavelengths = function(x, return_num = TRUE){
+    UseMethod("wavelengths")
+}
 
+
+#' Set wavelength labels
+#'
+#' \code{wavelengths} sets wavelength labels of lhs to the rhs values
+#'
+#' @param x spectra object (lhs)
+#' @param unsafe boolean. Skip safety check? Defaults to FALSE
+#' @param value rhs
+#'
+#' @return nothing. called for its side effect.
+#' @export
+`wavelengths<-` = function(x, unsafe = FALSE, value){
+    UseMethod("wavelengths<-")
+}
+
+
+#' @describeIn wavelengths Set spectra wavelength labels
+#' @export
+wavelengths.spectra = function(x, return_num = TRUE) {
     if(return_num){
-        return( as.numeric(spec$wavelengths) )
+        return( as.numeric(x$wavelengths) )
     } else {
-        return( as.character(spec$wavelengths) )
+        return( as.character(x$wavelengths) )
     }
 }
 
 
-#' Set sample names in spectra
-#'
-#' @param spec Spectra object
-#'
-#' @return nothing. called for its side effect.
+#' @describeIn wavelengths<- Set spectra wavelength labels
 #' @export
-`wavelengths<-` = function(spec, value){
-    if( !is_spectra(spec) ){
-        stop("Object must be of class spectra")
-    }
+`wavelengths<-.spectra` = function(x, unsafe = FALSE, value){
 
-    ## Length of samples in spec
-    nwl = length(spec$wavelengths)
-
-    ## Make copy of spec
-    spec_p = spec
-
-    ## Assign sample names
-    spec_p$wavelengths = value
-
-    ## Construct wavelengths using internal constructor. This should:
-    ##  (1) check for all requirements of wavelengths, including length
+    ## Assign new wavelength values constructed using the internal constructor.
+    ## Unless unsafe == TRUE, this should:
+    ##  (1) check for all requirements of wavelengths, including length (i.e. ncol(x) )
     ##  (2) throw if requirements are not met.
-    new_wl = i_wavelengths(spec_p$wavelengths, nwl)
-
-    ## Assign new wavelength to spec object
-    spec$wavelengths = new_wl
-
+    if(unsafe){
+        x$wavelengths = i_wavelengths(value, NULL)
+    } else {
+        x$wavelengths = i_wavelengths(value, ncol(x))
+    }
     ## return
-    spec
+    x
 }

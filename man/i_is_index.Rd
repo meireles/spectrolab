@@ -2,7 +2,7 @@
 % Please edit documentation in R/internal_utils.R
 \name{i_is_index}
 \alias{i_is_index}
-\title{Are numbers compatible with being an index?}
+\title{Compatible with being an index?}
 \usage{
 i_is_index(x, max_length, quiet = TRUE)
 }
@@ -11,12 +11,12 @@ i_is_index(x, max_length, quiet = TRUE)
 
 \item{max_length}{max acceptable values for x}
 
-\item{verbose}{get warnings?}
+\item{quiet}{get warnings?}
 }
 \value{
 boolean
 }
 \description{
-Are numbers compatible with being an index?
+\code{i_is_index} Tests if x is (are) fir the requirements of being indices
 }
 

@@ -2,17 +2,17 @@
 % Please edit documentation in R/descrip_summary_overloads.R
 \name{dim.spectra}
 \alias{dim.spectra}
-\title{Get dimension of spectra object}
+\title{Get dimension of spectra}
 \usage{
-\method{dim}{spectra}(spec)
+\method{dim}{spectra}(x)
 }
 \arguments{
-\item{spec}{spectra object}
+\item{x}{spectra object}
 }
 \value{
-tuple of integers. c("n_samples", "n_wavelengths")
+tuple of integers: c("n_samples", "n_wavelengths")
 }
 \description{
-Get dimension of spectra object
+\code{dim} returns a vector with number of samples and bands (wavelengths)
 }
 

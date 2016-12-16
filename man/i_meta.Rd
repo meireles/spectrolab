@@ -2,11 +2,21 @@
 % Please edit documentation in R/spectra.R
 \name{i_meta}
 \alias{i_meta}
-\title{Construct a metadata data.frame in the appropriate format}
+\title{Internal metadata constructor for spectra}
 \usage{
 i_meta(x, nsample, ...)
 }
+\arguments{
+\item{x}{data.frame}
+
+\item{nsample}{number of samples in spectra}
+
+\item{...}{additional arguments passed to as.data.frame}
+}
+\value{
+data.frame
+}
 \description{
-Construct a metadata data.frame in the appropriate format
+\code{i_meta} constructs a metadata data.frame in the appropriate format
 }
 

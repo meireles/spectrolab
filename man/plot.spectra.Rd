@@ -4,11 +4,11 @@
 \alias{plot.spectra}
 \title{Plot spectra}
 \usage{
-\method{plot}{spectra}(spec, ylab = "Reflectance", xlab = "Wavelength",
+\method{plot}{spectra}(x, ylab = "Reflectance", xlab = "Wavelength",
   col = "black", lty = 1, type = "l", ...)
 }
 \arguments{
-\item{spec}{spectra object}
+\item{x}{spectra object}
 
 \item{ylab}{label for y axis. defaults to "Reflectance"}
 

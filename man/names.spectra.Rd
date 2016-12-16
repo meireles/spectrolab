@@ -2,17 +2,17 @@
 % Please edit documentation in R/getters_and_setters.R
 \name{names.spectra}
 \alias{names.spectra}
-\title{Get sample names from spectra}
+\title{Get spectra sample names}
 \usage{
-\method{names}{spectra}(spec)
+\method{names}{spectra}(x)
 }
 \arguments{
-\item{spec}{A spectra object}
+\item{x}{spectra object}
 }
 \value{
 vector of sample names
 }
 \description{
-Get sample names from spectra
+\code{names} returns a vector of sample names
 }
 

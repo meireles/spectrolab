@@ -1,4 +1,6 @@
-#' Test if argument is a whole number
+#' Is whole number?
+#'
+#' \code{i_is_whole} Tests if x is (are) whole numbers
 #'
 #' @param x single value or vector of numbers
 #'
@@ -7,11 +9,13 @@ i_is_whole = function(x){
     as.integer(x) == x
 }
 
-#' Are numbers compatible with being an index?
+#' Compatible with being an index?
+#'
+#' \code{i_is_index} Tests if x is (are) fir the requirements of being indices
 #'
 #' @param x numeric values
 #' @param max_length max acceptable values for x
-#' @param verbose get warnings?
+#' @param quiet get warnings?
 #'
 #' @return boolean
 i_is_index = function(x, max_length, quiet = TRUE){
@@ -27,9 +31,11 @@ i_is_index = function(x, max_length, quiet = TRUE){
 }
 
 
-#' Get plot boundaries in user sapce
+#' Find plot boundaries in user space
 #'
-#' @param return_mat boolean. return a matrix? defaults to FALSE
+#' \code{i_plot_boundaries} gets plot boundaries in user space as matrix or vec
+#'
+#' @param return_mat return a matrix instead of vector? defaults to FALSE
 #'
 #' @return vector or matrix, depending on return_mat value
 i_plot_boundaries = function(return_mat = FALSE) {
@@ -40,4 +46,19 @@ i_plot_boundaries = function(return_mat = FALSE) {
                         dimnames = list(c("min", "max"), c("x", "y")))
     }
     bounds
+}
+
+
+#' Moving Average
+#'
+#' \code{i_mav} computes the moving average of a vector.
+#'
+#' @param x numeric vector
+#' @param n number of points going into the average
+#' @param sides TODO
+#' @references http://stackoverflow.com/questions/743812/calculating-moving-average-in-r
+#'
+#' @return numeric vector
+i_mav = function(x, n = 3, sides = 2){
+    filter(x, rep( (1/n), n), sides = sides)
 }
