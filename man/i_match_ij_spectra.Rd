@@ -14,9 +14,9 @@ i_match_ij_spectra(this, i = NULL, j = NULL)
 \item{j}{wavelengths, not indices}
 }
 \value{
-list if row indices and colimn indices
+list if row indices and column indices
 }
 \description{
-\code{i_match_ij_spectra} gets position matching if the relfectance matrix
+\code{i_match_ij_spectra} gets position matching if the reflectance matrix
 }
 

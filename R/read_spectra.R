@@ -4,7 +4,7 @@
 #' @param format file formats. Currently the only option is "sig" or "svc" (for SVC).
 #' @param include_white_ref boolean. include white reference. NOT IMPLEMENTED YET
 #' @param recursive read files recursively
-#' @param exclude_if_matches exludes files that match this regular exptession.
+#' @param exclude_if_matches excludes files that match this regular expression.
 #'                           Example: "BAD"
 #' @param outside_01_action what to do with values outside 0 and 1? Options are
 #'                          "NA", which replaces those values with NA or
@@ -96,7 +96,7 @@ read_spectra = function(path,
             x
         }
     } else {
-        stop("outside_01_action must be either `round` or `NA`")
+        stop("outside_01_action must be either `nothing` or `NA`")
     }
 
     #############################################################
@@ -114,10 +114,10 @@ read_spectra = function(path,
 }
 
 
-#' Intenral parser for SVC .sig files
+#' Internal parser for SVC .sig files
 #'
 #' @param file_paths paths for .sig files, already parsed by `read_spectra`
-#' @param include_white_ref NOT USED YET, but should read the wite reference
+#' @param include_white_ref NOT USED YET, but should read the write reference
 #'                          from each `.sig` file
 #' @param outside_01_fun function to deal with reflectance values outside 0.1.
 #' @param ... NOT USED YET

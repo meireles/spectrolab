@@ -31,9 +31,9 @@ i_is_index = function(x, max_length, quiet = TRUE){
 }
 
 
-#' Find plot boundaries in user sapce
+#' Find plot boundaries in user space
 #'
-#' \code{i_plot_boundaries} gets plot boundaries in user sapce as matrix or vec
+#' \code{i_plot_boundaries} gets plot boundaries in user space as matrix or vec
 #'
 #' @param return_mat return a matrix instead of vector? defaults to FALSE
 #'
@@ -46,4 +46,19 @@ i_plot_boundaries = function(return_mat = FALSE) {
                         dimnames = list(c("min", "max"), c("x", "y")))
     }
     bounds
+}
+
+
+#' Moving Average
+#'
+#' \code{i_mav} computes the moving average of a vector.
+#'
+#' @param x numeric vector
+#' @param n number of points going into the average
+#' @param sides TODO
+#' @references http://stackoverflow.com/questions/743812/calculating-moving-average-in-r
+#'
+#' @return numeric vector
+i_mav = function(x, n = 3, sides = 2){
+    filter(x, rep( (1/n), n), sides = sides)
 }

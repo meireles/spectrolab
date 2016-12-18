@@ -8,7 +8,7 @@ spectra(reflectance, wavelengths, names, meta = NULL, enforce01 = FALSE,
   ...)
 }
 \arguments{
-\item{reflectance}{N by M numeric matrix. N samples in rows and M wavelengs
+\item{reflectance}{N by M numeric matrix. N samples in rows and M wavelengths
 in columns}
 
 \item{wavelengths}{wavelength names in vector of length M}

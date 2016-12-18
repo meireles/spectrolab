@@ -2,14 +2,14 @@
 % Please edit documentation in R/read_spectra.R
 \name{i_read_sig}
 \alias{i_read_sig}
-\title{Intenral parser for SVC .sig files}
+\title{Internal parser for SVC .sig files}
 \usage{
 i_read_sig(file_paths, include_white_ref, outside_01_fun, ...)
 }
 \arguments{
 \item{file_paths}{paths for .sig files, already parsed by `read_spectra`}
 
-\item{include_white_ref}{NOT USED YET, but should read the wite reference
+\item{include_white_ref}{NOT USED YET, but should read the write reference
 from each `.sig` file}
 
 \item{outside_01_fun}{function to deal with reflectance values outside 0.1.}
@@ -20,6 +20,6 @@ from each `.sig` file}
 single `spectra` file or list of `spectra`
 }
 \description{
-Intenral parser for SVC .sig files
+Internal parser for SVC .sig files
 }
 

@@ -34,18 +34,20 @@ as.spectra.data.frame = function(x){
     spectra(r, w, s)
 }
 
+
 #' Convert spectra to matrix
 #'
-#' @param spec spectra object
+#' @param x spectra object
 #' @param fix_names Use make.names to normalize names?
 #'                  Pick one: "none" "row" "col" "both".
+#' @param ... does nothing
 #' @return matrix of spectral reflectance. columns are wavelengths and rows are
 #'         samples
 #' @export
-as.matrix.spectra = function(spec, fix_names = "none") {
-    r = reflectance(spec)
-    s = names(spec)
-    w = wavelengths(spec)
+as.matrix.spectra = function(x, fix_names = "none", ...) {
+    r = reflectance(x)
+    s = names(x)
+    w = wavelengths(x)
     o = c("none", "row", "col", "both")
 
     if( length(intersect(fix_names, o)) != 1 ){

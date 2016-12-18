@@ -20,3 +20,17 @@ test_that("enforce01 in ctor == T", {
     expect_error(spectra(rf, wl, nm, enforce01 = T))
 })
 
+test_that("enforce01 getter", {
+    expect_equal(enforce01(spectra(rf, wl, nm)), FALSE)
+    expect_equal(enforce01(spectra(rf01, wl, nm, enforce01 = TRUE)), TRUE)
+})
+
+test_that("enforce01 setter", {
+    s   = spectra(rf, wl, nm)
+    expect_error(enforce01(s) <- TRUE)
+
+    s01 = spectra(rf01, wl, nm)
+    expect_silent(enforce01(s01) <- TRUE)
+    enforce01(s01) = TRUE
+    expect_true(enforce01(s01) == TRUE)
+})

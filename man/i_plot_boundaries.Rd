@@ -2,7 +2,7 @@
 % Please edit documentation in R/internal_utils.R
 \name{i_plot_boundaries}
 \alias{i_plot_boundaries}
-\title{Find plot boundaries in user sapce}
+\title{Find plot boundaries in user space}
 \usage{
 i_plot_boundaries(return_mat = FALSE)
 }
@@ -13,6 +13,6 @@ i_plot_boundaries(return_mat = FALSE)
 vector or matrix, depending on return_mat value
 }
 \description{
-\code{i_plot_boundaries} gets plot boundaries in user sapce as matrix or vec
+\code{i_plot_boundaries} gets plot boundaries in user space as matrix or vec
 }
 

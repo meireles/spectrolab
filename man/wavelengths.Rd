@@ -2,9 +2,12 @@
 % Please edit documentation in R/getters_and_setters.R
 \name{wavelengths}
 \alias{wavelengths}
+\alias{wavelengths.spectra}
 \title{Get spectra wavelength labels}
 \usage{
 wavelengths(x, return_num = TRUE)
+
+\method{wavelengths}{spectra}(x, return_num = TRUE)
 }
 \arguments{
 \item{x}{spectra object}
@@ -18,4 +21,8 @@ vector of wavelengths. numeric if `return_num` = TRUE (default).
 \description{
 \code{wavelengths} returns a vector of wavelength labels from spectra
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{spectra}: Set spectra wavelength labels
+}}
 

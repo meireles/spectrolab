@@ -32,10 +32,10 @@ plot.spectra = function(x,
             ...)
 }
 
-#' Plot plogygon for spectra quantiles
+#' Plot polygon for spectra quantiles
 #'
 #' @param spec Spectra object
-#' @param total_prob Total mass to encompass. Number betwen 0.0 and 1.0
+#' @param total_prob Total mass to encompass. Number between 0.0 and 1.0
 #' @param col Polygon color
 #' @param add If add = FALSE (default), a new plot is created. Otherwise
 #'            (add = T), the quantile is added to the current plot.
