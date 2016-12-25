@@ -223,7 +223,7 @@ plot(spec_from_matrix, col = "blue", lwd = 0.75, cex.axis = 0.75)
 plot(spec_new, col = "orange", lwd = 0.75, add = TRUE)
 ```
 
-## Essential processiong 
+## Essential processing 
 
 ### Jump correction
 

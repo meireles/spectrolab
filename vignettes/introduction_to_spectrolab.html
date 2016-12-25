@@ -12,7 +12,7 @@
 
 <meta name="author" content="Jose Eduardo Meireles, Anna K. Schweiger" />
 
-<meta name="date" content="2016-11-20" />
+<meta name="date" content="2016-12-21" />
 
 <title>Introduction to spectrolab</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Introduction to spectrolab</h1>
 <h4 class="author"><em>Jose Eduardo Meireles, Anna K. Schweiger</em></h4>
-<h4 class="date"><em>2016-11-20</em></h4>
+<h4 class="date"><em>2016-12-21</em></h4>
 
 
 
@@ -236,8 +236,8 @@ spec_new &lt;-<span class="st"> </span>spec_new *<span class="st"> </span><span 
 <span class="kw">plot</span>(spec_from_matrix, <span class="dt">col =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">lwd =</span> <span class="fl">0.75</span>, <span class="dt">cex.axis =</span> <span class="fl">0.75</span>)
 <span class="kw">plot</span>(spec_new, <span class="dt">col =</span> <span class="st">&quot;orange&quot;</span>, <span class="dt">lwd =</span> <span class="fl">0.75</span>, <span class="dt">add =</span> <span class="ot">TRUE</span>)</code></pre></div>
 </div>
-<div id="essential-processiong" class="section level2">
-<h2>Essential processiong</h2>
+<div id="essential-processing" class="section level2">
+<h2>Essential processing</h2>
 <div id="jump-correction" class="section level3">
 <h3>Jump correction</h3>
 <p>Some instruments allow you to preserve the sensor overlap regions. This results in duplicated wavelenghts and a “jump” between the VIS/NIR and NIR/SWIR regions. The <code>jump corrector</code> removes the overlap regions between the VIS/NIR and NIR/SWIR regions, respectively, and corrects the spectra to allow a smooth transition, while keeping the information as original as possible. In principle, the algorithm searches for the wavelengths of closest approach in both overlap regions, cuts the spectrum into three pieces, removes the overlap and finds a multiplier to paste the junks back together. No additional smoothing is applied. As a convention, the NIR region is left unchanged.</p>
