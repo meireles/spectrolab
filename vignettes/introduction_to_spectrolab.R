@@ -2,8 +2,8 @@
 #  library("devtools")
 #  install_github("annakat/spectrolab")
 
-## ---- eval=FALSE---------------------------------------------------------
-#  library("spectrolab")
+## ------------------------------------------------------------------------
+library("spectrolab")
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  
@@ -13,7 +13,8 @@
 #  # Read .sig files
 #  acer_spectra <- read_spectra(path = dir_path, format = "sig")
 #  
-#  # Note that `acer_spectra` is a `spectra` object. You can ensure that is true using spectrolab's `is_spectra()` function.
+#  # Note that `acer_spectra` is a `spectra` object.
+#  # You can ensure that this is true using spectrolab's `is_spectra()` function.
 #  
 #  is_spectra(acer_spectra)
 
@@ -21,30 +22,40 @@
 #  # Simply print the object
 #  acer_spectra
 #  
-#  # Get a vector with the dataset dimension
+#  # or look at the vector with the dataset's dimensions
 #  dim(acer_spectra)
+#  
+#  # list the file names
+#  names(acer_spectra)
 #  
 #  # and plot the spectra
 #  plot(acer_spectra)
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  
-#  # Use `exclude_if_matches` to excluded flagged files
+#  # Check the filenames to see if there are any flags
+#  names(acer_spectra)
+#  
+#  # use `exclude_if_matches` to excluded flagged files
 #  acer_spectra <- read_spectra(path = dir_path, format = "sig",   exclude_if_matches = c("BAD","WR"))
 #  
 #  # and check result
 #  plot(acer_spectra)
 
-## ---- eval=FALSE---------------------------------------------------------
-#  spec <- spec_matrix_example
-#  
+## ------------------------------------------------------------------------
+# Read the example data
+spec <- spec_matrix_example
+
+## ---- eval=F-------------------------------------------------------------
 #  # Check out the format of the matrix
 #  spec[1:3, 1:4]
-#  
-#  # To convert it to spectra, simply run
-#  spec_from_matrix <- as.spectra(spec)
-#  
-#  # and again you can plot it to make sure everything worked okay
+
+## ------------------------------------------------------------------------
+# To convert it to spectra, simply run
+spec_from_matrix <- as.spectra(spec)
+
+## ---- eval=F-------------------------------------------------------------
+#  # and again you can plot your data to make sure everything worked okay
 #  plot(spec_from_matrix)
 
 ## ---- eval=F-------------------------------------------------------------
@@ -52,24 +63,22 @@
 #  spec_as_mat = as.matrix(spec_from_matrix, fix_names = "none")
 #  spec_as_mat[1:4, 1:3]
 
-## ---- fig.height=2.5, fig.width=8, eval=F--------------------------------
-#  # Simple spectra plot
-#  par(mfrow = c(1, 3))
-#  plot(spec_from_matrix, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
-#  
-#  # Stand along quantile plot
-#  plot_quantile(spec_from_matrix, total_prob = 0.8, col = rgb(1, 0, 0, 0.5), lwd = 0.5, border = TRUE)
-#  title("80% spectral quantile")
-#  
-#  # Combined quantile and individual spctra plot
-#  # With an added bonus of shading 4 spectral regions
-#  plot(spec_from_matrix, lwd = 0.25, lty = 1, col = "grey50", main="Spectra, quantile and regions")
-#  plot_quantile(spec_from_matrix, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border = FALSE, add = TRUE)
-#  plot_spec_regions(spec_from_matrix, regions = default_spec_regions(), add = TRUE)
+## ---- fig.height=2.5, fig.width=8, dev_svg-------------------------------
+# Simple spectra plot
+par(mfrow = c(1, 3))
+plot(spec_from_matrix, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
+
+# Stand along quantile plot
+plot_quantile(spec_from_matrix, total_prob = 0.8, col = rgb(1, 0, 0, 0.5), lwd = 0.5, border = TRUE)
+title("80% spectral quantile")
+
+# Combined individual spectra, quantiles and shade spectral regions
+plot(spec_from_matrix, lwd = 0.25, lty = 1, col = "grey50", main="Spectra, quantile and regions")
+plot_quantile(spec_from_matrix, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border = FALSE, add = TRUE)
+plot_spec_regions(spec_from_matrix, regions = default_spec_regions(), add = TRUE)
 
 ## ---- eval=F-------------------------------------------------------------
-#  # Get the vector of all sample names
-#  # Note that duplicate sample names are permitted
+#  # Get the vector of all sample names. Note: Duplicated sample names are permitted
 #  n <- names(spec_from_matrix)
 #  n[1:5]
 #  
@@ -94,7 +103,7 @@
 #  ### Check the result
 #  plot(spec_sub)
 #  
-#  # Subset spectra to all entries where sample_name matches "species_8" and wavelength regions
+#  # Subset spectra to all entries where sample_name matches "species_8"
 #  spec_sp8 <- spec_from_matrix["species_8", ]
 #  
 #  # Check the results
@@ -106,21 +115,15 @@
 #  plot_spec_regions(spec_sp8, default_spec_regions(), col = rgb(1, 0.5, 0, 0.1), add = TRUE)
 
 ## ---- eval=F-------------------------------------------------------------
-#  # Subset samples by index should work. It is also okay to subset by wavelength using numerics or characters.
+#  # Subsetting samples by indexes works and so does subsetting wavelengths by numerics or characters.
 #  reflectance(spec_sp8[1,"405"]) == reflectance(spec_sp8[1,405])
-#  
-#  #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
-#  # But remember that you CANNOT use indexes to subset wavelengths!
-#  #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
-#  
-#  # Something that is obvioulsy an index, like using 2 instead of 401 (the 2nd band), will fail.
+
+## ---- eval=F-------------------------------------------------------------
+#  # Something that is obvioulsy an index, like using 2 instead of 401 (the 2nd band
+#  # in our case), will fail.
 #  spec_sp8[ ,2]
 #  
 #  `Error in i_match_ij_spectra(this = this, i = i, j = j) : Wavelength subscript out of bounds. Use wavelength labels instead of raw indices.`
-#  
-#  # However, `spectrolab` canot detect if you meant to get the two last bands when
-#  # you use 2000:2001. It will assume that you wanted wavelengths "2000" and "2001"
-#  # Bottomline, be very careful not to use indexes to subset wavelengths!
 
 ## ---- eval=F-------------------------------------------------------------
 #  spec_new <- spec_from_matrix
@@ -133,7 +136,6 @@
 
 ## ----  fig.height=3, fig.width=4, fig.align="center", eval=F-------------
 #  # Scale reflectance by 0.75
-#  # spec_new[] = reflectance(spec_new) * 0.75
 #  spec_new <- spec_new * 0.75
 #  
 #  # Plot the results
@@ -150,31 +152,39 @@
 #  # Jump correction
 #  acer_juco <- jump_corr(acer_spectra)
 #  
-#  # Looks better!
+#  # This looks better!
 #  plot(acer_juco)
 
 ## ---- eval=F-------------------------------------------------------------
-#  # Perform vector normalization
-#  acer_vn <- normalize_spectra(acer_juco)
+#  # Subset jump corrected spectra to 400 - 2400 nm
+#  acer_sub <- acer_juco[, 400:2400]
 #  
-#  # and plot result
+#  # and check result
+#  plot(acer_sub)
+#  
+#  # Perform vector normalization
+#  acer_vn <- normalize_spectra(acer_sub)
+#  
+#  # and check result
 #  plot(acer_vn)
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  ### Smooth only VIS/NIR or NIR/SWIR
-#  Acer_smoo1 <- smoo.visnir(Acer_juco)
-#  Acer_smoo2 <- smoo.nirswir(Acer_juco)
+#  acer_smoo1 <- smoo.visnir(acer_juco)
+#  acer_smoo2 <- smoo.nirswir(acer_juco)
 #  
 #  ### Smooth both regions
-#  Acer_smoo <- smoo.nirswir.svc(Acer_smoo1)
+#  acer_smoo <- smoo.nirswir.svc(acer_smoo1)
 #  ### Same result
-#  Acer_smoo <- smoo.visnir.svc(Acer_smoo2)
+#  acer_smoo <- smoo.visnir.svc(acer_smoo2)
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  ### Some common examples, see `excl` for more.
-#  ### Exclude spectra with reflectances at the 'NIR shoulder' @ 761 nm <0.3 or >0.65
-#  Acer_excl <- exclhilo(Acer_juco)
+#  # Subset jump corrected spectra to 400 - 2400 nm
+#  acer_sub <- acer_juco[, 400:2400]
 #  
+#  ### Exclude spectra with reflectances at 780 nm (the "NIR shoulder") <0.3 or >0.65
+#  acer_sub1 <- excl_shoulder(acer_sub, refl_high = 0.65, refl_low = 0.3)
+#  plot(acer_sub)
 #  ### Exclude spectra with high reflectances in VIS: @ 450 nm >0.2
 #  Acer_excl <- exclhivis(Acer_juco)
 #  
