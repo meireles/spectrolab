@@ -105,7 +105,12 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
         value = reflectance(value)
     }
 
-    this$reflectance[ m[["r_idx"]], m[["c_idx"]] ] = i_reflectance(value, nwavelengths = l[["c_idx"]], nsample = l[["r_idx"]], enforce01 = e)
+    if(length(unlist(value, recursive = TRUE)) == 1) {
+        this$reflectance[ m[["r_idx"]], m[["c_idx"]] ] = i_reflectance(value, enforce01 = e)
+    } else {
+        this$reflectance[ m[["r_idx"]], m[["c_idx"]] ] = i_reflectance(value, nwavelengths = l[["c_idx"]], nsample = l[["r_idx"]], enforce01 = e)
+    }
+
     this
 }
 
