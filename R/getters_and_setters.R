@@ -105,6 +105,10 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
         value = reflectance(value)
     }
 
+    ## In case `value` is a scalar:
+    ##    1. Do not enforce dimension constraints
+    ##    2. Use default behavior of applying the scalar to all elements in
+    ##       the matrix
     if(length(unlist(value, recursive = TRUE)) == 1) {
         this$reflectance[ m[["r_idx"]], m[["c_idx"]] ] = i_reflectance(value, enforce01 = e)
     } else {
