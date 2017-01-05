@@ -74,14 +74,20 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
     # this
     ############################################################################
 
-    spectra(reflectance = this$reflectance[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ],
-            wavelengths = this$wavelengths[ m[["c_idx"]] ],
-            names       = this$names[ m[["r_idx"]] ],
-            meta        = this$meta[ m[["r_idx"]] ],
-            enforce01   = attr(this$reflectance, "enforce01")
-            )
-}
+    if(length(m[["c_idx"]]) == 1) {
+        out        = this$reflectance[ m[["r_idx"]] , m[["c_idx"]], drop = TRUE ]
+        names(out) = this$names[ m[["r_idx"]] ]
+        return(out)
 
+    } else {
+        out = spectra(reflectance = this$reflectance[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ],
+                      wavelengths = this$wavelengths[ m[["c_idx"]] ],
+                      names       = this$names[ m[["r_idx"]] ],
+                      meta        = this$meta[ m[["r_idx"]] ],
+                      enforce01   = attr(this$reflectance, "enforce01") )
+        return(out)
+    }
+}
 
 #' Assign reflectance values to spectra
 #'
