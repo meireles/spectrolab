@@ -260,11 +260,13 @@ names.spectra = function(x){
 #' \code{wavelengths} returns a vector of wavelength labels from spectra
 #'
 #' @param x spectra object
+#' @param min = NULL
+#' @param max = NULL
 #' @param return_num boolean. return vector of numeric values (default).
 #'                   otherwise, a vector of strings is returned
 #' @return vector of wavelengths. numeric if `return_num` = TRUE (default).
 #' @export
-wavelengths = function(x, return_num = TRUE){
+wavelengths = function(x, min = NULL, max = NULL, return_num = TRUE){
     UseMethod("wavelengths")
 }
 
@@ -286,12 +288,37 @@ wavelengths = function(x, return_num = TRUE){
 
 #' @describeIn wavelengths Set spectra wavelength labels
 #' @export
-wavelengths.spectra = function(x, return_num = TRUE) {
-    if(return_num){
-        return( as.numeric(x$wavelengths) )
-    } else {
-        return( as.character(x$wavelengths) )
+wavelengths.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
+
+    wl = as.numeric(x$wavelengths)
+
+    if(is.null(min) && is.null(max)) {
+        if(return_num) {
+            return( wl )
+        } else {
+            return( as.character(wl) )
+        }
     }
+
+    min = ifelse(is.null(min), min(wl), as.numeric(min))
+    max = ifelse(is.null(max), max(wl), as.numeric(max))
+
+    pick = wl >= min & wl <= max
+
+    if(any(pick)){
+
+        wl = wl[pick]
+
+        if(return_num) {
+            return( wl )
+        } else {
+            return( as.character(wl) )
+        }
+
+    } else {
+        stop("No wavelength matches the given conditions")
+    }
+
 }
 
 
