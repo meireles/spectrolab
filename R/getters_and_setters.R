@@ -60,31 +60,17 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 
     m = i_match_ij_spectra(this = this, i = i, j = j)
 
-    ############################################################################
-    ## Original implementation
-    ##
-    ## must profile. Not good because it doesn't carry over attributes of the
-    ## recletance data. I will try to patch by only re-running the
-
-    ## subset. drop = false is needed to return a matrix instead of vec when nsample = 1
-    # this$reflectance  = this$reflectance[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ]
-    # this$wavelengths  = this$wavelengths[ m[["c_idx"]] ]
-    # this$names        = this$names[ m[["r_idx"]] ]
-    #
-    # this
-    ############################################################################
-
     if(length(m[["c_idx"]]) == 1) {
-        out        = this$reflectance[ m[["r_idx"]] , m[["c_idx"]], drop = TRUE ]
-        names(out) = this$names[ m[["r_idx"]] ]
+        out        = reflectance(this)[ m[["r_idx"]] , m[["c_idx"]], drop = TRUE ]
+        names(out) = names(this)[ m[["r_idx"]] ]
         return(out)
 
     } else {
-        out = spectra(reflectance = this$reflectance[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ],
-                      wavelengths = this$wavelengths[ m[["c_idx"]] ],
-                      names       = this$names[ m[["r_idx"]] ],
-                      meta        = this$meta[ m[["r_idx"]] ],
-                      enforce01   = attr(this$reflectance, "enforce01") )
+        out = spectra(reflectance = reflectance(this)[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ],
+                      wavelengths = wavelengths(this)[ m[["c_idx"]] ],
+                      names       = names(this)[ m[["r_idx"]] ],
+                      meta        = this$meta[ m[["r_idx"]] ],                 ### TODO: Figure out $ operator
+                      enforce01   = enforce01(this) )
         return(out)
     }
 }
@@ -105,7 +91,7 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
     if(missing(j)){ j = NULL }
     m = i_match_ij_spectra(this = this, i = i, j = j)
     l = lapply(m, length)
-    e = attr(this$reflectance, "enforce01")
+    e = enforce01(this)
 
     if(is_spectra(value)){
         value = reflectance(value)
@@ -306,9 +292,8 @@ wavelengths.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
         }
     }
 
-    min = ifelse(is.null(min), min(wl), as.numeric(min))
-    max = ifelse(is.null(max), max(wl), as.numeric(max))
-
+    min  = ifelse(is.null(min), min(wl), as.numeric(min))
+    max  = ifelse(is.null(max), max(wl), as.numeric(max))
     pick = wl >= min & wl <= max
 
     if(any(pick)){

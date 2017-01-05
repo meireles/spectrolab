@@ -47,8 +47,8 @@ range.spectra = function(...,na.rm = FALSE){
 #' @return tuple of integers: c("n_samples", "n_wavelengths")
 #' @export
 dim.spectra = function(x){
-    c("n_samples"     = length(x$names),
-      "n_wavelengths" = length(x$wavelengths))
+    c("n_samples"     = length(names(x)),
+      "n_wavelengths" = length(wavelengths(x)) )
 }
 
 #' Print spectra
@@ -97,11 +97,11 @@ quantile.spectra = function(x,
 
     ## Get quantiles
     f = function(x){ quantile(x,  probs)}
-    y = apply(x$reflectance, 2, f)
+    y = apply(reflectance(x) , 2, f)
 
     ## Return spectra quantile object
     r = spectra(reflectance  = y,
-                wavelengths  = x$wavelengths,
+                wavelengths  = wavelengths(x),
                 names = probs)
     class(r) = c(class(r), "spec_quantile")
     r

@@ -121,41 +121,41 @@ smooth.spectra = function(x, method = "spline", ...){
 #' \code{resample} returns spectra resampled to new wavelengths using smoothing.
 #' Possible to increase or decrease the spectral resolution.
 #'
-#' @param y spectra object
-#' @param new_x numeric vector of wavelengths to sample from spectra
+#' @param x spectra object
+#' @param new_wvls numeric vector of wavelengths to sample from spectra
 #' @param ... additional parameters passed to the \code{smooth.spline} function.
 #'
 #' @return spectra object with resampled spectra
 #' @export
-resample = function(y, new_x, ...) {
+resample = function(x, new_wvls, ...) {
     UseMethod("resample")
 }
 
 
 #' @describeIn resample Resample spectra
 #' @export
-resample.spectra = function(y, new_x, ...) {
+resample.spectra = function(x, new_wvls, ...) {
 
     ## Do not predict points outside the original wavelength range
-    r = range(wavelengths(y))
+    r = range(wavelengths(x))
 
-    if(min(new_x) < r[1] || max(new_x) > r[2]){
+    if(min(new_wvls) < r[1] || max(new_wvls) > r[2]){
         stop("New wavelength values must be within the data's range: ", r[1], " to ", r[2])
     }
 
     ## Smooth and predict
-    s = i_smooth_spline_spectra(y, ...)
+    s = i_smooth_spline_spectra(x, ...)
     f = function(o, p){ predict(o, p)[["y"]] }
-    g = lapply(X = s, FUN = f, p = new_x)
+    g = lapply(X = s, FUN = f, p = new_wvls)
     d = i_reflectance( do.call(rbind, g) )
 
-    ## Wavelength nubmer may change, so using the "safe" setter will fail
+    ## Wavelength number may change, so using the "safe" setter will fail
     ## Instead of reaching inside the spectra object, I am using the "unsafe"
     ## version of the wavelength setter.
-    wavelengths(y, unsafe = TRUE) = new_x
+    wavelengths(x, unsafe = TRUE) = new_wvls
 
     ## THIS IS BAD. Figure out an "unsafe" version of the reflectance setter
-    y[["reflectance"]] = d
+    x[["reflectance"]] = d
 
-    y
+    x
 }

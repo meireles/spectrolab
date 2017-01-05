@@ -11,7 +11,7 @@ i_is_whole = function(x){
 
 #' Compatible with being an index?
 #'
-#' \code{i_is_index} Tests if x is (are) fir the requirements of being indices
+#' \code{i_is_index} Tests if x fit the requirements of being indices
 #'
 #' @param x numeric values
 #' @param max_length max acceptable values for x

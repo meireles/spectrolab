@@ -13,4 +13,3 @@
 is_spectra = function(x){
     inherits(x, "spectra")
 }
-

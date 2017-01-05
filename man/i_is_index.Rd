@@ -17,6 +17,6 @@ i_is_index(x, max_length, quiet = TRUE)
 boolean
 }
 \description{
-\code{i_is_index} Tests if x is (are) fir the requirements of being indices
+\code{i_is_index} Tests if x fit the requirements of being indices
 }
 
