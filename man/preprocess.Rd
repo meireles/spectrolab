@@ -57,7 +57,7 @@ excl_low(acer_spectra, refl_low=0.01, wvl_low=401)
 }
 
 \dontrun{
-excl_low(acer_spectra, wvl_low=770, wvl_high=800, refl_diff=0.02)
+excl_dip(acer_spectra, wvl_low=770, wvl_high=800, refl_diff=0.02)
 }
 
 }

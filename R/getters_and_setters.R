@@ -10,10 +10,10 @@
 i_match_ij_spectra = function(this, i = NULL, j = NULL){
     ## subset by samples i.e. rows
     if(is.null(i)){
-        r_match = seq(nrow(this$reflectance))
+        r_match = seq(nrow(this))
     } else {
-        r_match    = which(this$names %in% i)
-        r_no_match = setdiff(i, this$names)
+        r_match    = which(names(this) %in% i)
+        r_no_match = setdiff(i, names(this))
 
         if( length(r_no_match) != 0 || length(r_no_match) == length(i) ){
             if( i_is_index(i, dim(this)["n_samples"]) ) {
@@ -26,9 +26,9 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 
     ## subset by wavelength. i.e. columns
     if(is.null(j)){
-        c_match = seq(ncol(this$reflectance))
+        c_match = seq(ncol(this))
     } else {
-        c_match = match(j, this$wavelengths)
+        c_match = match(j, wavelengths(this))
         if(any(is.na(c_match))){
             stop("Wavelength subscript out of bounds. Use wavelength labels instead of raw indices.")
         }
