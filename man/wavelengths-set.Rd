@@ -9,7 +9,7 @@ wavelengths(x, unsafe = FALSE) <- value
 \arguments{
 \item{x}{spectra object (lhs)}
 
-\item{unsafe}{boolean. Skip safety check? Defaults to FALSE}
+\item{unsafe}{boolean. Skip length safety check? Defaults to FALSE}
 
 \item{value}{rhs}
 }

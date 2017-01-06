@@ -98,14 +98,13 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
     }
 
     ## In case `value` is a scalar:
-    ##    1. Do not enforce dimension constraints
-    ##    2. Use default behavior of applying the scalar to all elements in
-    ##       the matrix
-    if(length(unlist(value, recursive = TRUE)) == 1) {
-        this$reflectance[ m[["r_idx"]], m[["c_idx"]] ] = i_reflectance(value, enforce01 = e)
-    } else {
-        this$reflectance[ m[["r_idx"]], m[["c_idx"]] ] = i_reflectance(value, nwavelengths = l[["c_idx"]], nsample = l[["r_idx"]], enforce01 = e)
+    ##   1. Do not check for dimension constraints, which leads to
+    ##   2. assiging `value` to all elements in the reflectance matrix
+    if(is.vector(value) && length(value) == 1){
+        l = list(NULL)   ## assign the two elements in `l` to NULL
     }
+
+    this$reflectance[ m[["r_idx"]], m[["c_idx"]] ] = i_reflectance(value, nwavelengths = l[["c_idx"]], nsample = l[["r_idx"]], enforce01 = e)
 
     this
 }
@@ -147,7 +146,7 @@ reflectance.spectra = function(x){
 }
 
 
-#' @describeIn reflectance<- Get spectra reflectance
+#' @describeIn reflectance<- Set spectra reflectance
 #' @export
 `reflectance<-.spectra` = function(x, value){
     x[] = value
@@ -268,7 +267,7 @@ wavelengths = function(x, min = NULL, max = NULL, return_num = TRUE){
 #' \code{wavelengths} sets wavelength labels of lhs to the rhs values
 #'
 #' @param x spectra object (lhs)
-#' @param unsafe boolean. Skip safety check? Defaults to FALSE
+#' @param unsafe boolean. Skip length safety check? Defaults to FALSE
 #' @param value rhs
 #'
 #' @return nothing. called for its side effect.
@@ -282,34 +281,20 @@ wavelengths = function(x, min = NULL, max = NULL, return_num = TRUE){
 #' @export
 wavelengths.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
 
-    wl = as.numeric(x$wavelengths)
-
-    if(is.null(min) && is.null(max)) {
-        if(return_num) {
-            return( wl )
-        } else {
-            return( as.character(wl) )
-        }
-    }
-
-    min  = ifelse(is.null(min), min(wl), as.numeric(min))
-    max  = ifelse(is.null(max), max(wl), as.numeric(max))
+    wl   = as.numeric(x$wavelengths)
+    min  = ifelse(is.null(min), min(wl), as.numeric(min) )
+    max  = ifelse(is.null(max), max(wl), as.numeric(max) )
     pick = wl >= min & wl <= max
 
-    if(any(pick)){
-
-        wl = wl[pick]
-
-        if(return_num) {
-            return( wl )
-        } else {
-            return( as.character(wl) )
-        }
-
-    } else {
+    if(all(!pick)){
         stop("No wavelength matches the given conditions")
     }
 
+    if(!return_num) {
+        wl = as.character(wl)
+    }
+
+    wl[pick]
 }
 
 
