@@ -50,17 +50,20 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 #' @param this spectra object
 #' @param i Sample names (preferred) or index.
 #' @param j Wavelength labels, as numeric or character Do not use indexes.
+#' @param simplify Boolean. If TRUE (default), single band selections
+#'                 are returned as a named vector of reflectance values
 #'
-#' @return spectra object
+#' @return usually a spectra object, but see param `simplify`
 #' @export
-`[.spectra` = function(this, i, j){
+`[.spectra` = function(this, i, j, simplify = TRUE){
 
     if(missing(i)){ i = NULL }
     if(missing(j)){ j = NULL }
 
     m = i_match_ij_spectra(this = this, i = i, j = j)
 
-    if(length(m[["c_idx"]]) == 1) {
+    ## In
+    if(simplify && length(m[["c_idx"]]) == 1) {
         out        = reflectance(this)[ m[["r_idx"]] , m[["c_idx"]], drop = TRUE ]
         names(out) = names(this)[ m[["r_idx"]] ]
         return(out)
