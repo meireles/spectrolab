@@ -9,7 +9,7 @@ meta(x) <- value
 \arguments{
 \item{x}{spectra object (lhs)}
 
-\item{value}{rhs}
+\item{value}{rhs. TODO}
 }
 \value{
 nothing. called for its side effect

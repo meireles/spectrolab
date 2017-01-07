@@ -66,11 +66,24 @@ dim.spectra = function(x){
 #' @author meireles
 #' @export
 print.spectra = function(x, ...){
-    d = dim(x)
-    r = range(wavelengths(x))
+    r_wvl   = range(wavelengths(x))
+    n_met   = names(meta(x))
+    l_met   = length(n_met)
+
+    if(l_met > 4L){
+        n_met = c(n_met, "...")    ## overwriting n_met
+    }
+
     cat("spectra object", "\n")
-    cat("number of samples:", d[1],"\n")
-    cat("wavelength range: ", r[1], " to ", r[2], " (", d[2], " bands)" ,"\n", sep = "")
+    cat("number of samples:", nrow(x),"\n")
+    cat("wavelength range: ", r_wvl[1], " to ", r_wvl[2], " (", ncol(x), " bands)" ,"\n", sep = "")
+
+    if(is.null(n_met)){
+        cat("metadata: none", "\n")
+    } else {
+        cat("metadata (", l_met, "): ", sep = "")
+        cat(paste(n_met, collapse = ", "), sep = "")
+    }
 }
 
 
