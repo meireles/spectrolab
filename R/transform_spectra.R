@@ -56,7 +56,8 @@ normalize.spectra = function(x, ...){
 #'            is computed internally
 #' @return a list of spline functions
 #'
-#' @import parallel
+#' @importFrom parallel detectCores mclapply
+#'
 #' @author meireles
 i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
     if( !is_spectra(x) ){
