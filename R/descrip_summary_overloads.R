@@ -89,6 +89,21 @@ print.spectra = function(x, ...){
 }
 
 
+#' Structure of the spectra object
+#'
+#' @param object spectra object
+#' @param ... additioal args. not implemented
+#' @return prints to console
+#'
+#' @author meireles
+#' @export
+str.spectra = function(object, ...){
+    cat("The structure of a spectra object should be irrelevant.", "\n")
+    cat("To access spectra components, use the provided getters and setters.", "\n\n")
+    print(object)
+}
+
+
 #' Compute spectra quantiles
 #'
 #' \code{quantile} computes quantiles by wavelength and returns them as `spectra`
