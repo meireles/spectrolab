@@ -18,4 +18,7 @@ vector of wavelengths
 \description{
 \code{i_wavelengths} constructs wavelength labels in the appropriate format
 }
+\author{
+meireles
+}
 

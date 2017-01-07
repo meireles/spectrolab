@@ -32,4 +32,7 @@ a single `spectra` or a list of `spectra` (in case files had diff
 \description{
 Read files from various formats into `spectra`
 }
+\author{
+meireles
+}
 

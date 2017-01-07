@@ -19,4 +19,7 @@ list if row indices and column indices
 \description{
 \code{i_match_ij_spectra} gets position matching if the reflectance matrix
 }
+\author{
+meireles
+}
 

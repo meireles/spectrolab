@@ -28,4 +28,7 @@ nothing. called for side effect
 \description{
 Plot spectra
 }
+\author{
+meireles
+}
 

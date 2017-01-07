@@ -15,4 +15,7 @@ spectra object
 \description{
 Convert matrix to spectra
 }
+\author{
+meireles
+}
 

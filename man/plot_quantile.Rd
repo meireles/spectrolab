@@ -25,4 +25,7 @@ nothing. called for its side effect
 \description{
 Plot polygon for spectra quantiles
 }
+\author{
+meireles
+}
 

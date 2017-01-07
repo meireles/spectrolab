@@ -17,4 +17,7 @@ spectra object
 \description{
 Convert matrix or data frame to spectra
 }
+\author{
+meireles
+}
 

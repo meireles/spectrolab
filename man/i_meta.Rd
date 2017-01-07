@@ -19,4 +19,7 @@ data.frame
 \description{
 \code{i_meta} constructs a metadata data.frame in the appropriate format
 }
+\author{
+meireles
+}
 

@@ -34,4 +34,7 @@ spec_regions = cbind("VIS"   = c(begin = 400,  end = 700),
                      "SWIR1" = c(begin = 1550, end = 1800),
                      "SWIR2" = c(begin = 2000, end = 2400))
 }
+\author{
+meireles
+}
 

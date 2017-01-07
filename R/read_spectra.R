@@ -10,9 +10,10 @@
 #'                          "NA", which replaces those values with NA or
 #'                          "nothing" (default).
 #' @param ... nothing yet
-#'
 #' @return a single `spectra` or a list of `spectra` (in case files had diff
 #'         number of wavelengths)
+#'
+#' @author meireles
 #' @export
 read_spectra = function(path,
                         format,
@@ -81,12 +82,7 @@ read_spectra = function(path,
     #########################################
     ## define behaviour refl outside 01
     #########################################
-    # if(outside_01_action == "round"){
-    #     fix_out01 = function(x){
-    #         x[ x < 0.0] = 0.0
-    #         x[ x > 1.0] = 1.0
-    #         x
-    #     }
+
     if(outside_01_action == "nothing"){
             fix_out01 = function(x){ x }
 
@@ -121,8 +117,9 @@ read_spectra = function(path,
 #'                          from each `.sig` file
 #' @param outside_01_fun function to deal with reflectance values outside 0.1.
 #' @param ... NOT USED YET
-#'
 #' @return single `spectra` file or list of `spectra`
+#'
+#' @author meireles
 i_read_sig = function(file_paths,
                       include_white_ref,
                       outside_01_fun,

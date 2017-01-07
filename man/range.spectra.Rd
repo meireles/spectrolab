@@ -17,4 +17,7 @@ tuple of numeric values (min, max)
 \description{
 \code{range} Returns the range of (min, max) reflectance values in spectra
 }
+\author{
+meireles
+}
 

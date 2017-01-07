@@ -19,4 +19,7 @@ nothing. called for its side effect.
 \description{
 \code{wavelengths} sets wavelength labels of lhs to the rhs values
 }
+\author{
+meireles
+}
 

@@ -22,4 +22,7 @@ single `spectra` file or list of `spectra`
 \description{
 Internal parser for SVC .sig files
 }
+\author{
+meireles
+}
 

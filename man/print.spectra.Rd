@@ -17,4 +17,7 @@ nothing. called for side effect
 \description{
 \code{print} prints basic information about the spectra obj to the console
 }
+\author{
+meireles
+}
 

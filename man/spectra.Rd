@@ -28,4 +28,7 @@ spectra object
 \description{
 \code{spectra} "manually" creates a spectra object
 }
+\author{
+meireles
+}
 

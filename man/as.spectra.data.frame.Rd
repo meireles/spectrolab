@@ -15,4 +15,7 @@ spectra object
 \description{
 Convert data.frame to spectra
 }
+\author{
+meireles
+}
 

@@ -5,8 +5,9 @@
 #' @param this spectra
 #' @param i sample names or indices
 #' @param j wavelengths, not indices
-#'
 #' @return list if row indices and column indices
+#'
+#' @author meireles
 i_match_ij_spectra = function(this, i = NULL, j = NULL){
     ## subset by samples i.e. rows
     if(is.null(i)){
@@ -52,8 +53,9 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 #' @param j Wavelength labels, as numeric or character Do not use indexes.
 #' @param simplify Boolean. If TRUE (default), single band selections
 #'                 are returned as a named vector of reflectance values
-#'
 #' @return usually a spectra object, but see param `simplify`
+#'
+#' @author meireles
 #' @export
 `[.spectra` = function(this, i, j, simplify = TRUE){
 
@@ -86,8 +88,9 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 #' @param i sample name
 #' @param j wavelength
 #' @param value value to be assigned (rhs)
-#'
 #' @return nothing. modifies spectra as side effect
+#'
+#' @author meireles
 #' @export
 `[<-.spectra` = function(this, i, j, value){
     if(missing(i)){ i = NULL }
@@ -121,8 +124,9 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 #' \code{reflectance} returns the reflectance matrix from spectra
 #'
 #' @param x spectra object
-#'
 #' @return matrix with samples in rows and wavelengths in columns
+#'
+#' @author meireles
 #' @export
 reflectance = function(x){
     UseMethod("reflectance")
@@ -134,8 +138,9 @@ reflectance = function(x){
 #'
 #' @param x spectra object
 #' @param value value to be assigned to the lhs
-#'
 #' @return nothing. called for its side effect
+#'
+#' @author meireles
 #' @export
 `reflectance<-` = function(x, value){
     UseMethod("reflectance<-")
@@ -164,8 +169,9 @@ reflectance.spectra = function(x){
 #' \code{enforce01} gets if a reflectance constraint (0 - 1) is being enforced
 #'
 #' @param x spectra object
-#'
 #' @return Boolean
+#'
+#' @author meireles
 #' @export
 enforce01 = function(x){
     UseMethod("enforce01")
@@ -177,8 +183,9 @@ enforce01 = function(x){
 #'
 #' @param x spectra object
 #' @param value boolean.
+#' @return nothing. has a *side effect* of changing if a constraint is enforced
 #'
-#' @return nothing. has a **side effect** of changing if a constraint is enforced
+#' @author meireles
 #' @export
 `enforce01<-` = function(x, value){
     UseMethod("enforce01<-")
@@ -216,8 +223,9 @@ enforce01.spectra = function(x){
 #' \code{names} returns a vector of sample names
 #'
 #' @param x spectra object
-#'
 #' @return vector of sample names
+#'
+#' @author meireles
 #' @export
 names.spectra = function(x){
     x$names
@@ -230,18 +238,12 @@ names.spectra = function(x){
 #'
 #' @param x spectra object (lhs)
 #' @param value values to be assigned (rhs)
-#'
 #' @return nothing. called for its side effect.
+#'
+#' @author meireles
 #' @export
 `names<-.spectra` = function(x, value){
-
-    ## Assign sample names using sample names using internal constructor.
-    ## This should:
-    ##  (1) check for all requirements of names, including length (i.e. nrow(x))
-    ##  (2) throw if requirements are not met.
     x$names = i_names(value, nrow(x))
-
-    ## Return
     x
 }
 
@@ -259,6 +261,8 @@ names.spectra = function(x){
 #' @param return_num boolean. return vector of numeric values (default).
 #'                   otherwise, a vector of strings is returned
 #' @return vector of wavelengths. numeric if `return_num` = TRUE (default).
+#'
+#' @author meireles
 #' @export
 wavelengths = function(x, min = NULL, max = NULL, return_num = TRUE){
     UseMethod("wavelengths")
@@ -272,8 +276,9 @@ wavelengths = function(x, min = NULL, max = NULL, return_num = TRUE){
 #' @param x spectra object (lhs)
 #' @param unsafe boolean. Skip length safety check? Defaults to FALSE
 #' @param value rhs
-#'
 #' @return nothing. called for its side effect.
+#'
+#' @author meireles
 #' @export
 `wavelengths<-` = function(x, unsafe = FALSE, value){
     UseMethod("wavelengths<-")
@@ -305,15 +310,73 @@ wavelengths.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
 #' @export
 `wavelengths<-.spectra` = function(x, unsafe = FALSE, value){
 
-    ## Assign new wavelength values constructed using the internal constructor.
-    ## Unless unsafe == TRUE, this should:
-    ##  (1) check for all requirements of wavelengths, including length (i.e. ncol(x) )
-    ##  (2) throw if requirements are not met.
     if(unsafe){
         x$wavelengths = i_wavelengths(value, NULL)
     } else {
         x$wavelengths = i_wavelengths(value, ncol(x))
     }
-    ## return
+    x
+}
+
+
+########################################
+# meta
+########################################
+
+
+#' Get metadata
+#'
+#' \code{meta} returns metadata of spectra
+#'
+#' @param x spectra object
+#' @param i sample index or names
+#' @param k metadata column index or names
+#' @param simplify boolean. defaults to TRUE
+#' @return TODO
+#'
+#' @author meireles
+#' @export
+meta = function(x, i, k, simplify = TRUE){
+    UseMethod("meta")
+}
+
+#' Set metadata
+#'
+#' \code{meta} sets metadata
+#'
+#' @param x spectra object (lhs)
+#' @param value rhs
+#' @return nothing. called for its side effect
+#'
+#' @author meireles
+#' @export
+`meta<-` = function(x, value){
+    UseMethod("meta<-")
+}
+
+#' @describeIn meta get metadata
+#' @export
+meta.spectra = function(x, i, k, simplify = TRUE){
+
+    if(is.null(x$meta)){
+        return(NULL)
+    }
+
+    if(missing(i)){
+        i = seq.int(nrow(x$meta))
+    }
+    if(missing(k)){
+        k = seq.int(ncol(x$meta))
+    }
+
+    m = i_match_ij_spectra(this = x, i = i, j = NULL)
+
+    x$meta[ m[["r_idx"]], k, drop = simplify]
+}
+
+#' @describeIn meta<- set metadata
+#' @export
+`meta<-.spectra` = function(x, value){
+    x$meta = i_meta(value, nrow(x))
     x
 }

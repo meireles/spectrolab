@@ -27,4 +27,7 @@ Possible to increase or decrease the spectral resolution.
 \itemize{
 \item \code{spectra}: Resample spectra
 }}
+\author{
+meireles
+}
 

@@ -21,4 +21,7 @@ nothing. modifies spectra as side effect
 \description{
 \code{`[<-`} assigns the rhs values to spectra
 }
+\author{
+meireles
+}
 

@@ -4,8 +4,9 @@
 #'
 #' @param ... spectra object
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
-#'
 #' @return single numeric value
+#'
+#' @author meireles
 #' @export
 min.spectra = function(...,na.rm = FALSE){
     min(reflectance(...), na.rm = na.rm)
@@ -17,8 +18,9 @@ min.spectra = function(...,na.rm = FALSE){
 #'
 #' @param ... spectra object
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
-#'
 #' @return single numeric value
+#'
+#' @author meireles
 #' @export
 max.spectra = function(...,na.rm = FALSE){
     max(reflectance(...), na.rm = na.rm)
@@ -30,8 +32,9 @@ max.spectra = function(...,na.rm = FALSE){
 #'
 #' @param ... spectra object
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
-#'
 #' @return tuple of numeric values (min, max)
+#'
+#' @author meireles
 #' @export
 range.spectra = function(...,na.rm = FALSE){
     range(reflectance(...), na.rm = na.rm)
@@ -43,8 +46,9 @@ range.spectra = function(...,na.rm = FALSE){
 #' \code{dim} returns a vector with number of samples and bands (wavelengths)
 #'
 #' @param x spectra object
-#'
 #' @return tuple of integers: c("n_samples", "n_wavelengths")
+#'
+#' @author meireles
 #' @export
 dim.spectra = function(x){
     c("n_samples"     = length(names(x)),
@@ -57,8 +61,9 @@ dim.spectra = function(x){
 #'
 #' @param x spectra object
 #' @param ... other arguments passed to print. not implemented for spectra
-#'
 #' @return nothing. called for side effect
+#'
+#' @author meireles
 #' @export
 print.spectra = function(x, ...){
     d = dim(x)
@@ -67,6 +72,7 @@ print.spectra = function(x, ...){
     cat("number of samples:", d[1],"\n")
     cat("wavelength range: ", r[1], " to ", r[2], " (", d[2], " bands)" ,"\n", sep = "")
 }
+
 
 #' Compute spectra quantiles
 #'
@@ -78,6 +84,10 @@ print.spectra = function(x, ...){
 #'              Defaults to c(0.025, 0.25, 0.5, 0.75, 0.975)
 #' @param ... other arguments passed to quantile. not implemented for spectra
 #' @return spectra object with one spectrum for each prob
+#'
+#' @importFrom stats quantile
+#' @author meireles
+#' @export
 quantile.spectra = function(x,
                             probs = c(0.025, 0.25, 0.5, 0.75, 0.975),
                             ...){
@@ -96,7 +106,7 @@ quantile.spectra = function(x,
     }
 
     ## Get quantiles
-    f = function(x){ quantile(x,  probs)}
+    f = function(x){ quantile(x,  probs) }
     y = apply(reflectance(x) , 2, f)
 
     ## Return spectra quantile object

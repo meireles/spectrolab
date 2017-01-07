@@ -20,4 +20,7 @@ a list of spline functions
 \description{
 Gets spline functions for each spectrum in a spectra object
 }
+\author{
+meireles
+}
 

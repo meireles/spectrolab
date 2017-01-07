@@ -17,4 +17,7 @@ nothing. called for its side effect
 \description{
 \code{reflectance} Assigns the rhs to the reflectance of the lhs spectra obj
 }
+\author{
+meireles
+}
 

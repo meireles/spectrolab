@@ -12,8 +12,9 @@ devtools::use_package("parallel")
 #'
 #' @param x spectra object to be vector normalized
 #' @param ... nothing
-#'
 #' @return spectra object with normalized spectra
+#'
+#' @author meireles
 #' @export
 normalize = function(x, ...){
     UseMethod("normalize")
@@ -53,9 +54,10 @@ normalize.spectra = function(x, ...){
 #' @param parallel boolean. Do computation in parallel? Defaults to TRUE
 #' @param ... additional parameters passed to smooth.spline except nknots, which
 #'            is computed internally
+#' @return a list of spline functions
 #'
 #' @import parallel
-#' @return a list of spline functions
+#' @author meireles
 i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
     if( !is_spectra(x) ){
         stop("Object must be of class spectra")
@@ -93,8 +95,9 @@ smooth.default = stats::smooth
 #' @param x spectra object
 #' @param method Choose smoothing method: "spline" (default) or "moving_average"
 #' @param ... additional parameters passed to \code{smooth.spline}.
-#'
 #' @return a spectra object of with smoothed spectra
+#'
+#' @author meireles
 #' @export
 smooth = function(x, method = "spline", ...){
     UseMethod("smooth")
@@ -124,8 +127,9 @@ smooth.spectra = function(x, method = "spline", ...){
 #' @param x spectra object
 #' @param new_wvls numeric vector of wavelengths to sample from spectra
 #' @param ... additional parameters passed to the \code{smooth.spline} function.
-#'
 #' @return spectra object with resampled spectra
+#'
+#' @author meireles
 #' @export
 resample = function(x, new_wvls, ...) {
     UseMethod("resample")

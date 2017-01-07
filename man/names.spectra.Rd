@@ -15,4 +15,7 @@ vector of sample names
 \description{
 \code{names} returns a vector of sample names
 }
+\author{
+meireles
+}
 

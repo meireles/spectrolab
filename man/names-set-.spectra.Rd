@@ -17,4 +17,7 @@ nothing. called for its side effect.
 \description{
 \code{names} assigns sample names to lhs
 }
+\author{
+meireles
+}
 

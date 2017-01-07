@@ -4,14 +4,19 @@
 #'          First column must be the sample label and the remaining columns must
 #'          hold reflectance data.
 #' @return spectra object
+#'
+#' @author meireles
 #' @export
 as.spectra = function(x){
     UseMethod("as.spectra", x)
 }
 
 #' Convert matrix to spectra
+#'
 #' @param x matrix
 #' @return spectra object
+#'
+#' @author meireles
 #' @export
 as.spectra.matrix = function(x){
     r = x[ , -1 ]
@@ -22,9 +27,11 @@ as.spectra.matrix = function(x){
 }
 
 #' Convert data.frame to spectra
+#'
 #' @param x data.frame
 #' @return spectra object
 #'
+#' @author meireles
 #' @export
 as.spectra.data.frame = function(x){
     r = x[ , -1 ]
@@ -43,6 +50,8 @@ as.spectra.data.frame = function(x){
 #' @param ... does nothing
 #' @return matrix of spectral reflectance. columns are wavelengths and rows are
 #'         samples
+#'
+#' @author meireles
 #' @export
 as.matrix.spectra = function(x, fix_names = "none", ...) {
     r = reflectance(x)

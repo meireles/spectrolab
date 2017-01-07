@@ -3,8 +3,9 @@
 #' \code{i_is_whole} Tests if x is (are) whole numbers
 #'
 #' @param x single value or vector of numbers
-#'
 #' @return boolean
+#'
+#' @author meireles
 i_is_whole = function(x){
     as.integer(x) == x
 }
@@ -16,8 +17,9 @@ i_is_whole = function(x){
 #' @param x numeric values
 #' @param max_length max acceptable values for x
 #' @param quiet get warnings?
-#'
 #' @return boolean
+#'
+#' @author meireles
 i_is_index = function(x, max_length, quiet = TRUE){
     if(quiet){
         w = suppressWarnings(i_is_whole(x))
@@ -36,8 +38,9 @@ i_is_index = function(x, max_length, quiet = TRUE){
 #' \code{i_plot_boundaries} gets plot boundaries in user space as matrix or vec
 #'
 #' @param return_mat return a matrix instead of vector? defaults to FALSE
-#'
 #' @return vector or matrix, depending on return_mat value
+#'
+#' @author meireles
 i_plot_boundaries = function(return_mat = FALSE) {
     bounds = setNames(par("usr"), c("xmin", "xmax", "ymin", "ymax"))
 
@@ -56,9 +59,10 @@ i_plot_boundaries = function(return_mat = FALSE) {
 #' @param x numeric vector
 #' @param n number of points going into the average
 #' @param sides TODO
-#' @references http://stackoverflow.com/questions/743812/calculating-moving-average-in-r
-#'
 #' @return numeric vector
+#'
+#' @references http://stackoverflow.com/questions/743812/calculating-moving-average-in-r
+#' @author meireles
 i_mav = function(x, n = 3, sides = 2){
     filter(x, rep( (1/n), n), sides = sides)
 }
