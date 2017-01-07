@@ -345,7 +345,7 @@ meta = function(x, i, k, simplify = TRUE){
 #' \code{meta} sets metadata
 #'
 #' @param x spectra object (lhs)
-#' @param value rhs
+#' @param value rhs. TODO
 #' @return nothing. called for its side effect
 #'
 #' @author meireles
@@ -377,6 +377,13 @@ meta.spectra = function(x, i, k, simplify = TRUE){
 #' @describeIn meta<- set metadata
 #' @export
 `meta<-.spectra` = function(x, value){
-    x$meta = i_meta(value, nrow(x))
+
+    if(is.null(value)){
+        m = NULL
+    } else {
+        m = i_meta(value, nrow(x))
+    }
+
+    x$meta = m
     x
 }
