@@ -69,9 +69,11 @@ print.spectra = function(x, ...){
     r_wvl   = range(wavelengths(x))
     n_met   = names(meta(x))
     l_met   = length(n_met)
+    l_max   = 3L
 
-    if(l_met > 4L){
-        n_met = c(n_met, "...")    ## overwriting n_met
+    if(l_met > l_max){
+        n_met = c( head(n_met, l_max) , "...")    ## overwriting n_met
+        l_met = paste(l_max, "of", l_met)         ## overwriting l_met
     }
 
     cat("spectra object", "\n")
