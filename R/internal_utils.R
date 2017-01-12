@@ -40,7 +40,33 @@ i_is_index = function(x, max_length, all = TRUE, quiet = TRUE){
 }
 
 
-#' Match label od index
+#' Match label
+#'
+#' @param x label vector
+#' @param i picked label or NULL
+#' @return matched indices
+#'
+#' @author meireles
+#' @export
+i_match_label = function(x, i){
+    l = length(x)
+
+    if(missing(i) || is.null(i)){
+        return(seq.int(l))
+    }
+
+    m = which(x %in% i)
+    n = setdiff(i, x)
+
+    if( length(n) != 0 || length(n) == length(i) ){
+        stop("Following labels not found: ", n)
+    }
+
+    m
+}
+
+
+#' Match label or index
 #'
 #' @param x label vector
 #' @param i picked label or idx or NULL
@@ -59,6 +85,8 @@ i_match_label_or_idx = function(x, i){
         return(as.integer(i))
     }
 
+    ## Could use i_match_label here, though that would
+    ## duplicate the is missing check
     m = which(x %in% i)
     n = setdiff(i, x)
 
@@ -68,6 +96,7 @@ i_match_label_or_idx = function(x, i){
 
     m
 }
+
 
 
 #' Find plot boundaries in user space

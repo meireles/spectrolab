@@ -9,32 +9,11 @@
 #'
 #' @author meireles
 i_match_ij_spectra = function(this, i = NULL, j = NULL){
-    ## subset by samples i.e. rows
-    if(is.null(i)){
-        r_match = seq(nrow(this))
-    } else {
-        r_match    = which(names(this) %in% i)
-        r_no_match = setdiff(i, names(this))
 
-        if( length(r_no_match) != 0 || length(r_no_match) == length(i) ){
-            if( i_is_index(i, dim(this)["n_samples"]) ) {
-                r_match = as.integer(i)
-            } else {
-                stop("Sample subscript out of bounds: \n", r_no_match)
-            }
-        }
-    }
+    r_idx = i_match_label_or_idx( names(this) , i)
+    c_idx = i_match_label(wavelengths(this), j)
 
-    ## subset by wavelength. i.e. columns
-    if(is.null(j)){
-        c_match = seq(ncol(this))
-    } else {
-        c_match = match(j, wavelengths(this))
-        if(any(is.na(c_match))){
-            stop("Wavelength subscript out of bounds. Use wavelength labels instead of raw indices.")
-        }
-    }
-    list(r_idx = r_match, c_idx = c_match)
+    list(r_idx = r_idx, c_idx = c_idx)
 }
 
 
@@ -329,14 +308,14 @@ wavelengths.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
 #' \code{meta} returns metadata of spectra
 #'
 #' @param x spectra object
-#' @param i sample index or names
-#' @param k metadata column index or names
+#' @param name metadata column index or name
+#' @param sample sample index or name
 #' @param simplify boolean. defaults to TRUE
 #' @return TODO
 #'
 #' @author meireles
 #' @export
-meta = function(x, i, k, simplify = TRUE){
+meta = function(x, name, sample, simplify = TRUE){
     UseMethod("meta")
 }
 
@@ -356,34 +335,43 @@ meta = function(x, i, k, simplify = TRUE){
 
 #' @describeIn meta get metadata
 #' @export
-meta.spectra = function(x, i, k, simplify = TRUE){
+meta.spectra = function(x, name, sample, simplify = TRUE){
 
     if(is.null(x$meta)){
         return(NULL)
     }
 
-    if(missing(i)){
-        i = seq.int(nrow(x$meta))
-    }
-    if(missing(k)){
-        k = seq.int(ncol(x$meta))
+    if(missing(name)){
+        name = seq.int(ncol(x$meta))
     }
 
-    m = i_match_ij_spectra(this = x, i = i, j = NULL)
+    if(missing(sample)){
+        sample = seq.int(nrow(x$meta))
+    }
 
-    x$meta[ m[["r_idx"]], k, drop = simplify]
+    m = i_match_ij_spectra(this = x, i = sample, j = NULL)
+
+    x$meta[ m[["r_idx"]], name, drop = simplify]
 }
 
 #' @describeIn meta<- set metadata
 #' @export
-`meta<-.spectra` = function(x, value){
+`meta<-.spectra` = function(x, name, sample, value){
+    miss_n = missing(name)
+    miss_s = missing(sample)
 
-    if(is.null(value)){
-        m = NULL
-    } else {
-        m = i_meta(value, nrow(x))
+    ## Case user is deleting all metadata
+    if(is.null(value) && miss_n && miss_s){
+        x$meta = NULL
+        return(x)
     }
 
-    x$meta = m
+    ## Fill name / sample if they were not given
+    if(miss_n){ name = seq.int(ncol(x$meta)) }
+    if(miss_s){ sample = seq.int(nrow(x$meta)) }
+
+    n_meta = names(meta)
+
+    x$meta = i_meta(value, nrow(x))
     x
 }
