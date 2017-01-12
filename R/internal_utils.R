@@ -16,20 +16,57 @@ i_is_whole = function(x){
 #'
 #' @param x numeric values
 #' @param max_length max acceptable values for x
-#' @param quiet get warnings?
+#' @param all boolean. If TRUE, a single logical value is retuned. Else, a vector
+#'                     of length = length(x) is returned
+#' @param quiet boolean. get warnings?
 #' @return boolean
 #'
 #' @author meireles
-i_is_index = function(x, max_length, quiet = TRUE){
+i_is_index = function(x, max_length, all = TRUE, quiet = TRUE){
     if(quiet){
         w = suppressWarnings(i_is_whole(x))
     } else {
         w = i_is_whole(x)
     }
 
-    p = (x > 0 && x <= round(max_length, digits = 0) )
+    p = x > 0 & x <= round(max_length, digits = 0)
+    r = w & p
 
-    all(w) && all(p)
+    if(all){
+        r = all(r)
+    }
+
+    r
+}
+
+
+#' Match label od index
+#'
+#' @param x label vector
+#' @param i picked label or idx or NULL
+#' @return matched indices
+#'
+#' @author meireles
+#' @export
+i_match_label_or_idx = function(x, i){
+    l = length(x)
+
+    if(missing(i) || is.null(i)){
+        return(seq.int(l))
+    }
+
+    if(i_is_index(x = i, max_length = l)){
+        return(as.integer(i))
+    }
+
+    m = which(x %in% i)
+    n = setdiff(i, x)
+
+    if( length(n) != 0 || length(n) == length(i) ){
+        stop("Sample subscript out of bounds: ", n)
+    }
+
+    m
 }
 
 
