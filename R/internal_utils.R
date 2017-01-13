@@ -44,25 +44,45 @@ i_is_index = function(x, max_length, all = TRUE, quiet = TRUE){
 #'
 #' @param x label vector
 #' @param i picked label or NULL
-#' @return matched indices
+#' @param full boolean. If TRUE, a full list of results is returned
+#' @return matched indices, or list in case full = TRUE
 #'
 #' @author meireles
 #' @export
-i_match_label = function(x, i){
+i_match_label = function(x, i, full = FALSE){
+
+    r = list(matched = NULL, unmatched = NULL, not_element = NULL)
     l = length(x)
 
+    ## Case x doesn't exist
+    if(l == 0){
+        stop("Invalid label vector")
+    }
+
+    ## Case i == NULL: return all incices
     if(missing(i) || is.null(i)){
-        return(seq.int(l))
+        r[] = list(seq.int(l), NULL, NULL)
+
+        if(full){
+            return(r)
+        } else {
+            return(r[["matched"]])
+        }
     }
 
     m = which(x %in% i)
+    u = which(! x %in% i)
     n = setdiff(i, x)
 
-    if( length(n) != 0 || length(n) == length(i) ){
-        stop("Following labels not found: ", n)
+    if(full){
+        r[] = list(m, u, n)
+        return(r)
+    } else {
+        if( length(n) != 0 || length(n) == length(i) ){
+            stop("Following labels not found: ", n)
+        }
+        return(m)
     }
-
-    m
 }
 
 
@@ -70,31 +90,36 @@ i_match_label = function(x, i){
 #'
 #' @param x label vector
 #' @param i picked label or idx or NULL
+#' @param full boolean. If TRUE, a full list of results is returned
 #' @return matched indices
 #'
 #' @author meireles
 #' @export
-i_match_label_or_idx = function(x, i){
+i_match_label_or_idx = function(x, i, full = FALSE){
+
     l = length(x)
+    d = i_is_index(x = i, max_length = l, all = FALSE)
 
-    if(missing(i) || is.null(i)){
-        return(seq.int(l))
+    if(any(d)){
+        i = as.integer(i)
+        r = list(matched     = i[d],
+                 unmatched   = setdiff(seq(l), i[d]),
+                 not_element = i[!d])
+
+        if(full){
+            return(r)
+        } else {
+            if( length(r[["not_element"]]) != 0 ){
+                stop("Following labels not found: ", r[["not_element"]])
+            } else {
+                return(r[["matched"]])
+            }
+        }
+
+    } else {
+        return( i_match_label(x, i, full = full) )
     }
 
-    if(i_is_index(x = i, max_length = l)){
-        return(as.integer(i))
-    }
-
-    ## Could use i_match_label here, though that would
-    ## duplicate the is missing check
-    m = which(x %in% i)
-    n = setdiff(i, x)
-
-    if( length(n) != 0 || length(n) == length(i) ){
-        stop("Sample subscript out of bounds: ", n)
-    }
-
-    m
 }
 
 
