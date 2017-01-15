@@ -119,11 +119,17 @@ i_wavelengths = function(x, nwavelengths = NULL) {
 #'
 #' @param x data.frame
 #' @param nsample number of samples in spectra
+#' @param allow_null boolean. If TRUE (default) and x is NULL, the function will
+#'                   return NULL regardless of nsample
 #' @param ... additional arguments passed to as.data.frame
 #' @return data.frame
 #'
 #' @author meireles
-i_meta = function(x, nsample, ...){
+i_meta = function(x, nsample, allow_null = TRUE, ...){
+
+    if(is.null(x) && allow_null){
+        return(x)
+    }
 
     x = as.data.frame(x, row.names = NULL, fix.empty.names = TRUE, ...)
 
