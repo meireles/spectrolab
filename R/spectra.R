@@ -125,7 +125,7 @@ i_wavelengths = function(x, nwavelengths = NULL) {
 #' @author meireles
 i_meta = function(x, nsample, ...){
 
-    x = as.data.frame(x, ...)
+    x = as.data.frame(x, row.names = NULL, fix.empty.names = TRUE, ...)
 
     if( nsample != nrow(x) ){
         stop("The number of columns of meta must be the same as nsample")
