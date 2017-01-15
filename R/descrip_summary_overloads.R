@@ -67,7 +67,7 @@ dim.spectra = function(x){
 #' @export
 print.spectra = function(x, ...){
     r_wvl   = range(wavelengths(x))
-    n_met   = names(meta(x))
+    n_met   = names(meta(x, simplify = FALSE))
     l_met   = length(n_met)
     l_max   = 3L
 
