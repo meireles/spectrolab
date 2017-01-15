@@ -131,11 +131,19 @@ i_meta = function(x, nsample, allow_null = TRUE, ...){
         return(x)
     }
 
-    x = as.data.frame(x, row.names = NULL, fix.empty.names = TRUE, ...)
+    if( ! is.data.frame(x) ){
+        stop("x must be a data.frame")
+    }
 
     if( nsample != nrow(x) ){
         stop("The number of columns of meta must be the same as nsample")
     }
+
+    if(is.null(colnames(x))){
+        stop("metadata elements (columns) must be named")
+    }
+
+    rownames(x) = NULL
 
     x
 }
