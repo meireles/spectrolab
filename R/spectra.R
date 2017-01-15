@@ -177,12 +177,8 @@ spectra = function(reflectance,
                                            enforce01    = enforce01),
               wavelengths  = i_wavelengths(wavelengths),
               names        = i_names(names),
-              meta         = NULL
+              meta         = i_meta(meta, nsample = spl_l, ...)
               )
-
-    if( !is.null(meta) ){
-        s$meta = i_meta(meta, nsample = spl_l, ...)
-    }
 
     structure(s, class = c("spectra"))
 }
