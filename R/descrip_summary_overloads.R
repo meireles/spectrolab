@@ -80,7 +80,7 @@ print.spectra = function(x, ...){
     cat("number of samples:", nrow(x),"\n")
     cat("wavelength range: ", r_wvl[1], " to ", r_wvl[2], " (", ncol(x), " bands)" ,"\n", sep = "")
 
-    if(is.null(n_met)){
+    if(l_met == 0){
         cat("metadata: none", "\n")
     } else {
         cat("metadata (", l_met, "): ", sep = "")
