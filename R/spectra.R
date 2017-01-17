@@ -140,7 +140,7 @@ i_meta = function(x, nsample, allow_null = TRUE, ...){
         stop("The number of columns of meta must be the same as nsample")
     }
 
-    if(is.null(colnames(x))){
+    if(ncol(x) > 0 && is.null(colnames(x))){
         stop("metadata elements (columns) must be named")
     }
 
