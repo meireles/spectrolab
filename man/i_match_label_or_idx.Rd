@@ -4,12 +4,14 @@
 \alias{i_match_label_or_idx}
 \title{Match label or index}
 \usage{
-i_match_label_or_idx(x, i)
+i_match_label_or_idx(x, i, full = FALSE)
 }
 \arguments{
 \item{x}{label vector}
 
 \item{i}{picked label or idx or NULL}
+
+\item{full}{boolean. If TRUE, a full list of results is returned}
 }
 \value{
 matched indices

@@ -5,18 +5,18 @@
 \alias{meta.spectra}
 \title{Get metadata}
 \usage{
-meta(x, name, sample, simplify = TRUE)
+meta(x, label, sample, simplify = FALSE)
 
-\method{meta}{spectra}(x, name, sample, simplify = TRUE)
+\method{meta}{spectra}(x, label = NULL, sample = NULL, simplify = FALSE)
 }
 \arguments{
 \item{x}{spectra object}
 
-\item{name}{metadata column index or name}
+\item{label}{metadata column index or label}
 
 \item{sample}{sample index or name}
 
-\item{simplify}{boolean. defaults to TRUE}
+\item{simplify}{boolean. defaults to FALSE}
 }
 \value{
 TODO

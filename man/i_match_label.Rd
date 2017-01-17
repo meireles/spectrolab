@@ -4,15 +4,17 @@
 \alias{i_match_label}
 \title{Match label}
 \usage{
-i_match_label(x, i)
+i_match_label(x, i, full = FALSE)
 }
 \arguments{
 \item{x}{label vector}
 
 \item{i}{picked label or NULL}
+
+\item{full}{boolean. If TRUE, a full list of results is returned}
 }
 \value{
-matched indices
+matched indices, or list in case full = TRUE
 }
 \description{
 Match label

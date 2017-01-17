@@ -43,7 +43,6 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 
     m = i_match_ij_spectra(this = this, i = i, j = j)
 
-    ## In
     if(simplify && length(m[["c_idx"]]) == 1) {
         out        = reflectance(this)[ m[["r_idx"]] , m[["c_idx"]], drop = TRUE ]
         names(out) = names(this)[ m[["r_idx"]] ]
@@ -53,7 +52,7 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
         out = spectra(reflectance = reflectance(this)[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ],
                       wavelengths = wavelengths(this)[ m[["c_idx"]] ],
                       names       = names(this)[ m[["r_idx"]] ],
-                      meta        = this$meta[ m[["r_idx"]] ],                 ### TODO: Figure out $ operator
+                      meta        = meta(this)[ m[["r_idx"]],  ],
                       enforce01   = enforce01(this) )
         return(out)
     }
@@ -302,20 +301,19 @@ wavelengths.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
 # meta
 ########################################
 
-
 #' Get metadata
 #'
 #' \code{meta} returns metadata of spectra
 #'
 #' @param x spectra object
-#' @param name metadata column index or name
+#' @param label metadata column index or label
 #' @param sample sample index or name
-#' @param simplify boolean. defaults to TRUE
+#' @param simplify boolean. defaults to FALSE
 #' @return TODO
 #'
 #' @author meireles
 #' @export
-meta = function(x, name, sample, simplify = TRUE){
+meta = function(x, label, sample, simplify = FALSE){
     UseMethod("meta")
 }
 
@@ -324,54 +322,96 @@ meta = function(x, name, sample, simplify = TRUE){
 #' \code{meta} sets metadata
 #'
 #' @param x spectra object (lhs)
+# #' @param label metadata column label
+# #' @param sample sample name
 #' @param value rhs. TODO
 #' @return nothing. called for its side effect
 #'
 #' @author meireles
 #' @export
 `meta<-` = function(x, value){
+    # function(x, label, sample, value)
     UseMethod("meta<-")
 }
 
 #' @describeIn meta get metadata
 #' @export
-meta.spectra = function(x, name, sample, simplify = TRUE){
+meta.spectra = function(x, label = NULL, sample = NULL, simplify = FALSE){
 
     if(is.null(x$meta)){
         return(NULL)
     }
 
-    if(missing(name)){
-        name = seq.int(ncol(x$meta))
-    }
-
-    if(missing(sample)){
-        sample = seq.int(nrow(x$meta))
-    }
-
     m = i_match_ij_spectra(this = x, i = sample, j = NULL)
+    l = i_match_label_or_idx(colnames(x$meta), label)
 
-    x$meta[ m[["r_idx"]], name, drop = simplify]
+    x$meta[ m[["r_idx"]], l, drop = simplify]
 }
 
 #' @describeIn meta<- set metadata
 #' @export
-`meta<-.spectra` = function(x, name, sample, value){
-    miss_n = missing(name)
-    miss_s = missing(sample)
-
-    ## Case user is deleting all metadata
-    if(is.null(value) && miss_n && miss_s){
-        x$meta = NULL
-        return(x)
-    }
-
-    ## Fill name / sample if they were not given
-    if(miss_n){ name = seq.int(ncol(x$meta)) }
-    if(miss_s){ sample = seq.int(nrow(x$meta)) }
-
-    n_meta = names(meta)
-
+`meta<-.spectra` = function(x, value){
     x$meta = i_meta(value, nrow(x))
     x
+    #`meta<-.spectra` = function(x, label, sample = NULL, value){
+
+    # m_is_null = is.null(x$meta)
+    # v_is_null = is.null(value)
+    #
+    # ########################################
+    # ## 1st RETURNING block
+    # ########################################
+    #
+    # ## Nothing happening
+    # if(m_is_null && v_is_null){
+    #     return(x)
+    # }
+    #
+    # ## Assignment on blank
+    # ## sample: ignored.
+    # ## label: takes precedence over names in value
+    # if(m_is_null){
+    #     v = as.data.frame(value)
+    #     if(length(label) == length(v)){ colnames(v) = label }
+    #     x$meta = i_meta(v, nrow(x))
+    #     return(x)
+    # }
+    #
+    # ########################################
+    # ## Matching
+    # ########################################
+    #
+    # ## Sample match
+    # s_match     = i_match_label_or_idx(names(x), sample, full = FALSE)
+    # s_match_all = length(s_match) == nrow(x)
+    #
+    # ## Label names
+    # l_match_f   = i_match_label_or_idx(names(x$meta), label, full = TRUE)
+    # l_match     = l_match_f[["matched"]]
+    # l_match_all = length(l_match) == ncol(x$meta)
+    #
+    # ########################################
+    # ## 2nd RETURNING block
+    # ########################################
+    #
+    # ## Removing metadata
+    # if(v_is_null){
+    #     if(l_match_all){
+    #         x$meta = i_meta(NULL, nrow(x))
+    #         return(x)
+    #     } else if(length(l_match) > 0){
+    #         m = x$meta
+    #         m[ , l_match] = NULL
+    #         x$meta = i_meta(m, ncol(x))
+    #         return(x)
+    #     }
+    # }
+    #
+    # ########################################
+    # ## MODIFYING x$meta
+    # ########################################
+    # m = x$meta
+    # m[ s_match, label] = value
+    # x$meta = i_meta(m, nrow(x))
+    # x
 }
