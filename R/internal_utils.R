@@ -45,18 +45,24 @@ i_is_index = function(x, max_length, all = TRUE, quiet = TRUE){
 #' @param x label vector
 #' @param i picked label or NULL
 #' @param full boolean. If TRUE, a full list of results is returned
+#' @param allow_empty_lookup boolean. If TRUE, x is allowed to be NULL. Defaults
+#'        to false
 #' @return matched indices, or list in case full = TRUE
 #'
 #' @author meireles
 #' @export
-i_match_label = function(x, i, full = FALSE){
+i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
 
     r = list(matched = NULL, unmatched = NULL, not_element = NULL)
     l = length(x)
 
     ## Case x doesn't exist
     if(l == 0){
-        stop("Invalid label vector")
+        if(allow_empty_lookup){
+            return(NULL)
+        } else {
+            stop("Invalid label vector (x)")
+        }
     }
 
     ## Case i == NULL: return all incices
@@ -91,14 +97,26 @@ i_match_label = function(x, i, full = FALSE){
 #' @param x label vector
 #' @param i picked label or idx or NULL
 #' @param full boolean. If TRUE, a full list of results is returned
+#' @param allow_empty_lookup boolean. If TRUE, x is allowed to be NULL. Defaults
+#'        to false
 #' @return matched indices
 #'
 #' @author meireles
 #' @export
-i_match_label_or_idx = function(x, i, full = FALSE){
+i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
 
     l = length(x)
+
+    if(l == 0){
+        if(allow_empty_lookup){
+            return(NULL)
+        } else {
+            stop("Invalid label vector (x)")
+        }
+    }
+
     d = i_is_index(x = i, max_length = l, all = FALSE)
+
 
     if(any(d)){
         i = as.integer(i)
