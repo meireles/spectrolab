@@ -128,7 +128,8 @@ i_wavelengths = function(x, nwavelengths = NULL) {
 i_meta = function(x, nsample, allow_null = TRUE, ...){
 
     if(is.null(x) && allow_null){
-        return(x)
+        m = matrix( , nrow = nsample, ncol = 0)
+        return(as.data.frame(m))
     }
 
     if( ! is.data.frame(x) ){
