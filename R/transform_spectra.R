@@ -34,9 +34,8 @@ normalize.spectra = function(x, ...){
     # normalize and construct a `spectra` object
     x[] = i_reflectance(refl / magnitudes)
 
-    # TODO
     # add a magnitute attribute to the`spectra` object
-    # it should go to the metadata data.frame...
+    meta(x, "normalization_magnitude") = magnitudes
 
     # return
     x
