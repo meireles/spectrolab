@@ -322,15 +322,14 @@ meta = function(x, label, sample, simplify = FALSE){
 #' \code{meta} sets metadata
 #'
 #' @param x spectra object (lhs)
-# #' @param label metadata column label
-# #' @param sample sample name
+#' @param label metadata column label
+#' @param sample sample name
 #' @param value rhs. TODO
 #' @return nothing. called for its side effect
 #'
 #' @author meireles
 #' @export
-`meta<-` = function(x, value){
-    # function(x, label, sample, value)
+`meta<-` = function(x, label, sample, value){
     UseMethod("meta<-")
 }
 
@@ -338,80 +337,74 @@ meta = function(x, label, sample, simplify = FALSE){
 #' @export
 meta.spectra = function(x, label = NULL, sample = NULL, simplify = FALSE){
 
-    if(is.null(x$meta)){
-        return(NULL)
+    if(ncol(x$meta) == 0){
+        return(x$meta)
     }
 
-    m = i_match_ij_spectra(this = x, i = sample, j = NULL)
+    m = i_match_label_or_idx(names(x), i = sample)
     l = i_match_label_or_idx(colnames(x$meta), label)
 
-    x$meta[ m[["r_idx"]], l, drop = simplify]
+    x$meta[ m, l, drop = simplify]
 }
 
 #' @describeIn meta<- set metadata
 #' @export
-`meta<-.spectra` = function(x, value){
-    x$meta = i_meta(value, nrow(x))
-    x
-    #`meta<-.spectra` = function(x, label, sample = NULL, value){
+`meta<-.spectra` = function(x, label = NULL, sample = NULL, value) {
 
-    # m_is_null = is.null(x$meta)
-    # v_is_null = is.null(value)
-    #
-    # ########################################
-    # ## 1st RETURNING block
-    # ########################################
-    #
-    # ## Nothing happening
-    # if(m_is_null && v_is_null){
-    #     return(x)
-    # }
-    #
-    # ## Assignment on blank
-    # ## sample: ignored.
-    # ## label: takes precedence over names in value
-    # if(m_is_null){
-    #     v = as.data.frame(value)
-    #     if(length(label) == length(v)){ colnames(v) = label }
-    #     x$meta = i_meta(v, nrow(x))
-    #     return(x)
-    # }
-    #
-    # ########################################
-    # ## Matching
-    # ########################################
-    #
-    # ## Sample match
-    # s_match     = i_match_label_or_idx(names(x), sample, full = FALSE)
-    # s_match_all = length(s_match) == nrow(x)
-    #
-    # ## Label names
-    # l_match_f   = i_match_label_or_idx(names(x$meta), label, full = TRUE)
-    # l_match     = l_match_f[["matched"]]
-    # l_match_all = length(l_match) == ncol(x$meta)
-    #
-    # ########################################
-    # ## 2nd RETURNING block
-    # ########################################
-    #
-    # ## Removing metadata
-    # if(v_is_null){
-    #     if(l_match_all){
-    #         x$meta = i_meta(NULL, nrow(x))
-    #         return(x)
-    #     } else if(length(l_match) > 0){
-    #         m = x$meta
-    #         m[ , l_match] = NULL
-    #         x$meta = i_meta(m, ncol(x))
-    #         return(x)
-    #     }
-    # }
-    #
-    # ########################################
-    # ## MODIFYING x$meta
-    # ########################################
-    # m = x$meta
-    # m[ s_match, label] = value
-    # x$meta = i_meta(m, nrow(x))
-    # x
+    ## It turns out that is.vector returns TRUE for a list
+    ## So I am testing for list BEFORE I test for vector.
+    ## Bottomline, order of testing matters here!
+    if(is.data.frame(value)){
+        vv = value
+        nv = ncol(vv)
+        lv = colnames(vv)
+    } else if (is.matrix(value)) {
+        vv = as.data.frame(value)
+        nv = ncol(vv)
+        lv = colnames(vv)
+    } else if (is.list(value)){
+        if(length(value) == 1){
+            vv = value[[1]]
+        } else {
+            vv = data.frame(value)
+        }
+        nv = length(value)
+        lv = names(value)
+    } else if (is.vector(value)){
+        vv = value
+        nv = 1
+        lv = NULL
+    } else if (is.null(value)) {
+        vv = NULL
+        nv = 0
+        lv = NULL
+    } else {
+        stop("value must be of the following: data.frame, matrix, list or vector")
+    }
+
+    if( ! is.null(label) && any(length(label) == nv, nv == 0) ) {
+        lv = label
+    }
+
+    s     = i_match_label_or_idx(names(x), sample, full = FALSE)
+    s_all = is.null(sample) || length(s) == nrow(x)
+
+    m = x$meta
+
+    if(is.null(lv)){
+        if(s_all){
+            m[ , ] = vv
+        } else {
+            m[s , ] = vv
+        }
+    } else {
+        if(s_all){
+            m[ , lv ] = vv
+        } else {
+            m[s , lv] = vv
+        }
+    }
+
+    x$meta = i_meta(m, nrow(x))
+    return(x)
 }
