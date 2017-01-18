@@ -26,7 +26,10 @@ read_spectra = function(path,
     #########################################
     ## match formats
     #########################################
-    format_lookup = c(sig = "sig", svc = "sig")
+    format_lookup = c(sig = "sig",
+                      svc = "sig",
+                      sed = "sed",
+                      psr = "sed")
     format_match  = pmatch( tolower(format), names(format_lookup))
 
     ## Error if format isn't found
@@ -100,52 +103,78 @@ read_spectra = function(path,
     #############################################################
 
     if(format_lookup[format_match] == "sig"){
-        result = i_read_sig(i_path,
-                            include_white_ref = include_white_ref,
-                            outside_01_fun    = fix_out01)
+        result = i_read_ascii_spectra(i_path,
+                                      skip_first_n      = 25,
+                                      sep_char          = " ",
+                                      wl_and_refl_cols  = c(1, 7),
+                                      divide_refl_by    = 100,
+                                      include_white_ref = include_white_ref,
+                                      outside_01_fun    = fix_out01)
         return(result)
     }
 
-    # if my other instrumet, use function blah ...
+    if(format_lookup[format_match] == "sed"){
+        result = i_read_ascii_spectra(i_path,
+                                      skip_first_n      = 27,
+                                      sep_char          = "\t",
+                                      wl_and_refl_cols  = c(1, 4),
+                                      divide_refl_by    = 100,
+                                      include_white_ref = include_white_ref,
+                                      outside_01_fun    = fix_out01)
+        return(result)
+    }
 }
 
 
-#' Internal parser for SVC .sig files
+#' Internal parser for ASCII format
 #'
-#' @param file_paths paths for .sig files, already parsed by `read_spectra`
+#' Generic parser for SVC's `.sig` and PSR's `.sed`
+#'
+#' @param file_paths paths for files already parsed by `read_spectra`
+#' @param skip_first_n skip the first n lines
+#' @param sep_char separator
+#' @param wl_and_refl_cols vector of length 2 with index wavelength labels and
+#'                         reflectance values
+#' @param divide_refl_by divide reflectance values by this
 #' @param include_white_ref NOT USED YET, but should read the write reference
-#'                          from each `.sig` file
+#'                          from each file
 #' @param outside_01_fun function to deal with reflectance values outside 0.1.
 #' @param ... NOT USED YET
 #' @return single `spectra` file or list of `spectra`
 #'
 #' @author meireles
-i_read_sig = function(file_paths,
-                      include_white_ref,
-                      outside_01_fun,
-                      ...){
+i_read_ascii_spectra = function(file_paths,
+                                skip_first_n,
+                                sep_char,
+                                wl_and_refl_cols,
+                                divide_refl_by,
+                                include_white_ref,
+                                outside_01_fun,
+                                ...){
 
-    parse_sig = function(x) {
-        ## wl in col 1 and refl in col 7
-        result = read.delim(x, sep = " ", skip = 25, header = FALSE)[ , c(1, 7)]
+    parse = function(x) {
+        result = read.delim(x,
+                            sep = sep_char,
+                            skip = skip_first_n,
+                            header = FALSE)[ , wl_and_refl_cols ]
         colnames(result) = c("wl", "refl")
         result
     }
 
-    ## read sig data
-    sig_data        = lapply(file_paths, parse_sig)
-    names(sig_data) = file_paths
+    ## read  data
+    data        = lapply(file_paths, parse)
+    names(data) = file_paths
 
     ## there mabye files with different number of bands. check for them
-    sig_ncol = unlist(lapply(sig_data, nrow))
-    sig_data = split(sig_data, sig_ncol)
+    ncol = unlist(lapply(data, nrow))
+    data = split(data, ncol)
 
     ## Construct spectra
-    spec = lapply(sig_data, function(x) {
+    spec = lapply(data, function(x) {
         rf = lapply(x, function(y){ y[ , "refl"] })
         rf = do.call(rbind, rf)
-        rf = rf / 100               # svc has reflectances from ~ 1 to 100.
-        rf = outside_01_fun(rf)     # deal with values outside 01
+        rf = rf / divide_refl_by
+        rf = outside_01_fun(rf)
         wl = x[[1]][ , "wl"]
         nm = basename(names(x))
 
