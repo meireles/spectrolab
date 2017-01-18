@@ -28,6 +28,10 @@ spectra object
 \description{
 \code{spectra} "manually" creates a spectra object
 }
+\note{
+This function resorts to an ugly hack to deal with metadata assignment.
+      Need to think a little harder to find a solution.
+}
 \author{
 meireles
 }

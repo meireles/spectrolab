@@ -168,6 +168,8 @@ i_meta = function(x, nsample, allow_null = TRUE, ...){
 #' @param ... additional arguments to metadata creation. not implemented yet
 #' @return spectra object
 #'
+#' @note This function resorts to an ugly hack to deal with metadata assignment.
+#'       Need to think a little harder to find a solution.
 #' @author meireles
 #' @export
 spectra = function(reflectance,
@@ -176,6 +178,17 @@ spectra = function(reflectance,
                    meta      = NULL,
                    enforce01 = FALSE,
                    ...){
+
+    ## HACK!!! affected blocks marked with ***
+    ## The coersion logic for metadata (meta) is in the setter meta() instead of
+    ## being in the ctor i_meta.
+    ## This means that assigning metadata with `meta()` works in more situations
+    ## than using the ctor, e.g.
+    ##    meta(s) = list("clade" = c("A", "B", "C", ...))             ## OK
+    ##    spectra(..., meta = list("clade" = c("A", "B", "C", ...)))  ## NO GO
+    ##
+    ## I will resort to an ugly hack to tackle that issue, but this should be
+    ## fixed soon.
 
     wl_l  = length(wavelengths)
     spl_l = length(names)
@@ -186,8 +199,10 @@ spectra = function(reflectance,
                                            enforce01    = enforce01),
               wavelengths  = i_wavelengths(wavelengths),
               names        = i_names(names),
-              meta         = i_meta(meta, nsample = spl_l, ...)
+              meta         = i_meta(NULL, nsample = spl_l, ...) ## *** Ideally i_meta(meta, nsample = spl_l, ...)
               )
 
-    structure(s, class = c("spectra"))
+    s = structure(s, class = c("spectra")) ## *** This should be the resturned obj
+    meta(s) = meta                         ## *** so I shouldn't have to do this
+    s
 }
