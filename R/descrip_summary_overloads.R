@@ -8,7 +8,7 @@
 #'
 #' @author meireles
 #' @export
-min.spectra = function(...,na.rm = FALSE){
+min.spectra = function(..., na.rm = FALSE){
     min(reflectance(...), na.rm = na.rm)
 }
 
@@ -22,7 +22,7 @@ min.spectra = function(...,na.rm = FALSE){
 #'
 #' @author meireles
 #' @export
-max.spectra = function(...,na.rm = FALSE){
+max.spectra = function(..., na.rm = FALSE){
     max(reflectance(...), na.rm = na.rm)
 }
 
@@ -36,7 +36,7 @@ max.spectra = function(...,na.rm = FALSE){
 #'
 #' @author meireles
 #' @export
-range.spectra = function(...,na.rm = FALSE){
+range.spectra = function(..., na.rm = FALSE){
     range(reflectance(...), na.rm = na.rm)
 }
 
