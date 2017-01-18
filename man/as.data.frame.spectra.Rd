@@ -10,14 +10,14 @@
 \arguments{
 \item{x}{spectra object}
 
-\item{row.names}{does nothing}
+\item{row.names}{does nothing. Here for compatibility with S3 generics}
 
-\item{optional}{does nothing}
+\item{optional}{does nothing. Here for compatibility with S3 generics}
 
 \item{fix_names}{Use make.names to normalize names?
 Pick one: "none" "row" "col" "both".}
 
-\item{...}{does nothing}
+\item{...}{does nothing. Here for compatibility with S3 generics}
 }
 \value{
 data.frame with: sample_name, metadata (if any) and reflectance.

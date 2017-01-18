@@ -54,7 +54,7 @@ as.spectra.matrix = function(x, name_idx = 1, meta_idxs = NULL){
 #' @param x spectra object
 #' @param fix_names Use make.names to normalize names?
 #'                  Pick one: "none" "row" "col" "both".
-#' @param ... does nothing
+#' @param ... does nothing. Here for compatibility with S3 generics
 #' @return matrix of spectral reflectance. columns are wavelengths and rows are
 #'         samples
 #'
@@ -89,11 +89,11 @@ as.matrix.spectra = function(x, fix_names = "none", ...) {
 #' returned.
 #'
 #' @param x spectra object
-#' @param row.names does nothing
-#' @param optional does nothing
+#' @param row.names does nothing. Here for compatibility with S3 generics
+#' @param optional does nothing. Here for compatibility with S3 generics
 #' @param fix_names Use make.names to normalize names?
 #'                  Pick one: "none" "row" "col" "both".
-#' @param ... does nothing
+#' @param ... does nothing. Here for compatibility with S3 generics
 #' @return data.frame with: sample_name, metadata (if any) and reflectance.
 #'
 #' @author meireles
