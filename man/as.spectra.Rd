@@ -4,12 +4,17 @@
 \alias{as.spectra}
 \title{Convert matrix or data frame to spectra}
 \usage{
-as.spectra(x)
+as.spectra(x, name_idx = 1, meta_idxs = NULL)
 }
 \arguments{
 \item{x}{matrix or dataframe. Samples are in rows and wavelengths in columns.
 First column must be the sample label and the remaining columns must
 hold reflectance data.}
+
+\item{name_idx}{column index with sample names. Defaults to 1st col}
+
+\item{meta_idxs}{column indices with metadata (not name and not reflectance).
+Defaults to NULL}
 }
 \value{
 spectra object

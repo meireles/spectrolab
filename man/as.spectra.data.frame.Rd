@@ -4,10 +4,15 @@
 \alias{as.spectra.data.frame}
 \title{Convert data.frame to spectra}
 \usage{
-\method{as.spectra}{data.frame}(x)
+\method{as.spectra}{data.frame}(x, name_idx = 1, meta_idxs = NULL)
 }
 \arguments{
 \item{x}{data.frame}
+
+\item{name_idx}{column index with sample names. Defaults to 1st col}
+
+\item{meta_idxs}{column indices with metadata (not name and not reflectance).
+Defaults to NULL}
 }
 \value{
 spectra object
