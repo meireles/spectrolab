@@ -2,16 +2,32 @@
 #'
 #' \code{i_match_ij_spectra} gets position matching if the reflectance matrix
 #'
-#' @param this spectra
-#' @param i sample names or indices
-#' @param j wavelengths, not indices
+#' @param x spectra
+#' @param i sample names or indices or boolean vector
+#' @param j wavelengths or boolean vector, NOT INDICES
 #' @return list if row indices and column indices
 #'
 #' @author meireles
-i_match_ij_spectra = function(this, i = NULL, j = NULL){
+i_match_ij_spectra = function(x, i = NULL, j = NULL){
 
-    r_idx = i_match_label_or_idx( names(this) , i)
-    c_idx = i_match_label(wavelengths(this), j)
+    if(is.logical(i)){
+        if(length(i) != nrow(x)) {
+            stop("boolean vector i must have the same length as the number of samples")
+        }
+        i = which(i)
+    }
+
+
+    if(is.logical(j)){
+        if(length(j) != ncol(x)){
+            stop("boolean vector i must have the same length as the number of samples")
+        }
+        j = which(j)
+        j = wavelengths(x)[j]
+    }
+
+    r_idx = i_match_label_or_idx( names(x) , i)
+    c_idx = i_match_label(wavelengths(x), j)
 
     list(r_idx = r_idx, c_idx = c_idx)
 }
@@ -27,33 +43,34 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 #' c(1, 2) and not (at least necessarily) the first and second samples in the
 #' `spectra` object.
 #'
-#' @param this spectra object
-#' @param i Sample names (preferred) or index.
-#' @param j Wavelength labels, as numeric or character Do not use indexes.
+#' @param x spectra object
+#' @param i Sample names (preferred), index, or a logical vector of length nrow(x)
+#' @param j Wavelength labels, as numeric or character
+#'          or a logical vector of length ncol(x). Do not use indexes!
 #' @param simplify Boolean. If TRUE (default), single band selections
 #'                 are returned as a named vector of reflectance values
 #' @return usually a spectra object, but see param `simplify`
 #'
 #' @author meireles
 #' @export
-`[.spectra` = function(this, i, j, simplify = TRUE){
+`[.spectra` = function(x, i, j, simplify = TRUE){
 
     if(missing(i)){ i = NULL }
     if(missing(j)){ j = NULL }
 
-    m = i_match_ij_spectra(this = this, i = i, j = j)
+    m = i_match_ij_spectra(x = x, i = i, j = j)
 
     if(simplify && length(m[["c_idx"]]) == 1) {
-        out        = reflectance(this)[ m[["r_idx"]] , m[["c_idx"]], drop = TRUE ]
-        names(out) = names(this)[ m[["r_idx"]] ]
+        out        = reflectance(x)[ m[["r_idx"]] , m[["c_idx"]], drop = TRUE ]
+        names(out) = names(x)[ m[["r_idx"]] ]
         return(out)
 
     } else {
-        out = spectra(reflectance = reflectance(this)[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ],
-                      wavelengths = wavelengths(this)[ m[["c_idx"]] ],
-                      names       = names(this)[ m[["r_idx"]] ],
-                      meta        = meta(this)[ m[["r_idx"]],  ],
-                      enforce01   = enforce01(this) )
+        out = spectra(reflectance = reflectance(x)[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ],
+                      wavelengths = wavelengths(x)[ m[["c_idx"]] ],
+                      names       = names(x)[ m[["r_idx"]] ],
+                      meta        = meta(x)[ m[["r_idx"]],  ],
+                      enforce01   = enforce01(x) )
         return(out)
     }
 }
@@ -62,20 +79,22 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
 #'
 #' \code{`[<-`} assigns the rhs values to spectra
 #'
-#' @param this spectra object (lhs)
-#' @param i sample name
-#' @param j wavelength
-#' @param value value to be assigned (rhs)
+#' @param x spectra object (lhs)
+#' @param i Sample names (preferred), index, or a logical vector of length nrow(x)
+#' @param j Wavelength labels, as numeric or character
+#'          or a logical vector of length ncol(x). Do not use indexes!
+#' @param value value to be assigned (rhs). Must either data coercible to numeric
+#'              or another `spectra` obj
 #' @return nothing. modifies spectra as side effect
 #'
 #' @author meireles
 #' @export
-`[<-.spectra` = function(this, i, j, value){
+`[<-.spectra` = function(x, i, j, value){
     if(missing(i)){ i = NULL }
     if(missing(j)){ j = NULL }
-    m = i_match_ij_spectra(this = this, i = i, j = j)
+    m = i_match_ij_spectra(x = x, i = i, j = j)
     l = lapply(m, length)
-    e = enforce01(this)
+    e = enforce01(x)
 
     if(is_spectra(value)){
         value = reflectance(value)
@@ -88,9 +107,9 @@ i_match_ij_spectra = function(this, i = NULL, j = NULL){
         l = list(NULL)   ## assign the two elements in `l` to NULL
     }
 
-    this$reflectance[ m[["r_idx"]], m[["c_idx"]] ] = i_reflectance(value, nwavelengths = l[["c_idx"]], nsample = l[["r_idx"]], enforce01 = e)
+    x$reflectance[ m[["r_idx"]], m[["c_idx"]] ] = i_reflectance(value, nwavelengths = l[["c_idx"]], nsample = l[["r_idx"]], enforce01 = e)
 
-    this
+    x
 }
 
 ########################################

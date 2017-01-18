@@ -4,16 +4,18 @@
 \alias{[<-.spectra}
 \title{Assign reflectance values to spectra}
 \usage{
-\method{[}{spectra}(this, i, j) <- value
+\method{[}{spectra}(x, i, j) <- value
 }
 \arguments{
-\item{this}{spectra object (lhs)}
+\item{x}{spectra object (lhs)}
 
-\item{i}{sample name}
+\item{i}{Sample names (preferred), index, or a logical vector of length nrow(x)}
 
-\item{j}{wavelength}
+\item{j}{Wavelength labels, as numeric or character
+or a logical vector of length ncol(x). Do not use indexes!}
 
-\item{value}{value to be assigned (rhs)}
+\item{value}{value to be assigned (rhs). Must either data coercible to numeric
+or another `spectra` obj}
 }
 \value{
 nothing. modifies spectra as side effect

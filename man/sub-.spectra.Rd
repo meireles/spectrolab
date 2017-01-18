@@ -4,14 +4,15 @@
 \alias{[.spectra}
 \title{Subset spectra}
 \usage{
-\method{[}{spectra}(this, i, j, simplify = TRUE)
+\method{[}{spectra}(x, i, j, simplify = TRUE)
 }
 \arguments{
-\item{this}{spectra object}
+\item{x}{spectra object}
 
-\item{i}{Sample names (preferred) or index.}
+\item{i}{Sample names (preferred), index, or a logical vector of length nrow(x)}
 
-\item{j}{Wavelength labels, as numeric or character Do not use indexes.}
+\item{j}{Wavelength labels, as numeric or character
+or a logical vector of length ncol(x). Do not use indexes!}
 
 \item{simplify}{Boolean. If TRUE (default), single band selections
 are returned as a named vector of reflectance values}

@@ -4,14 +4,14 @@
 \alias{i_match_ij_spectra}
 \title{Get internal indexes for spectra attributes}
 \usage{
-i_match_ij_spectra(this, i = NULL, j = NULL)
+i_match_ij_spectra(x, i = NULL, j = NULL)
 }
 \arguments{
-\item{this}{spectra}
+\item{x}{spectra}
 
-\item{i}{sample names or indices}
+\item{i}{sample names or indices or boolean vector}
 
-\item{j}{wavelengths, not indices}
+\item{j}{wavelengths or boolean vector, NOT INDICES}
 }
 \value{
 list if row indices and column indices
