@@ -1,7 +1,10 @@
+devtools::use_package("prospectr")
+
 #' Read files from various formats into `spectra`
 #'
 #' @param path Path to directory or input files
-#' @param format file formats. Currently the only option is "sig" or "svc" (for SVC).
+#' @param format file formats. "asd" (for ASD); "sig" or "svc" (for SVC);
+#'               "sed" or "psr" (for SpecEvo PSR).
 #' @param include_white_ref boolean. include white reference. NOT IMPLEMENTED YET
 #' @param recursive read files recursively
 #' @param exclude_if_matches excludes files that match this regular expression.
@@ -29,7 +32,8 @@ read_spectra = function(path,
     format_lookup = c(sig = "sig",
                       svc = "sig",
                       sed = "sed",
-                      psr = "sed")
+                      psr = "sed",
+                      asd = "asd")
     format_match  = pmatch( tolower(format), names(format_lookup))
 
     ## Error if format isn't found
@@ -123,6 +127,16 @@ read_spectra = function(path,
                                       outside_01_fun    = fix_out01)
         return(result)
     }
+
+    if(format_lookup[format_match] == "asd"){
+        result = i_read_asd_spectra(i_path,
+                                    format = "binary",
+                                    divide_refl_by = 1,
+                                    include_white_ref = FALSE,
+                                    outside_01_fun = NULL,
+                                    ...)
+        return(result)
+    }
 }
 
 
@@ -189,3 +203,29 @@ i_read_ascii_spectra = function(file_paths,
         return(spec[[1]])
     }
 }
+
+
+#' Parser for ASD's `.asd`
+#'
+#' @param file_paths paths for files already parsed by `read_spectra`
+#' @param format choice of ASD format. Either "binary" or "txt"
+#' @param divide_refl_by divide reflectance values by this
+#' @param include_white_ref NOT USED YET, but should read the write reference
+#'                          from each file
+#' @param outside_01_fun function to deal with reflectance values outside 0.1.
+#' @param ... NOT USED YET
+#'
+#'  @importFrom prospectr readASD
+i_read_asd_spectra = function(file_paths,
+                              format = c("binary", "txt"),
+                              divide_refl_by,
+                              include_white_ref,
+                              outside_01_fun,
+                              ...){
+
+    rf = prospectr::readASD(fnames = file_paths, out_format = "matrix")
+    wl = colnames(rf)
+    nm = gsub(".asd$", "",rownames(rf))
+    spectra(rf, wl, nm)
+}
+
