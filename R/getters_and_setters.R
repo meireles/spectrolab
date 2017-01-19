@@ -14,7 +14,11 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL){
         if(length(i) != nrow(x)) {
             stop("boolean vector i must have the same length as the number of samples")
         }
-        i = which(i)
+        if(any(i)){
+         i =  which(i)
+        } else {
+            stop("All boolean values are FALSE (no sample matched)")
+        }
     }
 
 
@@ -22,8 +26,12 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL){
         if(length(j) != ncol(x)){
             stop("boolean vector i must have the same length as the number of samples")
         }
-        j = which(j)
-        j = wavelengths(x)[j]
+
+        if(any(j)){
+            j = wavelengths(x)[ which(j) ]
+        } else {
+            stop("All boolean values are FALSE (no wavelengths matched)")
+        }
     }
 
     r_idx = i_match_label_or_idx( names(x) , i)
