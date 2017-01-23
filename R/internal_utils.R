@@ -76,7 +76,7 @@ i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
         }
     }
 
-    m = which(x %in% i)
+    m = which(  x %in% i)
     u = which(! x %in% i)
     n = setdiff(i, x)
 
@@ -135,7 +135,7 @@ i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
         }
 
     } else {
-        return( i_match_label(x, i, full = full) )
+        return( i_match_label(x, i, full = full, allow_empty_lookup = allow_empty_lookup) )
     }
 
 }
