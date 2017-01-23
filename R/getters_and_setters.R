@@ -364,12 +364,15 @@ meta = function(x, label, sample, simplify = FALSE){
 #' @export
 meta.spectra = function(x, label = NULL, sample = NULL, simplify = FALSE){
 
-    if(ncol(x$meta) == 0){
-        return(x$meta)
-    }
-
     m = i_match_label_or_idx(names(x), i = sample)
-    l = i_match_label_or_idx(colnames(x$meta), label)
+    l = i_match_label_or_idx(colnames(x$meta), label, allow_empty_lookup = TRUE)
+
+    ## Case. Label is not null (user is looking for `something`) BUT
+    ## that `something` doesn't exist, return NULL
+    if( !is.null(label) && is.null(l)){
+        message("Following label(s) do(es) not exist: ", label)
+        return(NULL)
+    }
 
     x$meta[ m, l, drop = simplify]
 }
