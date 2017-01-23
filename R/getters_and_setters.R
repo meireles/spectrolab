@@ -366,18 +366,21 @@ meta = function(x, label, sample, simplify = FALSE, quiet = TRUE){
 meta.spectra = function(x, label = NULL, sample = NULL, simplify = FALSE, quiet = TRUE){
 
     m = i_match_label_or_idx(names(x), i = sample)
-    l = i_match_label_or_idx(colnames(x$meta), label, allow_empty_lookup = TRUE)
+    l = i_match_label_or_idx(colnames(x$meta),
+                             label,
+                             full = TRUE,
+                             allow_empty_lookup = TRUE)
 
-    ## Case. Label is not null (user is looking for `something`) BUT
-    ## that `something` doesn't exist, return NULL
-    if( !is.null(label) && is.null(l)){
+    ## Case: User provided a non-existent label
+    ## return NULL
+    if( ! is.null( l[["not_element"]] ) ){
         if(!quiet){
             message("Following label(s) do(es) not exist: ", label)
         }
         return(NULL)
     }
 
-    x$meta[ m, l, drop = simplify]
+    x$meta[ m, l[["matched"]], drop = simplify]
 }
 
 #' @describeIn meta<- set metadata
