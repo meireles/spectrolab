@@ -5,12 +5,14 @@
 \alias{normalize.spectra}
 \title{Vector normalize spectra}
 \usage{
-normalize(x, ...)
+normalize(x, quiet = FALSE, ...)
 
-\method{normalize}{spectra}(x, ...)
+\method{normalize}{spectra}(x, quiet = FALSE, ...)
 }
 \arguments{
 \item{x}{spectra object to be vector normalized}
+
+\item{quiet}{booean. Warn about change in y value units? Defaults to FALSE}
 
 \item{...}{nothing}
 }

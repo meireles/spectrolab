@@ -5,9 +5,10 @@
 \alias{meta.spectra}
 \title{Get metadata}
 \usage{
-meta(x, label, sample, simplify = FALSE)
+meta(x, label, sample, simplify = FALSE, quiet = TRUE)
 
-\method{meta}{spectra}(x, label = NULL, sample = NULL, simplify = FALSE)
+\method{meta}{spectra}(x, label = NULL, sample = NULL, simplify = FALSE,
+  quiet = TRUE)
 }
 \arguments{
 \item{x}{spectra object}
@@ -17,6 +18,8 @@ meta(x, label, sample, simplify = FALSE)
 \item{sample}{sample index or name}
 
 \item{simplify}{boolean. defaults to FALSE}
+
+\item{quiet}{boolean. warn about non-existent metadata? defaults to TRUE}
 }
 \value{
 TODO

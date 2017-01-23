@@ -11,19 +11,31 @@ devtools::use_package("parallel")
 #' \code{normalize} returns a spectra obj with vector normalized reflectances
 #'
 #' @param x spectra object to be vector normalized
+#' @param quiet booean. Warn about change in y value units? Defaults to FALSE
 #' @param ... nothing
 #' @return spectra object with normalized spectra
 #'
 #' @author meireles
 #' @export
-normalize = function(x, ...){
+normalize = function(x, quiet = FALSE, ...){
     UseMethod("normalize")
 }
 
 
 #' @describeIn normalize Vector normalize spectra
 #' @export
-normalize.spectra = function(x, ...){
+normalize.spectra = function(x, quiet = FALSE, ...){
+
+    name_norm_meta = "normalization_magnitude"
+
+    if(!quiet){
+        message("Vector nomalizing spectra...")
+        message("Note that y values will not be true reflectances anymore!")
+
+        if(!is.null(meta(x , name_norm_meta))){
+            warning("spectra were apparently already vector normalized.\n  normalization magnitudes may not make sense.")
+        }
+    }
 
     refl            = reflectance(x)
     refl_squared    = refl * refl
@@ -35,7 +47,7 @@ normalize.spectra = function(x, ...){
     x[] = i_reflectance(refl / magnitudes)
 
     # add a magnitute attribute to the`spectra` object
-    meta(x, "normalization_magnitude") = magnitudes
+    meta(x, name_norm_meta) = magnitudes
 
     # return
     x
