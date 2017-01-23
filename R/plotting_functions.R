@@ -36,8 +36,10 @@ plot.spectra = function(x,
 #' Plot polygon for spectra quantiles
 #'
 #' @param spec Spectra object
-#' @param total_prob Total mass to encompass. Number between 0.0 and 1.0
+#' @param total_prob Total probability mass to encompass. Single number
+#'                   between 0.0 and 1.0. Defaults to 0.95
 #' @param col Polygon color
+#' @param border boolean. Draw border?
 #' @param add If add = FALSE (default), a new plot is created. Otherwise
 #'            (add = T), the quantile is added to the current plot.
 #' @param ... Other parameters passed to polygon()
@@ -48,12 +50,18 @@ plot.spectra = function(x,
 plot_quantile = function(spec,
                          total_prob = 0.95,
                          col        = rgb(0, 0, 0, 0.1),
+                         border     = TRUE,
                          add        = FALSE,
                          ...){
 
     if( !is_spectra(spec) ){
         stop("Object must be of class spectra")
     }
+
+    if( ! is.vector(total_prob) || length(total_prob) != 1 ){
+        stop("total_prob must be a single number")
+    }
+
 
     if(total_prob < 0.0 || total_prob > 1.0){
         stop("total_prob must be between 0.0 and 1.0")
@@ -71,7 +79,7 @@ plot_quantile = function(spec,
         plot(spec, type = "n")
     }
 
-    polygon(x = xx, y = yy, col = col, ...)
+    polygon(x = xx, y = yy, col = col, border = border, ...)
 }
 
 
