@@ -336,11 +336,12 @@ wavelengths.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
 #' @param label metadata column index or label
 #' @param sample sample index or name
 #' @param simplify boolean. defaults to FALSE
+#' @param quiet boolean. warn about non-existent metadata? defaults to TRUE
 #' @return TODO
 #'
 #' @author meireles
 #' @export
-meta = function(x, label, sample, simplify = FALSE){
+meta = function(x, label, sample, simplify = FALSE, quiet = TRUE){
     UseMethod("meta")
 }
 
@@ -362,7 +363,7 @@ meta = function(x, label, sample, simplify = FALSE){
 
 #' @describeIn meta get metadata
 #' @export
-meta.spectra = function(x, label = NULL, sample = NULL, simplify = FALSE){
+meta.spectra = function(x, label = NULL, sample = NULL, simplify = FALSE, quiet = TRUE){
 
     m = i_match_label_or_idx(names(x), i = sample)
     l = i_match_label_or_idx(colnames(x$meta), label, allow_empty_lookup = TRUE)
@@ -370,7 +371,9 @@ meta.spectra = function(x, label = NULL, sample = NULL, simplify = FALSE){
     ## Case. Label is not null (user is looking for `something`) BUT
     ## that `something` doesn't exist, return NULL
     if( !is.null(label) && is.null(l)){
-        message("Following label(s) do(es) not exist: ", label)
+        if(!quiet){
+            message("Following label(s) do(es) not exist: ", label)
+        }
         return(NULL)
     }
 
