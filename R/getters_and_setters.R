@@ -372,8 +372,7 @@ meta.spectra = function(x, label = NULL, sample = NULL, simplify = FALSE, quiet 
                              allow_empty_lookup = TRUE)
 
     ## Case: User provided a non-existent label
-    ## return NULL
-    if( ! is.null( l[["not_element"]] ) ){
+    if( length(l[["not_element"]]) != 0 ){
         if(!quiet){
             message("Following label(s) do(es) not exist: ", label)
         }
