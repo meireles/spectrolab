@@ -10,7 +10,7 @@ resample(x, new_wvls, ...)
 \method{resample}{spectra}(x, new_wvls, ...)
 }
 \arguments{
-\item{x}{spectra object}
+\item{x}{spectra object. Wavelengths must be strictly increasing}
 
 \item{new_wvls}{numeric vector of wavelengths to sample from spectra}
 

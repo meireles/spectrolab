@@ -7,7 +7,7 @@
 i_smooth_spline_spectra(x, parallel = TRUE, ...)
 }
 \arguments{
-\item{x}{spectra object}
+\item{x}{spectra object. Wavelengths must be strictly increasing}
 
 \item{parallel}{boolean. Do computation in parallel? Defaults to TRUE}
 

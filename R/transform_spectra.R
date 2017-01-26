@@ -2,6 +2,35 @@ library("devtools")
 devtools::use_package("devtools")
 devtools::use_package("parallel")
 
+
+################################################################################
+# Utils
+################################################################################
+
+#' Are wavelengths increasing
+#'
+#' Many transform functions can only (or at least should only) be applied to
+#' spectra with monotonically varying, very likely increasing) wavelength values.
+#' \code{i_test_increasing_wavelengths} tests that case and may throw an error
+#' or return the boolen result from the test.
+#'
+#' @param x wavelengths
+#' @param stop boolean. Throw error if test fails? Defaults to TRUE
+#' @param call boolean. If stop = TRUE, should the function call be printed?
+#' @return boolean
+#'
+#' @author meireles
+i_test_increasing_wavelengths = function(x, stop = TRUE, call = FALSE){
+    if(any(x < cummax(x))){
+        if(stop){
+            stop("Wavelength values must be strictly increasing. You probably need to run `splice_sensor_overlap` first", call. = call)
+        }
+        return(FALSE)
+    }
+    TRUE
+}
+
+
 ################################################################################
 # Vector normalization
 ################################################################################
@@ -10,7 +39,7 @@ devtools::use_package("parallel")
 #'
 #' \code{normalize} returns a spectra obj with vector normalized reflectances
 #'
-#' @param x spectra object to be vector normalized
+#' @param x spectra object. Wavelengths must be strictly increasing
 #' @param quiet booean. Warn about change in y value units? Defaults to FALSE
 #' @param ... nothing
 #' @return spectra object with normalized spectra
@@ -26,13 +55,13 @@ normalize = function(x, quiet = FALSE, ...){
 #' @export
 normalize.spectra = function(x, quiet = FALSE, ...){
 
-    name_norm_meta = "normalization_magnitude"
+    i_test_increasing_wavelengths(wavelengths(x), stop = TRUE)
 
     if(!quiet){
         message("Vector nomalizing spectra...")
         message("Note that y values will not be true reflectances anymore!")
 
-        if(!is.null(meta(x , name_norm_meta))){
+        if( "normalization_magnitude" %in% names(meta(x , "normalization_magnitude")) ){
             warning("spectra were apparently already vector normalized.\n  normalization magnitudes may not make sense.")
         }
     }
@@ -47,7 +76,7 @@ normalize.spectra = function(x, quiet = FALSE, ...){
     x[] = i_reflectance(refl / magnitudes)
 
     # add a magnitute attribute to the`spectra` object
-    meta(x, name_norm_meta) = magnitudes
+    meta(x, "normalization_magnitude") = magnitudes
 
     # return
     x
@@ -61,7 +90,7 @@ normalize.spectra = function(x, quiet = FALSE, ...){
 #'
 #' Gets spline functions for each spectrum in a spectra object
 #'
-#' @param x spectra object
+#' @param x spectra object. Wavelengths must be strictly increasing
 #' @param parallel boolean. Do computation in parallel? Defaults to TRUE
 #' @param ... additional parameters passed to smooth.spline except nknots, which
 #'            is computed internally
@@ -104,7 +133,7 @@ smooth.default = stats::smooth
 #'
 #' \code{smooth} runs each spectrum by a smoothing and returns the spectra
 #'
-#' @param x spectra object
+#' @param x spectra object. Wavelengths must be strictly increasing
 #' @param method Choose smoothing method: "spline" (default) or "moving_average"
 #' @param ... additional parameters passed to \code{smooth.spline}.
 #' @return a spectra object of with smoothed spectra
@@ -118,6 +147,9 @@ smooth = function(x, method = "spline", ...){
 #' @describeIn smooth Smooth spectra
 #' @export
 smooth.spectra = function(x, method = "spline", ...){
+
+    i_test_increasing_wavelengths(wavelengths(x), stop = TRUE)
+
     if(method == "spline") {
         s   = i_smooth_spline_spectra(x, ...)
         x[] = do.call(rbind, sapply(s, `[`, "y"))
@@ -136,7 +168,7 @@ smooth.spectra = function(x, method = "spline", ...){
 #' \code{resample} returns spectra resampled to new wavelengths using smoothing.
 #' Possible to increase or decrease the spectral resolution.
 #'
-#' @param x spectra object
+#' @param x spectra object. Wavelengths must be strictly increasing
 #' @param new_wvls numeric vector of wavelengths to sample from spectra
 #' @param ... additional parameters passed to the \code{smooth.spline} function.
 #' @return spectra object with resampled spectra
@@ -151,6 +183,9 @@ resample = function(x, new_wvls, ...) {
 #' @describeIn resample Resample spectra
 #' @export
 resample.spectra = function(x, new_wvls, ...) {
+
+    ## Enforce increasing wavelengths in spectra object
+    i_test_increasing_wavelengths(wavelengths(x), stop = TRUE)
 
     ## Do not predict points outside the original wavelength range
     r = range(wavelengths(x))

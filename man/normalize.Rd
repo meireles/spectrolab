@@ -10,7 +10,7 @@ normalize(x, quiet = FALSE, ...)
 \method{normalize}{spectra}(x, quiet = FALSE, ...)
 }
 \arguments{
-\item{x}{spectra object to be vector normalized}
+\item{x}{spectra object. Wavelengths must be strictly increasing}
 
 \item{quiet}{booean. Warn about change in y value units? Defaults to FALSE}
 

@@ -17,7 +17,7 @@ i_match_ij_spectra(x, i = NULL, j = NULL)
 list if row indices and column indices
 }
 \description{
-\code{i_match_ij_spectra} gets position matching if the reflectance matrix
+\code{i_match_ij_spectra} gets index position matching i and j
 }
 \author{
 meireles
