@@ -16,6 +16,6 @@ vector of sample names
 \code{names} returns a vector of sample names
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

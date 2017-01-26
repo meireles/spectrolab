@@ -29,6 +29,6 @@ nothing. called for its side effect
 Plot polygon for spectra quantiles
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

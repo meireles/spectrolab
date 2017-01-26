@@ -27,6 +27,6 @@ a spectra object of with smoothed spectra
 \item \code{spectra}: Smooth spectra
 }}
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

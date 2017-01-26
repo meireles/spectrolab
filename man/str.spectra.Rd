@@ -18,6 +18,6 @@ prints to console
 Structure of the spectra object
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

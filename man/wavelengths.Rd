@@ -31,6 +31,6 @@ vector of wavelengths. numeric if `return_num` = TRUE (default).
 \item \code{spectra}: Set spectra wavelength labels
 }}
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

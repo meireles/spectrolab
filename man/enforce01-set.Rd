@@ -18,6 +18,6 @@ nothing. has a *side effect* of changing if a constraint is enforced
 \code{enforce01<-} sets or unsets a spectra reflectance constraint (0 - 1)
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

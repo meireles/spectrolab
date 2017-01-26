@@ -9,7 +9,7 @@
 #' @param x any object
 #' @return boolean
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 is_spectra = function(x){
     inherits(x, "spectra")

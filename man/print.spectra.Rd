@@ -18,6 +18,6 @@ nothing. called for side effect
 \code{print} prints basic information about the spectra obj to the console
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

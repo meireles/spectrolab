@@ -22,6 +22,6 @@ nothing. called for its side effect
 \code{meta} sets metadata
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

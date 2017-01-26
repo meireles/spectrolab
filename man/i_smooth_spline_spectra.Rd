@@ -21,6 +21,6 @@ a list of spline functions
 Gets spline functions for each spectrum in a spectra object
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

@@ -5,7 +5,7 @@
 #' @param x single value or vector of numbers
 #' @return boolean
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 i_is_whole = function(x){
     as.integer(x) == x
 }
@@ -21,7 +21,7 @@ i_is_whole = function(x){
 #' @param quiet boolean. get warnings?
 #' @return boolean
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 i_is_index = function(x, max_length, all = TRUE, quiet = TRUE){
     if(quiet){
         w = suppressWarnings(i_is_whole(x))
@@ -49,7 +49,7 @@ i_is_index = function(x, max_length, all = TRUE, quiet = TRUE){
 #'        to false
 #' @return matched indices, or list in case full = TRUE
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
 
@@ -101,7 +101,7 @@ i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
 #'        to false
 #' @return matched indices
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
 
@@ -149,7 +149,7 @@ i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
 #' @param return_mat return a matrix instead of vector? defaults to FALSE
 #' @return vector or matrix, depending on return_mat value
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 i_plot_boundaries = function(return_mat = FALSE) {
     bounds = setNames(par("usr"), c("xmin", "xmax", "ymin", "ymax"))
 
@@ -171,7 +171,7 @@ i_plot_boundaries = function(return_mat = FALSE) {
 #' @return numeric vector
 #'
 #' @references http://stackoverflow.com/questions/743812/calculating-moving-average-in-r
-#' @author meireles
+#' @author Jose Eduardo Meireles
 i_mav = function(x, n = 3, sides = 2){
     filter(x, rep( (1/n), n), sides = sides)
 }

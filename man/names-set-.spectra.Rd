@@ -18,6 +18,6 @@ nothing. called for its side effect.
 \code{names} assigns sample names to lhs
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

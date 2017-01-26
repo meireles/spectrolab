@@ -16,6 +16,6 @@ tuple of integers: c("n_samples", "n_wavelengths")
 \code{dim} returns a vector with number of samples and bands (wavelengths)
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

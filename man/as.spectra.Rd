@@ -23,6 +23,6 @@ spectra object
 Convert matrix or data frame to spectra
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

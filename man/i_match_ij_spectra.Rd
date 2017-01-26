@@ -20,6 +20,6 @@ list if row indices and column indices
 \code{i_match_ij_spectra} gets index position matching i and j
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

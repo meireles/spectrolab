@@ -20,6 +20,6 @@ nothing. called for its side effect.
 \code{wavelengths} sets wavelength labels of lhs to the rhs values
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

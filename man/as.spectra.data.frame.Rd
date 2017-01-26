@@ -21,6 +21,6 @@ spectra object
 Convert data.frame to spectra
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

@@ -20,7 +20,7 @@ numeric vector
 \code{i_mav} computes the moving average of a vector.
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 \references{
 http://stackoverflow.com/questions/743812/calculating-moving-average-in-r

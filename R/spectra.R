@@ -18,7 +18,7 @@
 #'                  Defaults to FALSE
 #' @return data conformable to relative reflectance: numeric matrix
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = FALSE) {
 
     ## test if x dimensions conform to nwavelengths and nsample
@@ -68,7 +68,7 @@ i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = FAL
 #'                If NULL (default) checking is skipped.
 #' @return vector of sample names
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 i_names = function(x, nsample = NULL){
 
     if( ! is.null(dim(x)) ){
@@ -94,7 +94,7 @@ i_names = function(x, nsample = NULL){
 #'                     If NULL (default) checking is skipped.
 #' @return vector of wavelengths
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 i_wavelengths = function(x, nwavelengths = NULL) {
     if(! is.vector(x)) {
         stop("Wavelengths names must be in a vector")
@@ -124,7 +124,7 @@ i_wavelengths = function(x, nwavelengths = NULL) {
 #' @param ... additional arguments passed to as.data.frame
 #' @return data.frame
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 i_meta = function(x, nsample, allow_null = TRUE, ...){
 
     if(is.null(x) && allow_null){
@@ -170,7 +170,7 @@ i_meta = function(x, nsample, allow_null = TRUE, ...){
 #'
 #' @note This function resorts to an ugly hack to deal with metadata assignment.
 #'       Need to think a little harder to find a solution.
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 spectra = function(reflectance,
                    wavelengths,

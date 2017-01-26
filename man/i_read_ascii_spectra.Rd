@@ -33,6 +33,6 @@ single `spectra` file or list of `spectra`
 Generic parser for SVC's `.sig` and PSR's `.sed`
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

@@ -6,7 +6,7 @@
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
 #' @return single numeric value
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 min.spectra = function(..., na.rm = FALSE){
     min(reflectance(...), na.rm = na.rm)
@@ -20,7 +20,7 @@ min.spectra = function(..., na.rm = FALSE){
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
 #' @return single numeric value
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 max.spectra = function(..., na.rm = FALSE){
     max(reflectance(...), na.rm = na.rm)
@@ -34,7 +34,7 @@ max.spectra = function(..., na.rm = FALSE){
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
 #' @return tuple of numeric values (min, max)
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 range.spectra = function(..., na.rm = FALSE){
     range(reflectance(...), na.rm = na.rm)
@@ -48,7 +48,7 @@ range.spectra = function(..., na.rm = FALSE){
 #' @param x spectra object
 #' @return tuple of integers: c("n_samples", "n_wavelengths")
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 dim.spectra = function(x){
     c("n_samples"     = length(names(x)),
@@ -63,7 +63,7 @@ dim.spectra = function(x){
 #' @param ... other arguments passed to print. not implemented for spectra
 #' @return nothing. called for side effect
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 print.spectra = function(x, ...){
     r_wvl   = range(wavelengths(x))
@@ -95,7 +95,7 @@ print.spectra = function(x, ...){
 #' @param ... additioal args. not implemented
 #' @return prints to console
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 str.spectra = function(object, ...){
     cat("The structure of a spectra object should be irrelevant.", "\n")
@@ -116,7 +116,7 @@ str.spectra = function(object, ...){
 #' @return spectra object with one spectrum for each prob
 #'
 #' @importFrom stats quantile
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 quantile.spectra = function(x,
                             probs = c(0.025, 0.25, 0.5, 0.75, 0.975),

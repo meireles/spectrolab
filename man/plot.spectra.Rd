@@ -29,6 +29,6 @@ nothing. called for side effect
 Plot spectra
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

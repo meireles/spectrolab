@@ -16,6 +16,6 @@ boolean
 \code{is_spectra} tests if the argument is a spectra class object
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

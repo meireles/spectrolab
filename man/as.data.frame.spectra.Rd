@@ -28,6 +28,6 @@ reflectance data. One advantage over as.matrix, is that the metadata are
 returned.
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

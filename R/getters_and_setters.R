@@ -7,7 +7,7 @@
 #' @param j wavelengths or boolean vector, NOT INDICES
 #' @return list if row indices and column indices
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 i_match_ij_spectra = function(x, i = NULL, j = NULL){
 
     if(is.logical(i)){
@@ -59,7 +59,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL){
 #'                 are returned as a named vector of reflectance values
 #' @return usually a spectra object, but see param `simplify`
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 `[.spectra` = function(x, i, j, simplify = TRUE){
 
@@ -95,7 +95,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL){
 #'              or another `spectra` obj
 #' @return nothing. modifies spectra as side effect
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 `[<-.spectra` = function(x, i, j, value){
     if(missing(i)){ i = NULL }
@@ -131,7 +131,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL){
 #' @param x spectra object
 #' @return matrix with samples in rows and wavelengths in columns
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 reflectance = function(x){
     UseMethod("reflectance")
@@ -145,7 +145,7 @@ reflectance = function(x){
 #' @param value value to be assigned to the lhs
 #' @return nothing. called for its side effect
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 `reflectance<-` = function(x, value){
     UseMethod("reflectance<-")
@@ -176,7 +176,7 @@ reflectance.spectra = function(x){
 #' @param x spectra object
 #' @return Boolean
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 enforce01 = function(x){
     UseMethod("enforce01")
@@ -190,7 +190,7 @@ enforce01 = function(x){
 #' @param value boolean.
 #' @return nothing. has a *side effect* of changing if a constraint is enforced
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 `enforce01<-` = function(x, value){
     UseMethod("enforce01<-")
@@ -230,7 +230,7 @@ enforce01.spectra = function(x){
 #' @param x spectra object
 #' @return vector of sample names
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 names.spectra = function(x){
     x$names
@@ -245,7 +245,7 @@ names.spectra = function(x){
 #' @param value values to be assigned (rhs)
 #' @return nothing. called for its side effect.
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 `names<-.spectra` = function(x, value){
     x$names = i_names(value, nrow(x))
@@ -267,7 +267,7 @@ names.spectra = function(x){
 #'                   otherwise, a vector of strings is returned
 #' @return vector of wavelengths. numeric if `return_num` = TRUE (default).
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 wavelengths = function(x, min = NULL, max = NULL, return_num = TRUE){
     UseMethod("wavelengths")
@@ -283,7 +283,7 @@ wavelengths = function(x, min = NULL, max = NULL, return_num = TRUE){
 #' @param value rhs
 #' @return nothing. called for its side effect.
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 `wavelengths<-` = function(x, unsafe = FALSE, value){
     UseMethod("wavelengths<-")
@@ -339,7 +339,7 @@ wavelengths.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
 #' @param quiet boolean. warn about non-existent metadata? defaults to TRUE
 #' @return TODO
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 meta = function(x, label, sample, simplify = FALSE, quiet = TRUE){
     UseMethod("meta")
@@ -355,7 +355,7 @@ meta = function(x, label, sample, simplify = FALSE, quiet = TRUE){
 #' @param value rhs. TODO
 #' @return nothing. called for its side effect
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 `meta<-` = function(x, label, sample, value){
     UseMethod("meta<-")

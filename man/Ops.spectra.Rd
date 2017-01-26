@@ -19,6 +19,6 @@ Depends on the operator. c("+", "-", "*", "/", "^") return spectra
 Overloads arithmetic operators for spectra using `Ops.`
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

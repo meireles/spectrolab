@@ -28,6 +28,6 @@ Possible to increase or decrease the spectral resolution.
 \item \code{spectra}: Resample spectra
 }}
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

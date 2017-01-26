@@ -32,6 +32,6 @@ TODO
 \item \code{spectra}: get metadata
 }}
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

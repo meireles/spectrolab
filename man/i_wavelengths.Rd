@@ -19,6 +19,6 @@ vector of wavelengths
 \code{i_wavelengths} constructs wavelength labels in the appropriate format
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

@@ -34,6 +34,6 @@ a single `spectra` or a list of `spectra` (in case files had diff
 Read files from various formats into `spectra`
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

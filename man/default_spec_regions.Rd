@@ -13,6 +13,6 @@ matrix with default_spec_regions
 return default spectral regions matrix
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

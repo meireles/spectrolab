@@ -33,6 +33,6 @@ This function resorts to an ugly hack to deal with metadata assignment.
       Need to think a little harder to find a solution.
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

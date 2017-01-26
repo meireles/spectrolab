@@ -16,7 +16,7 @@ devtools::use_package("prospectr")
 #' @return a single `spectra` or a list of `spectra` (in case files had diff
 #'         number of wavelengths)
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 read_spectra = function(path,
                         format,
@@ -156,7 +156,7 @@ read_spectra = function(path,
 #' @param ... NOT USED YET
 #' @return single `spectra` file or list of `spectra`
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 i_read_ascii_spectra = function(file_paths,
                                 skip_first_n,
                                 sep_char,

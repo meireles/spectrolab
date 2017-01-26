@@ -19,7 +19,7 @@ devtools::use_package("parallel")
 #' @param call boolean. If stop = TRUE, should the function call be printed?
 #' @return boolean
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 i_test_increasing_wavelengths = function(x, stop = TRUE, call = FALSE){
     if(any(x < cummax(x))){
         if(stop){
@@ -44,7 +44,7 @@ i_test_increasing_wavelengths = function(x, stop = TRUE, call = FALSE){
 #' @param ... nothing
 #' @return spectra object with normalized spectra
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 normalize = function(x, quiet = FALSE, ...){
     UseMethod("normalize")
@@ -98,7 +98,7 @@ normalize.spectra = function(x, quiet = FALSE, ...){
 #'
 #' @importFrom parallel detectCores mclapply
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
     if( !is_spectra(x) ){
         stop("Object must be of class spectra")
@@ -138,7 +138,7 @@ smooth.default = stats::smooth
 #' @param ... additional parameters passed to \code{smooth.spline}.
 #' @return a spectra object of with smoothed spectra
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 smooth = function(x, method = "spline", ...){
     UseMethod("smooth")
@@ -173,7 +173,7 @@ smooth.spectra = function(x, method = "spline", ...){
 #' @param ... additional parameters passed to the \code{smooth.spline} function.
 #' @return spectra object with resampled spectra
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 resample = function(x, new_wvls, ...) {
     UseMethod("resample")

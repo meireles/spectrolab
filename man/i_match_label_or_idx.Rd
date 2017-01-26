@@ -23,6 +23,6 @@ matched indices
 Match label or index
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

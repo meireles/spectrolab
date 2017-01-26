@@ -16,6 +16,6 @@ boolean
 \code{i_is_whole} Tests if x is (are) whole numbers
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

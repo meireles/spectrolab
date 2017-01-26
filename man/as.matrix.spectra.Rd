@@ -22,6 +22,6 @@ matrix of spectral reflectance. columns are wavelengths and rows are
 Convert spectra to matrix
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

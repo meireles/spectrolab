@@ -18,6 +18,6 @@ single numeric value
 \code{min} Returns the minimum reflectance value in a spectra object
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

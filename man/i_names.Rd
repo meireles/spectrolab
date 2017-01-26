@@ -19,6 +19,6 @@ vector of sample names
 \code{i_names} constructs a sample name vector in the appropriate format
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

@@ -23,6 +23,6 @@ spectra with monotonically varying, very likely increasing) wavelength values.
 or return the boolen result from the test.
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

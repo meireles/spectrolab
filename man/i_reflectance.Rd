@@ -29,6 +29,6 @@ Coerces input form different formats into data conformable to reflectance,
 which is a numeric matrix with no dimension names.
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

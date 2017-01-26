@@ -23,6 +23,6 @@ matched indices, or list in case full = TRUE
 Match label
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

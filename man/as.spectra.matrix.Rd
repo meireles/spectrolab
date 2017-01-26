@@ -21,6 +21,6 @@ spectra object
 Convert matrix to spectra
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

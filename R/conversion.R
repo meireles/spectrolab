@@ -8,7 +8,7 @@
 #'                  Defaults to NULL
 #' @return spectra object
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 as.spectra = function(x, name_idx = 1, meta_idxs = NULL){
     UseMethod("as.spectra", x)
@@ -22,7 +22,7 @@ as.spectra = function(x, name_idx = 1, meta_idxs = NULL){
 #'                  Defaults to NULL
 #' @return spectra object
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 as.spectra.data.frame = function(x, name_idx = 1, meta_idxs = NULL){
     s = x[ , name_idx, drop = TRUE]
@@ -42,7 +42,7 @@ as.spectra.data.frame = function(x, name_idx = 1, meta_idxs = NULL){
 #'                  Defaults to NULL
 #' @return spectra object
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 as.spectra.matrix = function(x, name_idx = 1, meta_idxs = NULL){
     as.spectra(as.data.frame(x), name_idx = name_idx, meta_idxs = meta_idxs)
@@ -58,7 +58,7 @@ as.spectra.matrix = function(x, name_idx = 1, meta_idxs = NULL){
 #' @return matrix of spectral reflectance. columns are wavelengths and rows are
 #'         samples
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 as.matrix.spectra = function(x, fix_names = "none", ...) {
     r = reflectance(x)
@@ -96,7 +96,7 @@ as.matrix.spectra = function(x, fix_names = "none", ...) {
 #' @param ... does nothing. Here for compatibility with S3 generics
 #' @return data.frame with: sample_name, metadata (if any) and reflectance.
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 as.data.frame.spectra = function(x,
                                  row.names = NULL,

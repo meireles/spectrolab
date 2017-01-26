@@ -18,6 +18,6 @@ nothing. called for its side effect
 \code{reflectance} Assigns the rhs to the reflectance of the lhs spectra obj
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

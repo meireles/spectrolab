@@ -9,7 +9,7 @@
 #' @param ... other arguments passed to matplot
 #' @return nothing. called for side effect
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 plot.spectra = function(x,
                         ylab = "Reflectance",
@@ -45,7 +45,7 @@ plot.spectra = function(x,
 #' @param ... Other parameters passed to polygon()
 #' @return nothing. called for its side effect
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 plot_quantile = function(spec,
                          total_prob = 0.95,
@@ -87,7 +87,7 @@ plot_quantile = function(spec,
 #'
 #' @return matrix with default_spec_regions
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 default_spec_regions = function(){
     cbind("VIS"   = c(begin = 400,  end = 700),
@@ -118,7 +118,7 @@ default_spec_regions = function(){
 #' @param ... additional parameters passed to polygon()
 #' @return nothing. called for its side effect
 #'
-#' @author meireles
+#' @author Jose Eduardo Meireles
 #' @export
 plot_spec_regions = function(spec,
                              regions,

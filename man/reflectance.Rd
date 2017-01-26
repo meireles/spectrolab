@@ -23,6 +23,6 @@ matrix with samples in rows and wavelengths in columns
 \item \code{spectra}: Get spectra reflectance
 }}
 \author{
-meireles
+Jose Eduardo Meireles
 }
 

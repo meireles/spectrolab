@@ -23,6 +23,6 @@ boolean
 \code{i_is_index} Tests if x fit the requirements of being indices
 }
 \author{
-meireles
+Jose Eduardo Meireles
 }
 
