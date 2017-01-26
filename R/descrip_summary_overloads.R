@@ -67,6 +67,12 @@ dim.spectra = function(x){
 #' @export
 print.spectra = function(x, ...){
     r_wvl   = range(wavelengths(x))
+    o_wvl   = i_test_increasing_wavelengths(wavelengths(x), stop = FALSE)
+
+    ## In case I want to report if the wavelength spacings are unequal
+    # d_wvl   = diff(wavelengths(x))
+    # d_wvl   = all(d_wvl[1] == d_wvl)
+
     n_met   = names(meta(x, simplify = FALSE))
     l_met   = length(n_met)
     l_max   = 3L
@@ -78,7 +84,9 @@ print.spectra = function(x, ...){
 
     cat("spectra object", "\n")
     cat("number of samples:", nrow(x),"\n")
-    cat("wavelength range: ", r_wvl[1], " to ", r_wvl[2], " (", ncol(x), " bands)" ,"\n", sep = "")
+    cat("wavelengths: ", r_wvl[1], " to ", r_wvl[2], " (", ncol(x), " bands",
+        ifelse(!o_wvl, ", **overlap not spliced**", NULL),
+        ")", "\n", sep = "")
 
     if(l_met == 0){
         cat("metadata: none", "\n")
