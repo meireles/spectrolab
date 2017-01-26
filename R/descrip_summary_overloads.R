@@ -97,6 +97,20 @@ print.spectra = function(x, ...){
 }
 
 
+#' Summarize spectra
+#'
+#' @param object spectra object
+#' @param ... additional params to summary. not used yet
+#' @return nothing yet (just prints to console)
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+summary.spectra = function(object, ...){
+    cat("**Figure out something useful to do here**\n")
+    print(object, ...)
+}
+
+
 #' Structure of the spectra object
 #'
 #' @param object spectra object
