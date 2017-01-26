@@ -1,6 +1,6 @@
 #' Get internal indexes for spectra attributes
 #'
-#' \code{i_match_ij_spectra} gets position matching if the reflectance matrix
+#' \code{i_match_ij_spectra} gets index position matching i and j
 #'
 #' @param x spectra
 #' @param i sample names or indices or boolean vector
@@ -77,7 +77,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL){
         out = spectra(reflectance = reflectance(x)[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ],
                       wavelengths = wavelengths(x)[ m[["c_idx"]] ],
                       names       = names(x)[ m[["r_idx"]] ],
-                      meta        = meta(x)[ m[["r_idx"]],  ],
+                      meta        = meta(x, label = NULL, sample =  m[["r_idx"]]),
                       enforce01   = enforce01(x) )
         return(out)
     }
