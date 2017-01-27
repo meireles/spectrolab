@@ -56,7 +56,7 @@ combine.spectra = function(s1, s2){
         stop("Object `b` must be of class spectra")
     }
 
-    if(any(wavelengths(s1) != wavelengths(s2))){
+    if(any( suppressWarnings(wavelengths(s1) != wavelengths(s2)) )){
         stop("Spectra must have the same wavelenegths. Consider using `resample()` first")
     }
 
