@@ -112,21 +112,22 @@ default_spec_regions = function(){
 #'                regions begins and ends. See details for an example
 #' @param col color for regions. single value or vector of length ncol(regions)
 #' @param border color for region borders. Defaults to FALSE (no border)
-#' @param add boolean. If TRUE (default) adds polygons to current plot. Otherwise
-#'            a new plot is created **without** any spectra.
+#' @param add boolean. If TRUE (default) adds polygons to current plot (if a plot
+#'            exists) or throws an error if a plot doesn't exist.
+#'            If FALSE, a new plot is created **without** any spectra.
 #' @param names boolean. add region column names on top of the polygons?
 #' @param ... additional parameters passed to polygon()
 #' @return nothing. called for its side effect
 #'
 #' @author Jose Eduardo Meireles
 #' @export
-plot_spec_regions = function(spec,
-                             regions,
-                             col    = rgb(0.7, 0.7, 0.7, 0.3),
-                             border = FALSE,
-                             add    = FALSE,
-                             names  = TRUE,
-                             ...){
+plot_regions = function(spec,
+                        regions,
+                        col    = rgb(0.7, 0.7, 0.7, 0.3),
+                        border = FALSE,
+                        add    = TRUE,
+                        names  = TRUE,
+                        ...){
     if( !is_spectra(spec) ){
         stop("Object must be of class spectra")
     }
@@ -146,6 +147,11 @@ plot_spec_regions = function(spec,
     yy_vec = yy_mat[ c("min", "max", "max", "min") , "y"]
 
     if(!add){
+        plot(spec, type = "n")
+    }
+
+    if( (!i_plot_exists()) && add) {
+        warning("No plot exists for `regions`` to be added to, but `add` is set to TRUE.\n  Plotting regions anyways." )
         plot(spec, type = "n")
     }
 
