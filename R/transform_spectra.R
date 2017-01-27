@@ -21,13 +21,11 @@ devtools::use_package("parallel")
 #'
 #' @author Jose Eduardo Meireles
 i_test_increasing_wavelengths = function(x, stop = TRUE, call = FALSE){
-    if(any(x < cummax(x))){
-        if(stop){
-            stop("Wavelength values must be strictly increasing. You probably need to run `splice_sensor_overlap` first", call. = call)
-        }
-        return(FALSE)
+    y = all(diff(x) >= 0.0)
+    if(y && stop){
+        stop("Wavelength values must be strictly increasing. You probably need to run `splice_sensor_overlap` first", call. = call)
     }
-    TRUE
+    y
 }
 
 
