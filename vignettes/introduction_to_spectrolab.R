@@ -75,7 +75,7 @@ title("80% spectral quantile")
 # Combined individual spectra, quantiles and shade spectral regions
 plot(spec_from_matrix, lwd = 0.25, lty = 1, col = "grey50", main="Spectra, quantile and regions")
 plot_quantile(spec_from_matrix, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border = FALSE, add = TRUE)
-plot_spec_regions(spec_from_matrix, regions = default_spec_regions(), add = TRUE)
+plot_regions(spec_from_matrix, regions = default_spec_regions(), add = TRUE)
 
 ## ---- eval=F-------------------------------------------------------------
 #  # Get the vector of all sample names. Note: Duplicated sample names are permitted
@@ -97,10 +97,10 @@ plot_spec_regions(spec_from_matrix, regions = default_spec_regions(), add = TRUE
 
 ## ---- fig.height=2.5, fig.width=6, fig.align="center", eval=F------------
 #  
-#  ### Subset wavelength regions
+#  # Subset wavelength regions
 #  spec_sub <-  spec_from_matrix[ ,400:700]
 #  
-#  ### Check the result
+#  # Check the result
 #  plot(spec_sub)
 #  
 #  # Subset spectra to all entries where sample_name matches "species_8"
@@ -112,7 +112,7 @@ plot_spec_regions(spec_from_matrix, regions = default_spec_regions(), add = TRUE
 #  # Plotting the subset result should work just fine
 #  plot(spec_sp8, col = "red", main = "Species 8 spectra")
 #  plot_quantile(spec_sp8, total_prob = 0.75, add = TRUE,  col = rgb(0.2, 0.2, 0.2, 0.2), border = TRUE)
-#  plot_spec_regions(spec_sp8, default_spec_regions(), col = rgb(1, 0.5, 0, 0.1), add = TRUE)
+#  plot_regions(spec_sp8, default_spec_regions(), col = rgb(1, 0.5, 0, 0.1), add = TRUE)
 
 ## ---- eval=F-------------------------------------------------------------
 #  # Subsetting samples by indexes works and so does subsetting wavelengths by numerics or characters.
@@ -163,31 +163,45 @@ plot_spec_regions(spec_from_matrix, regions = default_spec_regions(), add = TRUE
 #  plot(acer_sub)
 #  
 #  # Perform vector normalization
-#  acer_vn <- normalize_spectra(acer_sub)
+#  acer_vn <- normalize(acer_sub)
 #  
 #  # and check result
 #  plot(acer_vn)
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  ### Smooth only VIS/NIR or NIR/SWIR
+#  # Smooth only VIS/NIR or NIR/SWIR
 #  acer_smoo1 <- smoo.visnir(acer_juco)
 #  acer_smoo2 <- smoo.nirswir(acer_juco)
 #  
-#  ### Smooth both regions
+#  # Smooth both regions
 #  acer_smoo <- smoo.nirswir.svc(acer_smoo1)
-#  ### Same result
+#  
+#  # Same result
 #  acer_smoo <- smoo.visnir.svc(acer_smoo2)
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  # Subset jump corrected spectra to 400 - 2400 nm
 #  acer_sub <- acer_juco[, 400:2400]
 #  
-#  ### Exclude spectra with reflectances at 780 nm (the "NIR shoulder") <0.3 or >0.65
+#  # Exclude spectra with reflectances at 780 nm (the "NIR shoulder") <0.3 or >0.65
 #  acer_sub1 <- excl_shoulder(acer_sub, refl_high = 0.65, refl_low = 0.3)
+#  plot(acer_sub1)
+
+## ---- eval=FALSE---------------------------------------------------------
+#  # First plot your spectra to search for outliers
 #  plot(acer_sub)
-#  ### Exclude spectra with high reflectances in VIS: @ 450 nm >0.2
-#  Acer_excl <- exclhivis(Acer_juco)
 #  
-#  ### Exclude spectra with dips in NIR: @800 - @770 >0.02 ###
-#  Acer_excl <- excldipnir(Acer_juco)
+#  # and add vertical and horizontal guides if you like.
+#  abline(v=1500)
+#  abline(h=0.2)
+#  
+#  # Instead of using the NIR shoulder, remove the outlier by defining a lower limit,
+#  # e.g., 0.2 reflectance at 1500 nm, and check the result.
+#  acer_sub2 <- excl_low(acer_sub, refl_low = 0.2, wvl_low = 1500)
+#  plot(acer_sub2)
+#  
+#  # Or exclude the same measurement by defining a upper limit, e.g. 0.1 reflectance
+#  # at 600 nm, and check the result.
+#  acer_sub3 <- excl_high(acer_sub, refl_high = 0.1, wvl_high = 600)
+#  plot(acer_sub3)
 

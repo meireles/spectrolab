@@ -117,7 +117,7 @@ The workhorse function for plotting `spectra` is `plot()`. It will jointly plot 
 
 You can also plot the quantile of a `spectra` object with `plot_quantile()`. It's second argument, `total_prob`, is the total "mass" that the quantile encompasses. For instance, a `total_prob = 0.95` covers 95% of the variation in the `spectra` object, i.e. it is the `0.025 to 0.975` quantile. The quantile plot can stand alone or be added to a current plot if `add = TRUE`.
 
-Last but not least, you can also shade spectral regions with the `plot_spec_regions()` function. `spectrolab` provides a `default_spec_regions()` matrix as an example, but you obviously can customize it for your needs.
+Last but not least, you can also shade spectral regions with the `plot_regions()` function. `spectrolab` provides a `default_spec_regions()` matrix as an example, but you obviously can customize it for your needs.
 
 ```{r, fig.height=2.5, fig.width=8, dev_svg}
 # Simple spectra plot
@@ -131,7 +131,7 @@ title("80% spectral quantile")
 # Combined individual spectra, quantiles and shade spectral regions
 plot(spec_from_matrix, lwd = 0.25, lty = 1, col = "grey50", main="Spectra, quantile and regions")
 plot_quantile(spec_from_matrix, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border = FALSE, add = TRUE)
-plot_spec_regions(spec_from_matrix, regions = default_spec_regions(), add = TRUE)
+plot_regions(spec_from_matrix, regions = default_spec_regions(), add = TRUE)
 ```
 
 ## Querying
@@ -185,7 +185,7 @@ dim(spec_sp8)
 # Plotting the subset result should work just fine
 plot(spec_sp8, col = "red", main = "Species 8 spectra")
 plot_quantile(spec_sp8, total_prob = 0.75, add = TRUE,  col = rgb(0.2, 0.2, 0.2, 0.2), border = TRUE)
-plot_spec_regions(spec_sp8, default_spec_regions(), col = rgb(1, 0.5, 0, 0.1), add = TRUE)
+plot_regions(spec_sp8, default_spec_regions(), col = rgb(1, 0.5, 0, 0.1), add = TRUE)
 ```
 
 Note that you can (1) subset samples using indexes and (2) use characters or numerics to subset wavelengths. As said before, you cannot use indexes to subset wavelengths though.
