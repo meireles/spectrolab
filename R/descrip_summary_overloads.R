@@ -85,7 +85,7 @@ print.spectra = function(x, ...){
     cat("spectra object", "\n")
     cat("number of samples:", nrow(x),"\n")
     cat("wavelengths: ", r_wvl[1], " to ", r_wvl[2], " (", ncol(x), " bands",
-        ifelse(!o_wvl, ", **overlap not spliced**", NULL),
+        ifelse(!o_wvl, ", **overlap not spliced**", ""),
         ")", "\n", sep = "")
 
     if(l_met == 0){
