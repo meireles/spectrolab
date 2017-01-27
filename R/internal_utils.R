@@ -161,14 +161,14 @@ i_plot_boundaries = function(return_mat = FALSE) {
 }
 
 
-
 #' Tests if a plot device exists
 #'
 #' @return boolean
 #'
 #' @author Jose Eduardo Meireles
 i_plot_exists = function(){
-    dev.cur() > 1
+    tryCatch( {par(new = TRUE); TRUE},
+              warning = function(x){FALSE})
 }
 
 
