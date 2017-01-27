@@ -30,6 +30,64 @@ i_test_increasing_wavelengths = function(x, stop = TRUE, call = FALSE){
 
 
 ################################################################################
+# Combine spectral datasets
+################################################################################
+
+#' Combine spectral datasets
+#'
+#' \code{combine} binds two spectral datasets. Both spectra must have the
+#' very same wavelenegth labels, but different metadata are acceptable
+#'
+#' @param s1 spectra object 1
+#' @param s2 spectra object 1
+#' @return combined spectra object
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+combine = function(s1, s2){
+   UseMethod("combine")
+}
+
+
+#' @describeIn combine Combines two spectral datasets
+#' @export
+combine.spectra = function(s1, s2){
+    if( !is_spectra(s2) ){
+        stop("Object `b` must be of class spectra")
+    }
+
+    if(any(wavelengths(s1) != wavelengths(s2))){
+        stop("Spectra must have the same wavelenegths. Consider using `resample()` first")
+    }
+
+    r = rbind(reflectance(s1), reflectance(s2))
+    n = c(names(s1), names(s2))
+    w = wavelengths(s1)               ## OK because I tested for equality before
+
+    if(enforce01(s1) != enforce01(s2)){
+        warning("Spectra objects have different enforce01 requirements.\n  Setting enforce01 to FALSE...")
+        e = FALSE
+    } else {
+        e = enforce01(s1)             ## OK because I tested for inequality before
+    }
+
+    ## Merge metadata
+    m1 = meta(s1)
+    m2 = meta(s2)
+    mn = union(names(m2), names(m1))
+
+    m3 = data.frame(matrix(nrow     = nrow(m1) + nrow(m2),
+                           ncol     = length(mn),
+                           dimnames = list(NULL, mn)))
+
+    m3[1 : nrow(m1), names(m1)] = m1
+    m3[(1 + nrow(m1)) : nrow(m3), names(m2)] = m2
+
+    spectra(r, w, n, m3, e)
+}
+
+
+################################################################################
 # Vector normalization
 ################################################################################
 
