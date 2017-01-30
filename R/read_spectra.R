@@ -109,8 +109,8 @@ read_spectra = function(path,
     if(format_lookup[format_match] == "sig"){
         result = i_read_ascii_spectra(i_path,
                                       skip_first_n      = 25,
-                                      sep_char          = " ",
-                                      wl_and_refl_cols  = c(1, 7),
+                                      sep_char          = "",
+                                      wl_and_refl_cols  = c(1, 4),
                                       divide_refl_by    = 100,
                                       include_white_ref = include_white_ref,
                                       outside_01_fun    = fix_out01)
@@ -168,7 +168,7 @@ i_read_ascii_spectra = function(file_paths,
 
     parse = function(x) {
         result = read.delim(x,
-                            sep = sep_char,
+                            sep  = sep_char,
                             skip = skip_first_n,
                             header = FALSE)[ , wl_and_refl_cols ]
         colnames(result) = c("wl", "refl")
