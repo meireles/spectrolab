@@ -1,4 +1,3 @@
-
 match_overlap = function(){
     UseMethod("match_overlap")
 }
@@ -9,18 +8,13 @@ match_overlap.spectra = function(){
 }
 
 
-i_match_overlap_svc = function(){
+i_match_overlap_svc = function(x){
 
-    # Here's the matching algorithms used for the SVC.
-    #
     # ---------- Forwarded message ----------
     # From: "Lawrence Slomer" <lslomer@spectravista.com>
     # Date: Jun 12, 2015 9:07 AM
     # Subject: Re: Fwd: Re: SVC HR-1024i Matching Algorithm
-    # To: <frede368@umn.edu>
-    # Cc: <tomc@spectravista.com>
-    #
-    # Brett -
+    # ---------------------------------------
     #
     # Good day. Tom Corl asked me to respond to your matching question.
     #
@@ -58,4 +52,7 @@ i_match_overlap_svc = function(){
     # Please let me know if this answers your question.
     #
     # --Larry
+
+
+
 }

@@ -1,0 +1,13 @@
+Draft...
+
+# SVC datasets for reverse engineering Spectra Vista's sensor overlap matching function.
+# The raw data has been matched under two slightly different parameterizations using their 
+# PC program.
+
+# 1 - Matching based on radiance (default). Suffix "moc_radiance"
+# 2 - Matching based on reflectance. Suffix "moc_reflectance"
+
+# Otherwise, parameter values were the same (defaults in version xxxx):
+# 
+#
+#

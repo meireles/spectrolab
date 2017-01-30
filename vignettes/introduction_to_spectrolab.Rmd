@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The goal of `spectrolab` is to provide essential functions to process data from portable spectrometers and a common interface for spectra that other packages can build on. Currently `spectrolab` has been only tested for SVC data (Spectra Vista Corp). `spectrolab` provides methods to read spectral data files, to perform jump correction, vector normalization, smoothing at the sensor overlap regions, and to filter out "bad" measurements. `spectrolab` introduces the S3 class `spectra`, which makes it easy to plot and manipulate data and to access additional metadata.  
+The goal of `spectrolab` is to provide essential functions to process data from portable spectrometers and a common interface for spectra that other packages can build on. `spectrolab` provides methods to read spectral data files (SVC, ASD and Spectral Evolution), vector normalization, smoothing, matching sensor overlap regions, etc. `spectrolab` introduces the S3 class `spectra`, making it easy to plot and manipulate data and to access additional metadata.
 
 ## Installing and loading `spectrolab`
 
@@ -26,14 +26,33 @@ Assuming that everything went smoothly, you should be able to load `spectrolab` 
 library("spectrolab")
 ```
 
-The source code can be found on our [_GitHub repository_](https://github.com/annakat/spectrolab). Please report any bugs, send us your questions and comments ... and contribute!
+The source code can be found on our [_GitHub repository_](https://github.com/annakat/spectrolab). Please report any bugs and ask us your questions through the [issue tracker](https://github.com/annakat/spectrolab/issues).
 
-## Reading spectra: example with `.sig` files
+## Reading spectra
 
-You can read raw spectra using the function `read_spectra()`. As of now, only files in the `.sig` format (SVC) can be read direcly, but other formats are in the works.
-You can pass a vector of filenames to `read_spectra()`, but it is usually easier to pass the path for the folder where all your data is. 
+There are two ways of getting spectra into R: 1) converting a matrix or data.frame to `spectra` or 2) reading from raw data files (formats: SVC's `sig`, Spectral Evolution's `sed` and ASD's `asd`). Here are a couple examples:
 
-```{r, eval=FALSE}
+### Create spectra from a matrix
+
+If you already have your spectra in a matrix or data frame (e.g. when you read your data from a .csv file), you can use the function `as.spectra()` to convert it to a `spectra` object. The matrix **must** have samples in rows and wavelengths in columns. The header of the wavelengths columns must be (numeric) wavelength labels. You also should declare which column has the sample names (which are mandatory) using the `name_idx` argument. If other columns are present (other than sample name and reflectances), their indices must be passed to `as.spectra` as the `meta_idxs` argument.
+
+Here is an example using a dataset matrix named `spec_matrix_example` provided by the package.
+
+```{r, eval=TRUE}
+# Check out the format of the matrix
+spec_matrix_example[1:4, 1:3]
+
+# To convert it to spectra, simply run
+spec <- as.spectra(spec_matrix_example, name_idx = 1, meta_idxs = NULL)
+```
+
+
+### Reading spectra: example with SVC's `.sig` files
+
+You shoud use the function `read_spectra()` to read raw spectra files. You can pass a vector of filenames to `read_spectra()`, but it is usually easier to pass the path to the folder where your data are.
+
+
+```{r, eval=TRUE}
 
 # `dir_path` is the directory where our example datasets live
 dir_path <- system.file("extdata", "Acer_example", package = "spectrolab")
@@ -43,63 +62,45 @@ acer_spectra <- read_spectra(path = dir_path, format = "sig")
 
 # Note that `acer_spectra` is a `spectra` object. 
 # You can ensure that this is true using spectrolab's `is_spectra()` function.
-
 is_spectra(acer_spectra)
 ```
 
-You can inspect your spectra object in several ways. You may want to know how many spectra and how many bands are in there, retrieve the filenames, and of course you may want to plot the spectra.
 
-```{r, eval=FALSE}
+
+## Inspecting spectra
+
+You can check out your spectra object in several ways. For instance, You may want to know how many spectra and how many bands are in there, retrieve the filenames, and of course you may need to plot the data.
+
+```{r, eval=TRUE}
 # Simply print the object
 acer_spectra
 
-# or look at the vector with the dataset's dimensions
+# Get the dataset's dimensions
 dim(acer_spectra)
 
-# list the file names
+# Get the sample names
 names(acer_spectra)
 
 # and plot the spectra
 plot(acer_spectra)
 ```
 
-When plotting `(acer_spectra)` you will notice that the `Acer_example` data contain one white reference measurement (the horizontal line around 1.0 reflectance) and one obviously bad measurement (with the dip at the NIR shoulder). During the measurement campaign those two measurement were flagged with "_WR" and "_BAD". With `read_spectra()` it's easy to exclude flagged files, no matter what flags you have used.
+When plotting `(acer_spectra)` you will notice that the `Acer_example` data contain one white reference measurement (the horizontal line around 1.0 reflectance) and one obviously bad measurement (with a dip at the NIR shoulder). During the measurement campaign the file names of those two measurements were flagged with "_WR" and "_BAD". You can avoid importing those files to beging with by passing those flags to `read_spectra()`.
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 
 # Check the filenames to see if there are any flags
 names(acer_spectra)
 
-# use `exclude_if_matches` to excluded flagged files
-acer_spectra <- read_spectra(path = dir_path, format = "sig",   exclude_if_matches = c("BAD","WR"))
+# use the `exclude_if_matches` argument to excluded flagged files
+acer_spectra <- read_spectra(path = dir_path, format = "sig", exclude_if_matches = c("BAD","WR"))
 
 # and check result
 plot(acer_spectra)
 ```
+
 Flagging "unusual" measurements during data collection is a very good idea. It clearly helps you to quickly sort through your files when it comes to processing. However, you can also exclude bad spectra and outliers later on. We show you how in section `Excluding spectra` futher below. 
 
-### Create spectra from a matrix
-
-If you already have your spectra in a matrix (e.g. when you read your data from a .csv file), you can use the function `as.spectra()` to convert it to a `spectra` object. The matrix **must** be in a very specific format, so **read carefully!** (1) Samples must be in rows and wavelengths in columns. (2) The first column must be a sample label or filename. (3) Column names must be the wavelength labels. Note: In case you are as terrified as our virtual *Ms. A* of loosing metadata consider including "all" crucial sample information in the filename during your measurement campaign (e.g.`species_plotID_plantID.sig`).
-
-We included an example of a matrix named `spec_matrix_example`.
-
-```{r}
-# Read the example data
-spec <- spec_matrix_example
-```
-```{r, eval=F}
-# Check out the format of the matrix
-spec[1:3, 1:4]
-```
-```{r}
-# To convert it to spectra, simply run
-spec_from_matrix <- as.spectra(spec)
-```
-```{r, eval=F}
-# and again you can plot your data to make sure everything worked okay
-plot(spec_from_matrix)
-```
 
 ### Converting a `spectra` object into a matrix
 
@@ -107,7 +108,7 @@ It is also possible to convert a `spectra` object to a matrix format, using the 
 
 ```{r, eval=F}
 # Make a matrix from a `spectra` object
-spec_as_mat = as.matrix(spec_from_matrix, fix_names = "none")
+spec_as_mat = as.matrix(spec, fix_names = "none")
 spec_as_mat[1:4, 1:3]
 ```
 
@@ -122,16 +123,16 @@ Last but not least, you can also shade spectral regions with the `plot_regions()
 ```{r, fig.height=2.5, fig.width=8, dev_svg}
 # Simple spectra plot
 par(mfrow = c(1, 3))
-plot(spec_from_matrix, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
+plot(spec, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
 
 # Stand along quantile plot
-plot_quantile(spec_from_matrix, total_prob = 0.8, col = rgb(1, 0, 0, 0.5), lwd = 0.5, border = TRUE)
+plot_quantile(spec, total_prob = 0.8, col = rgb(1, 0, 0, 0.5), lwd = 0.5, border = TRUE)
 title("80% spectral quantile")
 
 # Combined individual spectra, quantiles and shade spectral regions
-plot(spec_from_matrix, lwd = 0.25, lty = 1, col = "grey50", main="Spectra, quantile and regions")
-plot_quantile(spec_from_matrix, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border = FALSE, add = TRUE)
-plot_regions(spec_from_matrix, regions = default_spec_regions(), add = TRUE)
+plot(spec, lwd = 0.25, lty = 1, col = "grey50", main="Spectra, quantile and regions")
+plot_quantile(spec, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border = FALSE, add = TRUE)
+plot_regions(spec, regions = default_spec_regions(), add = TRUE)
 ```
 
 ## Querying
@@ -140,21 +141,21 @@ plot_regions(spec_from_matrix, regions = default_spec_regions(), add = TRUE)
 
 ```{r, eval=F}
 # Get the vector of all sample names. Note: Duplicated sample names are permitted
-n <- names(spec_from_matrix)
+n <- names(spec)
 n[1:5]
 
 # Get the vector of wavelengths
-w <- wavelengths(spec_from_matrix)
+w <- wavelengths(spec)
 w[1:5]
 
 # or the reflectances in matrix format
-r <- reflectance(spec_from_matrix)
+r <- reflectance(spec)
 
 # First 10 wavelengths of first 5 species
 r[1:5,1:10]
 
 # You can also get the dimensions of your `spectra` object
-dim(spec_from_matrix)
+dim(spec)
 ```
 
 ## Subsetting spectra
@@ -171,13 +172,13 @@ Subsetting lets you e.g. exclude noisy regions at the beginning and end of the s
 ```{r, fig.height=2.5, fig.width=6, fig.align="center", eval=F}
 
 # Subset wavelength regions 
-spec_sub <-  spec_from_matrix[ ,400:700]
+spec_sub <-  spec[ ,400:700]
 
 # Check the result
 plot(spec_sub)
 
 # Subset spectra to all entries where sample_name matches "species_8"
-spec_sp8 <- spec_from_matrix["species_8", ]
+spec_sp8 <- spec["species_8", ]
 
 # Check the results
 dim(spec_sp8)
@@ -216,7 +217,7 @@ Bottomline, be very careful not to use indexes to subset wavelengths!
 You may want to edit certain simple attributes of `spectra`, such as make all sample names uppercase. This is easily attainable in `spectrolab`:
 
 ```{r, eval=F}
-spec_new <- spec_from_matrix
+spec_new <- spec
 
 # Replace names with an uppercase version
 names(spec_new) <- toupper(names(spec_new))
@@ -232,7 +233,7 @@ If you want to fiddle with the reflectance itself, this is easy, too.
 spec_new <- spec_new * 0.75
 
 # Plot the results
-plot(spec_from_matrix, col = "blue", lwd = 0.75, cex.axis = 0.75)
+plot(spec, col = "blue", lwd = 0.75, cex.axis = 0.75)
 plot(spec_new, col = "orange", lwd = 0.75, add = TRUE)
 ```
 
