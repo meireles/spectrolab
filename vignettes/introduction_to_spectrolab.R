@@ -6,6 +6,13 @@
 library("spectrolab")
 
 ## ---- eval=TRUE----------------------------------------------------------
+# Check out the format of the matrix
+spec_matrix_example[1:4, 1:3]
+
+# To convert it to spectra, simply run
+spec <- as.spectra(spec_matrix_example, name_idx = 1, meta_idxs = NULL)
+
+## ---- eval=TRUE----------------------------------------------------------
 
 # `dir_path` is the directory where our example datasets live
 dir_path <- system.file("extdata", "Acer_example", package = "spectrolab")
@@ -14,27 +21,17 @@ dir_path <- system.file("extdata", "Acer_example", package = "spectrolab")
 acer_spectra <- read_spectra(path = dir_path, format = "sig")
 
 # Note that `acer_spectra` is a `spectra` object. 
-# You can ensure that this is true using spectrolab's `is_spectra()` function.
+# You can ensure that this is true using the `is_spectra()` function.
 is_spectra(acer_spectra)
-
-## ---- eval=TRUE----------------------------------------------------------
-# Check out the format of the matrix
-spec_matrix_example[1:3, 1:3]
-
-# To convert it to spectra, simply run
-spec <- as.spectra(spec_matrix_example, name_idx = 1, meta_idxs = NULL)
-
-# and again you can plot your data to make sure everything worked okay
-plot(spec)
 
 ## ---- eval=TRUE----------------------------------------------------------
 # Simply print the object
 acer_spectra
 
-# or look at the vector with the dataset's dimensions
+# Get the dataset's dimensions
 dim(acer_spectra)
 
-# list the sample names
+# Get the sample names
 names(acer_spectra)
 
 # and plot the spectra
@@ -51,24 +48,60 @@ acer_spectra <- read_spectra(path = dir_path, format = "sig", exclude_if_matches
 # and check result
 plot(acer_spectra)
 
+## ------------------------------------------------------------------------
+# Read the example data
+spec <- spec_matrix_example
+
+# Check out the format of the matrix
+spec[1:3, 1:4]
+
+# To convert it to spectra, simply run
+spec_from_matrix <- as.spectra(spec, name_idx = 1)
+
+# and again you can plot your data to make sure everything worked okay
+plot(spec_from_matrix)
+
+## ---- eval=F-------------------------------------------------------------
+#  ### Our second example is a .csv file with some metadata
+#  dir_path <- system.file("extdata/spec_matrix_meta.csv", package = "spectrolab")
+#  spec_csv <- read.csv(dir_path, check.names = F)
+#  
+#  ### The sample names are in column 3, the metadata is in columns 1 and 2
+#  achillea_spec <- as.spectra(spec_csv, name_idx = 3, meta_idxs = c(1,2))
+#  
+#  ### And now you have a spectra object with metadata!
+#  ### You can access the metadata using the `meta()` function.
+#  achillea_spec
+#  meta(achillea_spec)
+#  
+#  ### It's also easy to add metadata to a spectra object
+#  my_meta <- c(rnorm(10,2,0.5))
+#  
+#  ### Let's say this is Nitrogen content
+#  meta(achillea_spec,label = "N_perc") <- my_meta
+#  meta(achillea_spec, "N_perc")
+#  
+#  ### And to get the same output in vector format
+#  meta(achillea_spec, "N_perc", simplify = T)
+
 ## ---- eval=F-------------------------------------------------------------
 #  # Make a matrix from a `spectra` object
 #  spec_as_mat = as.matrix(spec, fix_names = "none")
 #  spec_as_mat[1:4, 1:3]
 
-## ---- fig.height=2.5, fig.width=8, dev_svg-------------------------------
-# Simple spectra plot
-par(mfrow = c(1, 3))
-plot(spec, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
-
-# Stand along quantile plot
-plot_quantile(spec, total_prob = 0.8, col = rgb(1, 0, 0, 0.5), lwd = 0.5, border = TRUE)
-title("80% spectral quantile")
-
-# Combined individual spectra, quantiles and shade spectral regions
-plot(spec, lwd = 0.25, lty = 1, col = "grey50", main="Spectra, quantile and regions")
-plot_quantile(spec, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border = FALSE, add = TRUE)
-plot_regions(spec, regions = default_spec_regions(), add = TRUE)
+## ---- fig.height=2.5, fig.width=8, dev_svg, eval = F---------------------
+#  # Simple spectra plot
+#  par(mfrow = c(1, 3))
+#  plot(spec, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
+#  
+#  # Stand along quantile plot
+#  plot_quantile(spec, total_prob = 0.8, col = rgb(1, 0, 0, 0.5), lwd = 0.5, border = TRUE)
+#  title("80% spectral quantile")
+#  
+#  # Combined individual spectra, quantiles and shade spectral regions
+#  plot(spec, lwd = 0.25, lty = 1, col = "grey50", main="Spectra, quantile and regions")
+#  plot_quantile(spec, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border = FALSE, add = TRUE)
+#  plot_regions(spec, regions = default_spec_regions(), add = TRUE)
 
 ## ---- eval=F-------------------------------------------------------------
 #  # Get the vector of all sample names. Note: Duplicated sample names are permitted
@@ -160,41 +193,4 @@ plot_regions(spec, regions = default_spec_regions(), add = TRUE)
 #  
 #  # and check result
 #  plot(acer_vn)
-
-## ---- eval=FALSE---------------------------------------------------------
-#  # Smooth only VIS/NIR or NIR/SWIR
-#  acer_smoo1 <- smoo.visnir(acer_juco)
-#  acer_smoo2 <- smoo.nirswir(acer_juco)
-#  
-#  # Smooth both regions
-#  acer_smoo <- smoo.nirswir.svc(acer_smoo1)
-#  
-#  # Same result
-#  acer_smoo <- smoo.visnir.svc(acer_smoo2)
-
-## ---- eval=FALSE---------------------------------------------------------
-#  # Subset jump corrected spectra to 400 - 2400 nm
-#  acer_sub <- acer_juco[, 400:2400]
-#  
-#  # Exclude spectra with reflectances at 780 nm (the "NIR shoulder") <0.3 or >0.65
-#  acer_sub1 <- excl_shoulder(acer_sub, refl_high = 0.65, refl_low = 0.3)
-#  plot(acer_sub1)
-
-## ---- eval=FALSE---------------------------------------------------------
-#  # First plot your spectra to search for outliers
-#  plot(acer_sub)
-#  
-#  # and add vertical and horizontal guides if you like.
-#  abline(v=1500)
-#  abline(h=0.2)
-#  
-#  # Instead of using the NIR shoulder, remove the outlier by defining a lower limit,
-#  # e.g., 0.2 reflectance at 1500 nm, and check the result.
-#  acer_sub2 <- excl_low(acer_sub, refl_low = 0.2, wvl_low = 1500)
-#  plot(acer_sub2)
-#  
-#  # Or exclude the same measurement by defining a upper limit, e.g. 0.1 reflectance
-#  # at 600 nm, and check the result.
-#  acer_sub3 <- excl_high(acer_sub, refl_high = 0.1, wvl_high = 600)
-#  plot(acer_sub3)
 

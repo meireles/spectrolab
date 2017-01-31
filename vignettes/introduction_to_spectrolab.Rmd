@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The goal of `spectrolab` is to provide essential functions to process data from portable spectrometers and a common interface for spectra that other packages can build on. `spectrolab` provides methods to read spectral data files (SVC, ASD and Spectral Evolution), vector normalization, smoothing, matching sensor overlap regions, etc. `spectrolab` introduces the S3 class `spectra`, making it easy to plot and manipulate data and to access additional metadata.
+The goal of `spectrolab` is to provide essential functions to process data from portable spectrometers and a common interface other packages can build on. `spectrolab` provides methods to read spectral data, to perform jump correction, vector normalization, and smoothing at the sensor overlap regions. `spectrolab` introduces the S3 class `spectra`, which makes it easy to plot and subset data, and to add and access metadata.  
 
 ## Installing and loading `spectrolab`
 
@@ -61,11 +61,9 @@ dir_path <- system.file("extdata", "Acer_example", package = "spectrolab")
 acer_spectra <- read_spectra(path = dir_path, format = "sig")
 
 # Note that `acer_spectra` is a `spectra` object. 
-# You can ensure that this is true using spectrolab's `is_spectra()` function.
+# You can ensure that this is true using the `is_spectra()` function.
 is_spectra(acer_spectra)
 ```
-
-
 
 ## Inspecting spectra
 
@@ -87,6 +85,7 @@ plot(acer_spectra)
 
 When plotting `(acer_spectra)` you will notice that the `Acer_example` data contain one white reference measurement (the horizontal line around 1.0 reflectance) and one obviously bad measurement (with a dip at the NIR shoulder). During the measurement campaign the file names of those two measurements were flagged with "_WR" and "_BAD". You can avoid importing those files to beging with by passing those flags to `read_spectra()`.
 
+
 ```{r, eval=TRUE}
 
 # Check the filenames to see if there are any flags
@@ -99,8 +98,50 @@ acer_spectra <- read_spectra(path = dir_path, format = "sig", exclude_if_matches
 plot(acer_spectra)
 ```
 
-Flagging "unusual" measurements during data collection is a very good idea. It clearly helps you to quickly sort through your files when it comes to processing. However, you can also exclude bad spectra and outliers later on. We show you how in section `Excluding spectra` futher below. 
+Flagging "unusual" measurements during data collection is a very good idea. However, you can also exclude bad spectra and outliers by subsetting your spectra object. We show you how this works in the section **Subsetting spectra** below. 
 
+### Create spectra from a matrix
+
+If you already have your spectra in a matrix format, you can use the function `as.spectra()` to convert it to a `spectra` object. The matrix **must** be in a specific format. (1) Samples must be in rows and wavelengths in columns. (2) Column names must be the wavelength labels. (3) By default, `as.spectra()` assumes that the sample names are in the first column, but you can supply a different column index by using the `name_idx` argument. Here are two examples, one of a matrix named `spec_matrix_example`, and one of a .csv file with some metadata called `spec_matrix_meta`. 
+
+```{r}
+# Read the example data
+spec <- spec_matrix_example
+
+# Check out the format of the matrix
+spec[1:3, 1:4]
+
+# To convert it to spectra, simply run
+spec_from_matrix <- as.spectra(spec, name_idx = 1)
+
+# and again you can plot your data to make sure everything worked okay
+plot(spec_from_matrix)
+```
+
+
+```{r, eval=F}
+### Our second example is a .csv file with some metadata
+dir_path <- system.file("extdata/spec_matrix_meta.csv", package = "spectrolab")
+spec_csv <- read.csv(dir_path, check.names = F)
+
+### The sample names are in column 3, the metadata is in columns 1 and 2
+achillea_spec <- as.spectra(spec_csv, name_idx = 3, meta_idxs = c(1,2))
+
+### And now you have a spectra object with metadata! 
+### You can access the metadata using the `meta()` function. 
+achillea_spec
+meta(achillea_spec)
+
+### It's also easy to add metadata to a spectra object
+my_meta <- c(rnorm(10,2,0.5))
+
+### Let's say this is Nitrogen content
+meta(achillea_spec,label = "N_perc") <- my_meta
+meta(achillea_spec, "N_perc")
+
+### And to get the same output in vector format
+meta(achillea_spec, "N_perc", simplify = T)
+```
 
 ### Converting a `spectra` object into a matrix
 
@@ -120,7 +161,7 @@ You can also plot the quantile of a `spectra` object with `plot_quantile()`. It'
 
 Last but not least, you can also shade spectral regions with the `plot_regions()` function. `spectrolab` provides a `default_spec_regions()` matrix as an example, but you obviously can customize it for your needs.
 
-```{r, fig.height=2.5, fig.width=8, dev_svg}
+```{r, fig.height=2.5, fig.width=8, dev_svg, eval = F}
 # Simple spectra plot
 par(mfrow = c(1, 3))
 plot(spec, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
@@ -277,52 +318,5 @@ plot(acer_vn)
 
 ### Smoothing at overlap regions ... coming soon
 
-Depending on your analysis, it can be a good idea to smooth remaining noise at the sensor overlap regions. `spectrolab` comes with two smoothing functions: `smoo_visnir()` uses moving average between 970 - 1025 nm. `smoo_nirswir()` uses linear interpolation between 1903 - 1917 nm. Note: *Ms. A* does not do this when predicting traits from spectra. 
+Depending on your analysis, it can be a good idea to smooth remaining noise at the sensor overlap regions. 
 
-```{r, eval=FALSE}
-# Smooth only VIS/NIR or NIR/SWIR
-acer_smoo1 <- smoo.visnir(acer_juco)
-acer_smoo2 <- smoo.nirswir(acer_juco)
-
-# Smooth both regions
-acer_smoo <- smoo.nirswir.svc(acer_smoo1)
-
-# Same result
-acer_smoo <- smoo.visnir.svc(acer_smoo2)
-```
-
-## Excluding spectra 
-
-The `spectrolab` package comes with a couple of options to exclude bad spectra and outliers. The function `excl_shoulder()` focusses on the NIR shoulder (780 nm), a region commonly used to assess the signal to noise ratio in spectral measurements. You can set the upper and lower reflectance limits at 780 nm yourself.
-
-```{r, eval=FALSE}
-# Subset jump corrected spectra to 400 - 2400 nm 
-acer_sub <- acer_juco[, 400:2400]
-
-# Exclude spectra with reflectances at 780 nm (the "NIR shoulder") <0.3 or >0.65 
-acer_sub1 <- excl_shoulder(acer_sub, refl_high = 0.65, refl_low = 0.3)
-plot(acer_sub1)
-```
-
-Functions `excl_high` and `excl_low` give you more flexibility. Use `excl_high` to exclude measurements where reflectances appear *too high* and `excl_low` to exclude measurements where reflectances appear *too low*. Simply supply the wavelength and reflectance value limit you want to use.
-
-```{r, eval=FALSE}
-# First plot your spectra to search for outliers 
-plot(acer_sub)
-
-# and add vertical and horizontal guides if you like.
-abline(v=1500)
-abline(h=0.2)
-
-# Instead of using the NIR shoulder, remove the outlier by defining a lower limit,
-# e.g., 0.2 reflectance at 1500 nm, and check the result.
-acer_sub2 <- excl_low(acer_sub, refl_low = 0.2, wvl_low = 1500)
-plot(acer_sub2)
-
-# Or exclude the same measurement by defining a upper limit, e.g. 0.1 reflectance 
-# at 600 nm, and check the result. 
-acer_sub3 <- excl_high(acer_sub, refl_high = 0.1, wvl_high = 600)
-plot(acer_sub3)
-```
-
-Another common feature defining outliers can be dips in the spectrum, e.g. around the NIR shoulder, caused by some sort of sensor failure. To remove such measurements use `excl_dip` and define the maximum allowed difference `refl_diff` between two wavelengths, `wvl_low` which is the shorter wavelength, and `wvl_high` which is the longer wavelength. Use `help(preprocess)` for more information. 
