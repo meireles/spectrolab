@@ -14,7 +14,7 @@ library("spectrolab")
 #  acer_spectra <- read_spectra(path = dir_path, format = "sig")
 #  
 #  # Note that `acer_spectra` is a `spectra` object.
-#  # You can ensure that this is true using spectrolab's `is_spectra()` function.
+#  # You can ensure that this is true using the `is_spectra()` function.
 #  
 #  is_spectra(acer_spectra)
 
@@ -52,11 +52,13 @@ spec <- spec_matrix_example
 
 ## ------------------------------------------------------------------------
 # To convert it to spectra, simply run
-spec_from_matrix <- as.spectra(spec)
+spec_from_matrix <- as.spectra(spec, name_idx = 1)
 
 ## ---- eval=F-------------------------------------------------------------
 #  # and again you can plot your data to make sure everything worked okay
 #  plot(spec_from_matrix)
+#  
+#  spec_from_matrix2 <- spec_matrix_meta
 
 ## ---- eval=F-------------------------------------------------------------
 #  # Make a matrix from a `spectra` object
