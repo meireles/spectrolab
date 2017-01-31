@@ -120,7 +120,7 @@ read_spectra = function(path,
     if(format_lookup[format_match] == "sed"){
         result = i_read_ascii_spectra(i_path,
                                       skip_first_n      = 27,
-                                      sep_char          = "\t",
+                                      sep_char          = "",
                                       wl_and_refl_cols  = c(1, 4),
                                       divide_refl_by    = 100,
                                       include_white_ref = include_white_ref,
