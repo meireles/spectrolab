@@ -109,22 +109,27 @@ read_spectra = function(path,
     if(format_lookup[format_match] == "sig"){
         result = i_read_ascii_spectra(i_path,
                                       skip_first_n      = 25,
-                                      sep_char          = " ",
-                                      wl_and_refl_cols  = c(1, 7),
+                                      sep_char          = "",
+                                      header            = FALSE,
+                                      wl_and_refl_cols  = c(1, 4),
                                       divide_refl_by    = 100,
                                       include_white_ref = include_white_ref,
                                       outside_01_fun    = fix_out01)
         return(result)
     }
 
+
+
     if(format_lookup[format_match] == "sed"){
         result = i_read_ascii_spectra(i_path,
-                                      skip_first_n      = 27,
+                                      skip_first_n      = 26,
                                       sep_char          = "\t",
-                                      wl_and_refl_cols  = c(1, 4),
+                                      header            = TRUE,
+                                      wl_and_refl_cols  = c("Wvl", "Reflect. %"),
                                       divide_refl_by    = 100,
                                       include_white_ref = include_white_ref,
-                                      outside_01_fun    = fix_out01)
+                                      outside_01_fun    = fix_out01,
+                                      check.names       = FALSE)
         return(result)
     }
 
@@ -147,19 +152,22 @@ read_spectra = function(path,
 #' @param file_paths paths for files already parsed by `read_spectra`
 #' @param skip_first_n skip the first n lines
 #' @param sep_char separator
-#' @param wl_and_refl_cols vector of length 2 with index wavelength labels and
-#'                         reflectance values
+#' @param header boolean. keep header?
+#' @param wl_and_refl_cols vector of length 2 with the indices (or column names
+#'                         in case header = T for the columns with wavelength
+#'                         labels and reflectance values
 #' @param divide_refl_by divide reflectance values by this
 #' @param include_white_ref NOT USED YET, but should read the write reference
 #'                          from each file
 #' @param outside_01_fun function to deal with reflectance values outside 0.1.
-#' @param ... NOT USED YET
+#' @param ... additional arguments passed to read table
 #' @return single `spectra` file or list of `spectra`
 #'
 #' @author Jose Eduardo Meireles
 i_read_ascii_spectra = function(file_paths,
                                 skip_first_n,
                                 sep_char,
+                                header,
                                 wl_and_refl_cols,
                                 divide_refl_by,
                                 include_white_ref,
@@ -168,9 +176,9 @@ i_read_ascii_spectra = function(file_paths,
 
     parse = function(x) {
         result = read.delim(x,
-                            sep = sep_char,
+                            sep  = sep_char,
                             skip = skip_first_n,
-                            header = FALSE)[ , wl_and_refl_cols ]
+                            header = header, ...)[ , wl_and_refl_cols ]
         colnames(result) = c("wl", "refl")
         result
     }
@@ -215,7 +223,8 @@ i_read_ascii_spectra = function(file_paths,
 #' @param outside_01_fun function to deal with reflectance values outside 0.1.
 #' @param ... NOT USED YET
 #'
-#'  @importFrom prospectr readASD
+#' @author Jose Eduardo Meireles
+#' @importFrom prospectr readASD
 i_read_asd_spectra = function(file_paths,
                               format = c("binary", "txt"),
                               divide_refl_by,
