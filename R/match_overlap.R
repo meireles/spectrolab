@@ -1,14 +1,59 @@
-match_overlap = function(){
+#' Find sensor bounds
+#'
+#' \code{i_find_sensor_bounds} finds the bounds bwteen sen
+#'
+#' @param x wavelength vector
+#' @param idx boolean. return indices? defaults to TRUE
+#' @return data.frame with sensor bounds
+#'
+#' @author Jose Eduardo Meireles
+i_find_sensor_bounds= function(x, idx = TRUE){
+    y = which(diff(x) < 0.0)
+    n = length(y) + 1
+    l = matrix(data     = c( c(1, y + 1), c(y, length(x)) ),
+               ncol     = n,
+               byrow    = TRUE,
+               dimnames = list(c("begin", "end"),
+                               paste("sensor", seq(n), sep = "_") )
+    )
+
+    if(!idx){
+        l["begin", ] = x[ l["begin", ] ]
+        l["end", ]   = x[ l["end", ] ]
+    }
+    as.data.frame(l)
+}
+
+
+#' Match spectra at sensor overlap regions
+#'
+#' @param x spectra object
+#' @param cut_points cut points for transition between sensors. must be of length
+#'                   number of sensors - 1. Defaults to c(990, 1900)
+#' @return spectra object
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+match_overlap = function(x, cut_points = c(990, 1900) ){
     UseMethod("match_overlap")
 }
 
 
-match_overlap.spectra = function(){
-
+#' @describeIn match_overlap Match sensor ovelap regions
+#' @export
+match_overlap.spectra = function(x, cut_points = c(990, 1900)){
+    i_match_overlap_svc(x = x, cut_points = cut_points)
 }
 
 
-i_match_overlap_svc = function(x){
+#' TODO
+#'
+#' @param x TODO
+#' @param cut_points TODO
+#' @return TODO
+#'
+#' @author Jose Eduardo Meireles
+i_match_overlap_svc = function(x, cut_points){
 
     # ---------- Forwarded message ----------
     # From: "Lawrence Slomer" <lslomer@spectravista.com>
@@ -53,6 +98,56 @@ i_match_overlap_svc = function(x){
     #
     # --Larry
 
+    ## List wavelengths per sensor
+    w = wavelengths(x)
+    b = i_find_sensor_bounds(w)
+    s = lapply(b, function(y){
+        w[ seq.int(y[[1]], y[[2]]) ]
+    })
 
+    if(length(cut_points) != ncol(b) - 1){
+        stop("number of cut_points must be equal to the number of overlaps")
+    }
 
+    ## Compute factors for the silicon sensor (1st one)
+    ## The factors are computed across a range of wavelengths
+    ## I think that the defaults in SVC are 990 (used for cut point) and 1010
+    rg = c(cut_points[1], 1010)
+    m  = as.matrix(x)
+
+    o1 = m[ , as.character(s[[1]][ s[[1]] > rg[1] & s[[1]] < rg[2] ]) ]
+    o2 = m[ , as.character(s[[2]][ s[[2]] > rg[1] & s[[2]] < rg[2] ]) ]
+    f  = rowMeans(o2) / rowMeans(o1)
+
+    ## Prune the wavelengths based on cut_points
+    for(i in 1 : length(cut_points)){
+        right      = which(s[[i + 1]] >=  cut_points[i])
+        s[[i + 1]] = s[[i + 1]][ right ]
+        s[[i]]     = s[[i]][ s[[i]] < min(s[[i + 1]]) ]
+    }
+
+    ## Compute the factor matrix for the visible range "AFTER prunning"
+    fm = sapply(f, function(y){
+        seq(1.0, y, length.out = length(s[[1]]))
+    })
+
+    ## Before scaling the prunned spectra, I need to check for duplicated
+    ## wavelengths and exclude them. Because the duplicates can be on either
+    ## sensor1 or 2, depending on cut_points[1], it is works out to exclude the
+    ## non monotonically increasing wl.
+    ## HACK
+    g      = x[ , unlist(s) ]
+    idx_rm = which(diff(wavelengths(g)) <= 0.0)
+
+    ## Assign a dummy wavelength value to the wl to rm
+    bogus  = 123456789
+    wavelengths(g)[ idx_rm ] = bogus
+
+    ## now prune the spectral data
+    g = g[ , wavelengths(g)[ wavelengths(g) != bogus ]  ]
+
+    ## Scale silicon sensor by factors
+    g[ , s[[1]]] = reflectance(g[ , s[[1]] ] ) * t(fm)
+
+    g
 }
