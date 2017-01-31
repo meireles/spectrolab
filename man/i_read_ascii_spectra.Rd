@@ -4,8 +4,8 @@
 \alias{i_read_ascii_spectra}
 \title{Internal parser for ASCII format}
 \usage{
-i_read_ascii_spectra(file_paths, skip_first_n, sep_char, wl_and_refl_cols,
-  divide_refl_by, include_white_ref, outside_01_fun, ...)
+i_read_ascii_spectra(file_paths, skip_first_n, sep_char, header,
+  wl_and_refl_cols, divide_refl_by, include_white_ref, outside_01_fun, ...)
 }
 \arguments{
 \item{file_paths}{paths for files already parsed by `read_spectra`}
@@ -13,6 +13,8 @@ i_read_ascii_spectra(file_paths, skip_first_n, sep_char, wl_and_refl_cols,
 \item{skip_first_n}{skip the first n lines}
 
 \item{sep_char}{separator}
+
+\item{header}{boolean. keep header?}
 
 \item{wl_and_refl_cols}{vector of length 2 with index wavelength labels and
 reflectance values}
@@ -24,7 +26,7 @@ from each file}
 
 \item{outside_01_fun}{function to deal with reflectance values outside 0.1.}
 
-\item{...}{NOT USED YET}
+\item{...}{additional arguments passed to read table}
 }
 \value{
 single `spectra` file or list of `spectra`
