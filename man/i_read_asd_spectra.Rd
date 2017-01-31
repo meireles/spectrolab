@@ -19,11 +19,12 @@ from each file}
 
 \item{outside_01_fun}{function to deal with reflectance values outside 0.1.}
 
-\item{...}{NOT USED YET
-
- @importFrom prospectr readASD}
+\item{...}{NOT USED YET}
 }
 \description{
 Parser for ASD's `.asd`
+}
+\author{
+Jose Eduardo Meireles
 }
 

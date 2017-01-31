@@ -153,8 +153,9 @@ read_spectra = function(path,
 #' @param skip_first_n skip the first n lines
 #' @param sep_char separator
 #' @param header boolean. keep header?
-#' @param wl_and_refl_cols vector of length 2 with index wavelength labels and
-#'                         reflectance values
+#' @param wl_and_refl_cols vector of length 2 with the indices (or column names
+#'                         in case header = T for the columns with wavelength
+#'                         labels and reflectance values
 #' @param divide_refl_by divide reflectance values by this
 #' @param include_white_ref NOT USED YET, but should read the write reference
 #'                          from each file
@@ -222,7 +223,8 @@ i_read_ascii_spectra = function(file_paths,
 #' @param outside_01_fun function to deal with reflectance values outside 0.1.
 #' @param ... NOT USED YET
 #'
-#'  @importFrom prospectr readASD
+#' @author Jose Eduardo Meireles
+#' @importFrom prospectr readASD
 i_read_asd_spectra = function(file_paths,
                               format = c("binary", "txt"),
                               divide_refl_by,

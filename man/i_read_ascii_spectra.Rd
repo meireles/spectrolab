@@ -16,8 +16,9 @@ i_read_ascii_spectra(file_paths, skip_first_n, sep_char, header,
 
 \item{header}{boolean. keep header?}
 
-\item{wl_and_refl_cols}{vector of length 2 with index wavelength labels and
-reflectance values}
+\item{wl_and_refl_cols}{vector of length 2 with the indices (or column names
+in case header = T for the columns with wavelength
+labels and reflectance values}
 
 \item{divide_refl_by}{divide reflectance values by this}
 
