@@ -17,6 +17,8 @@
 #' @param enforce01 Boolean. enforce reflectance to be between 0.0 and 1.0?
 #'                  Defaults to FALSE
 #' @return data conformable to relative reflectance: numeric matrix
+#'
+#' @author Jose Eduardo Meireles
 i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = FALSE) {
 
     ## test if x dimensions conform to nwavelengths and nsample
@@ -53,7 +55,6 @@ i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = FAL
     ## add enforce01 attribute
     attr(x, which = "enforce01") = enforce01
 
-    ## Return
     x
 }
 
@@ -66,6 +67,8 @@ i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = FAL
 #' @param nsample Integer of expected number of samples.
 #'                If NULL (default) checking is skipped.
 #' @return vector of sample names
+#'
+#' @author Jose Eduardo Meireles
 i_names = function(x, nsample = NULL){
 
     if( ! is.null(dim(x)) ){
@@ -89,8 +92,9 @@ i_names = function(x, nsample = NULL){
 #' @param x vector of wavelengths. Either numeric or character
 #' @param nwavelengths Integer of expected number of wavelengths.
 #'                     If NULL (default) checking is skipped.
-#'
 #' @return vector of wavelengths
+#'
+#' @author Jose Eduardo Meireles
 i_wavelengths = function(x, nwavelengths = NULL) {
     if(! is.vector(x)) {
         stop("Wavelengths names must be in a vector")
@@ -115,15 +119,32 @@ i_wavelengths = function(x, nwavelengths = NULL) {
 #'
 #' @param x data.frame
 #' @param nsample number of samples in spectra
+#' @param allow_null boolean. If TRUE (default) and x is NULL, the function will
+#'                   return NULL regardless of nsample
 #' @param ... additional arguments passed to as.data.frame
-#'
 #' @return data.frame
-i_meta = function(x, nsample, ...){
-    x = as.data.frame(x, ...)
+#'
+#' @author Jose Eduardo Meireles
+i_meta = function(x, nsample, allow_null = TRUE, ...){
+
+    if(is.null(x) && allow_null){
+        m = matrix(NA, nrow = nsample, ncol = 0)
+        return(as.data.frame(m))
+    }
+
+    if( ! is.data.frame(x) ){
+        stop("x must be a data.frame")
+    }
 
     if( nsample != nrow(x) ){
         stop("The number of columns of meta must be the same as nsample")
     }
+
+    if(ncol(x) > 0 && is.null(colnames(x))){
+        stop("metadata elements (columns) must be named")
+    }
+
+    rownames(x) = NULL
 
     x
 }
@@ -145,8 +166,11 @@ i_meta = function(x, nsample, ...){
 #'             equals to the number of samples (nrow(reflectance) or length(names))
 #' @param enforce01 Force reflectance to be between 0 and 1. defaults to FALSE
 #' @param ... additional arguments to metadata creation. not implemented yet
-#'
 #' @return spectra object
+#'
+#' @note This function resorts to an ugly hack to deal with metadata assignment.
+#'       Need to think a little harder to find a solution.
+#' @author Jose Eduardo Meireles
 #' @export
 spectra = function(reflectance,
                    wavelengths,
@@ -154,6 +178,17 @@ spectra = function(reflectance,
                    meta      = NULL,
                    enforce01 = FALSE,
                    ...){
+
+    ## HACK!!! affected blocks marked with ***
+    ## The coersion logic for metadata (meta) is in the setter meta() instead of
+    ## being in the ctor i_meta.
+    ## This means that assigning metadata with `meta()` works in more situations
+    ## than using the ctor, e.g.
+    ##    meta(s) = list("clade" = c("A", "B", "C", ...))             ## OK
+    ##    spectra(..., meta = list("clade" = c("A", "B", "C", ...)))  ## NO GO
+    ##
+    ## I will resort to an ugly hack to tackle that issue, but this should be
+    ## fixed soon.
 
     wl_l  = length(wavelengths)
     spl_l = length(names)
@@ -163,13 +198,11 @@ spectra = function(reflectance,
                                            nsample      = spl_l,
                                            enforce01    = enforce01),
               wavelengths  = i_wavelengths(wavelengths),
-              names        = i_names(names))
+              names        = i_names(names),
+              meta         = i_meta(NULL, nsample = spl_l, ...) ## *** Ideally i_meta(meta, nsample = spl_l, ...)
+              )
 
-    if( is.null(meta) ){
-        s["meta"] = NULL
-    } else {
-        s["meta"] = i_meta(meta, nsample = spl_l, ...)
-    }
-
-    structure(s, class = c("spectra"))
+    s = structure(s, class = c("spectra")) ## *** This should be the resturned obj
+    meta(s) = meta                         ## *** so I shouldn't have to do this
+    s
 }

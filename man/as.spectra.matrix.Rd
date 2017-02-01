@@ -4,15 +4,23 @@
 \alias{as.spectra.matrix}
 \title{Convert matrix to spectra}
 \usage{
-\method{as.spectra}{matrix}(x)
+\method{as.spectra}{matrix}(x, name_idx = 1, meta_idxs = NULL)
 }
 \arguments{
 \item{x}{matrix}
+
+\item{name_idx}{column index with sample names. Defaults to 1st col}
+
+\item{meta_idxs}{column indices with metadata (not name and not reflectance).
+Defaults to NULL}
 }
 \value{
 spectra object
 }
 \description{
 Convert matrix to spectra
+}
+\author{
+Jose Eduardo Meireles
 }
 

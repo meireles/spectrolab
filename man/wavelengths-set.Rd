@@ -9,7 +9,7 @@ wavelengths(x, unsafe = FALSE) <- value
 \arguments{
 \item{x}{spectra object (lhs)}
 
-\item{unsafe}{boolean. Skip safety check? Defaults to FALSE}
+\item{unsafe}{boolean. Skip length safety check? Defaults to FALSE}
 
 \item{value}{rhs}
 }
@@ -18,5 +18,8 @@ nothing. called for its side effect.
 }
 \description{
 \code{wavelengths} sets wavelength labels of lhs to the rhs values
+}
+\author{
+Jose Eduardo Meireles
 }
 

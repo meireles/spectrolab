@@ -4,9 +4,9 @@
 #'
 #' @param e1 lhs
 #' @param e2 rhs
-#'
 #' @return Depends on the operator. c("+", "-", "*", "/", "^") return spectra
 #'         c("==", "!=", "<", "<=", ">=", ">") return boolean matrices
+#' @author Jose Eduardo Meireles
 #' @export
 Ops.spectra = function(e1, e2) {
     mathop = c("+", "-", "*", "/", "^")

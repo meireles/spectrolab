@@ -4,17 +4,21 @@
 \alias{[.spectra}
 \title{Subset spectra}
 \usage{
-\method{[}{spectra}(this, i, j)
+\method{[}{spectra}(x, i, j, simplify = TRUE)
 }
 \arguments{
-\item{this}{spectra object}
+\item{x}{spectra object}
 
-\item{i}{Sample names (preferred) or index.}
+\item{i}{Sample names (preferred), index, or a logical vector of length nrow(x)}
 
-\item{j}{Wavelength labels, as numeric or character Do not use indexes.}
+\item{j}{Wavelength labels, as numeric or character
+or a logical vector of length ncol(x). Do not use indexes!}
+
+\item{simplify}{Boolean. If TRUE (default), single band selections
+are returned as a named vector of reflectance values}
 }
 \value{
-spectra object
+usually a spectra object, but see param `simplify`
 }
 \description{
 \code{`[`} Subsets spectra by sample names (rows) or (and) wavelengths (columns)
@@ -25,5 +29,8 @@ names or indexes, in that order. That is, if you subset x[1:2 , ] and your
 sample names contain 1 and 2, you will get the spectra with names in
 c(1, 2) and not (at least necessarily) the first and second samples in the
 `spectra` object.
+}
+\author{
+Jose Eduardo Meireles
 }
 

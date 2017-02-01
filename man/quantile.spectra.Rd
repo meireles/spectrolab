@@ -21,4 +21,7 @@ spectra object with one spectrum for each prob
 \description{
 \code{quantile} computes quantiles by wavelength and returns them as `spectra`
 }
+\author{
+Jose Eduardo Meireles
+}
 

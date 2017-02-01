@@ -15,4 +15,7 @@ boolean
 \description{
 \code{i_is_whole} Tests if x is (are) whole numbers
 }
+\author{
+Jose Eduardo Meireles
+}
 

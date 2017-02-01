@@ -3,35 +3,49 @@
 #' @param x matrix or dataframe. Samples are in rows and wavelengths in columns.
 #'          First column must be the sample label and the remaining columns must
 #'          hold reflectance data.
+#' @param name_idx column index with sample names. Defaults to 1st col
+#' @param meta_idxs column indices with metadata (not name and not reflectance).
+#'                  Defaults to NULL
 #' @return spectra object
+#'
+#' @author Jose Eduardo Meireles
 #' @export
-as.spectra = function(x){
+as.spectra = function(x, name_idx = 1, meta_idxs = NULL){
     UseMethod("as.spectra", x)
 }
 
-#' Convert matrix to spectra
-#' @param x matrix
-#' @return spectra object
-#' @export
-as.spectra.matrix = function(x){
-    r = x[ , -1 ]
-    w = colnames(r)
-    s = x[ , 1 ]
-
-    spectra(r, w, s)
-}
-
 #' Convert data.frame to spectra
+#'
 #' @param x data.frame
+#' @param name_idx column index with sample names. Defaults to 1st col
+#' @param meta_idxs column indices with metadata (not name and not reflectance).
+#'                  Defaults to NULL
 #' @return spectra object
 #'
+#' @author Jose Eduardo Meireles
 #' @export
-as.spectra.data.frame = function(x){
-    r = x[ , -1 ]
+as.spectra.data.frame = function(x, name_idx = 1, meta_idxs = NULL){
+    s = x[ , name_idx, drop = TRUE]
+    m = x[ , meta_idxs, drop = FALSE]
+    r = x[ , - c(name_idx, meta_idxs), drop = FALSE]
     w = colnames(r)
-    s = x[ , 1 ]
 
-    spectra(r, w, s)
+    spectra(r, w, s, m)
+}
+
+
+#' Convert matrix to spectra
+#'
+#' @param x matrix
+#' @param name_idx column index with sample names. Defaults to 1st col
+#' @param meta_idxs column indices with metadata (not name and not reflectance).
+#'                  Defaults to NULL
+#' @return spectra object
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+as.spectra.matrix = function(x, name_idx = 1, meta_idxs = NULL){
+    as.spectra(as.data.frame(x), name_idx = name_idx, meta_idxs = meta_idxs)
 }
 
 
@@ -40,9 +54,11 @@ as.spectra.data.frame = function(x){
 #' @param x spectra object
 #' @param fix_names Use make.names to normalize names?
 #'                  Pick one: "none" "row" "col" "both".
-#' @param ... does nothing
+#' @param ... does nothing. Here for compatibility with S3 generics
 #' @return matrix of spectral reflectance. columns are wavelengths and rows are
 #'         samples
+#'
+#' @author Jose Eduardo Meireles
 #' @export
 as.matrix.spectra = function(x, fix_names = "none", ...) {
     r = reflectance(x)
@@ -64,4 +80,32 @@ as.matrix.spectra = function(x, fix_names = "none", ...) {
 
     dimnames(r) = list(s, w)
     r
+}
+
+#' Convert spectra to data.frame
+#'
+#' Returns a data.frame that includes sample names, metadata (if present) and
+#' reflectance data. One advantage over as.matrix, is that the metadata are
+#' returned.
+#'
+#' @param x spectra object
+#' @param row.names does nothing. Here for compatibility with S3 generics
+#' @param optional does nothing. Here for compatibility with S3 generics
+#' @param fix_names Use make.names to normalize names?
+#'                  Pick one: "none" "row" "col" "both".
+#' @param ... does nothing. Here for compatibility with S3 generics
+#' @return data.frame with: sample_name, metadata (if any) and reflectance.
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+as.data.frame.spectra = function(x,
+                                 row.names = NULL,
+                                 optional = FALSE,
+                                 fix_names = "none",
+                                 ...) {
+
+    y = as.matrix(x, fix_names = fix_names, ...)
+    m = meta(x)
+
+    data.frame(sample_name = rownames(y), m, y, check.names = FALSE, row.names = NULL)
 }

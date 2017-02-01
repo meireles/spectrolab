@@ -12,7 +12,7 @@
 \item{fix_names}{Use make.names to normalize names?
 Pick one: "none" "row" "col" "both".}
 
-\item{...}{does nothing}
+\item{...}{does nothing. Here for compatibility with S3 generics}
 }
 \value{
 matrix of spectral reflectance. columns are wavelengths and rows are
@@ -20,5 +20,8 @@ matrix of spectral reflectance. columns are wavelengths and rows are
 }
 \description{
 Convert spectra to matrix
+}
+\author{
+Jose Eduardo Meireles
 }
 

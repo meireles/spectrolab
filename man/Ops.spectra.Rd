@@ -18,4 +18,7 @@ Depends on the operator. c("+", "-", "*", "/", "^") return spectra
 \description{
 Overloads arithmetic operators for spectra using `Ops.`
 }
+\author{
+Jose Eduardo Meireles
+}
 

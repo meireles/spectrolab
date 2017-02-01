@@ -7,7 +7,7 @@
 i_smooth_spline_spectra(x, parallel = TRUE, ...)
 }
 \arguments{
-\item{x}{spectra object}
+\item{x}{spectra object. Wavelengths must be strictly increasing}
 
 \item{parallel}{boolean. Do computation in parallel? Defaults to TRUE}
 
@@ -19,5 +19,8 @@ a list of spline functions
 }
 \description{
 Gets spline functions for each spectrum in a spectra object
+}
+\author{
+Jose Eduardo Meireles
 }
 

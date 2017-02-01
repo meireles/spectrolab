@@ -11,8 +11,10 @@
 #' }
 #' @import prospectr
 #' @export
-
 jump_corr <- function (spec) {
+
+    .Deprecated("match_overlap", package = "spectrolab")
+
     if( !is_spectra(spec) ){
         stop("Object must be of class spectra")
     }
@@ -87,4 +89,3 @@ jump_corr <- function (spec) {
                         names = names(spec))
     return(spec_corri)
     }
-

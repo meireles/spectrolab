@@ -4,10 +4,11 @@
 #'
 #' @param ... spectra object
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
-#'
 #' @return single numeric value
+#'
+#' @author Jose Eduardo Meireles
 #' @export
-min.spectra = function(...,na.rm = FALSE){
+min.spectra = function(..., na.rm = FALSE){
     min(reflectance(...), na.rm = na.rm)
 }
 
@@ -17,10 +18,11 @@ min.spectra = function(...,na.rm = FALSE){
 #'
 #' @param ... spectra object
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
-#'
 #' @return single numeric value
+#'
+#' @author Jose Eduardo Meireles
 #' @export
-max.spectra = function(...,na.rm = FALSE){
+max.spectra = function(..., na.rm = FALSE){
     max(reflectance(...), na.rm = na.rm)
 }
 
@@ -30,10 +32,11 @@ max.spectra = function(...,na.rm = FALSE){
 #'
 #' @param ... spectra object
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
-#'
 #' @return tuple of numeric values (min, max)
+#'
+#' @author Jose Eduardo Meireles
 #' @export
-range.spectra = function(...,na.rm = FALSE){
+range.spectra = function(..., na.rm = FALSE){
     range(reflectance(...), na.rm = na.rm)
 }
 
@@ -43,12 +46,13 @@ range.spectra = function(...,na.rm = FALSE){
 #' \code{dim} returns a vector with number of samples and bands (wavelengths)
 #'
 #' @param x spectra object
-#'
 #' @return tuple of integers: c("n_samples", "n_wavelengths")
+#'
+#' @author Jose Eduardo Meireles
 #' @export
 dim.spectra = function(x){
-    c("n_samples"     = length(x$names),
-      "n_wavelengths" = length(x$wavelengths))
+    c("n_samples"     = length(names(x)),
+      "n_wavelengths" = length(wavelengths(x)) )
 }
 
 #' Print spectra
@@ -57,16 +61,70 @@ dim.spectra = function(x){
 #'
 #' @param x spectra object
 #' @param ... other arguments passed to print. not implemented for spectra
-#'
 #' @return nothing. called for side effect
+#'
+#' @author Jose Eduardo Meireles
 #' @export
 print.spectra = function(x, ...){
-    d = dim(x)
-    r = range(wavelengths(x))
+    r_wvl   = range(wavelengths(x))
+    o_wvl   = i_test_increasing_wavelengths(wavelengths(x), stop = FALSE)
+
+    ## In case I want to report if the wavelength spacings are unequal
+    # d_wvl   = diff(wavelengths(x))
+    # d_wvl   = all(d_wvl[1] == d_wvl)
+
+    n_met   = names(meta(x, simplify = FALSE))
+    l_met   = length(n_met)
+    l_max   = 3L
+
+    if(l_met > l_max){
+        n_met = c( head(n_met, l_max) , "...")    ## overwriting n_met
+        l_met = paste(l_max, "of", l_met)         ## overwriting l_met
+    }
+
     cat("spectra object", "\n")
-    cat("number of samples:", d[1],"\n")
-    cat("wavelength range: ", r[1], " to ", r[2], " (", d[2], " bands)" ,"\n", sep = "")
+    cat("number of samples:", nrow(x),"\n")
+    cat("wavelengths: ", r_wvl[1], " to ", r_wvl[2], " (", ncol(x), " bands",
+        ifelse(!o_wvl, ", **overlap not spliced**", ""),
+        ")", "\n", sep = "")
+
+    if(l_met == 0){
+        cat("metadata: none", "\n")
+    } else {
+        cat("metadata (", l_met, "): ", sep = "")
+        cat(paste(n_met, collapse = ", "), sep = "")
+    }
 }
+
+
+#' Summarize spectra
+#'
+#' @param object spectra object
+#' @param ... additional params to summary. not used yet
+#' @return nothing yet (just prints to console)
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+summary.spectra = function(object, ...){
+    cat("**Figure out something useful to do here**\n")
+    print(object, ...)
+}
+
+
+#' Structure of the spectra object
+#'
+#' @param object spectra object
+#' @param ... additioal args. not implemented
+#' @return prints to console
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+str.spectra = function(object, ...){
+    cat("The structure of a spectra object should be irrelevant.", "\n")
+    cat("To access spectra components, use the provided getters and setters.", "\n\n")
+    print(object)
+}
+
 
 #' Compute spectra quantiles
 #'
@@ -78,6 +136,10 @@ print.spectra = function(x, ...){
 #'              Defaults to c(0.025, 0.25, 0.5, 0.75, 0.975)
 #' @param ... other arguments passed to quantile. not implemented for spectra
 #' @return spectra object with one spectrum for each prob
+#'
+#' @importFrom stats quantile
+#' @author Jose Eduardo Meireles
+#' @export
 quantile.spectra = function(x,
                             probs = c(0.025, 0.25, 0.5, 0.75, 0.975),
                             ...){
@@ -96,12 +158,12 @@ quantile.spectra = function(x,
     }
 
     ## Get quantiles
-    f = function(x){ quantile(x,  probs)}
-    y = apply(x$reflectance, 2, f)
+    f = function(x){ quantile(x,  probs) }
+    y = apply(reflectance(x) , 2, f)
 
     ## Return spectra quantile object
     r = spectra(reflectance  = y,
-                wavelengths  = x$wavelengths,
+                wavelengths  = wavelengths(x),
                 names = probs)
     class(r) = c(class(r), "spec_quantile")
     r

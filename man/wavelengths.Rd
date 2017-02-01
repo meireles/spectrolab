@@ -5,12 +5,17 @@
 \alias{wavelengths.spectra}
 \title{Get spectra wavelength labels}
 \usage{
-wavelengths(x, return_num = TRUE)
+wavelengths(x, min = NULL, max = NULL, return_num = TRUE)
 
-\method{wavelengths}{spectra}(x, return_num = TRUE)
+\method{wavelengths}{spectra}(x, min = NULL, max = NULL,
+  return_num = TRUE)
 }
 \arguments{
 \item{x}{spectra object}
+
+\item{min}{= NULL}
+
+\item{max}{= NULL}
 
 \item{return_num}{boolean. return vector of numeric values (default).
 otherwise, a vector of strings is returned}
@@ -25,4 +30,7 @@ vector of wavelengths. numeric if `return_num` = TRUE (default).
 \itemize{
 \item \code{spectra}: Set spectra wavelength labels
 }}
+\author{
+Jose Eduardo Meireles
+}
 

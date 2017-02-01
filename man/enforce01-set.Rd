@@ -12,9 +12,12 @@ enforce01(x) <- value
 \item{value}{boolean.}
 }
 \value{
-nothing. has a **side effect** of changing if a constraint is enforced
+nothing. has a *side effect* of changing if a constraint is enforced
 }
 \description{
 \code{enforce01<-} sets or unsets a spectra reflectance constraint (0 - 1)
+}
+\author{
+Jose Eduardo Meireles
 }
 

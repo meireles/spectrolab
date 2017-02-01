@@ -22,4 +22,7 @@ Boolean
 \itemize{
 \item \code{spectra}: Get reflectance constraint status
 }}
+\author{
+Jose Eduardo Meireles
+}
 

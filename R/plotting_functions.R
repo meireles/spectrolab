@@ -7,8 +7,9 @@
 #' @param lty line type. defaults to 1
 #' @param type type of plot. meant to take either line "l" or no plotting "n"
 #' @param ... other arguments passed to matplot
-#'
 #' @return nothing. called for side effect
+#'
+#' @author Jose Eduardo Meireles
 #' @export
 plot.spectra = function(x,
                         ylab = "Reflectance",
@@ -35,23 +36,32 @@ plot.spectra = function(x,
 #' Plot polygon for spectra quantiles
 #'
 #' @param spec Spectra object
-#' @param total_prob Total mass to encompass. Number between 0.0 and 1.0
+#' @param total_prob Total probability mass to encompass. Single number
+#'                   between 0.0 and 1.0. Defaults to 0.95
 #' @param col Polygon color
+#' @param border boolean. Draw border?
 #' @param add If add = FALSE (default), a new plot is created. Otherwise
 #'            (add = T), the quantile is added to the current plot.
 #' @param ... Other parameters passed to polygon()
-#'
 #' @return nothing. called for its side effect
+#'
+#' @author Jose Eduardo Meireles
 #' @export
 plot_quantile = function(spec,
                          total_prob = 0.95,
                          col        = rgb(0, 0, 0, 0.1),
+                         border     = TRUE,
                          add        = FALSE,
                          ...){
 
     if( !is_spectra(spec) ){
         stop("Object must be of class spectra")
     }
+
+    if( ! is.vector(total_prob) || length(total_prob) != 1 ){
+        stop("total_prob must be a single number")
+    }
+
 
     if(total_prob < 0.0 || total_prob > 1.0){
         stop("total_prob must be between 0.0 and 1.0")
@@ -69,13 +79,15 @@ plot_quantile = function(spec,
         plot(spec, type = "n")
     }
 
-    polygon(x = xx, y = yy, col = col, ...)
+    polygon(x = xx, y = yy, col = col, border = border, ...)
 }
 
 
 #' return default spectral regions matrix
 #'
 #' @return matrix with default_spec_regions
+#'
+#' @author Jose Eduardo Meireles
 #' @export
 default_spec_regions = function(){
     cbind("VIS"   = c(begin = 400,  end = 700),
@@ -100,20 +112,22 @@ default_spec_regions = function(){
 #'                regions begins and ends. See details for an example
 #' @param col color for regions. single value or vector of length ncol(regions)
 #' @param border color for region borders. Defaults to FALSE (no border)
-#' @param add boolean. If TRUE (default) adds polygons to current plot. Otherwise
-#'            a new plot is created **without** any spectra.
+#' @param add boolean. If TRUE (default) adds polygons to current plot (if a plot
+#'            exists) or throws an error if a plot doesn't exist.
+#'            If FALSE, a new plot is created **without** any spectra.
 #' @param names boolean. add region column names on top of the polygons?
 #' @param ... additional parameters passed to polygon()
-#'
 #' @return nothing. called for its side effect
+#'
+#' @author Jose Eduardo Meireles
 #' @export
-plot_spec_regions = function(spec,
-                             regions,
-                             col    = rgb(0.7, 0.7, 0.7, 0.3),
-                             border = FALSE,
-                             add    = FALSE,
-                             names  = TRUE,
-                             ...){
+plot_regions = function(spec,
+                        regions,
+                        col    = rgb(0.7, 0.7, 0.7, 0.3),
+                        border = FALSE,
+                        add    = TRUE,
+                        names  = TRUE,
+                        ...){
     if( !is_spectra(spec) ){
         stop("Object must be of class spectra")
     }
@@ -133,6 +147,11 @@ plot_spec_regions = function(spec,
     yy_vec = yy_mat[ c("min", "max", "max", "min") , "y"]
 
     if(!add){
+        plot(spec, type = "n")
+    }
+
+    if( (!i_plot_exists()) && add) {
+        warning("No plot exists for `regions`` to be added to, but `add` is set to TRUE.\n  Plotting regions anyways." )
         plot(spec, type = "n")
     }
 

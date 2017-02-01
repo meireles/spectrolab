@@ -17,4 +17,7 @@ single numeric value
 \description{
 \code{min} Returns the minimum reflectance value in a spectra object
 }
+\author{
+Jose Eduardo Meireles
+}
 

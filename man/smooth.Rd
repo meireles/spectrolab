@@ -10,7 +10,7 @@ smooth(x, method = "spline", ...)
 \method{smooth}{spectra}(x, method = "spline", ...)
 }
 \arguments{
-\item{x}{spectra object}
+\item{x}{spectra object. Wavelengths must be strictly increasing}
 
 \item{method}{Choose smoothing method: "spline" (default) or "moving_average"}
 
@@ -26,4 +26,7 @@ a spectra object of with smoothed spectra
 \itemize{
 \item \code{spectra}: Smooth spectra
 }}
+\author{
+Jose Eduardo Meireles
+}
 

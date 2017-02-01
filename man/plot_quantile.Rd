@@ -5,14 +5,17 @@
 \title{Plot polygon for spectra quantiles}
 \usage{
 plot_quantile(spec, total_prob = 0.95, col = rgb(0, 0, 0, 0.1),
-  add = FALSE, ...)
+  border = TRUE, add = FALSE, ...)
 }
 \arguments{
 \item{spec}{Spectra object}
 
-\item{total_prob}{Total mass to encompass. Number between 0.0 and 1.0}
+\item{total_prob}{Total probability mass to encompass. Single number
+between 0.0 and 1.0. Defaults to 0.95}
 
 \item{col}{Polygon color}
+
+\item{border}{boolean. Draw border?}
 
 \item{add}{If add = FALSE (default), a new plot is created. Otherwise
 (add = T), the quantile is added to the current plot.}
@@ -24,5 +27,8 @@ nothing. called for its side effect
 }
 \description{
 Plot polygon for spectra quantiles
+}
+\author{
+Jose Eduardo Meireles
 }
 

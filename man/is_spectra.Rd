@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{is_spectra}
 \alias{is_spectra}
-\title{Is spectra object?}
+\title{Is it a spectra object?}
 \usage{
 is_spectra(x)
 }
@@ -14,5 +14,8 @@ boolean
 }
 \description{
 \code{is_spectra} tests if the argument is a spectra class object
+}
+\author{
+Jose Eduardo Meireles
 }
 

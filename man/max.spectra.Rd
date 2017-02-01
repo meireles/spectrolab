@@ -17,4 +17,7 @@ single numeric value
 \description{
 \code{max} Returns the maximum reflectance value in a spectra object
 }
+\author{
+Jose Eduardo Meireles
+}
 

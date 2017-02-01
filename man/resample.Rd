@@ -5,14 +5,14 @@
 \alias{resample.spectra}
 \title{Resample spectra}
 \usage{
-resample(y, new_x, ...)
+resample(x, new_wvls, ...)
 
-\method{resample}{spectra}(y, new_x, ...)
+\method{resample}{spectra}(x, new_wvls, ...)
 }
 \arguments{
-\item{y}{spectra object}
+\item{x}{spectra object. Wavelengths must be strictly increasing}
 
-\item{new_x}{numeric vector of wavelengths to sample from spectra}
+\item{new_wvls}{numeric vector of wavelengths to sample from spectra}
 
 \item{...}{additional parameters passed to the \code{smooth.spline} function.}
 }
@@ -27,4 +27,7 @@ Possible to increase or decrease the spectral resolution.
 \itemize{
 \item \code{spectra}: Resample spectra
 }}
+\author{
+Jose Eduardo Meireles
+}
 

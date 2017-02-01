@@ -15,4 +15,7 @@ vector or matrix, depending on return_mat value
 \description{
 \code{i_plot_boundaries} gets plot boundaries in user space as matrix or vec
 }
+\author{
+Jose Eduardo Meireles
+}
 

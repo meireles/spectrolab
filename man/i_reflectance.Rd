@@ -28,4 +28,7 @@ data conformable to relative reflectance: numeric matrix
 Coerces input form different formats into data conformable to reflectance,
 which is a numeric matrix with no dimension names.
 }
+\author{
+Jose Eduardo Meireles
+}
 
