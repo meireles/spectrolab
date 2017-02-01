@@ -1,6 +1,6 @@
 ---
 title: "Introduction to spectrolab"
-author: "Jose Eduardo Meireles, Anna K. Schweiger"
+author: "Jose Eduardo Meireles and Anna K. Schweiger"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -9,7 +9,10 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The goal of `spectrolab` is to provide essential functions to process data from portable spectrometers and a common interface other packages can build on. `spectrolab` provides methods to read spectral data, to perform jump correction, vector normalization, and smoothing at the sensor overlap regions. `spectrolab` introduces the S3 class `spectra`, which makes it easy to plot and subset data, and to add and access metadata.  
+The goal of `spectrolab` is to provide 1) functions to read, process and visualize data from portable spectrometers as well as 2) a common interface other packages can build on. `spectrolab` introduces a `spectra` S3 class and implements various methods to read spectral files, access and subset spectal data, perform transformations such as vector normalization, smoothing, and sensor overlap matching, plot spectra, etc. 
+
+The source code can be found on our [GitHub repository](https://github.com/annakat/spectrolab). Please report any bugs and ask us your questions through the [issue tracker](https://github.com/annakat/spectrolab/issues).
+
 
 ## Installing and loading `spectrolab`
 
@@ -26,24 +29,26 @@ Assuming that everything went smoothly, you should be able to load `spectrolab` 
 library("spectrolab")
 ```
 
-The source code can be found on our [_GitHub repository_](https://github.com/annakat/spectrolab). Please report any bugs and ask us your questions through the [issue tracker](https://github.com/annakat/spectrolab/issues).
-
 ## Reading spectra
 
 There are two ways of getting spectra into R: 1) converting a matrix or data.frame to `spectra` or 2) reading from raw data files (formats: SVC's `sig`, Spectral Evolution's `sed` and ASD's `asd`). Here are a couple examples:
 
-### Create spectra from a matrix
+### Create spectra from a matrix or data.frame
 
 If you already have your spectra in a matrix or data frame (e.g. when you read your data from a .csv file), you can use the function `as.spectra()` to convert it to a `spectra` object. The matrix **must** have samples in rows and wavelengths in columns. The header of the wavelengths columns must be (numeric) wavelength labels. You also should declare which column has the sample names (which are mandatory) using the `name_idx` argument. If other columns are present (other than sample name and reflectances), their indices must be passed to `as.spectra` as the `meta_idxs` argument.
 
-Here is an example using a dataset matrix named `spec_matrix_example` provided by the package.
+Here is an example using a dataset matrix named `spec_matrix_meta.csv` provided by the package.
 
 ```{r, eval=TRUE}
-# Check out the format of the matrix
-spec_matrix_example[1:4, 1:3]
+dir_path <- system.file("extdata/spec_matrix_meta.csv", package = "spectrolab")
+spec_csv <- read.csv(dir_path, check.names = F)
 
-# To convert it to spectra, simply run
-spec <- as.spectra(spec_matrix_example, name_idx = 1, meta_idxs = NULL)
+## The sample names are in column 3
+## Columns 1 and 2 are metadata
+achillea_spec <- as.spectra(spec_csv, name_idx = 3, meta_idxs = c(1,2) )
+
+## And now you have a spectra object with sample names and metadata...
+achillea_spec
 ```
 
 
@@ -51,43 +56,17 @@ spec <- as.spectra(spec_matrix_example, name_idx = 1, meta_idxs = NULL)
 
 You shoud use the function `read_spectra()` to read raw spectra files. You can pass a vector of filenames to `read_spectra()`, but it is usually easier to pass the path to the folder where your data are.
 
-
 ```{r, eval=TRUE}
-
 # `dir_path` is the directory where our example datasets live
 dir_path <- system.file("extdata", "Acer_example", package = "spectrolab")
 
 # Read .sig files
 acer_spectra <- read_spectra(path = dir_path, format = "sig")
-
-# Note that `acer_spectra` is a `spectra` object. 
-# You can ensure that this is true using the `is_spectra()` function.
-is_spectra(acer_spectra)
 ```
 
-## Inspecting spectra
-
-You can check out your spectra object in several ways. For instance, You may want to know how many spectra and how many bands are in there, retrieve the filenames, and of course you may need to plot the data.
+It may be the case that file names of undesirable spectra where flagged in the field, e.g with "_WR" (white reference) and "_BAD" (bad measurements). You can avoid importing those files to beging with by passing those flags to the argument `exclude_if_matches` in `read_spectra()`.
 
 ```{r, eval=TRUE}
-# Simply print the object
-acer_spectra
-
-# Get the dataset's dimensions
-dim(acer_spectra)
-
-# Get the sample names
-names(acer_spectra)
-
-# and plot the spectra
-plot(acer_spectra)
-```
-
-When plotting `(acer_spectra)` you will notice that the `Acer_example` data contain one white reference measurement (the horizontal line around 1.0 reflectance) and one obviously bad measurement (with a dip at the NIR shoulder). During the measurement campaign the file names of those two measurements were flagged with "_WR" and "_BAD". You can avoid importing those files to beging with by passing those flags to `read_spectra()`.
-
-
-```{r, eval=TRUE}
-
 # Check the filenames to see if there are any flags
 names(acer_spectra)
 
@@ -98,105 +77,35 @@ acer_spectra <- read_spectra(path = dir_path, format = "sig", exclude_if_matches
 plot(acer_spectra)
 ```
 
-Flagging "unusual" measurements during data collection is a very good idea. However, you can also exclude bad spectra and outliers by subsetting your spectra object. We show you how this works in the section **Subsetting spectra** below. 
+Flagging "unusual" measurements during data collection is a very good idea. However, you can also exclude bad spectra and outliers by subsetting your spectra object. We show you how this works in the section **Subsetting spectra** further below.
 
-### Create spectra from a matrix
+## Inspecting and querying spectra
 
-If you already have your spectra in a matrix format, you can use the function `as.spectra()` to convert it to a `spectra` object. The matrix **must** be in a specific format. (1) Samples must be in rows and wavelengths in columns. (2) Column names must be the wavelength labels. (3) By default, `as.spectra()` assumes that the sample names are in the first column, but you can supply a different column index by using the `name_idx` argument. Here are two examples, one of a matrix named `spec_matrix_example`, and one of a .csv file with some metadata called `spec_matrix_meta`. 
+You can check out your spectra object in several ways. For instance, You may want to know how many spectra and how many bands are in there, retrieve the filenames. Of course you will need to plot the data, but that topic gets its own section further down.
 
-```{r}
-# Read the example data
-spec <- spec_matrix_example
+```{r, eval=TRUE}
+# Simply print the object
+acer_spectra
 
-# Check out the format of the matrix
-spec[1:3, 1:4]
-
-# To convert it to spectra, simply run
-spec_from_matrix <- as.spectra(spec, name_idx = 1)
-
-# and again you can plot your data to make sure everything worked okay
-plot(spec_from_matrix)
+# Get the dataset's dimensions
+dim(acer_spectra)
 ```
 
+`spectrolab` also lets you query the components of the `spectra`, done with the functions `names()` for sample names, `wavelengths()` for wavelength labels, `reflectance()` for the reflectance matrix, and `meta()` for the associated metadata (in case you have any).
 
-```{r, eval=F}
-### Our second example is a .csv file with some metadata
-dir_path <- system.file("extdata/spec_matrix_meta.csv", package = "spectrolab")
-spec_csv <- read.csv(dir_path, check.names = F)
 
-### The sample names are in column 3, the metadata is in columns 1 and 2
-achillea_spec <- as.spectra(spec_csv, name_idx = 3, meta_idxs = c(1,2))
+```{r, eval=TRUE}
+# Vector of all sample names. Note: Duplicated sample names are permitted
+n <- names(achillea_spec)
 
-### And now you have a spectra object with metadata! 
-### You can access the metadata using the `meta()` function. 
-achillea_spec
-meta(achillea_spec)
+# Vector of wavelengths
+w <- wavelengths(achillea_spec)
 
-### It's also easy to add metadata to a spectra object
-my_meta <- c(rnorm(10,2,0.5))
+# Reflectance matrix
+r <- reflectance(achillea_spec)
 
-### Let's say this is Nitrogen content
-meta(achillea_spec,label = "N_perc") <- my_meta
-meta(achillea_spec, "N_perc")
-
-### And to get the same output in vector format
-meta(achillea_spec, "N_perc", simplify = T)
-```
-
-### Converting a `spectra` object into a matrix
-
-It is also possible to convert a `spectra` object to a matrix format, using the `as.matrix()` function. This is for example useful if you want to export your data in a particular format, such as .csv. `spectrolab` will (1) place wavelengths in columns, assigning wavelength labels to `colnames`, and (2) samples in rows, assigning sample names to `rownames`. Since `R` imposes strict rules on column name formats and sometimes on row names, `as.matrix()` will try to fix potential dimname issues if `fix_names != "none"`.
-
-```{r, eval=F}
-# Make a matrix from a `spectra` object
-spec_as_mat = as.matrix(spec, fix_names = "none")
-spec_as_mat[1:4, 1:3]
-```
-
-## Plotting
-
-The workhorse function for plotting `spectra` is `plot()`. It will jointly plot each spectrum in the `spectra` object. You should be able to pass the usual plot arguments to it, such as `col`, `ylab`, `lwd`, etc.
-
-You can also plot the quantile of a `spectra` object with `plot_quantile()`. It's second argument, `total_prob`, is the total "mass" that the quantile encompasses. For instance, a `total_prob = 0.95` covers 95% of the variation in the `spectra` object, i.e. it is the `0.025 to 0.975` quantile. The quantile plot can stand alone or be added to a current plot if `add = TRUE`.
-
-Last but not least, you can also shade spectral regions with the `plot_regions()` function. `spectrolab` provides a `default_spec_regions()` matrix as an example, but you obviously can customize it for your needs.
-
-```{r, fig.height=2.5, fig.width=8, dev_svg, eval = F}
-# Simple spectra plot
-par(mfrow = c(1, 3))
-plot(spec, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
-
-# Stand along quantile plot
-plot_quantile(spec, total_prob = 0.8, col = rgb(1, 0, 0, 0.5), lwd = 0.5, border = TRUE)
-title("80% spectral quantile")
-
-# Combined individual spectra, quantiles and shade spectral regions
-plot(spec, lwd = 0.25, lty = 1, col = "grey50", main="Spectra, quantile and regions")
-plot_quantile(spec, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border = FALSE, add = TRUE)
-plot_regions(spec, regions = default_spec_regions(), add = TRUE)
-```
-
-## Querying
-
-`spectrolab` lets you query the `spectra` object and get summary information. You can easily get sample names with `names()` and wavelength labels with `wavelengths()`. If you need the reflectance, you can retrieve it with the `reflectance()` function.
-
-```{r, eval=F}
-# Get the vector of all sample names. Note: Duplicated sample names are permitted
-n <- names(spec)
-n[1:5]
-
-# Get the vector of wavelengths
-w <- wavelengths(spec)
-w[1:5]
-
-# or the reflectances in matrix format
-r <- reflectance(spec)
-
-# First 10 wavelengths of first 5 species
-r[1:5,1:10]
-
-# You can also get the dimensions of your `spectra` object
-dim(spec)
+# Metadata. Use simplify = TRUE to get a vector instead of a data.frame
+m = meta(achillea_spec, "ssp", simplify = TRUE)
 ```
 
 ## Subsetting spectra
@@ -210,39 +119,29 @@ You can subset the `spectra` using a notation *similar* to the `[i,j]` function 
 
 Subsetting lets you e.g. exclude noisy regions at the beginning and end of the spectrum or limit the data to specific entries.
 
-```{r, fig.height=2.5, fig.width=6, fig.align="center", eval=F}
-
+```{r, eval=TRUE}
 # Subset wavelength regions 
-spec_sub <-  spec[ ,400:700]
+spec_sub_vis <- achillea_spec[ , 400:700]
 
-# Check the result
-plot(spec_sub)
-
-# Subset spectra to all entries where sample_name matches "species_8"
-spec_sp8 <- spec["species_8", ]
-
-# Check the results
-dim(spec_sp8)
-
-# Plotting the subset result should work just fine
-plot(spec_sp8, col = "red", main = "Species 8 spectra")
-plot_quantile(spec_sp8, total_prob = 0.75, add = TRUE,  col = rgb(0.2, 0.2, 0.2, 0.2), border = TRUE)
-plot_regions(spec_sp8, default_spec_regions(), col = rgb(1, 0.5, 0, 0.1), add = TRUE)
+# Subset spectra to all entries where sample_name matches "ACHMI_7" or
+# get the forst three samples
+spec_sub_byname <- achillea_spec["ACHMI_7", ]
+spec_sub_byidx  <- achillea_spec[ 1:3, ]
 ```
 
 Note that you can (1) subset samples using indexes and (2) use characters or numerics to subset wavelengths. As said before, you cannot use indexes to subset wavelengths though.
 
-```{r, eval=F}
+```{r, eval=TRUE}
 # Subsetting samples by indexes works and so does subsetting wavelengths by numerics or characters.
-reflectance(spec_sp8[1,"405"]) == reflectance(spec_sp8[1,405])
+spec_sub_byidx[1, "405"] == spec_sub_byidx[1, 405]
 ```
 
 *But remember that you CANNOT use indexes to subset wavelengths!*
 
-```{r, eval=F}
+```{r, eval=T, error=T}
 # Something that is obvioulsy an index, like using 2 instead of 401 (the 2nd band 
 # in our case), will fail.
-spec_sp8[ ,2]
+spec_sub_byidx[ , 2]
 
 `Error in i_match_ij_spectra(this = this, i = i, j = j) : Wavelength subscript out of bounds. Use wavelength labels instead of raw indices.`
 ```
@@ -253,70 +152,76 @@ wanted wavelengths "2000" and "2001".
 Bottomline, be very careful not to use indexes to subset wavelengths!
 
 
-## Manipulating samples and wavelength labels
+## Plotting
 
-You may want to edit certain simple attributes of `spectra`, such as make all sample names uppercase. This is easily attainable in `spectrolab`:
+The workhorse function for plotting `spectra` is `plot()`. It will jointly plot each spectrum in the `spectra` object. You should be able to pass the usual plot arguments to it, such as `col`, `ylab`, `lwd`, etc.
 
-```{r, eval=F}
-spec_new <- spec
+You can also plot the quantile of a `spectra` object with `plot_quantile()`. It's second argument, `total_prob`, is the total "mass" that the quantile encompasses. For instance, a `total_prob = 0.95` covers 95% of the variation in the `spectra` object, i.e. it is the `0.025 to 0.975` quantile. The quantile plot can stand alone or be added to a current plot if `add = TRUE`.
 
-# Replace names with an uppercase version
-names(spec_new) <- toupper(names(spec_new))
+Last but not least, you can also shade spectral regions with the `plot_regions()` function. `spectrolab` provides a `default_spec_regions()` matrix as an example, but you obviously can customize it for your needs.
+
+```{r, fig.height=2.5, fig.width=7, dev_svg, eval = TRUE}
+# Simple spectra plot
+par(mfrow = c(1, 3))
+plot(achillea_spec, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
+
+# Stand along quantile plot
+plot_quantile(achillea_spec, total_prob = 0.8, col = rgb(1, 0, 0, 0.5), lwd = 0.5, border = TRUE)
+title("80% spectral quantile")
+
+# Combined individual spectra, quantiles and shade spectral regions
+plot(achillea_spec, lwd = 0.25, lty = 1, col = "grey50", main="Spectra, quantile and regions")
+plot_quantile(achillea_spec, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border = FALSE, add = TRUE)
+plot_regions(achillea_spec, regions = default_spec_regions(), add = TRUE)
+```
+
+
+## Manipulating samples names, wavelength labels, metadata and reflectance
+
+You may want to edit certain simple attributes of `spectra`, such as making all sample names lowecase This is easily attainable in `spectrolab`.
+
+```{r, eval=T}
+spec_new <- achillea_spec
+
+# Replace names with a lowercase version
+names(spec_new) <- tolower(names(achillea_spec))
 
 # Check the results
 names(spec_new)[1:5]
 ```
 
 If you want to fiddle with the reflectance itself, this is easy, too.
-
-```{r,  fig.height=3, fig.width=4, fig.align="center", eval=F}
+```{r,  fig.height=3, fig.width=4, fig.align="center", eval=T}
 # Scale reflectance by 0.75
 spec_new <- spec_new * 0.75
 
 # Plot the results
-plot(spec, col = "blue", lwd = 0.75, cex.axis = 0.75)
+plot(achillea_spec, col = "blue", lwd = 0.75, cex.axis = 0.75)
 plot(spec_new, col = "orange", lwd = 0.75, add = TRUE)
 ```
 
-## Essential processing 
-
-### Jump correction
-
-Some instruments allow you to preserve the sensor overlap regions. This results in duplicated wavelenghts and a "jump" between the VIS/NIR and NIR/SWIR regions. `spectrolab`'s `jump corrector` removes the overlap regions between the VIS/NIR and NIR/SWIR regions, respectively, and corrects the spectra to allow for better transition between the regions, while keeping the spectral information as close to the original as possible. In principle, the algorithm searches for the wavelengths of closest approach in both overlap regions, cuts the spectrum into three pieces, removes the overlap and finds a multiplier to paste the junks back together. No additional smoothing is applied. As a convention, the NIR region is left unchanged, the VIS and SWIR get adjusted.  
-
-```{r, eval=F}
-# Read Acer example spectra 
-acer_spectra <- read_spectra(path = dir_path, format = "sig",   exclude_if_matches = c("BAD","WR"))
-
-# and check result
-plot(acer_spectra)
-
-# Jump correction 
-acer_juco <- jump_corr(acer_spectra)
-
-# This looks better!
-plot(acer_juco)
+Or you can also edit or add new metadata to the `spectra` object.
+```{r, eval = TRUE}
+## Adding metadata to a spectra object: a dummy N content
+n_content <- rnorm(n = nrow(achillea_spec), mean = 2, sd = 0.5)
+meta(achillea_spec, label = "N_percent") <- n_content
 ```
 
-### Vector normalisation
 
-Treating each spectrum as a vector and standarizing it to unity length is a great way to remove brightness differences (e.g. due to changing lamp power), while preserving the shape of the spectrum (and thus its information content). Vector normalization is implemented in `spectrolab`'s `normalize()` function. Note: If you want to use *Ms. A's* trait coefficients, you need to use vector normalized spectra, limited to the 400 - 2400 nm wavelength range.
+### Converting a `spectra` object into a matrix or data.frame
 
-```{r, eval=F}
-# Subset jump corrected spectra to 400 - 2400 nm 
-acer_sub <- acer_juco[, 400:2400]
+It is also possible to convert a `spectra` object to a matrix or data.frame using the `as.matrix()` or `as.data.frame()` functions. This is useful if you want to export your data in a particular format, such as .csv. 
 
-# and check result
-plot(acer_sub)
+If you're converting spectra to a matrix, `spectrolab` will (1) place wavelengths in columns, assigning wavelength labels to `colnames`, and (2) samples in rows, assigning sample names to `rownames`. Since `R` imposes strict rules on column name formats and sometimes on row names, `as.matrix()` will try to fix potential dimname issues if `fix_names != "none"`. Note that `as.matrix()` will not keep metadata.
 
-# Perform vector normalization
-acer_vn <- normalize(acer_sub)
+Conversion to data.frame is similar, but keeps the metadata.
 
-# and check result
-plot(acer_vn)
+```{r, eval=T}
+# Make a matrix from a `spectra` object
+spec_as_mat = as.matrix(achillea_spec, fix_names = "none")
+spec_as_mat[1:4, 1:3]
+
+# Make a matrix from a `spectra` object
+spec_as_df = as.data.frame(achillea_spec, fix_names = "none")
+spec_as_df[1:4, 1:5]
 ```
-
-### Smoothing at overlap regions ... coming soon
-
-Depending on your analysis, it can be a good idea to smooth remaining noise at the sensor overlap regions. 
-
