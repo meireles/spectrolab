@@ -124,13 +124,13 @@ acer_spectra =<span class="st"> </span><span class="kw">read_spectra</span>(<spa
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Simply print the object</span>
 acer_spectra</code></pre></div>
 <pre><code>## spectra object 
-## number of samples: 8 
+## number of samples: 7 
 ## wavelengths: 340.5 to 2522.8 (1024 bands, **overlap not spliced**)
 ## metadata: none</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Get the dataset's dimensions</span>
 <span class="kw">dim</span>(acer_spectra)</code></pre></div>
 <pre><code>##     n_samples n_wavelengths 
-##             8          1024</code></pre>
+##             7          1024</code></pre>
 <p><code>spectrolab</code> also lets you access the individual components of the <code>spectra</code>. This is done with the functions <code>names()</code> for sample names, <code>wavelengths()</code> for wavelength labels, <code>reflectance()</code> for the reflectance matrix, and <code>meta()</code> for the associated metadata (in case you have any).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Vector of all sample names. Note: Duplicated sample names are permitted</span>
 n =<span class="st"> </span><span class="kw">names</span>(achillea_spec)
@@ -235,10 +235,10 @@ spec_as_mat[<span class="dv">1</span>:<span class="dv">4</span>, <span class="dv
 spec_as_df =<span class="st"> </span><span class="kw">as.data.frame</span>(achillea_spec, <span class="dt">fix_names =</span> <span class="st">&quot;none&quot;</span>)
 spec_as_df[<span class="dv">1</span>:<span class="dv">4</span>, <span class="dv">1</span>:<span class="dv">5</span>]</code></pre></div>
 <pre><code>##   sample_name ident                   ssp N_percent        400
-## 1     ACHMI_1 10526 Achillea millefolium   2.666875 0.03734791
-## 2     ACHMI_2 10527 Achillea millefolium   1.774987 0.04608409
-## 3     ACHMI_3 10528 Achillea millefolium   1.905786 0.04058113
-## 4     ACHMI_4 10529 Achillea millefolium   1.733936 0.04063730</code></pre>
+## 1     ACHMI_1 10526 Achillea millefolium   2.242836 0.03734791
+## 2     ACHMI_2 10527 Achillea millefolium   2.068577 0.04608409
+## 3     ACHMI_3 10528 Achillea millefolium   3.456545 0.04058113
+## 4     ACHMI_4 10529 Achillea millefolium   2.072452 0.04063730</code></pre>
 </div>
 </div>
 
