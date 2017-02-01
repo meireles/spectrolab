@@ -111,8 +111,8 @@ i_match_overlap_svc = function(x, cut_points){
 
     ## Compute factors for the silicon sensor (1st one)
     ## The factors are computed across a range of wavelengths
-    ## I think that the defaults in SVC are 990 (used for cut point) and 1010
-    rg = c(cut_points[1], 1010)
+    ## I think that the defaults in SVC are 990 (used for cut point) and 1000
+    rg = c(cut_points[1], 1000)
     m  = as.matrix(x)
 
     o1 = m[ , as.character(s[[1]][ s[[1]] > rg[1] & s[[1]] < rg[2] ]) ]
@@ -136,8 +136,14 @@ i_match_overlap_svc = function(x, cut_points){
     ## sensor1 or 2, depending on cut_points[1], it is works out to exclude the
     ## non monotonically increasing wl.
     ## HACK
-    g      = x[ , unlist(s) ]
-    idx_rm = which(diff(wavelengths(g)) <= 0.0)
+    g = x[ , unlist(s) ]
+    d = which(duplicated(wavelengths(g)))
+
+    if(wavelengths(g)[d] < cut_points[1]){
+        idx_rm = d
+    } else {
+        idx_rm = which(diff(wavelengths(g)) <= 0.0)
+    }
 
     ## Assign a dummy wavelength value to the wl to rm
     bogus  = 123456789
