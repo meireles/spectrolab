@@ -175,6 +175,11 @@ i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
 
     if(parallel) {
         n = parallel::detectCores()
+
+        if( .Platform$OS.type == "windows" ){
+            n = 1
+        }
+
         return(parallel::mclapply(r, smooth.spline, x = w, nknots = nknots, mc.cores = n, ...))
     } else {
         return(lapply(r, smooth.spline, x = w, nknots = nknots, ...))
