@@ -42,11 +42,8 @@ export(enforce01)
 export(i_match_label)
 export(i_match_label_or_idx)
 export(is_spectra)
-<<<<<<< HEAD
-export(match_overlap)
-=======
 export(jump_corr)
->>>>>>> parent of fd4b28a... removed jump correction
+export(match_overlap)
 export(meta)
 export(normalize)
 export(plot_quantile)
