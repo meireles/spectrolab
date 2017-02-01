@@ -1,5 +1,5 @@
 /*** Spectra Vista SIG Data ***/
-name= ACPL_F3_P2_B_2_000.sig
+name= 3_6_PANVI_2_T_1_001.sig
 instrument= HI: 1152050 (HR-1024i)
 integration= 100.0, 9.0, 7.0, 200.0, 40.0, 7.0
 scan method= Time-based, Time-based
