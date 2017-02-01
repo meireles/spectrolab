@@ -30,6 +30,7 @@ If FALSE, a new plot is created **without** any spectra.}
 nothing. called for its side effect
 }
 \description{
+default spectral regions
 spec_regions = cbind("VIS"   = c(begin = 400,  end = 700),
                      "NIR"   = c(begin = 800,  end = 1300),
                      "SWIR1" = c(begin = 1550, end = 1800),

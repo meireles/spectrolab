@@ -100,12 +100,6 @@ default_spec_regions = function(){
 
 #' Plot polygons for spectral regions
 #'
-#' spec_regions = cbind("VIS"   = c(begin = 400,  end = 700),
-#'                      "NIR"   = c(begin = 800,  end = 1300),
-#'                      "SWIR1" = c(begin = 1550, end = 1800),
-#'                      "SWIR2" = c(begin = 2000, end = 2400))
-#'
-#'
 #' @param spec spectra object
 #' @param regions matrix with spectral regions in columns and only two rows named
 #'                "begin" and "end". Values are the wavelengths where a spectral
@@ -119,6 +113,11 @@ default_spec_regions = function(){
 #' @param ... additional parameters passed to polygon()
 #' @return nothing. called for its side effect
 #'
+#' @description default spectral regions
+#' spec_regions = cbind("VIS"   = c(begin = 400,  end = 700),
+#'                      "NIR"   = c(begin = 800,  end = 1300),
+#'                      "SWIR1" = c(begin = 1550, end = 1800),
+#'                      "SWIR2" = c(begin = 2000, end = 2400))
 #' @author Jose Eduardo Meireles
 #' @export
 plot_regions = function(spec,
