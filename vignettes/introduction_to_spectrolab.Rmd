@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The goal of `spectrolab` is to provide 1) functions to read, process and visualize data from portable spectrometers as well as 2) a common interface other packages can build on. `spectrolab` introduces a `spectra` S3 class and implements various methods to read spectral files, access and subset spectal data, perform transformations such as vector normalization, smoothing, and sensor overlap matching, plot spectra, etc. 
+The goal of `spectrolab` is to provide 1) functions to read, process and visualize data from portable spectrometers as well as 2) a common interface that other packages can build on. The package introduces a `spectra` S3 class and implements various methods to read spectral files, access and subset data, perform tasks such as vector normalization, smoothing, and sensor overlap matching, plotting spectra.
 
 The source code can be found on our [GitHub repository](https://github.com/annakat/spectrolab). Please report any bugs and ask us your questions through the [issue tracker](https://github.com/annakat/spectrolab/issues).
 
@@ -31,7 +31,7 @@ library("spectrolab")
 
 ## Reading spectra
 
-There are two ways of getting spectra into R: 1) converting a matrix or data.frame to `spectra` or 2) reading from raw data files (formats: SVC's `sig`, Spectral Evolution's `sed` and ASD's `asd`). Here are a couple examples:
+There are two ways to get spectra into R: 1) converting a matrix or data.frame to `spectra` or 2) reading spectra from raw data files (formats: SVC's `sig`, Spectral Evolution's `sed` and ASD's `asd`). Here are a couple examples:
 
 ### Create spectra from a matrix or data.frame
 
@@ -40,14 +40,13 @@ If you already have your spectra in a matrix or data frame (e.g. when you read y
 Here is an example using a dataset matrix named `spec_matrix_meta.csv` provided by the package.
 
 ```{r, eval=TRUE}
-dir_path <- system.file("extdata/spec_matrix_meta.csv", package = "spectrolab")
-spec_csv <- read.csv(dir_path, check.names = F)
+dir_path = system.file("extdata/spec_matrix_meta.csv", package = "spectrolab")
+spec_csv = read.csv(dir_path, check.names = F)
 
-## The sample names are in column 3
-## Columns 1 and 2 are metadata
-achillea_spec <- as.spectra(spec_csv, name_idx = 3, meta_idxs = c(1,2) )
+# The sample names are in column 3. Columns 1 and 2 are metadata
+achillea_spec = as.spectra(spec_csv, name_idx = 3, meta_idxs = c(1,2) )
 
-## And now you have a spectra object with sample names and metadata...
+# And now you have a spectra object with sample names and metadata...
 achillea_spec
 ```
 
@@ -58,26 +57,20 @@ You shoud use the function `read_spectra()` to read raw spectra files. You can p
 
 ```{r, eval=TRUE}
 # `dir_path` is the directory where our example datasets live
-dir_path <- system.file("extdata", "Acer_example", package = "spectrolab")
+dir_path = system.file("extdata", "Acer_example", package = "spectrolab")
 
 # Read .sig files
-acer_spectra <- read_spectra(path = dir_path, format = "sig")
+acer_spectra = read_spectra(path = dir_path, format = "sig")
 ```
 
-It may be the case that file names of undesirable spectra where flagged in the field, e.g with "_WR" (white reference) and "_BAD" (bad measurements). You can avoid importing those files to beging with by passing those flags to the argument `exclude_if_matches` in `read_spectra()`.
+It may be the case that file names of undesirable spectra where flagged in the field, e.g with "_WR" (white reference) and "_BAD" (bad measurements). You can avoid importing such files by passing those flags to the argument `exclude_if_matches` in `read_spectra()`.
 
 ```{r, eval=TRUE}
-# Check the filenames to see if there are any flags
-names(acer_spectra)
-
 # use the `exclude_if_matches` argument to excluded flagged files
-acer_spectra <- read_spectra(path = dir_path, format = "sig", exclude_if_matches = c("BAD","WR"))
-
-# and check result
-plot(acer_spectra)
+acer_spectra = read_spectra(path = dir_path, format = "sig", exclude_if_matches = c("BAD","WR"))
 ```
 
-Flagging "unusual" measurements during data collection is a very good idea. However, you can also exclude bad spectra and outliers by subsetting your spectra object. We show you how this works in the section **Subsetting spectra** further below.
+Flagging "unusual" measurements during data collection speeds up the dataset cleanup process. However, you can also exclude bad spectra and outliers by subsetting your spectra object, as shown in the section **Subsetting spectra** further below.
 
 ## Inspecting and querying spectra
 
@@ -91,18 +84,18 @@ acer_spectra
 dim(acer_spectra)
 ```
 
-`spectrolab` also lets you query the components of the `spectra`, done with the functions `names()` for sample names, `wavelengths()` for wavelength labels, `reflectance()` for the reflectance matrix, and `meta()` for the associated metadata (in case you have any).
+`spectrolab` also lets you access the individual components of the `spectra`. This is done with the functions `names()` for sample names, `wavelengths()` for wavelength labels, `reflectance()` for the reflectance matrix, and `meta()` for the associated metadata (in case you have any).
 
 
 ```{r, eval=TRUE}
 # Vector of all sample names. Note: Duplicated sample names are permitted
-n <- names(achillea_spec)
+n = names(achillea_spec)
 
 # Vector of wavelengths
-w <- wavelengths(achillea_spec)
+w = wavelengths(achillea_spec)
 
 # Reflectance matrix
-r <- reflectance(achillea_spec)
+r = reflectance(achillea_spec)
 
 # Metadata. Use simplify = TRUE to get a vector instead of a data.frame
 m = meta(achillea_spec, "ssp", simplify = TRUE)
@@ -117,16 +110,22 @@ You can subset the `spectra` using a notation *similar* to the `[i,j]` function 
   - `x[ ,800:900]` will keep wavelengths between `800` and `900`.
   - `x[ ,1:5] ` will **fail**!. *wavelengths __cannot__ be subset by indexes!*
 
-Subsetting lets you e.g. exclude noisy regions at the beginning and end of the spectrum or limit the data to specific entries.
+Subsetting lets you, for instance, exclude noisy regions at the beginning and end of the spectrum or limit the data to specific entries.
 
 ```{r, eval=TRUE}
-# Subset wavelength regions 
-spec_sub_vis <- achillea_spec[ , 400:700]
+# Subset wavelength regions.
+spec_sub_vis = achillea_spec[ , 400:700 ]
 
 # Subset spectra to all entries where sample_name matches "ACHMI_7" or
 # get the forst three samples
-spec_sub_byname <- achillea_spec["ACHMI_7", ]
-spec_sub_byidx  <- achillea_spec[ 1:3, ]
+spec_sub_byname = achillea_spec["ACHMI_7", ]
+spec_sub_byidx  = achillea_spec[ 1:3, ]
+```
+
+The resolution of some spectra may be different from 1nm, as is the case with SVC. In those cases, the best way to subset spectra is using the `min` and `max` argguments for wavelengths:
+
+```{r, eval=TRUE}
+acer_spectra_trim = acer_spectra[ , wavelengths(acer_spectra, 400, 2400) ]
 ```
 
 Note that you can (1) subset samples using indexes and (2) use characters or numerics to subset wavelengths. As said before, you cannot use indexes to subset wavelengths though.
@@ -145,11 +144,6 @@ spec_sub_byidx[ , 2]
 
 `Error in i_match_ij_spectra(this = this, i = i, j = j) : Wavelength subscript out of bounds. Use wavelength labels instead of raw indices.`
 ```
-
-However, `spectrolab` cannot detect if you meant to get the two last bands when
-you have 2001 in your dataset and use 2000:2001. It will assume that you 
-wanted wavelengths "2000" and "2001".
-Bottomline, be very careful not to use indexes to subset wavelengths!
 
 
 ## Plotting
@@ -181,10 +175,10 @@ plot_regions(achillea_spec, regions = default_spec_regions(), add = TRUE)
 You may want to edit certain simple attributes of `spectra`, such as making all sample names lowecase This is easily attainable in `spectrolab`.
 
 ```{r, eval=T}
-spec_new <- achillea_spec
+spec_new = achillea_spec
 
 # Replace names with a lowercase version
-names(spec_new) <- tolower(names(achillea_spec))
+names(spec_new) = tolower(names(achillea_spec))
 
 # Check the results
 names(spec_new)[1:5]
@@ -193,7 +187,7 @@ names(spec_new)[1:5]
 If you want to fiddle with the reflectance itself, this is easy, too.
 ```{r,  fig.height=3, fig.width=4, fig.align="center", eval=T}
 # Scale reflectance by 0.75
-spec_new <- spec_new * 0.75
+spec_new = spec_new * 0.75
 
 # Plot the results
 plot(achillea_spec, col = "blue", lwd = 0.75, cex.axis = 0.75)
@@ -203,8 +197,8 @@ plot(spec_new, col = "orange", lwd = 0.75, add = TRUE)
 Or you can also edit or add new metadata to the `spectra` object.
 ```{r, eval = TRUE}
 ## Adding metadata to a spectra object: a dummy N content
-n_content <- rnorm(n = nrow(achillea_spec), mean = 2, sd = 0.5)
-meta(achillea_spec, label = "N_percent") <- n_content
+n_content = rnorm(n = nrow(achillea_spec), mean = 2, sd = 0.5)
+meta(achillea_spec, label = "N_percent") = n_content
 ```
 
 
