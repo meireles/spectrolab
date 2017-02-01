@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting_functions.R
 \name{plot_quantile}
 \alias{plot_quantile}
-\title{Plot polygon for spectra quantiles}
+\title{Plot spectra quantiles}
 \usage{
 plot_quantile(spec, total_prob = 0.95, col = rgb(0, 0, 0, 0.1),
   border = TRUE, add = FALSE, ...)

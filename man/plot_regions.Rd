@@ -4,17 +4,17 @@
 \alias{plot_regions}
 \title{Plot polygons for spectral regions}
 \usage{
-plot_regions(spec, regions, col = rgb(0.7, 0.7, 0.7, 0.3), border = FALSE,
-  add = TRUE, names = TRUE, ...)
+plot_regions(spec, regions = default_spec_regions(), col = rgb(0.7, 0.7,
+  0.7, 0.3), border = FALSE, add = TRUE, names = TRUE, ...)
 }
 \arguments{
 \item{spec}{spectra object}
 
 \item{regions}{matrix with spectral regions in columns and only two rows named
 "begin" and "end". Values are the wavelengths where a spectral
-regions begins and ends. See details for an example}
+regions begins and ends. See description for the}
 
-\item{col}{color for regions. single value or vector of length ncol(regions)}
+\item{col}{color for regions. single value or vector of length ncol (regions)}
 
 \item{border}{color for region borders. Defaults to FALSE (no border)}
 
@@ -30,6 +30,10 @@ If FALSE, a new plot is created **without** any spectra.}
 nothing. called for its side effect
 }
 \description{
+Plot custom or default spectral regions
+}
+\details{
+The default spectral regions are:
 spec_regions = cbind("VIS"   = c(begin = 400,  end = 700),
                      "NIR"   = c(begin = 800,  end = 1300),
                      "SWIR1" = c(begin = 1550, end = 1800),

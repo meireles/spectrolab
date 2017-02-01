@@ -33,8 +33,8 @@ plot.spectra = function(x,
             ...)
 }
 
-#' Plot polygon for spectra quantiles
-#'
+#' Plot spectra quantiles
+#' @description Plot polygon for spectra quantiles
 #' @param spec Spectra object
 #' @param total_prob Total probability mass to encompass. Single number
 #'                   between 0.0 and 1.0. Defaults to 0.95
@@ -99,18 +99,12 @@ default_spec_regions = function(){
 
 
 #' Plot polygons for spectral regions
-#'
-#' spec_regions = cbind("VIS"   = c(begin = 400,  end = 700),
-#'                      "NIR"   = c(begin = 800,  end = 1300),
-#'                      "SWIR1" = c(begin = 1550, end = 1800),
-#'                      "SWIR2" = c(begin = 2000, end = 2400))
-#'
-#'
+#' @description Plot custom or default spectral regions
 #' @param spec spectra object
 #' @param regions matrix with spectral regions in columns and only two rows named
 #'                "begin" and "end". Values are the wavelengths where a spectral
-#'                regions begins and ends. See details for an example
-#' @param col color for regions. single value or vector of length ncol(regions)
+#'                regions begins and ends. See description for the
+#' @param col color for regions. single value or vector of length ncol (regions)
 #' @param border color for region borders. Defaults to FALSE (no border)
 #' @param add boolean. If TRUE (default) adds polygons to current plot (if a plot
 #'            exists) or throws an error if a plot doesn't exist.
@@ -119,10 +113,16 @@ default_spec_regions = function(){
 #' @param ... additional parameters passed to polygon()
 #' @return nothing. called for its side effect
 #'
+#' @details
+#' The default spectral regions are:
+#' spec_regions = cbind("VIS"   = c(begin = 400,  end = 700),
+#'                      "NIR"   = c(begin = 800,  end = 1300),
+#'                      "SWIR1" = c(begin = 1550, end = 1800),
+#'                      "SWIR2" = c(begin = 2000, end = 2400))
 #' @author Jose Eduardo Meireles
 #' @export
 plot_regions = function(spec,
-                        regions,
+                        regions = default_spec_regions(),
                         col    = rgb(0.7, 0.7, 0.7, 0.3),
                         border = FALSE,
                         add    = TRUE,
