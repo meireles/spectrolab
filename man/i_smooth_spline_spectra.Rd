@@ -9,7 +9,8 @@ i_smooth_spline_spectra(x, parallel = TRUE, ...)
 \arguments{
 \item{x}{spectra object. Wavelengths must be strictly increasing}
 
-\item{parallel}{boolean. Do computation in parallel? Defaults to TRUE}
+\item{parallel}{boolean. Do computation in parallel? Defaults to TRUE.
+Unfortunately, the parallelization doesn't work on Windows.}
 
 \item{...}{additional parameters passed to smooth.spline except nknots, which
 is computed internally}
@@ -18,7 +19,7 @@ is computed internally}
 a list of spline functions
 }
 \description{
-Gets spline functions for each spectrum in a spectra object
+Gets spline functions for each spectrum in a spectra object.
 }
 \author{
 Jose Eduardo Meireles

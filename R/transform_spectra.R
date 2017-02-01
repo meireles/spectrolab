@@ -144,10 +144,11 @@ normalize.spectra = function(x, quiet = FALSE, ...){
 
 #' Smooth spline functions for spectra
 #'
-#' Gets spline functions for each spectrum in a spectra object
+#' Gets spline functions for each spectrum in a spectra object.
 #'
 #' @param x spectra object. Wavelengths must be strictly increasing
-#' @param parallel boolean. Do computation in parallel? Defaults to TRUE
+#' @param parallel boolean. Do computation in parallel? Defaults to TRUE.
+#'                 Unfortunately, the parallelization doesn't work on Windows.
 #' @param ... additional parameters passed to smooth.spline except nknots, which
 #'            is computed internally
 #' @return a list of spline functions
