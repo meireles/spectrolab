@@ -12,32 +12,40 @@ plot_regions(spec, regions = default_spec_regions(), col = rgb(0.7, 0.7,
 
 \item{regions}{matrix with spectral regions in columns and only two rows named
 "begin" and "end". Values are the wavelengths where a spectral
-regions begins and ends. See description for the}
+regions begins and ends. See details for how the default regions are defined.}
 
-\item{col}{color for regions. single value or vector of length ncol (regions)}
+\item{col}{color for regions. Single value or vector of length ncol (regions).}
 
-\item{border}{color for region borders. Defaults to FALSE (no border)}
+\item{border}{color for region borders. Defaults to FALSE (no border).}
 
 \item{add}{boolean. If TRUE (default) adds polygons to current plot (if a plot
 exists) or throws an error if a plot doesn't exist.
 If FALSE, a new plot is created **without** any spectra.}
 
-\item{names}{boolean. add region column names on top of the polygons?}
+\item{names}{boolean. Add region column names on top of the polygons?}
 
-\item{...}{additional parameters passed to polygon()}
+\item{...}{additional parameters passed to polygon().}
 }
 \value{
-nothing. called for its side effect
+nothing. Called for its side effect.
 }
 \description{
-Plot custom or default spectral regions
+\code{plot_regions} plots polygons for default (VIS, NIR, SWIR 1, SWIR 2) or customized regions of the spectrum.
 }
 \details{
-The default spectral regions are:
+Default regions:
 spec_regions = cbind("VIS"   = c(begin = 400,  end = 700),
                      "NIR"   = c(begin = 800,  end = 1300),
                      "SWIR1" = c(begin = 1550, end = 1800),
-                     "SWIR2" = c(begin = 2000, end = 2400))
+                     "SWIR2" = c(begin = 2000, end = 2400)).
+}
+\examples{
+spec = as.spectra(spec_matrix_example)
+fun = colorRampPalette(c(rgb(1, 1, 0, 0.7),rgb(1, 0, 0, 0.7)), alpha=T)
+colors = fun(4)
+plot_regions(spec,default_spec_regions(), col=colors)
+plot(spec, add=T)
+
 }
 \author{
 Jose Eduardo Meireles

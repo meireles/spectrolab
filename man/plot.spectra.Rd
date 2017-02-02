@@ -10,23 +10,23 @@
 \arguments{
 \item{x}{spectra object}
 
-\item{ylab}{label for y axis. defaults to "Reflectance"}
+\item{ylab}{label for y axis. Defaults to "Reflectance".}
 
-\item{xlab}{label for x axis. defaults to "Wavelength"}
+\item{xlab}{label for x axis. Defaults to "Wavelength".}
 
-\item{col}{line color. defaults to "black"}
+\item{col}{line color. Defaults to "black".}
 
-\item{lty}{line type. defaults to 1}
+\item{lty}{line type. Defaults to 1.}
 
-\item{type}{type of plot. meant to take either line "l" or no plotting "n"}
+\item{type}{type of plot. Meant to take either line "l" or no plotting "n".}
 
-\item{...}{other arguments passed to matplot}
+\item{...}{other arguments passed to matplot.}
 }
 \value{
-nothing. called for side effect
+nothing. Called for side effect.
 }
 \description{
-Plot spectra
+\code{plot} plots spectra.
 }
 \author{
 Jose Eduardo Meireles
