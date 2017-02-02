@@ -146,7 +146,7 @@ i_match_overlap_svc = function(x, cut_points){
     }
 
     ## Assign a dummy wavelength value to the wl to rm
-    bogus  = 123456789
+    bogus  = 12345678911121110987654321.0
     wavelengths(g)[ idx_rm ] = bogus
 
     ## now prune the spectral data
