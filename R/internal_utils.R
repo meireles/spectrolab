@@ -7,7 +7,9 @@
 #'
 #' @author Jose Eduardo Meireles
 i_is_whole = function(x){
-    as.integer(x) == x
+    r = suppressWarnings(as.integer(x) == x)
+    r[is.na(r)] = FALSE
+    r
 }
 
 #' Compatible with being an index?
