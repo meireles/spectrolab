@@ -38,4 +38,3 @@ Generic parser for SVC's `.sig` and PSR's `.sed`
 \author{
 Jose Eduardo Meireles
 }
-

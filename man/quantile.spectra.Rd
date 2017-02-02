@@ -7,7 +7,8 @@
 \method{quantile}{spectra}(x, probs = c(0.025, 0.25, 0.5, 0.75, 0.975), ...)
 }
 \arguments{
-\item{x}{spectra object}
+\item{x}{spectra object. Must have at least the same number of sample that
+length(probs) has.}
 
 \item{probs}{Probabilities to compute quantiles.
 Must be a vector of numerics between 0.0 and 1.0.
@@ -24,4 +25,3 @@ spectra object with one spectrum for each prob
 \author{
 Jose Eduardo Meireles
 }
-

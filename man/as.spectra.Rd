@@ -25,4 +25,3 @@ Convert matrix or data frame to spectra
 \author{
 Jose Eduardo Meireles
 }
-

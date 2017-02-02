@@ -21,4 +21,3 @@ Jump correction of spectra
 jump_corr("raw_spectra_Acer")
 }
 }
-

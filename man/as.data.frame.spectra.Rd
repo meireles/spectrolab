@@ -30,4 +30,3 @@ returned.
 \author{
 Jose Eduardo Meireles
 }
-

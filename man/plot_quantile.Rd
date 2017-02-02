@@ -31,4 +31,3 @@ nothing. Called for its side effect.
 \author{
 Jose Eduardo Meireles
 }
-

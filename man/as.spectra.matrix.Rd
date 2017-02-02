@@ -23,4 +23,3 @@ Convert matrix to spectra
 \author{
 Jose Eduardo Meireles
 }
-

@@ -59,4 +59,3 @@ plot(spec, add = TRUE)
 \author{
 Jose Eduardo Meireles
 }
-

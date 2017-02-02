@@ -23,4 +23,3 @@ Convert data.frame to spectra
 \author{
 Jose Eduardo Meireles
 }
-

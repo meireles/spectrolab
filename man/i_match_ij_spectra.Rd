@@ -22,4 +22,3 @@ list if row indices and column indices
 \author{
 Jose Eduardo Meireles
 }
-

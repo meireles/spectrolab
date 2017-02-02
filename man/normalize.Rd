@@ -26,7 +26,7 @@ spectra object with normalized spectra
 \itemize{
 \item \code{spectra}: Vector normalize spectra
 }}
+
 \author{
 Jose Eduardo Meireles
 }
-

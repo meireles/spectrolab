@@ -33,4 +33,3 @@ c(1, 2) and not (at least necessarily) the first and second samples in the
 \author{
 Jose Eduardo Meireles
 }
-

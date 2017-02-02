@@ -24,4 +24,3 @@ Gets spline functions for each spectrum in a spectra object.
 \author{
 Jose Eduardo Meireles
 }
-

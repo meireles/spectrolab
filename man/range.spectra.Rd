@@ -20,4 +20,3 @@ tuple of numeric values (min, max)
 \author{
 Jose Eduardo Meireles
 }
-

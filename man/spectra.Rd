@@ -35,4 +35,3 @@ This function resorts to an ugly hack to deal with metadata assignment.
 \author{
 Jose Eduardo Meireles
 }
-

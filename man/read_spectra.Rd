@@ -36,4 +36,3 @@ Read files from various formats into `spectra`
 \author{
 Jose Eduardo Meireles
 }
-

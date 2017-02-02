@@ -15,4 +15,3 @@ Tests if a plot device exists
 \author{
 Jose Eduardo Meireles
 }
-

@@ -25,4 +25,3 @@ Match label
 \author{
 Jose Eduardo Meireles
 }
-

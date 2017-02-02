@@ -31,7 +31,7 @@ TODO
 \itemize{
 \item \code{spectra}: get metadata
 }}
+
 \author{
 Jose Eduardo Meireles
 }
-

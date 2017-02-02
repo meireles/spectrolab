@@ -25,7 +25,7 @@ Match spectra at sensor overlap regions
 \itemize{
 \item \code{spectra}: Match sensor ovelap regions
 }}
+
 \author{
 Jose Eduardo Meireles
 }
-

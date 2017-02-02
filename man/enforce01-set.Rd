@@ -20,4 +20,3 @@ nothing. has a *side effect* of changing if a constraint is enforced
 \author{
 Jose Eduardo Meireles
 }
-

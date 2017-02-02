@@ -21,4 +21,3 @@ vector of wavelengths
 \author{
 Jose Eduardo Meireles
 }
-

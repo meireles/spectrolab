@@ -20,4 +20,3 @@ single numeric value
 \author{
 Jose Eduardo Meireles
 }
-

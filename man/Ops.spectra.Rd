@@ -21,4 +21,3 @@ Overloads arithmetic operators for spectra using `Ops.`
 \author{
 Jose Eduardo Meireles
 }
-

@@ -20,4 +20,3 @@ TODO
 \author{
 Jose Eduardo Meireles
 }
-

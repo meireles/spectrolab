@@ -25,7 +25,7 @@ very same wavelenegth labels, but different metadata are acceptable
 \itemize{
 \item \code{spectra}: Combines two spectral datasets
 }}
+
 \author{
 Jose Eduardo Meireles
 }
-

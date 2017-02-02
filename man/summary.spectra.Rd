@@ -20,4 +20,3 @@ Summarize spectra
 \author{
 Jose Eduardo Meireles
 }
-

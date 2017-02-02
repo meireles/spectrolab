@@ -15,4 +15,3 @@ Return default spectral regions matrix
 \author{
 Jose Eduardo Meireles
 }
-

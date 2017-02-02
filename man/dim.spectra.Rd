@@ -18,4 +18,3 @@ tuple of integers: c("n_samples", "n_wavelengths")
 \author{
 Jose Eduardo Meireles
 }
-

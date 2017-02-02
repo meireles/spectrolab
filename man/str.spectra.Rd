@@ -20,4 +20,3 @@ Structure of the spectra object
 \author{
 Jose Eduardo Meireles
 }
-

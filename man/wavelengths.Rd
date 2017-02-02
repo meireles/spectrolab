@@ -30,7 +30,7 @@ vector of wavelengths. numeric if `return_num` = TRUE (default).
 \itemize{
 \item \code{spectra}: Set spectra wavelength labels
 }}
+
 \author{
 Jose Eduardo Meireles
 }
-

@@ -25,4 +25,3 @@ boolean
 \author{
 Jose Eduardo Meireles
 }
-

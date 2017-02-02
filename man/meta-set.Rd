@@ -24,4 +24,3 @@ nothing. called for its side effect
 \author{
 Jose Eduardo Meireles
 }
-

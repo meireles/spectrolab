@@ -27,4 +27,3 @@ Parser for ASD's `.asd`
 \author{
 Jose Eduardo Meireles
 }
-

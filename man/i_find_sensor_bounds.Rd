@@ -20,4 +20,3 @@ data.frame with sensor bounds
 \author{
 Jose Eduardo Meireles
 }
-

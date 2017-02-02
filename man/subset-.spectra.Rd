@@ -26,4 +26,3 @@ nothing. modifies spectra as side effect
 \author{
 Jose Eduardo Meireles
 }
-

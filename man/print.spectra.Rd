@@ -20,4 +20,3 @@ nothing. called for side effect
 \author{
 Jose Eduardo Meireles
 }
-
