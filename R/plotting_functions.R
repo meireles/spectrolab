@@ -11,6 +11,8 @@
 #' @param ... other arguments passed to matplot.
 #' @return nothing. Called for side effect.
 #'
+#' @importFrom graphics matplot
+#'
 #' @author Jose Eduardo Meireles
 #' @export
 plot.spectra = function(x,
@@ -25,14 +27,14 @@ plot.spectra = function(x,
         warning("spectra plot is likely to work best with type = 'l' or no plotting, i.e. type = 'n' ")
     }
 
-    matplot(x    = wavelengths(x),
-            y    = t(reflectance(x)),
-            type = type,
-            ylab = ylab,
-            xlab = xlab,
-            lty  = lty,
-            col  = col,
-            ...)
+    graphics::matplot(x    = wavelengths(x),
+                      y    = t(reflectance(x)),
+                      type = type,
+                      ylab = ylab,
+                      xlab = xlab,
+                      lty  = lty,
+                      col  = col,
+                      ...)
 }
 
 #' Plot spectra quantiles
@@ -48,6 +50,8 @@ plot.spectra = function(x,
 #'            (add = TRUE), the quantile is added to the current plot.
 #' @param ... other parameters passed to polygon().
 #' @return nothing. Called for its side effect.
+#'
+#' @importFrom graphics polygon
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -83,7 +87,7 @@ plot_quantile = function(spec,
         plot(spec, type = "n")
     }
 
-    polygon(x = xx, y = yy, col = col, border = border, ...)
+    graphics::polygon(x = xx, y = yy, col = col, border = border, ...)
 }
 
 
@@ -140,15 +144,17 @@ default_spec_regions = function(){
 #' plot(spec, add = TRUE)
 #' }
 #'
+#' @importFrom grDevices rgb
+#' @importFrom graphics mtext par polygon
 #'
 #' @author Jose Eduardo Meireles
 #' @export
 plot_regions = function(spec,
                         regions = default_spec_regions(),
-                        col    = rgb(0.7, 0.7, 0.7, 0.3),
-                        border = FALSE,
-                        add    = TRUE,
-                        names  = TRUE,
+                        col     = grDevices::rgb(0.7, 0.7, 0.7, 0.3),
+                        border  = FALSE,
+                        add     = TRUE,
+                        names   = TRUE,
                         ...){
     if( !is_spectra(spec) ){
         stop("Object must be of class spectra")
@@ -178,7 +184,7 @@ plot_regions = function(spec,
     }
 
     for(i in 1:ncol(xx_mat)) {
-        polygon(xx_mat[ , i], yy_vec, col = col[i], border = border, ...)
+        graphics::polygon(xx_mat[ , i], yy_vec, col = col[i], border = border, ...)
     }
 
     if(names){
@@ -186,13 +192,13 @@ plot_regions = function(spec,
         region_pos = colMeans(m_regions)
 
         # scale mtext
-        cex  = par("cex.axis")
-        nc   = par("mfrow")[2]
+        cex  = graphics::par("cex.axis")
+        nc   = graphics::par("mfrow")[2]
         brks = c(1, 2, 3, 4, 1000)
         r    = findInterval(nc, brks)
         m    = c(1.0, 0.86, 0.68, 0.60)[r]
 
         # plot margin text
-        mtext(region_txt, side = 3, at = region_pos, cex = cex * m)
+        graphics::mtext(region_txt, side = 3, at = region_pos, cex = cex * m)
     }
 }

@@ -4,8 +4,9 @@
 \alias{plot_regions}
 \title{Plot polygons for spectral regions}
 \usage{
-plot_regions(spec, regions = default_spec_regions(), col = rgb(0.7, 0.7,
-  0.7, 0.3), border = FALSE, add = TRUE, names = TRUE, ...)
+plot_regions(spec, regions = default_spec_regions(),
+  col = grDevices::rgb(0.7, 0.7, 0.7, 0.3), border = FALSE, add = TRUE,
+  names = TRUE, ...)
 }
 \arguments{
 \item{spec}{spectra object}
@@ -53,7 +54,6 @@ colors = col_fun(4)
 plot_regions(spec,default_spec_regions(), col = colors)
 plot(spec, add = TRUE)
 }
-
 
 }
 \author{
