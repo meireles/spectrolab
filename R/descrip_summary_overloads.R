@@ -130,7 +130,8 @@ str.spectra = function(object, ...){
 #'
 #' \code{quantile} computes quantiles by wavelength and returns them as `spectra`
 #'
-#' @param x spectra object
+#' @param x spectra object. Must have at least the same number of sample that
+#'          length(probs) has.
 #' @param probs Probabilities to compute quantiles.
 #'              Must be a vector of numerics between 0.0 and 1.0.
 #'              Defaults to c(0.025, 0.25, 0.5, 0.75, 0.975)
@@ -156,6 +157,11 @@ quantile.spectra = function(x,
         message("Duplicated probs being excluded: ", probs[ !w ])
         probs = probs[ w ]
     }
+
+    if(nrow(x) < length(probs)){
+        stop("There are less samples (", nrow(x),") than probabilities (",  length(probs), ") for `quantile` to makes sense.")
+    }
+
 
     ## Get quantiles
     f = function(x){ quantile(x,  probs) }
