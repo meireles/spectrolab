@@ -188,7 +188,10 @@ i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
     }
 }
 
-# #' @describeIn stats::smooth Default smoothing function
+#' Default smoothing function
+#'
+#' @inherit stats::smooth
+#' @importFrom stats smooth
 smooth.default = stats::smooth
 
 #' Smooth spectra
