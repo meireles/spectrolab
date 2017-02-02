@@ -1,13 +1,15 @@
 #' Plot spectra
 #'
+#' \code{plot} plots spectra.
+#'
 #' @param x spectra object
-#' @param ylab label for y axis. defaults to "Reflectance"
-#' @param xlab label for x axis. defaults to "Wavelength"
-#' @param col line color. defaults to "black"
-#' @param lty line type. defaults to 1
-#' @param type type of plot. meant to take either line "l" or no plotting "n"
-#' @param ... other arguments passed to matplot
-#' @return nothing. called for side effect
+#' @param ylab label for y axis. Defaults to "Reflectance".
+#' @param xlab label for x axis. Defaults to "Wavelength".
+#' @param col line color. Defaults to "black".
+#' @param lty line type. Defaults to 1.
+#' @param type type of plot. Meant to take either line "l" or no plotting "n".
+#' @param ... other arguments passed to matplot.
+#' @return nothing. Called for side effect.
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -33,17 +35,19 @@ plot.spectra = function(x,
             ...)
 }
 
-#' Plot polygon for spectra quantiles
+#' Plot spectra quantiles
 #'
-#' @param spec Spectra object
-#' @param total_prob Total probability mass to encompass. Single number
-#'                   between 0.0 and 1.0. Defaults to 0.95
-#' @param col Polygon color
+#' \code{plot_quantile} plots polygons for the quantiles of spectra per wavelength.
+#'
+#' @param spec spectra object
+#' @param total_prob total probability mass to encompass. Single number
+#'                   between 0.0 and 1.0. Defaults to 0.95.
+#' @param col polygon color
 #' @param border boolean. Draw border?
-#' @param add If add = FALSE (default), a new plot is created. Otherwise
-#'            (add = T), the quantile is added to the current plot.
-#' @param ... Other parameters passed to polygon()
-#' @return nothing. called for its side effect
+#' @param add if add = FALSE (default), a new plot is created. Otherwise
+#'            (add = TRUE), the quantile is added to the current plot.
+#' @param ... other parameters passed to polygon().
+#' @return nothing. Called for its side effect.
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -83,7 +87,7 @@ plot_quantile = function(spec,
 }
 
 
-#' return default spectral regions matrix
+#' Return default spectral regions matrix
 #'
 #' @return matrix with default_spec_regions
 #'
@@ -100,29 +104,38 @@ default_spec_regions = function(){
 
 #' Plot polygons for spectral regions
 #'
-#' spec_regions = cbind("VIS"   = c(begin = 400,  end = 700),
-#'                      "NIR"   = c(begin = 800,  end = 1300),
-#'                      "SWIR1" = c(begin = 1550, end = 1800),
-#'                      "SWIR2" = c(begin = 2000, end = 2400))
-#'
+#' \code{plot_regions} plots polygons for default (VIS, NIR, SWIR 1, SWIR 2) or customized regions of the spectrum.
 #'
 #' @param spec spectra object
 #' @param regions matrix with spectral regions in columns and only two rows named
 #'                "begin" and "end". Values are the wavelengths where a spectral
-#'                regions begins and ends. See details for an example
-#' @param col color for regions. single value or vector of length ncol(regions)
-#' @param border color for region borders. Defaults to FALSE (no border)
+#'                regions begins and ends. See details for how the default regions are defined.
+#' @param col color for regions. Single value or vector of length ncol (regions).
+#' @param border color for region borders. Defaults to FALSE (no border).
 #' @param add boolean. If TRUE (default) adds polygons to current plot (if a plot
 #'            exists) or throws an error if a plot doesn't exist.
 #'            If FALSE, a new plot is created **without** any spectra.
-#' @param names boolean. add region column names on top of the polygons?
-#' @param ... additional parameters passed to polygon()
-#' @return nothing. called for its side effect
+#' @param names boolean. Add region column names on top of the polygons?
+#' @param ... additional parameters passed to polygon().
+#' @return nothing. Called for its side effect.
+#'
+#' @details
+#' Default regions:
+#' spec_regions = cbind("VIS"   = c(begin = 400,  end = 700),
+#'                      "NIR"   = c(begin = 800,  end = 1300),
+#'                      "SWIR1" = c(begin = 1550, end = 1800),
+#'                      "SWIR2" = c(begin = 2000, end = 2400)).
+#' @examples
+#' spec = as.spectra(spec_matrix_example)
+#' fun = colorRampPalette(c(rgb(1, 1, 0, 0.7),rgb(1, 0, 0, 0.7)), alpha=T)
+#' colors = fun(4)
+#' plot_regions(spec,default_spec_regions(), col=colors)
+#' plot(spec, add=T)
 #'
 #' @author Jose Eduardo Meireles
 #' @export
 plot_regions = function(spec,
-                        regions,
+                        regions = default_spec_regions(),
                         col    = rgb(0.7, 0.7, 0.7, 0.3),
                         border = FALSE,
                         add    = TRUE,
@@ -151,7 +164,7 @@ plot_regions = function(spec,
     }
 
     if( (!i_plot_exists()) && add) {
-        warning("No plot exists for `regions`` to be added to, but `add` is set to TRUE.\n  Plotting regions anyways." )
+        warning("No plot exists for `regions` to be added to, but `add` is set to TRUE.\n  Plotting regions anyways." )
         plot(spec, type = "n")
     }
 

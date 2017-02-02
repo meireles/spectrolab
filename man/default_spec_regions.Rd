@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting_functions.R
 \name{default_spec_regions}
 \alias{default_spec_regions}
-\title{return default spectral regions matrix}
+\title{Return default spectral regions matrix}
 \usage{
 default_spec_regions()
 }
@@ -10,7 +10,7 @@ default_spec_regions()
 matrix with default_spec_regions
 }
 \description{
-return default spectral regions matrix
+Return default spectral regions matrix
 }
 \author{
 Jose Eduardo Meireles

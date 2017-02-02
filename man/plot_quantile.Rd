@@ -2,31 +2,31 @@
 % Please edit documentation in R/plotting_functions.R
 \name{plot_quantile}
 \alias{plot_quantile}
-\title{Plot polygon for spectra quantiles}
+\title{Plot spectra quantiles}
 \usage{
 plot_quantile(spec, total_prob = 0.95, col = rgb(0, 0, 0, 0.1),
   border = TRUE, add = FALSE, ...)
 }
 \arguments{
-\item{spec}{Spectra object}
+\item{spec}{spectra object}
 
-\item{total_prob}{Total probability mass to encompass. Single number
-between 0.0 and 1.0. Defaults to 0.95}
+\item{total_prob}{total probability mass to encompass. Single number
+between 0.0 and 1.0. Defaults to 0.95.}
 
-\item{col}{Polygon color}
+\item{col}{polygon color}
 
 \item{border}{boolean. Draw border?}
 
-\item{add}{If add = FALSE (default), a new plot is created. Otherwise
-(add = T), the quantile is added to the current plot.}
+\item{add}{if add = FALSE (default), a new plot is created. Otherwise
+(add = TRUE), the quantile is added to the current plot.}
 
-\item{...}{Other parameters passed to polygon()}
+\item{...}{other parameters passed to polygon().}
 }
 \value{
-nothing. called for its side effect
+nothing. Called for its side effect.
 }
 \description{
-Plot polygon for spectra quantiles
+\code{plot_quantile} plots polygons for the quantiles of spectra per wavelength.
 }
 \author{
 Jose Eduardo Meireles
