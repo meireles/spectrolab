@@ -126,11 +126,20 @@ default_spec_regions = function(){
 #'                      "SWIR1" = c(begin = 1550, end = 1800),
 #'                      "SWIR2" = c(begin = 2000, end = 2400)).
 #' @examples
+#'
 #' spec = as.spectra(spec_matrix_example)
-#' fun = colorRampPalette(c(rgb(1, 1, 0, 0.7),rgb(1, 0, 0, 0.7)), alpha=T)
-#' colors = fun(4)
-#' plot_regions(spec,default_spec_regions(), col=colors)
-#' plot(spec, add=T)
+#' plot_regions(spec, default_spec_regions())
+#' plot(spec, add = TRUE)
+#'
+#' # Alternatively, if you want to get fancy...
+#' \dontrun{
+#' col_fun = colorRampPalette(c(rgb(1, 1, 0, 0.7),rgb(1, 0, 0, 0.7)), alpha = TRUE)
+#' colors = col_fun(4)
+#'
+#' plot_regions(spec,default_spec_regions(), col = colors)
+#' plot(spec, add = TRUE)
+#' }
+#'
 #'
 #' @author Jose Eduardo Meireles
 #' @export
