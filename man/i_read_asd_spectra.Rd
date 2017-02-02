@@ -21,6 +21,9 @@ from each file}
 
 \item{...}{NOT USED YET}
 }
+\value{
+spectra object
+}
 \description{
 Parser for ASD's `.asd`
 }

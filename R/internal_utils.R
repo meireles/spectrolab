@@ -151,9 +151,12 @@ i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
 #' @param return_mat return a matrix instead of vector? defaults to FALSE
 #' @return vector or matrix, depending on return_mat value
 #'
+#' @importFrom stats setNames
+#' @importFrom graphics par
+#'
 #' @author Jose Eduardo Meireles
 i_plot_boundaries = function(return_mat = FALSE) {
-    bounds = setNames(par("usr"), c("xmin", "xmax", "ymin", "ymax"))
+    bounds = stats::setNames(graphics::par("usr"), c("xmin", "xmax", "ymin", "ymax"))
 
     if(return_mat) {
         bounds = matrix(bounds, ncol = 2,
@@ -167,9 +170,11 @@ i_plot_boundaries = function(return_mat = FALSE) {
 #'
 #' @return boolean
 #'
+#' @importFrom graphics par
+#'
 #' @author Jose Eduardo Meireles
 i_plot_exists = function(){
-    tryCatch( {par(new = TRUE); TRUE},
+    tryCatch( {graphics::par(new = TRUE); TRUE},
               warning = function(x){FALSE})
 }
 
@@ -183,8 +188,10 @@ i_plot_exists = function(){
 #' @param sides TODO
 #' @return numeric vector
 #'
+#' @importFrom stats filter
+#'
 #' @references http://stackoverflow.com/questions/743812/calculating-moving-average-in-r
 #' @author Jose Eduardo Meireles
 i_mav = function(x, n = 3, sides = 2){
-    filter(x, rep( (1/n), n), sides = sides)
+    stats::filter(x, rep( (1/n), n), sides = sides)
 }

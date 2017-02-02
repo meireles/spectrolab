@@ -75,15 +75,17 @@ read_spectra = function(path,
     ## filter files that match bad spectra
     #########################################
     if(!is.null(exclude_if_matches)){
-        #bad_tag = paste0("\\.", exclude_if_matches, "$")
-        bad_tag = exclude_if_matches
+        # bad_tag = paste0("\\.", exclude_if_matches, "$")
         # m       = grepl(pattern = bad_tag, i_path)
-        m <- grepl(paste(bad_tag,collapse="|"), i_path)
+        bad_tag = exclude_if_matches
+        m       = grepl(paste(bad_tag,collapse = "|"), i_path)
         i_path  = i_path[!m]
     }
 
     ## error if bad spectra fiters out all file names
-    if(length(i_path) == 0){stop("No paths left after removeing bad spectra. Check your `exclude_if_ends_with` param")}
+    if(length(i_path) == 0){
+        stop("No paths left after removeing bad spectra. Check your `exclude_if_ends_with` param")
+    }
 
 
     #########################################
@@ -161,7 +163,9 @@ read_spectra = function(path,
 #'                          from each file
 #' @param outside_01_fun function to deal with reflectance values outside 0.1.
 #' @param ... additional arguments passed to read table
-#' @return single `spectra` file or list of `spectra`
+#' @return single `spectra` or list of `spectra`
+#'
+#' @importFrom utils read.delim
 #'
 #' @author Jose Eduardo Meireles
 i_read_ascii_spectra = function(file_paths,
@@ -179,8 +183,8 @@ i_read_ascii_spectra = function(file_paths,
     ## Internal function to read table
     ############################################################
     parse = function(x) {
-        result = read.delim(x, sep = sep_char,
-                            skip = skip_first_n, header = header, ...)
+        result = utils::read.delim(x, sep = sep_char,
+                                   skip = skip_first_n, header = header, ...)
     }
 
     ############################################################
@@ -262,9 +266,11 @@ i_read_ascii_spectra = function(file_paths,
 #'                          from each file
 #' @param outside_01_fun function to deal with reflectance values outside 0.1.
 #' @param ... NOT USED YET
+#' @return spectra object
+#'
+#' @importFrom prospectr readASD
 #'
 #' @author Jose Eduardo Meireles
-#' @importFrom prospectr readASD
 i_read_asd_spectra = function(file_paths,
                               format = c("binary", "txt"),
                               divide_refl_by,

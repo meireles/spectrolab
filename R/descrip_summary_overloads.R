@@ -63,6 +63,8 @@ dim.spectra = function(x){
 #' @param ... other arguments passed to print. not implemented for spectra
 #' @return nothing. called for side effect
 #'
+#' @importFrom utils head
+#'
 #' @author Jose Eduardo Meireles
 #' @export
 print.spectra = function(x, ...){
@@ -78,14 +80,14 @@ print.spectra = function(x, ...){
     l_max   = 3L
 
     if(l_met > l_max){
-        n_met = c( head(n_met, l_max) , "...")    ## overwriting n_met
-        l_met = paste(l_max, "of", l_met)         ## overwriting l_met
+        n_met = c( utils::head(n_met, l_max) , "...")    ## overwriting n_met
+        l_met = paste(l_max, "of", l_met)                ## overwriting l_met
     }
 
     cat("spectra object", "\n")
     cat("number of samples:", nrow(x),"\n")
     cat("wavelengths: ", r_wvl[1], " to ", r_wvl[2], " (", ncol(x), " bands",
-        ifelse(!o_wvl, ", **overlap not spliced**", ""),
+        ifelse(!o_wvl, ", **overlap not matched**", ""),
         ")", "\n", sep = "")
 
     if(l_met == 0){
@@ -139,6 +141,7 @@ str.spectra = function(object, ...){
 #' @return spectra object with one spectrum for each prob
 #'
 #' @importFrom stats quantile
+#'
 #' @author Jose Eduardo Meireles
 #' @export
 quantile.spectra = function(x,
@@ -164,7 +167,7 @@ quantile.spectra = function(x,
 
 
     ## Get quantiles
-    f = function(x){ quantile(x,  probs) }
+    f = function(x){ stats::quantile(x, probs) }
     y = apply(reflectance(x) , 2, f)
 
     ## Return spectra quantile object

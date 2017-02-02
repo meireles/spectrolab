@@ -134,7 +134,6 @@ normalize.spectra = function(x, quiet = FALSE, ...){
     # add a magnitute attribute to the`spectra` object
     meta(x, "normalization_magnitude") = magnitudes
 
-    # return
     x
 }
 
@@ -154,6 +153,7 @@ normalize.spectra = function(x, quiet = FALSE, ...){
 #' @return a list of spline functions
 #'
 #' @importFrom parallel detectCores mclapply
+#' @importFrom stats smooth.spline
 #'
 #' @author Jose Eduardo Meireles
 i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
@@ -178,17 +178,17 @@ i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
         n = parallel::detectCores()
 
         if( .Platform$OS.type == "windows" ){
+            message("Parallelization is not availiable for windows. Using 1 core...")
             n = 1
         }
 
-        return(parallel::mclapply(r, smooth.spline, x = w, nknots = nknots, mc.cores = n, ...))
+        return(parallel::mclapply(r, stats::smooth.spline, x = w, nknots = nknots, mc.cores = n, ...))
     } else {
-        return(lapply(r, smooth.spline, x = w, nknots = nknots, ...))
+        return(lapply(r, stats::smooth.spline, x = w, nknots = nknots, ...))
     }
 }
 
-#' Smooth function from `stats`
-#' @rdname stats::smooth Default smoothing function
+# #' @describeIn stats::smooth Default smoothing function
 smooth.default = stats::smooth
 
 #' Smooth spectra
@@ -235,6 +235,8 @@ smooth.spectra = function(x, method = "spline", ...){
 #' @param ... additional parameters passed to the \code{smooth.spline} function.
 #' @return spectra object with resampled spectra
 #'
+#' @importFrom stats predict
+#'
 #' @author Jose Eduardo Meireles
 #' @export
 resample = function(x, new_wvls, ...) {
@@ -258,7 +260,7 @@ resample.spectra = function(x, new_wvls, ...) {
 
     ## Smooth and predict
     s = i_smooth_spline_spectra(x, ...)
-    f = function(o, p){ predict(o, p)[["y"]] }
+    f = function(o, p){ stats::predict(o, p)[["y"]] }
     g = lapply(X = s, FUN = f, p = new_wvls)
     d = i_reflectance( do.call(rbind, g) )
 

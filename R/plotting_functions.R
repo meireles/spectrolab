@@ -11,7 +11,7 @@
 #' @param ... other arguments passed to matplot.
 #' @return nothing. Called for side effect.
 #'
-#' @importFrom graphics matplot
+#' @importFrom graphics matplot plot
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -26,6 +26,10 @@ plot.spectra = function(x,
     if( ! type %in% c("l", "n")){
         warning("spectra plot is likely to work best with type = 'l' or no plotting, i.e. type = 'n' ")
     }
+
+    ## Note on importFrom:
+    ## Also using "@importFrom graphics plot" because a generic plot is not declared
+    ## anywhere, but graphics::plot is not directly called by this method.
 
     graphics::matplot(x    = wavelengths(x),
                       y    = t(reflectance(x)),

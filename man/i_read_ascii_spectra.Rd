@@ -30,7 +30,7 @@ from each file}
 \item{...}{additional arguments passed to read table}
 }
 \value{
-single `spectra` file or list of `spectra`
+single `spectra` or list of `spectra`
 }
 \description{
 Generic parser for SVC's `.sig` and PSR's `.sed`
