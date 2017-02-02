@@ -4,8 +4,8 @@
 \alias{i_read_ascii_spectra}
 \title{Internal parser for ASCII format}
 \usage{
-i_read_ascii_spectra(file_paths, skip_first_n, sep_char, header,
-  wl_and_refl_cols, divide_refl_by, include_white_ref, outside_01_fun, ...)
+i_read_ascii_spectra(file_paths, skip_first_n, sep_char, header, wl_col,
+  refl_cols, divide_refl_by, include_white_ref, outside_01_fun, ...)
 }
 \arguments{
 \item{file_paths}{paths for files already parsed by `read_spectra`}
@@ -16,11 +16,11 @@ i_read_ascii_spectra(file_paths, skip_first_n, sep_char, header,
 
 \item{header}{boolean. keep header?}
 
-\item{wl_and_refl_cols}{vector of length 2 with the indices (or column names
-in case header = T for the columns with wavelength
-labels and reflectance values}
+\item{wl_col}{idx or name of wavelength column}
 
-\item{divide_refl_by}{divide reflectance values by this}
+\item{refl_cols}{idx or name of reflectance columns. MULTIPLE}
+
+\item{divide_refl_by}{divide reflectance values by this. MULTIPLE}
 
 \item{include_white_ref}{NOT USED YET, but should read the write reference
 from each file}

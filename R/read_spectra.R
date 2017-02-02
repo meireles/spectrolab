@@ -91,7 +91,7 @@ read_spectra = function(path,
     #########################################
 
     if(outside_01_action == "nothing"){
-            fix_out01 = function(x){ x }
+        fix_out01 = function(x){ x }
 
     } else if (outside_01_action %in% c("NA", "na", NA) ) {
         fix_out01 = function(x){
@@ -111,22 +111,23 @@ read_spectra = function(path,
                                       skip_first_n      = 25,
                                       sep_char          = "",
                                       header            = FALSE,
-                                      wl_and_refl_cols  = c(1, 4),
+                                      wl_col            = 1,
+                                      refl_cols         = 4,
                                       divide_refl_by    = 100,
                                       include_white_ref = include_white_ref,
                                       outside_01_fun    = fix_out01)
         return(result)
     }
 
-
-
     if(format_lookup[format_match] == "sed"){
+
         result = i_read_ascii_spectra(i_path,
                                       skip_first_n      = 26,
                                       sep_char          = "\t",
                                       header            = TRUE,
-                                      wl_and_refl_cols  = c("Wvl", "Reflect. %"),
-                                      divide_refl_by    = 100,
+                                      wl_col            = "Wvl",
+                                      refl_cols         = c("Reflect. %", "Reflect. [1.0]"),
+                                      divide_refl_by    = c(100, 1),
                                       include_white_ref = include_white_ref,
                                       outside_01_fun    = fix_out01,
                                       check.names       = FALSE)
@@ -135,10 +136,10 @@ read_spectra = function(path,
 
     if(format_lookup[format_match] == "asd"){
         result = i_read_asd_spectra(i_path,
-                                    format = "binary",
-                                    divide_refl_by = 1,
+                                    format            = "binary",
+                                    divide_refl_by    = 1,
                                     include_white_ref = FALSE,
-                                    outside_01_fun = NULL,
+                                    outside_01_fun    = NULL,
                                     ...)
         return(result)
     }
@@ -153,10 +154,9 @@ read_spectra = function(path,
 #' @param skip_first_n skip the first n lines
 #' @param sep_char separator
 #' @param header boolean. keep header?
-#' @param wl_and_refl_cols vector of length 2 with the indices (or column names
-#'                         in case header = T for the columns with wavelength
-#'                         labels and reflectance values
-#' @param divide_refl_by divide reflectance values by this
+#' @param wl_col idx or name of wavelength column
+#' @param refl_cols idx or name of reflectance columns. MULTIPLE
+#' @param divide_refl_by divide reflectance values by this. MULTIPLE
 #' @param include_white_ref NOT USED YET, but should read the write reference
 #'                          from each file
 #' @param outside_01_fun function to deal with reflectance values outside 0.1.
@@ -168,24 +168,64 @@ i_read_ascii_spectra = function(file_paths,
                                 skip_first_n,
                                 sep_char,
                                 header,
-                                wl_and_refl_cols,
+                                wl_col,
+                                refl_cols,
                                 divide_refl_by,
                                 include_white_ref,
                                 outside_01_fun,
                                 ...){
 
+    ############################################################
+    ## Internal function to read table
+    ############################################################
     parse = function(x) {
-        result = read.delim(x,
-                            sep  = sep_char,
-                            skip = skip_first_n,
-                            header = header, ...)[ , wl_and_refl_cols ]
-        colnames(result) = c("wl", "refl")
-        result
+        result = read.delim(x, sep = sep_char,
+                            skip = skip_first_n, header = header, ...)
     }
 
-    ## read  data
+    ############################################################
+    ## Requirements and param checks
+
+    if(length(refl_cols) > 1 && any(i_is_whole(refl_cols)) ){
+        stop("refl_cols cannot be a vector of indices.")
+    }
+
+    ## Deal with cases where multiple reflectance columns or multiple reflectance
+    ## scalars (divide_refl_by) are given
+    if(length(refl_cols) < length(divide_refl_by)) {
+        warning("Length of divide_refl_by should be either 1 or equals to the length of refl_cols. divide_refl_by has been prunned to length", length(refl_cols), ".")
+        divide_refl_by = rep(divide_refl_by, length.out = length(refl_cols))
+    }
+
+    ############################################################
+    ## Parse data
+    ############################################################
     data        = lapply(file_paths, parse)
     names(data) = file_paths
+
+    ############################################################
+    ## Choose right reflectance columns from parsed data
+    ## Updates refl_cols to an INDEX
+    if(length(refl_cols) > 1) {
+
+        d = data[[1]]                                 ## OK to use the first file as representative of the whole thing?
+        m = colnames(d) %in% refl_cols
+        n = which(refl_cols %in% colnames(d))
+
+        if(all( !m )){
+            stop("refl_cols did not match any columns.")
+        }
+
+        if( sum(m) > 1 ){
+            stop("refl_cols matched more than one column.")
+        }
+
+        # Update refl cols and divide by
+        # subset 1st as a safeguard in case m matches more than one column
+        refl_cols      = which(m)
+        divide_refl_by = divide_refl_by[n]
+    }
+
 
     ## there mabye files with different number of bands. check for them
     ncol = unlist(lapply(data, nrow))
@@ -193,11 +233,11 @@ i_read_ascii_spectra = function(file_paths,
 
     ## Construct spectra
     spec = lapply(data, function(x) {
-        rf = lapply(x, function(y){ y[ , "refl"] })
+        rf = lapply(x, function(y){ y[ , refl_cols ] })
         rf = do.call(rbind, rf)
         rf = rf / divide_refl_by
         rf = outside_01_fun(rf)
-        wl = x[[1]][ , "wl"]
+        wl = x[[1]][ , wl_col ]
         nm = basename(names(x))
 
         spectra(rf, wl, nm)
