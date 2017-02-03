@@ -1,6 +1,6 @@
-#' Find sensor bounds
+#' Find sensor overlap bounds
 #'
-#' \code{i_find_sensor_bounds} finds the bounds bwteen sen
+#' \code{i_find_sensor_overlap_bounds} finds the overlap bounds between sensors
 #'
 #' @param x wavelength vector
 #' @param idx boolean. return indices? defaults to TRUE
@@ -8,21 +8,21 @@
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_find_sensor_bounds= function(x, idx = TRUE){
-    y = which(diff(x) < 0.0)
-    n = length(y) + 1
-    l = matrix(data     = c( c(1, y + 1), c(y, length(x)) ),
-               ncol     = n,
-               byrow    = TRUE,
-               dimnames = list(c("begin", "end"),
-                               paste("sensor", seq(n), sep = "_") )
-    )
+i_find_sensor_overlap_bounds = function(x, idx = TRUE){
+    decrease    = which(diff(x) < 0.0)
+    n_decreases = length(decrease) + 1
 
+    bounds = matrix(data     = c( c(1, decrease + 1), c(decrease, length(x)) ),
+                    ncol     = n_decreases,
+                    byrow    = TRUE,
+                    dimnames = list(c("begin", "end"),
+                                    paste("sensor", seq(n_decreases), sep = "_") )
+    )
     if(!idx){
-        l["begin", ] = x[ l["begin", ] ]
-        l["end", ]   = x[ l["end", ] ]
+        bounds["begin", ] = x[ bounds["begin", ] ]
+        bounds["end", ]   = x[ bounds["end", ] ]
     }
-    as.data.frame(l)
+    as.data.frame(bounds)
 }
 
 
@@ -102,12 +102,12 @@ i_match_overlap_svc = function(x, cut_points){
 
     ## List wavelengths per sensor
     w = wavelengths(x)
-    b = i_find_sensor_bounds(w)
+    b = i_find_sensor_overlap_bounds(w)
     s = lapply(b, function(y){
         w[ seq.int(y[[1]], y[[2]]) ]
     })
 
-    if(ncol(b == 1)){
+    if(ncol(b) == 1){
         message("No overlap regions were found. Returning spectra unmodified...")
         return(x)
     }
