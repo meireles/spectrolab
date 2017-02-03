@@ -174,7 +174,7 @@ plot_regions = function(spec,
         col = rep(col, length.out = ncol(m_regions))
     }
 
-    xx_mat = m_regions[ c("begin", "begin", "end", "end"),  ]
+    xx_mat = m_regions[ c("begin", "begin", "end", "end"),  , drop = FALSE]
     yy_mat = i_plot_boundaries(return_mat = TRUE)
     yy_vec = yy_mat[ c("min", "max", "max", "min") , "y"]
 
