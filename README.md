@@ -17,10 +17,8 @@ _Note for windows users:_ Apparently there is a bug in devtools' `install_guithu
 
 ## Using `spectrolab`
 
-This vignette [introduces the package](vignettes/introduction_to_spectrolab.md), and works you through the basics of the package.
+This vignette [introduces spectrolab](vignettes/introduction_to_spectrolab.md), and works you through the basics of the package.
 
-A vignette on how to [process spectra](vignettes/processing_spectra.md) using `spectrolab` explains how to exclude bad measurements, smooth, and normalize spectra among other things.
+A vignette on how to [process spectra](vignettes/processing_spectra.md) using `spectrolab` showcases several useful features such as excluding bad measurements, smoothing and normalizing spectra among other things.
 
 We highly encourage you to read the vignette on [advanced spectrolab use](vignettes/advanced_spectrolab.md) if you're planning on contributing to or developing a package that depends on `spectrolab`.
-
-
