@@ -21,3 +21,4 @@ vector of sample names
 \author{
 Jose Eduardo Meireles
 }
+\keyword{internal}

@@ -7,6 +7,7 @@
 #' @param j wavelengths or boolean vector, NOT INDICES
 #' @return list if row indices and column indices
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
 i_match_ij_spectra = function(x, i = NULL, j = NULL){
 

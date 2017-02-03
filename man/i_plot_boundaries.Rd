@@ -18,3 +18,4 @@ vector or matrix, depending on return_mat value
 \author{
 Jose Eduardo Meireles
 }
+\keyword{internal}

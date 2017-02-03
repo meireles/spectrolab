@@ -25,3 +25,4 @@ or return the boolen result from the test.
 \author{
 Jose Eduardo Meireles
 }
+\keyword{internal}

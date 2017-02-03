@@ -25,3 +25,4 @@ boolean
 \author{
 Jose Eduardo Meireles
 }
+\keyword{internal}

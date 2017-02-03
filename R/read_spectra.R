@@ -167,6 +167,7 @@ read_spectra = function(path,
 #'
 #' @importFrom utils read.delim
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
 i_read_ascii_spectra = function(file_paths,
                                 skip_first_n,
@@ -270,6 +271,7 @@ i_read_ascii_spectra = function(file_paths,
 #'
 #' @importFrom prospectr readASD
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
 i_read_asd_spectra = function(file_paths,
                               format = c("binary", "txt"),

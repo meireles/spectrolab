@@ -6,6 +6,7 @@
 #' @param idx boolean. return indices? defaults to TRUE
 #' @return data.frame with sensor bounds
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
 i_find_sensor_bounds= function(x, idx = TRUE){
     y = which(diff(x) < 0.0)
@@ -52,6 +53,7 @@ match_overlap.spectra = function(x, cut_points = c(990, 1900)){
 #' @param cut_points TODO
 #' @return TODO
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
 i_match_overlap_svc = function(x, cut_points){
 

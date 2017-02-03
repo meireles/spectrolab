@@ -18,6 +18,7 @@
 #'                  Defaults to FALSE
 #' @return data conformable to relative reflectance: numeric matrix
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
 i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = FALSE) {
 
@@ -68,6 +69,7 @@ i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = FAL
 #'                If NULL (default) checking is skipped.
 #' @return vector of sample names
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
 i_names = function(x, nsample = NULL){
 
@@ -94,6 +96,7 @@ i_names = function(x, nsample = NULL){
 #'                     If NULL (default) checking is skipped.
 #' @return vector of wavelengths
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
 i_wavelengths = function(x, nwavelengths = NULL) {
     if(! is.vector(x)) {
@@ -124,6 +127,7 @@ i_wavelengths = function(x, nwavelengths = NULL) {
 #' @param ... additional arguments passed to as.data.frame
 #' @return data.frame
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
 i_meta = function(x, nsample, allow_null = TRUE, ...){
 

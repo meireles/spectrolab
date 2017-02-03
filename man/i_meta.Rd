@@ -25,3 +25,4 @@ data.frame
 \author{
 Jose Eduardo Meireles
 }
+\keyword{internal}

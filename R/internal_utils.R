@@ -5,6 +5,7 @@
 #' @param x single value or vector of numbers
 #' @return boolean
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
 i_is_whole = function(x){
     r = suppressWarnings(as.integer(x) == x)
@@ -23,6 +24,7 @@ i_is_whole = function(x){
 #' @param quiet boolean. get warnings?
 #' @return boolean
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
 i_is_index = function(x, max_length, all = TRUE, quiet = TRUE){
     if(quiet){
@@ -51,8 +53,8 @@ i_is_index = function(x, max_length, all = TRUE, quiet = TRUE){
 #'        to false
 #' @return matched indices, or list in case full = TRUE
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
-#' @export
 i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
 
     r = list(matched = NULL, unmatched = NULL, not_element = NULL)
@@ -103,8 +105,8 @@ i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
 #'        to false
 #' @return matched indices
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
-#' @export
 i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
 
     l = length(x)
@@ -154,6 +156,7 @@ i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
 #' @importFrom stats setNames
 #' @importFrom graphics par
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
 i_plot_boundaries = function(return_mat = FALSE) {
     bounds = stats::setNames(graphics::par("usr"), c("xmin", "xmax", "ymin", "ymax"))
@@ -172,6 +175,7 @@ i_plot_boundaries = function(return_mat = FALSE) {
 #'
 #' @importFrom graphics par
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
 i_plot_exists = function(){
     tryCatch( {graphics::par(new = TRUE); TRUE},
@@ -188,9 +192,11 @@ i_plot_exists = function(){
 #' @param sides TODO
 #' @return numeric vector
 #'
-#' @importFrom stats filter
-#'
 #' @references http://stackoverflow.com/questions/743812/calculating-moving-average-in-r
+#'
+#' @importFrom stats filter
+#' @keywords internal
+#'
 #' @author Jose Eduardo Meireles
 i_mav = function(x, n = 3, sides = 2){
     stats::filter(x, rep( (1/n), n), sides = sides)

@@ -31,3 +31,4 @@ which is a numeric matrix with no dimension names.
 \author{
 Jose Eduardo Meireles
 }
+\keyword{internal}

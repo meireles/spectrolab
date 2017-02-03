@@ -19,6 +19,7 @@ devtools::use_package("parallel")
 #' @param call boolean. If stop = TRUE, should the function call be printed?
 #' @return boolean
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
 i_test_increasing_wavelengths = function(x, stop = TRUE, call = FALSE){
     y = all(diff(x) >= 0.0)
@@ -155,6 +156,7 @@ normalize.spectra = function(x, quiet = FALSE, ...){
 #' @importFrom parallel detectCores mclapply
 #' @importFrom stats smooth.spline
 #'
+#' @keywords internal
 #' @author Jose Eduardo Meireles
 i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
     if( !is_spectra(x) ){

@@ -25,3 +25,4 @@ http://stackoverflow.com/questions/743812/calculating-moving-average-in-r
 \author{
 Jose Eduardo Meireles
 }
+\keyword{internal}
