@@ -105,8 +105,12 @@ i_match_overlap_svc = function(x, cut_points){
         w[ seq.int(y[[1]], y[[2]]) ]
     })
 
+    if(ncol(b == 1)){
+        message("No overlap regions were found. Returning spectra unmodified...")
+        return(x)
+    }
     if(length(cut_points) != ncol(b) - 1){
-        stop("number of cut_points must be equal to the number of overlaps")
+        stop("number of cut_points must be equal to the number of overlaps.")
     }
 
     ## Compute factors for the silicon sensor (1st one)
