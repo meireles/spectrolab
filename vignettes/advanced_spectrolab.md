@@ -1,17 +1,9 @@
----
-title: "Advanced spectrolab"
-author: "Jose Eduardo Meireles, Anna K. Schweiger"
-date: "`r Sys.Date()`"
-output:
-  rmarkdown::html_vignette:
-    keep_md: true
-vignette: >
-  %\VignetteIndexEntry{Advanced spectrolab}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
+# Advanced spectrolab
+Jose Eduardo Meireles, Anna K. Schweiger  
+`r Sys.Date()`  
 
-```{r}
+
+```r
 library("spectrolab")
 ```
 
@@ -26,7 +18,8 @@ Some of the requirements can be relaxed. For example, reflectance must by defaul
 
 Alternativelly to `read_spectra()` or `as.spectra()`, you can create a `spectra` object "by hand"" using the more flexible `spectra()` constructor, which takes at least arguments: (1) a reflectance matrix, (2) a vector of wavelengths and (3) the sample names.
 
-```{r}
+
+```r
 # (1) Create a reflectance matrix.
 #     In this case, by removing the first column that holds the species name
 rf = spec_matrix_example[, -1]
@@ -45,15 +38,24 @@ spec = spectra(reflectance = rf, wavelengths = wl, names = sn)
 
 # And hopefully this worked fine
 is_spectra(spec)
+```
+
+```
+## [1] TRUE
+```
+
+```r
 plot(spec)
 ```
+
+![](advanced_spectrolab_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
 
 ## Getting and Setting
 
 `spectrolab` gives you acess to get and set functions for most `spectra` components. The `names()`, `wavelengths()` functions do both getting and setting, as expected in T
 
-```{r, eval=F}
 
+```r
 # Getters
 names(spec)[1:4]
 wavelengths(spec)[1:4]
@@ -64,16 +66,20 @@ names(spec)       = toupper(names(spec))
 
 Reflectances are set using the `[` notation. For instance:
 
-```{r}
+
+```r
 spec[1, 400:1200] = spec[1, 400:1200] * 2
 plot(spec)
 ```
+
+![](advanced_spectrolab_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 You may want to fiddle with the reflectance itself. This is easy to do, but there are some constraints. For example, `spectrolab` will not allow you to have negative reflectance values or values greater than 1.
 
 However, `spectrolab` will throw an error if you try to perform an illegal operation to reflectance, for instance 
 
-```{r, error=TRUE}
+
+```r
 # Trying to add 1.0 to all reflectance values will fail.
 spec[] = reflectance(spec) + 1.0
 ```

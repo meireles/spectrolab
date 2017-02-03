@@ -12,7 +12,7 @@
 
 <meta name="author" content="Anna K. Schweiger and Jose Eduardo Meireles" />
 
-<meta name="date" content="2017-01-31" />
+<meta name="date" content="2017-02-02" />
 
 <title>Processing spectra with spectrolab</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Processing spectra with spectrolab</h1>
 <h4 class="author"><em>Anna K. Schweiger and Jose Eduardo Meireles</em></h4>
-<h4 class="date"><em>2017-01-31</em></h4>
+<h4 class="date"><em>2017-02-02</em></h4>
 
 
 
@@ -95,7 +95,7 @@ acer_juco &lt;-<span class="st"> </span><span class="kw">jump_corr</span>(acer_s
 <h3>Vector normalisation</h3>
 <p>Treating each spectrum as a vector and standarizing it to unity length is a great way to remove brightness differences (e.g. due to changing lamp power), while preserving the shape of the spectrum (and thus its information content). Vector normalization is implemented in <code>spectrolab</code>’s <code>normalize()</code> function. Note: If you want to use <em>Ms. A’s</em> trait coefficients, you need to use vector normalized spectra, limited to the 400 - 2400 nm wavelength range.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subset jump corrected spectra to 400 - 2400 nm </span>
-acer_sub &lt;-<span class="st"> </span>acer_juco[, <span class="dv">400</span>:<span class="dv">2400</span>]
+acer_sub &lt;-<span class="st"> </span>acer_juco[, <span class="dv">400</span><span class="op">:</span><span class="dv">2400</span>]
 
 <span class="co"># and check result</span>
 <span class="kw">plot</span>(acer_sub)
