@@ -1,6 +1,6 @@
 ---
-title: "Advanced spectrolab"
-author: "Jose Eduardo Meireles"
+title: "Advanced spectrolab for package developers and contributors"
+author: "Jose Eduardo Meireles and Anna K. Schweiger"
 output:
   rmarkdown::html_vignette:
     keep_md: true
@@ -10,13 +10,41 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+## Style guide and conventions
+
+### Genral 
+
+* object names are lower case
+* assignment is done with equals `=` instead of arrow `<-`
+* only really obvious abbreviations may be used
+* names should be separated by undesrcore `_`, unless you're overloading an R generic e.g. `as.matrix`.
+* internal functions should use the `i_` prefix. e.g `i_find_spectra()`
+* all functions must be documented with roxygen2 comments
+* strive for small functions.
+* try to fail gracefully
+
+### Specific
+
+* **Do not reach inside the `spectra` object's guts**. If you're accessing the internal data structuresdirectly, you're probably doing something wrong.
+* If the only way you can implement something reasonably is gutting the `spectra` object, we did something wrong. Please report an issue and submit a pull request.
+* **Do not** use a pattern of deconstructing and reconstructing the `spectra` object, even if doing so though the getters and setters. 
+
 ```{r}
 library("spectrolab")
 ```
 
+
 ## The spectra class
 
-The `spectra` class holds the essential information used in spectral dataset: reflectance, wavelengths, etc. The class has a bunch of requirements in terms of both format and values. 
+`spectrolab` defines a new S3 class called `spectra` that holds all of the different compnents of a spectral data.
+
+Without diving too much into its implementation, a `spectra` object has 
+
+
+
+
+
+class holds the essential information used in spectral dataset: reflectance, wavelengths, etc. The class has a bunch of requirements in terms of both format and values. 
 
 Some of the requirements can be relaxed. For example, reflectance must by default be between 0 and 1, but you can pass `enforce01` to the `spectra()` constructor to supress this behaviour
 

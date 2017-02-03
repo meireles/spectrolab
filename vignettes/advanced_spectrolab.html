@@ -10,10 +10,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<meta name="author" content="Jose Eduardo Meireles" />
+<meta name="author" content="Jose Eduardo Meireles and Anna K. Schweiger" />
 
 
-<title>Advanced spectrolab</title>
+<title>Advanced spectrolab for package developers and contributors</title>
 
 
 
@@ -67,15 +67,41 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<h1 class="title toc-ignore">Advanced spectrolab</h1>
-<h4 class="author"><em>Jose Eduardo Meireles</em></h4>
+<h1 class="title toc-ignore">Advanced spectrolab for package developers and contributors</h1>
+<h4 class="author"><em>Jose Eduardo Meireles and Anna K. Schweiger</em></h4>
 
 
 
+<div id="style-guide-and-conventions" class="section level2">
+<h2>Style guide and conventions</h2>
+<div id="genral" class="section level3">
+<h3>Genral</h3>
+<ul>
+<li>object names are lower case</li>
+<li>assignment is done with equals <code>=</code> instead of arrow <code>&lt;-</code></li>
+<li>only really obvious abbreviations may be used</li>
+<li>names should be separated by undesrcore <code>_</code>, unless you’re overloading an R generic e.g. <code>as.matrix</code>.</li>
+<li>internal functions should use the <code>i_</code> prefix. e.g <code>i_find_spectra()</code></li>
+<li>all functions must be documented with roxygen2 comments</li>
+<li>strive for small functions.</li>
+<li>try to fail gracefully</li>
+</ul>
+</div>
+<div id="specific" class="section level3">
+<h3>Specific</h3>
+<ul>
+<li><strong>Do not reach inside the <code>spectra</code> object’s guts</strong>. If you’re accessing the internal data structuresdirectly, you’re probably doing something wrong.</li>
+<li>If the only way you can implement something reasonably is gutting the <code>spectra</code> object, we did something wrong. Please report an issue and submit a pull request.</li>
+<li><strong>Do not</strong> use a pattern of deconstructing and reconstructing the <code>spectra</code> object, even if doing so though the getters and setters.</li>
+</ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;spectrolab&quot;</span>)</code></pre></div>
+</div>
+</div>
 <div id="the-spectra-class" class="section level2">
 <h2>The spectra class</h2>
-<p>The <code>spectra</code> class holds the essential information used in spectral dataset: reflectance, wavelengths, etc. The class has a bunch of requirements in terms of both format and values.</p>
+<p><code>spectrolab</code> defines a new S3 class called <code>spectra</code> that holds all of the different compnents of a spectral data.</p>
+<p>Without diving too much into its implementation, a <code>spectra</code> object has</p>
+<p>class holds the essential information used in spectral dataset: reflectance, wavelengths, etc. The class has a bunch of requirements in terms of both format and values.</p>
 <p>Some of the requirements can be relaxed. For example, reflectance must by default be between 0 and 1, but you can pass <code>enforce01</code> to the <code>spectra()</code> constructor to supress this behaviour</p>
 </div>
 <div id="constructing-a-spectra-object-by-hand" class="section level2">
