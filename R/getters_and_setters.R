@@ -5,11 +5,13 @@
 #' @param x spectra
 #' @param i sample names or indices or boolean vector
 #' @param j wavelengths or boolean vector, NOT INDICES
+#' @param allow_negative boolean. Allow indices i to be negative? Defaults to
+#'                       FALSE
 #' @return list if row indices and column indices
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_match_ij_spectra = function(x, i = NULL, j = NULL){
+i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 
     if(is.logical(i)){
         if(length(i) != nrow(x)) {
@@ -35,7 +37,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL){
         }
     }
 
-    r_idx = i_match_label_or_idx( names(x) , i)
+    r_idx = i_match_label_or_idx( names(x) , i, allow_negative = allow_negative)
     c_idx = i_match_label(wavelengths(x), j)
 
     list(r_idx = r_idx, c_idx = c_idx)
@@ -67,7 +69,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL){
     if(missing(i)){ i = NULL }
     if(missing(j)){ j = NULL }
 
-    m = i_match_ij_spectra(x = x, i = i, j = j)
+    m = i_match_ij_spectra(x = x, i = i, j = j, allow_negative = TRUE)
 
     if(simplify && length(m[["c_idx"]]) == 1) {
         out        = reflectance(x)[ m[["r_idx"]] , m[["c_idx"]], drop = TRUE ]
@@ -101,7 +103,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL){
 `[<-.spectra` = function(x, i, j, value){
     if(missing(i)){ i = NULL }
     if(missing(j)){ j = NULL }
-    m = i_match_ij_spectra(x = x, i = i, j = j)
+    m = i_match_ij_spectra(x = x, i = i, j = j, allow_negative = FALSE)
     l = lapply(m, length)
     e = enforce01(x)
 

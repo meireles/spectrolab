@@ -18,28 +18,39 @@ i_is_whole = function(x){
 #' \code{i_is_index} Tests if x fit the requirements of being indices
 #'
 #' @param x numeric values
-#' @param max_length max acceptable values for x
+#' @param max_length Max acceptable values for x
 #' @param all boolean. If TRUE, a single logical value is retuned. Else, a vector
 #'                     of length = length(x) is returned
-#' @param quiet boolean. get warnings?
+#' @param allow_negative boolean. Allow negative integers (used in subseting?).
+#'                       defaults to FALSE
+#' @param quiet boolean. Get warnings?
 #' @return boolean
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_is_index = function(x, max_length, all = TRUE, quiet = TRUE){
+i_is_index = function(x, max_length, all = TRUE, allow_negative = FALSE, quiet = TRUE){
     if(quiet){
         w = suppressWarnings(i_is_whole(x))
     } else {
         w = i_is_whole(x)
     }
 
-    p = x > 0 & x <= round(max_length, digits = 0)
-    r = w & p
-
-    if(all){
-        r = all(r)
+    if(allow_negative){
+        ## Even if allow_negative == TRUE, I cannot allow mixing positive and
+        ## negative indices
+        if(all(x > 0)) {
+            p = x <= round(max_length, digits = 0)
+        } else if(all(x < 0)){
+            p = x >= round( - max_length, digits = 0)
+        } else {
+            stop("cannot mix positive and negative indices")
+        }
+    } else {
+        p = x > 0 & x <= round(max_length, digits = 0)
     }
 
+    r = w & p
+    if(all){ r = all(r) }
     r
 }
 
@@ -103,11 +114,12 @@ i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
 #' @param full boolean. If TRUE, a full list of results is returned
 #' @param allow_empty_lookup boolean. If TRUE, x is allowed to be NULL. Defaults
 #'        to false
+#' @param allow_negative boolean. Allow indices to be negative? Defaults to FALSE
 #' @return matched indices
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
+i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE, allow_negative = FALSE){
 
     l = length(x)
 
@@ -119,14 +131,22 @@ i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
         }
     }
 
-    d = i_is_index(x = i, max_length = l, all = FALSE)
-
+    d = i_is_index(x = i, max_length = l, all = FALSE, allow_negative = allow_negative)
 
     if(any(d)){
         i = as.integer(i)
-        r = list(matched     = i[d],
-                 unmatched   = setdiff(seq(l), i[d]),
-                 not_element = i[!d])
+                                            ## In case the indices are positive
+        if(all(i > 0)){
+            r = list(matched     = i[d],
+                     unmatched   = setdiff(seq(l), i[d]),
+                     not_element = i[!d])
+        } else {                            ## In case the indices are negative
+            ip = abs(i)
+            r = list(matched     = setdiff(seq(l), ip[d]),
+                     unmatched   = ip[d],
+                     not_element = i[!d])
+        }
+
 
         if(full){
             return(r)

@@ -4,7 +4,8 @@
 \alias{i_match_label_or_idx}
 \title{Match label or index}
 \usage{
-i_match_label_or_idx(x, i, full = FALSE, allow_empty_lookup = FALSE)
+i_match_label_or_idx(x, i, full = FALSE, allow_empty_lookup = FALSE,
+  allow_negative = FALSE)
 }
 \arguments{
 \item{x}{label vector}
@@ -15,6 +16,8 @@ i_match_label_or_idx(x, i, full = FALSE, allow_empty_lookup = FALSE)
 
 \item{allow_empty_lookup}{boolean. If TRUE, x is allowed to be NULL. Defaults
 to false}
+
+\item{allow_negative}{boolean. Allow indices to be negative? Defaults to FALSE}
 }
 \value{
 matched indices

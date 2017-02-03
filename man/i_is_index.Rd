@@ -4,17 +4,21 @@
 \alias{i_is_index}
 \title{Compatible with being an index?}
 \usage{
-i_is_index(x, max_length, all = TRUE, quiet = TRUE)
+i_is_index(x, max_length, all = TRUE, allow_negative = FALSE,
+  quiet = TRUE)
 }
 \arguments{
 \item{x}{numeric values}
 
-\item{max_length}{max acceptable values for x}
+\item{max_length}{Max acceptable values for x}
 
 \item{all}{boolean. If TRUE, a single logical value is retuned. Else, a vector
 of length = length(x) is returned}
 
-\item{quiet}{boolean. get warnings?}
+\item{allow_negative}{boolean. Allow negative integers (used in subseting?).
+defaults to FALSE}
+
+\item{quiet}{boolean. Get warnings?}
 }
 \value{
 boolean
