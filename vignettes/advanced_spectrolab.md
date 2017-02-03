@@ -1,6 +1,5 @@
 # Advanced spectrolab
-Jose Eduardo Meireles, Anna K. Schweiger  
-`r Sys.Date()`  
+Jose Eduardo Meireles  
 
 
 ```r
@@ -12,7 +11,6 @@ library("spectrolab")
 The `spectra` class holds the essential information used in spectral dataset: reflectance, wavelengths, etc. The class has a bunch of requirements in terms of both format and values. 
 
 Some of the requirements can be relaxed. For example, reflectance must by default be between 0 and 1, but you can pass `enforce01` to the `spectra()` constructor to supress this behaviour
-
 
 ## Constructing a `spectra` object _"by hand"_
 

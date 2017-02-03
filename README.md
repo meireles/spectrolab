@@ -14,6 +14,6 @@ devtools::install_github("annakat/spectrolab")
 Using `spectrolab`
 --------------
 
-This vignette [introduces the package](https://github.com/annakat/spectrolab/blob/master/vignettes/introduction_to_spectrolab.Rmd). Here you can find more on how to [process spectra](https://github.com/annakat/spectrolab/blob/master/vignettes/processing_spectra.Rmd) and the [spectra S3 class](https://github.com/annakat/spectrolab/blob/master/vignettes/advanced_spectrolab.Rmd).   
+This vignette [introduces the package](vignettes/introduction_to_spectrolab.md). Here you can find more on how to [process spectra](vignettes/processing_spectra.md) and the [spectra S3 class](vignettes/advanced_spectrolab.md).
 
 

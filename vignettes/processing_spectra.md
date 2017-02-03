@@ -1,6 +1,5 @@
 # Processing spectra with spectrolab
 Anna K. Schweiger and Jose Eduardo Meireles  
-`r Sys.Date()`  
 
 
 ## Essential processing 

@@ -1,7 +1,6 @@
 ---
 title: "Processing spectra with spectrolab"
 author: "Anna K. Schweiger and Jose Eduardo Meireles"
-date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
     keep_md: true

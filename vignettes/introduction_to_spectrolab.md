@@ -1,6 +1,5 @@
 # Introduction to spectrolab
 Jose Eduardo Meireles and Anna K. Schweiger  
-`r Sys.Date()`  
 
 The goal of `spectrolab` is to provide 1) functions to read, process and visualize data from portable spectrometers as well as 2) a common interface that other packages can build on. The package introduces a `spectra` S3 class and implements various methods to read spectral files, access and subset data, perform tasks such as vector normalization, smoothing, and sensor overlap matching, plotting spectra.
 
@@ -285,8 +284,8 @@ spec_as_df[1:4, 1:5]
 
 ```
 ##   sample_name ident                   ssp N_percent        400
-## 1     ACHMI_1 10526 Achillea millefolium   1.395130 0.03734791
-## 2     ACHMI_2 10527 Achillea millefolium   1.397361 0.04608409
-## 3     ACHMI_3 10528 Achillea millefolium   1.949853 0.04058113
-## 4     ACHMI_4 10529 Achillea millefolium   1.271661 0.04063730
+## 1     ACHMI_1 10526 Achillea millefolium   2.080107 0.03734791
+## 2     ACHMI_2 10527 Achillea millefolium   3.112791 0.04608409
+## 3     ACHMI_3 10528 Achillea millefolium   1.437576 0.04058113
+## 4     ACHMI_4 10529 Achillea millefolium   2.442087 0.04063730
 ```
