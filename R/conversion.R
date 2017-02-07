@@ -3,7 +3,9 @@
 #' @param x matrix or dataframe. Samples are in rows and wavelengths in columns.
 #'          First column must be the sample label and the remaining columns must
 #'          hold reflectance data.
-#' @param name_idx column index with sample names. Defaults to 1st col
+#' @param name_idx column index with sample names. Defaults to 1st col. If NULL
+#'                 or 0, rownames(x) or a sequence of integers will be assigned
+#'                 as names.
 #' @param meta_idxs column indices with metadata (not name and not reflectance).
 #'                  Defaults to NULL
 #' @return spectra object
@@ -17,7 +19,9 @@ as.spectra = function(x, name_idx = 1, meta_idxs = NULL){
 #' Convert data.frame to spectra
 #'
 #' @param x data.frame
-#' @param name_idx column index with sample names. Defaults to 1st col
+#' @param name_idx column index with sample names. Defaults to 1st col. If NULL
+#'                 or 0, rownames(x) or a sequence of integers will be assigned
+#'                 as names.
 #' @param meta_idxs column indices with metadata (not name and not reflectance).
 #'                  Defaults to NULL
 #' @return spectra object
@@ -25,9 +29,17 @@ as.spectra = function(x, name_idx = 1, meta_idxs = NULL){
 #' @author Jose Eduardo Meireles
 #' @export
 as.spectra.data.frame = function(x, name_idx = 1, meta_idxs = NULL){
-    s = x[ , name_idx, drop = TRUE]
+
+    if( is.null(name_idx) || name_idx == 0){
+        name_idx = NULL
+        s        = rownames(x)
+    } else {
+        s = x[ , name_idx, drop = TRUE]
+    }
+
     m = x[ , meta_idxs, drop = FALSE]
-    r = x[ , - c(name_idx, meta_idxs), drop = FALSE]
+    p = setdiff(seq(ncol(x)), c(name_idx, meta_idxs))
+    r = x[ , p, drop = FALSE]
     w = colnames(r)
 
     spectra(r, w, s, m)

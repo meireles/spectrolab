@@ -9,7 +9,9 @@
 \arguments{
 \item{x}{data.frame}
 
-\item{name_idx}{column index with sample names. Defaults to 1st col}
+\item{name_idx}{column index with sample names. Defaults to 1st col. If NULL
+or 0, rownames(x) or a sequence of integers will be assigned
+as names.}
 
 \item{meta_idxs}{column indices with metadata (not name and not reflectance).
 Defaults to NULL}

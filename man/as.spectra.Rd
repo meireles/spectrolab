@@ -11,7 +11,9 @@ as.spectra(x, name_idx = 1, meta_idxs = NULL)
 First column must be the sample label and the remaining columns must
 hold reflectance data.}
 
-\item{name_idx}{column index with sample names. Defaults to 1st col}
+\item{name_idx}{column index with sample names. Defaults to 1st col. If NULL
+or 0, rownames(x) or a sequence of integers will be assigned
+as names.}
 
 \item{meta_idxs}{column indices with metadata (not name and not reflectance).
 Defaults to NULL}
