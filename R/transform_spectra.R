@@ -2,34 +2,6 @@ library("devtools")
 devtools::use_package("devtools")
 devtools::use_package("parallel")
 
-
-################################################################################
-# Utils
-################################################################################
-
-#' Are wavelengths increasing
-#'
-#' Many transform functions can only (or at least should only) be applied to
-#' spectra with monotonically varying, very likely increasing) wavelength values.
-#' \code{i_test_increasing_wavelengths} tests that case and may throw an error
-#' or return the boolen result from the test.
-#'
-#' @param x wavelengths
-#' @param stop boolean. Throw error if test fails? Defaults to TRUE
-#' @param call boolean. If stop = TRUE, should the function call be printed?
-#' @return boolean
-#'
-#' @keywords internal
-#' @author Jose Eduardo Meireles
-i_test_increasing_wavelengths = function(x, stop = TRUE, call = FALSE){
-    y = all(diff(x) >= 0.0)
-    if( !y && stop){
-        stop("Wavelength values must be strictly increasing. You probably need to run `match_overlap` first", call. = call)
-    }
-    y
-}
-
-
 ################################################################################
 # Combine spectral datasets
 ################################################################################
