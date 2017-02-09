@@ -9,8 +9,16 @@ i_trim_sensor_overlap(x, splice_at)
 \arguments{
 \item{x}{spectra object}
 
-\item{splice_at}{}
+\item{splice_at}{wavelengths where to splice sensors. suggests where the
+begining of sensors 2 and 3 should be.}
+}
+\value{
+spectra object
 }
 \description{
 Trim sensor overlap
 }
+\author{
+Jose Eduardo Meireles
+}
+\keyword{internal}
