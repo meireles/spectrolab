@@ -27,8 +27,8 @@ Example: "BAD"}
 \item{...}{nothing yet}
 }
 \value{
-a single `spectra` or a list of `spectra` (in case files had diff
-        number of wavelengths)
+a single `spectra` or a list of `spectra` (in case files have
+        incompatible band number or wavelengths values)
 }
 \description{
 Read files from various formats into `spectra`

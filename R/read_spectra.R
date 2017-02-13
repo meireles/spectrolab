@@ -13,8 +13,8 @@ devtools::use_package("prospectr")
 #'                          "NA", which replaces those values with NA or
 #'                          "nothing" (default).
 #' @param ... nothing yet
-#' @return a single `spectra` or a list of `spectra` (in case files had diff
-#'         number of wavelengths)
+#' @return a single `spectra` or a list of `spectra` (in case files have
+#'         incompatible band number or wavelengths values)
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -232,9 +232,15 @@ i_read_ascii_spectra = function(file_paths,
     }
 
 
-    ## there mabye files with different number of bands. check for them
-    ncol = unlist(lapply(data, nrow))
-    data = split(data, ncol)
+    ## there mabye files with different number of bands or wavelength values
+    ## check for them and split the data if needed
+    wl_factor = unlist(
+        lapply(data, function(x){
+            paste0(x[ , wl_col], collapse = "")
+        })
+    )
+
+    data = unname(split(data, wl_factor))
 
     ## Construct spectra
     spec = lapply(data, function(x) {
@@ -250,7 +256,7 @@ i_read_ascii_spectra = function(file_paths,
 
     if(length(spec) > 1){
         warning("Returning a list of `spectra` beause some files\n
-                had different number of bands.")
+                had different number of bands or wavelength values.")
         return(spec)
     } else {
         return(spec[[1]])
