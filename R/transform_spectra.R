@@ -47,11 +47,12 @@ combine.spectra = function(s1, s2){
     ## Merge metadata
     m1 = meta(s1)
     m2 = meta(s2)
-    mn = union(names(m2), names(m1))
+    mn = union(names(m1), names(m2))
 
     m3 = data.frame(matrix(nrow     = nrow(m1) + nrow(m2),
                            ncol     = length(mn),
-                           dimnames = list(NULL, mn)))
+                           dimnames = list(NULL, mn)),
+                    check.names = FALSE)
 
     m3[1 : nrow(m1), names(m1)] = m1
     m3[(1 + nrow(m1)) : nrow(m3), names(m2)] = m2
