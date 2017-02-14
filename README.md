@@ -13,7 +13,7 @@ You can install spectrolab from github with:
 devtools::install_github("annakat/spectrolab")
 ```
 
-_Note for windows users:_ Apparently there is a bug in devtools' `install_guithub` preventing the correct installation of all dependencies (see [issue 21](https://github.com/annakat/spectrolab/issues/21)). If you run into trouble, try running `install.packages("prospectr")` before installing `spectrolab`.
+_Note for windows users:_ Apparently there is a bug in devtools' `install_github` preventing the correct installation of all dependencies (see [issue 21](https://github.com/annakat/spectrolab/issues/21)). If you run into trouble, try running `install.packages("prospectr")` before installing `spectrolab`.
 
 ## Using `spectrolab`
 
