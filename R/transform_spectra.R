@@ -62,6 +62,38 @@ combine.spectra = function(s1, s2){
 
 
 ################################################################################
+# Aggregate
+################################################################################
+
+#' Aggregate
+#'
+#' @param x spectra object
+#' @param by vector of factors to guide the aggregation
+#' @param FUN function to be applied
+#' @param ... extra args to FUN
+#' @return spectra object
+#'
+#' @importFrom stats aggregate
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+aggregate.spectra = function(x, by, FUN, ...){
+
+    if(!is.list(by)){
+        by = list(by)
+    }
+
+    r = stats::aggregate(as.matrix(x), by, FUN, ...)
+    m = stats::aggregate(meta(x), by, FUN, ...)
+    n = r[ , 1]
+    s = as.spectra(r, 1)
+    meta(s) = m[ , -1]
+    s
+}
+
+
+
+################################################################################
 # Vector normalization
 ################################################################################
 
