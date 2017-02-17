@@ -88,6 +88,8 @@ aggregate.spectra = function(x, by, FUN, ...){
     n = r[ , 1]
     s = as.spectra(r, 1)
     meta(s) = m[ , -1]
+
+    enforce01(s) = enforce01(x)
     s
 }
 
