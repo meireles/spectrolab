@@ -9,9 +9,6 @@ devtools::use_package("prospectr")
 #' @param recursive read files recursively
 #' @param exclude_if_matches excludes files that match this regular expression.
 #'                           Example: "BAD"
-#' @param outside_01_action what to do with values outside 0 and 1? Options are
-#'                          "NA", which replaces those values with NA or
-#'                          "nothing" (default).
 #' @param ... nothing yet
 #' @return a single `spectra` or a list of `spectra` (in case files have
 #'         incompatible band number or wavelengths values)
@@ -23,7 +20,6 @@ read_spectra = function(path,
                         include_white_ref  = FALSE,
                         recursive          = FALSE,
                         exclude_if_matches = NULL,
-                        outside_01_action  = "nothing", # "NA"
                         ...) {
 
     #########################################
@@ -88,22 +84,6 @@ read_spectra = function(path,
     }
 
 
-    #########################################
-    ## define behaviour refl outside 01
-    #########################################
-
-    if(outside_01_action == "nothing"){
-        fix_out01 = function(x){ x }
-
-    } else if (outside_01_action %in% c("NA", "na", NA) ) {
-        fix_out01 = function(x){
-            x[ x < 0.0 || x > 1.0] = NA
-            x
-        }
-    } else {
-        stop("outside_01_action must be either `nothing` or `NA`")
-    }
-
     #############################################################
     ## Read spectra with the appropriate function
     #############################################################
@@ -116,8 +96,7 @@ read_spectra = function(path,
                                       wl_col            = 1,
                                       refl_cols         = 4,
                                       divide_refl_by    = 100,
-                                      include_white_ref = include_white_ref,
-                                      outside_01_fun    = fix_out01)
+                                      include_white_ref = include_white_ref)
         return(result)
     }
 
@@ -131,7 +110,6 @@ read_spectra = function(path,
                                       refl_cols         = c("Reflect. %", "Reflect. [1.0]"),
                                       divide_refl_by    = c(100, 1),
                                       include_white_ref = include_white_ref,
-                                      outside_01_fun    = fix_out01,
                                       check.names       = FALSE)
         return(result)
     }
@@ -141,7 +119,6 @@ read_spectra = function(path,
                                     format            = "binary",
                                     divide_refl_by    = 1,
                                     include_white_ref = FALSE,
-                                    outside_01_fun    = NULL,
                                     ...)
         return(result)
     }
@@ -161,7 +138,6 @@ read_spectra = function(path,
 #' @param divide_refl_by divide reflectance values by this. MULTIPLE
 #' @param include_white_ref NOT USED YET, but should read the write reference
 #'                          from each file
-#' @param outside_01_fun function to deal with reflectance values outside 0.1.
 #' @param ... additional arguments passed to read table
 #' @return single `spectra` or list of `spectra`
 #'
@@ -177,7 +153,6 @@ i_read_ascii_spectra = function(file_paths,
                                 refl_cols,
                                 divide_refl_by,
                                 include_white_ref,
-                                outside_01_fun,
                                 ...){
 
     ############################################################
@@ -247,7 +222,6 @@ i_read_ascii_spectra = function(file_paths,
         rf = lapply(x, function(y){ y[ , refl_cols ] })
         rf = do.call(rbind, rf)
         rf = rf / divide_refl_by
-        rf = outside_01_fun(rf)
         wl = x[[1]][ , wl_col ]
         nm = basename(names(x))
 
@@ -270,7 +244,6 @@ i_read_ascii_spectra = function(file_paths,
 #' @param divide_refl_by divide reflectance values by this
 #' @param include_white_ref NOT USED YET, but should read the write reference
 #'                          from each file
-#' @param outside_01_fun function to deal with reflectance values outside 0.1.
 #' @param ... NOT USED YET
 #' @return spectra object
 #'
@@ -282,7 +255,6 @@ i_read_asd_spectra = function(file_paths,
                               format = c("binary", "txt"),
                               divide_refl_by,
                               include_white_ref,
-                              outside_01_fun,
                               ...){
 
     rf = prospectr::readASD(fnames = file_paths, out_format = "matrix")
