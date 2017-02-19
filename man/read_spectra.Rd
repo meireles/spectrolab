@@ -5,7 +5,7 @@
 \title{Read files from various formats into `spectra`}
 \usage{
 read_spectra(path, format, include_white_ref = FALSE, recursive = FALSE,
-  exclude_if_matches = NULL, outside_01_action = "nothing", ...)
+  exclude_if_matches = NULL, ...)
 }
 \arguments{
 \item{path}{Path to directory or input files}
@@ -19,10 +19,6 @@ read_spectra(path, format, include_white_ref = FALSE, recursive = FALSE,
 
 \item{exclude_if_matches}{excludes files that match this regular expression.
 Example: "BAD"}
-
-\item{outside_01_action}{what to do with values outside 0 and 1? Options are
-"NA", which replaces those values with NA or
-"nothing" (default).}
 
 \item{...}{nothing yet}
 }

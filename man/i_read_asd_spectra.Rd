@@ -5,7 +5,7 @@
 \title{Parser for ASD's `.asd`}
 \usage{
 i_read_asd_spectra(file_paths, format = c("binary", "txt"), divide_refl_by,
-  include_white_ref, outside_01_fun, ...)
+  include_white_ref, ...)
 }
 \arguments{
 \item{file_paths}{paths for files already parsed by `read_spectra`}
@@ -16,8 +16,6 @@ i_read_asd_spectra(file_paths, format = c("binary", "txt"), divide_refl_by,
 
 \item{include_white_ref}{NOT USED YET, but should read the write reference
 from each file}
-
-\item{outside_01_fun}{function to deal with reflectance values outside 0.1.}
 
 \item{...}{NOT USED YET}
 }

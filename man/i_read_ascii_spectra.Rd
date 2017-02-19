@@ -5,7 +5,7 @@
 \title{Internal parser for ASCII format}
 \usage{
 i_read_ascii_spectra(file_paths, skip_first_n, sep_char, header, wl_col,
-  refl_cols, divide_refl_by, include_white_ref, outside_01_fun, ...)
+  refl_cols, divide_refl_by, include_white_ref, ...)
 }
 \arguments{
 \item{file_paths}{paths for files already parsed by `read_spectra`}
@@ -24,8 +24,6 @@ i_read_ascii_spectra(file_paths, skip_first_n, sep_char, header, wl_col,
 
 \item{include_white_ref}{NOT USED YET, but should read the write reference
 from each file}
-
-\item{outside_01_fun}{function to deal with reflectance values outside 0.1.}
 
 \item{...}{additional arguments passed to read table}
 }
