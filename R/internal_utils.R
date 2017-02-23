@@ -91,7 +91,7 @@ i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
         }
     }
 
-    m = which(  x %in% i)
+    m = match(i, x) # return matches in the same order as i. allows to reorder samples
     u = which(! x %in% i)
     n = setdiff(i, x)
 
