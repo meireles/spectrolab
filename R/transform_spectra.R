@@ -70,6 +70,8 @@ combine.spectra = function(s1, s2){
 #' @param x spectra object
 #' @param by vector of factors to guide the aggregation
 #' @param FUN function to be applied
+#' @param FUN_meta function to be applied to metadata. If NULL (default), same
+#'        FUN appied to reflectance is used.
 #' @param ... extra args to FUN
 #' @return spectra object
 #'
@@ -77,14 +79,18 @@ combine.spectra = function(s1, s2){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
-aggregate.spectra = function(x, by, FUN, ...){
+aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
 
     if(!is.list(by)){
         by = list(by)
     }
 
+    if(is.null(FUN_meta)){
+        FUN_meta = FUN
+    }
+
     r = stats::aggregate(as.matrix(x), by, FUN, ...)
-    m = stats::aggregate(meta(x), by, FUN, ...)
+    m = stats::aggregate(meta(x), by, FUN_meta, ...)
     n = r[ , 1]
     s = as.spectra(r, 1)
     meta(s) = m[ , -1]

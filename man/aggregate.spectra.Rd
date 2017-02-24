@@ -4,7 +4,7 @@
 \alias{aggregate.spectra}
 \title{Aggregate}
 \usage{
-\method{aggregate}{spectra}(x, by, FUN, ...)
+\method{aggregate}{spectra}(x, by, FUN, FUN_meta = NULL, ...)
 }
 \arguments{
 \item{x}{spectra object}
@@ -12,6 +12,9 @@
 \item{by}{vector of factors to guide the aggregation}
 
 \item{FUN}{function to be applied}
+
+\item{FUN_meta}{function to be applied to metadata. If NULL (default), same
+FUN appied to reflectance is used.}
 
 \item{...}{extra args to FUN}
 }
