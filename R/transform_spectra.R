@@ -96,16 +96,6 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
         FUN_meta = FUN
     }
 
-    z = function(x, fun){
-        r = tryCatch(
-            { fun(x) },
-            warning = function(w){ unique(x) }
-        )
-        r
-    }
-
-
-
     r = stats::aggregate(as.matrix(x), by, FUN, ...)
     m = stats::aggregate(meta(x), by, FUN_meta, ...)
     n = r[ , 1]
