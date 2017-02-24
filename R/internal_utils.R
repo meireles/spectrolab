@@ -121,6 +121,32 @@ i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
 #' @author Jose Eduardo Meireles
 i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE, allow_negative = FALSE){
 
+
+    ################################################################################
+    # match index function
+    # HACK. this function should've been declared outside
+    ################################################################################
+
+    i_match_index = function(ii, dd, ll){
+        ii = as.integer(ii)
+        ## In case the indices are positive
+        if(all(ii > 0)){
+            r = list(matched     = ii[dd],
+                     unmatched   = setdiff(seq(ll), ii[dd]),
+                     not_element = ii[!dd])
+        } else {                            ## In case the indices are negative
+            ip = abs(ii)
+            r = list(matched     = setdiff(seq(ll), ip[dd]),
+                     unmatched   = ip[dd],
+                     not_element = ii[!dd])
+        }
+        r
+    }
+
+    ################################################################################
+    # Begin i_match_label_or_idx
+    ################################################################################
+
     l = length(x)
 
     if(l == 0){
@@ -131,37 +157,65 @@ i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE, 
         }
     }
 
+    ########################################
+    # First try to match to label
+    ########################################
+    m = i_match_label(x, i, full = TRUE, allow_empty_lookup = allow_empty_lookup)
+
+    ## return matched by lable if clean cut
+    if(length(m$matched) > 0 && length(m$not_element) == 0){
+        if(full){
+            return(m)
+        } else {
+            return(m$matched)
+        }
+    }
+
+    ########################################
+    # Now match to index
+    ########################################
     d = i_is_index(x = i, max_length = l, all = FALSE, allow_negative = allow_negative)
 
-    if(any(d)){
-        i = as.integer(i)
-                                            ## In case the indices are positive
-        if(all(i > 0)){
-            r = list(matched     = i[d],
-                     unmatched   = setdiff(seq(l), i[d]),
-                     not_element = i[!d])
-        } else {                            ## In case the indices are negative
-            ip = abs(i)
-            r = list(matched     = setdiff(seq(l), ip[d]),
-                     unmatched   = ip[d],
-                     not_element = i[!d])
+    if (any(d)){
+        r = i_match_index(ii = i, dd = d, ll = l)
+    }
+
+    ## return matched by index if clean cut
+    if(all(d)){
+        if(full){
+            return(r)
+        } else {
+            return(r$matched)
         }
+    }
 
+    ########################################
+    # Try both
+    ########################################
 
+    message("Trying to match by label...")
+    if(length(m$matched) > 0 && length(m$not_element) != length(i)){
+        if(full){
+            return(m)
+        } else {
+            warning("Following label not found:", i[m$not_element])
+            return(m$matched)
+        }
+    }
+
+    message("Trying to match by index...")
+    if (any(d)) {
         if(full){
             return(r)
         } else {
             if( length(r[["not_element"]]) != 0 ){
-                stop("Following labels not found: ", r[["not_element"]])
-            } else {
+                warning("Following indices not found: ", r[["not_element"]])
                 return(r[["matched"]])
             }
         }
-
-    } else {
-        return( i_match_label(x, i, full = full, allow_empty_lookup = allow_empty_lookup) )
     }
 
+    stop("No match.")
 }
 
 
