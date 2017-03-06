@@ -1,5 +1,6 @@
-
 #' Are wavelengths increasing
+#'
+#' \code{i_test_increasing_wavelengths} tests if wavelength values are increasing
 #'
 #' Many transform functions can only (or at least should only) be applied to
 #' spectra with monotonically varying, very likely increasing) wavelength values.
@@ -52,8 +53,16 @@ i_find_sensor_overlap_bounds = function(x, idx = TRUE){
 
 #' Remove duplicated wavelength
 #'
+#' \code{i_remove_duplicated_wavelength} removes a duplicated wavelength
+#'
+#' SVC instruments usually have a certain wavelength that is repeated in the
+#' overlap region of different sensors, e.g. 1005.5 nm. The choice of which
+#' duplicate wavelength to remove (1005.5 in sensor 1 or sensor 2) will depend
+#' on boundary. If the duplicated value is greater than boundary, the first
+#' sensor duplicate is removed. Else, the second dup is removed.
+#'
 #' @param x spectra object
-#' @param boundary sensor boundary
+#' @param boundary boundary (double). If < wvl value, the first dup is pruned
 #' @return spectra object
 #'
 #' @keywords internal
@@ -67,7 +76,7 @@ i_remove_duplicated_wavelength = function(x, boundary){
     }
 
     i      = which(w == d)
-    idx_rm = ifelse(d < boundary, i[2], i[1])
+    idx_rm = ifelse(d > boundary, i[1], i[2])
 
     ## HACK. There is no easy way of subsetting wavelengths if they are
     ## duplicated. Therefore, I have to change the value of the wavelength

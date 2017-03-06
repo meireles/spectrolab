@@ -17,6 +17,9 @@ i_test_increasing_wavelengths(x, stop = TRUE, call = FALSE)
 boolean
 }
 \description{
+\code{i_test_increasing_wavelengths} tests if wavelength values are increasing
+}
+\details{
 Many transform functions can only (or at least should only) be applied to
 spectra with monotonically varying, very likely increasing) wavelength values.
 \code{i_test_increasing_wavelengths} tests that case and may throw an error

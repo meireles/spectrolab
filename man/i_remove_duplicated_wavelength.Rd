@@ -9,13 +9,20 @@ i_remove_duplicated_wavelength(x, boundary)
 \arguments{
 \item{x}{spectra object}
 
-\item{boundary}{sensor boundary}
+\item{boundary}{boundary (double). If < wvl value, the first dup is pruned}
 }
 \value{
 spectra object
 }
 \description{
-Remove duplicated wavelength
+\code{i_remove_duplicated_wavelength} removes a duplicated wavelength
+}
+\details{
+SVC instruments usually have a certain wavelength that is repeated in the
+overlap region of different sensors, e.g. 1005.5 nm. The choice of which
+duplicate wavelength to remove (1005.5 in sensor 1 or sensor 2) will depend
+on boundary. If the duplicated value is greater than boundary, the first
+sensor duplicate is removed. Else, the second dup is removed.
 }
 \author{
 Jose Eduardo Meireles
