@@ -65,7 +65,7 @@ combine.spectra = function(s1, s2){
 # Aggregate
 ################################################################################
 
-#' Aggregate
+#' Aggregate spectra
 #'
 #' Applies FUN (and FUN_meta) over over spectra aggregating by factor `by`.
 #'
@@ -104,6 +104,34 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
 
     enforce01(s) = enforce01(x)
     s
+}
+
+################################################################################
+# Split spectral datasets
+################################################################################
+
+
+#' Split spectra
+#'
+#' \code{split} a spectra object into a list of spectra according to grouping f.
+#'
+#' @param x spectra object
+#' @param f factor vector defining the grouping. Must have length nrow(x)
+#' @param drop NOT used
+#' @param ... NOT used
+#' @return list of spectra
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+split.spectra = function(x, f, drop = FALSE, ...){
+
+    if(nrow(x) != length(f)){
+        stop("f must have the same length as the number of samples in x")
+    }
+
+    l = split(seq.int(length(f)), f)
+
+    lapply(l, function(y){ x[y, ] })
 }
 
 

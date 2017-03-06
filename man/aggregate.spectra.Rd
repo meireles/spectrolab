@@ -2,7 +2,7 @@
 % Please edit documentation in R/transform_spectra.R
 \name{aggregate.spectra}
 \alias{aggregate.spectra}
-\title{Aggregate}
+\title{Aggregate spectra}
 \usage{
 \method{aggregate}{spectra}(x, by, FUN, FUN_meta = NULL, ...)
 }
