@@ -166,7 +166,7 @@ normalize.spectra = function(x, quiet = FALSE, ...){
         message("Vector nomalizing spectra...")
         message("Note that y values will not be true reflectances anymore!")
 
-        if( "normalization_magnitude" %in% names(meta(x , "normalization_magnitude")) ){
+        if( "normalization_magnitude" %in% names(meta(x)) ){
             warning("spectra were apparently already vector normalized.\n  normalization magnitudes may not make sense.")
         }
     }
