@@ -5,8 +5,8 @@ sudo: false
 cache: packages
 warnings_are_errors: false
 
-install:
-  - ./travis-tool.sh github_package jimhester/covr
- 
+r_github_packages:
+  - jimhester/covr
+
  after_success:
-  - Rscript -e 'covr::coveralls()'
+  - R -e 'covr::coveralls()'
