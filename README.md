@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/meireles/spectrolab.svg?branch=master)](https://travis-ci.org/meireles/spectrolab)
 
+[![Coverage Status](https://coveralls.io/repos/github/meireles/spectrolab/badge.svg?branch=master)](https://coveralls.io/github/meireles/spectrolab?branch=master)
+
 # spectrolab
 
 The package is being actively developed and the *API will likely change*. You’re welcome to give it a spin, but do so *at your own risk*.
