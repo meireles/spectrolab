@@ -8,5 +8,5 @@ warnings_are_errors: false
 r_github_packages:
   - jimhester/covr
 
- after_success:
+after_success:
   - R -e 'covr::coveralls()'
