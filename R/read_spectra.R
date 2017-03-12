@@ -9,6 +9,8 @@ devtools::use_package("prospectr")
 #' @param recursive read files recursively
 #' @param exclude_if_matches excludes files that match this regular expression.
 #'                           Example: "BAD"
+#' @param ignore_extension boolean. If TRUE, the parser will try to read every
+#'                         file in path regardless of the expected extension.
 #' @param ... nothing yet
 #' @return a single `spectra` or a list of `spectra` (in case files have
 #'         incompatible band number or wavelengths values)
@@ -20,6 +22,7 @@ read_spectra = function(path,
                         include_white_ref  = FALSE,
                         recursive          = FALSE,
                         exclude_if_matches = NULL,
+                        ignore_extension   = FALSE,
                         ...) {
 
     #########################################
@@ -36,7 +39,11 @@ read_spectra = function(path,
     if(length(format_match) == 0){ stop("Format not supported") }
 
     ## create regexpr to select files
-    regexpr_ext = paste0("\\.", format_lookup[format_match], "$")
+    if(ignore_extension){
+        regexpr_ext = ""
+    } else {
+        regexpr_ext = paste0("\\.", format_lookup[format_match], "$")
+    }
 
     #########################################
     ## validate paths

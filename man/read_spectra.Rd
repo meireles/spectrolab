@@ -5,7 +5,7 @@
 \title{Read files from various formats into `spectra`}
 \usage{
 read_spectra(path, format, include_white_ref = FALSE, recursive = FALSE,
-  exclude_if_matches = NULL, ...)
+  exclude_if_matches = NULL, ignore_extension = FALSE, ...)
 }
 \arguments{
 \item{path}{Path to directory or input files}
@@ -19,6 +19,9 @@ read_spectra(path, format, include_white_ref = FALSE, recursive = FALSE,
 
 \item{exclude_if_matches}{excludes files that match this regular expression.
 Example: "BAD"}
+
+\item{ignore_extension}{boolean. If TRUE, the parser will try to read every
+file in path regardless of the expected extension.}
 
 \item{...}{nothing yet}
 }
