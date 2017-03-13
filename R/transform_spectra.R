@@ -238,6 +238,44 @@ i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
     }
 }
 
+
+#' Smooth moving average for spectra
+#'
+#' @param x spectra object
+#' @return spectra object
+#'
+#' @keywords internal
+#' @author Jose Eduardo Meireles
+i_smooth_mav_spectra = function(x){
+    if( !is_spectra(x) ){
+        stop("Object must be of class spectra")
+    }
+
+    scale   = c(3, 4, 5, 7, 10, 20, 30)
+    cutres  = 200
+
+    range   = diff(range( wavelengths(x) ))
+    resol   = ceiling(range / ncol(x))
+    fullres = floor(range / resol)
+    propres = floor(range / resol / scale)
+    n       = max( scale[propres >= cutres] )
+
+    r   = reflectance(x)
+    s   = t(apply(r, 1, i_mav, n = n))
+    w   = which(apply(is.na(s), 2, all))
+    ww  = wavelengths(x)[w]
+
+    message("Simple moving average over n: ", n)
+    if(length(w) != 0){
+        message("Smoothing transformed some reflectances into NAs")
+        message("Those wavelengths were removed but the original refl values were kept as metadata")
+    }
+    x[]     = s
+    x       = x[ , setdiff(wavelengths(x), ww) ]
+    meta(x) = matrix(r[ , w], nrow = nrow(x), dimnames = list(NULL, paste("removed_wvl_", ww, sep = "") ) )
+    x
+}
+
 #' Default smoothing function
 #'
 #' @inherit stats::smooth
@@ -270,7 +308,7 @@ smooth.spectra = function(x, method = "spline", ...){
         x[] = do.call(rbind, sapply(s, `[`, "y"))
         return(x)
     } else if (method == "moving_average") {
-        stop("Sorry, not implemented yet!")
+        i_smooth_mav_spectra(x)
     }
 }
 
