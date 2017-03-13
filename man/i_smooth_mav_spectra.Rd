@@ -4,7 +4,7 @@
 \alias{i_smooth_mav_spectra}
 \title{Smooth moving average for spectra}
 \usage{
-i_smooth_mav_spectra(x)
+i_smooth_mav_spectra(x, n = NULL)
 }
 \arguments{
 \item{x}{spectra object}

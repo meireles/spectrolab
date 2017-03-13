@@ -246,19 +246,25 @@ i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_smooth_mav_spectra = function(x){
+i_smooth_mav_spectra = function(x, n = NULL){
     if( !is_spectra(x) ){
         stop("Object must be of class spectra")
     }
 
-    scale   = c(3, 4, 5, 7, 10, 20, 30)
-    cutres  = 200
+    if(is.null(n)){
+        scale   = c(2, 3, 4, 5, 7, 10, 15, 20)
+        cutres  = 150
 
-    range   = diff(range( wavelengths(x) ))
-    resol   = ceiling(range / ncol(x))
-    fullres = floor(range / resol)
-    propres = floor(range / resol / scale)
-    n       = max( scale[propres >= cutres] )
+        range   = diff(range( wavelengths(x) ))
+        resol   = ceiling(range / ncol(x))
+        fullres = floor(range / resol)
+        propres = floor(range / resol / scale)
+        n       = max(c(scale[propres >= cutres]), 1)
+    }
+
+    if(n == 1){
+        stop("Not enough resolution to smooth using moving average. n param was 1.")
+    }
 
     r   = reflectance(x)
     s   = t(apply(r, 1, i_mav, n = n))
@@ -288,7 +294,8 @@ smooth.default = stats::smooth
 #'
 #' @param x spectra object. Wavelengths must be strictly increasing
 #' @param method Choose smoothing method: "spline" (default) or "moving_average"
-#' @param ... additional parameters passed to \code{smooth.spline}.
+#' @param ... additional parameters passed to \code{smooth.spline} or param `n`
+#'            for the moving average smoothing.
 #' @return a spectra object of with smoothed spectra
 #'
 #' @author Jose Eduardo Meireles
@@ -308,7 +315,7 @@ smooth.spectra = function(x, method = "spline", ...){
         x[] = do.call(rbind, sapply(s, `[`, "y"))
         return(x)
     } else if (method == "moving_average") {
-        i_smooth_mav_spectra(x)
+        i_smooth_mav_spectra(x, ...)
     }
 }
 
