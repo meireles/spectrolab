@@ -140,7 +140,7 @@ i_trim_sensor_overlap = function(x, splice_at){
 #' Typical values in our own individual instruments were:
 #' SVC ~ c(990, 1900)
 #' PSR ~ c()
-#' ASD ~ c()
+#' ASD ~ c(1000, 1800)
 #'
 #' @param x spectra object
 #' @param splice_at wavelengths that serve as splice poits. Typically the
