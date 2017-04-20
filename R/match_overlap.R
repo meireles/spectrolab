@@ -142,6 +142,10 @@ i_trim_sensor_overlap = function(x, splice_at){
 #' PSR ~ c()
 #' ASD ~ c(1001, 1801)
 #'
+#' If the factors used to match spectra are unreasonable, \code{match_sensors}
+#' will throw. Unreasonable factors (f) are defined as 0.5 > f < 1.5 or NaN,
+#' which  happens when the reflectance value for the right sensor is 0.
+#'
 #' @param x spectra object
 #' @param splice_at wavelengths that serve as splice poits. Typically the
 #'                  beginings of sensor 2 and sensor 3.
@@ -182,10 +186,10 @@ match_sensors.spectra = function(x, splice_at, interpolate_wvl = 5){
     interpolate_wvl = rep(interpolate_wvl, length.out = length(splice_at))
 
     ## Pick wavelengths by sensor to computer factors
-    p1 = s$sensor_1[ s$sensor_1 >= splice_at[1] - interpolate_wvl[1] ]
+    p1  = s$sensor_1[ s$sensor_1 >= splice_at[1] - interpolate_wvl[1] ]
     p21 = s$sensor_2[1]
     p23 = s$sensor_2[ length((s$sensor_2)) ]
-    p3 = s$sensor_3[ s$sensor_3 < splice_at[2] + interpolate_wvl[2] ]
+    p3  = s$sensor_3[ s$sensor_3 < splice_at[2] + interpolate_wvl[2] ]
 
     ## solve issues if any of the picks are empty
     if(length(p1) == 0){ p1 = max(s$sensor_1) }
@@ -199,6 +203,45 @@ match_sensors.spectra = function(x, splice_at, interpolate_wvl = 5){
     f3 = rowMeans(reflectance(x[ , p23, simplify = FALSE])) /
          rowMeans(reflectance(x[ , p3, simplify = FALSE]))
 
+
+    ## Check for factors
+    factor_min = 0.5
+    factor_max = 1.5
+
+    # f1_nan     = which(is.nan(f1))
+    # f3_nan     = which(is.nan(f3))
+    # f1_outside = which( f1 < factor_min | f1 > factor_max )
+    # f3_outside = which( f3 < factor_min | f3 > factor_max )
+    #
+    # if(length(f1_nan) > 0){
+    #     stop("Conversion factor to match sensors 1 and 2 could not be computed for spectra: ", paste(f1_nan, sep = " ") )
+    # }
+    # if(length(f3_nan) > 0){
+    #     stop("Conversion factor to match sensors 2 and 3 could not be computed for spectra: ", paste(f3_nan, sep = " ") )
+    # }
+    #
+    # if(length(f1_outside) > 0 ){
+    #     warning("Conversion factors to match sensors 1 and 2 are outside of reasonable values for spectra: ",
+    #             paste(f1_outside, sep = " "))
+    # }
+    #
+    # if(length(f3_outside) > 0){
+    #     warning("Conversion factors to match sensors 2 and 3 are outside of reasonable values for spectra: ",
+    #             paste(f3_outside, sep = " "))
+    # }
+
+    f1_out_or_nan = which( f1 < factor_min | f1 > factor_max | is.nan(f1))
+    f3_out_or_nan = which( f3 < factor_min | f3 > factor_max | is.nan(f3))
+
+    if(length(f1_out_or_nan) > 0 ){
+        stop("Conversion factors to match sensors 1 and 2 are outside of reasonable values for spectra: ",
+                paste(f1_out_or_nan, sep = " "))
+    }
+
+    if(length(f3_out_or_nan) > 0){
+        stop("Conversion factors to match sensors 2 and 3 are outside of reasonable values for spectra: ",
+                paste(f3_out_or_nan, sep = " "))
+    }
 
     ## Compute the factor matrices
     ## These functions need to be empirically derived. Current implementation
