@@ -134,13 +134,13 @@ i_trim_sensor_overlap = function(x, splice_at){
 #'
 #' \code{match_sensors} scales reflectance values of sensors 1 (vis) and 3 (swir2)
 #'
-#' splice_at has no default because sensor transition points vary bwteeen vendors
+#' splice_at has no default because sensor transition points vary between vendors
 #' and individual instruments. It is an imporant parameter though, so you should
 #' visually inspect your spectra before assigning it.
 #' Typical values in our own individual instruments were:
 #' SVC ~ c(990, 1900)
 #' PSR ~ c()
-#' ASD ~ c()
+#' ASD ~ c(1001, 1801)
 #'
 #' @param x spectra object
 #' @param splice_at wavelengths that serve as splice poits. Typically the

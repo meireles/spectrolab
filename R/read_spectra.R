@@ -236,7 +236,7 @@ i_read_ascii_spectra = function(file_paths,
     })
 
     if(length(spec) > 1){
-        warning("Returning a list of `spectra` beause some files had different number of bands or wavelength values. If you want to make those data compatible, consider resampling (with resample) and then combining them (with combine)")
+        warning("Returning a list of `spectra` because some files had different number of bands or wavelength values. If you want to make those data compatible, consider resampling (with resample) and then combining them (with combine)")
         return(spec)
     } else {
         return(spec[[1]])
