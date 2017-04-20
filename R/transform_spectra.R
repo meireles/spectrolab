@@ -12,7 +12,7 @@ devtools::use_package("parallel")
 #' very same wavelenegth labels, but different metadata are acceptable
 #'
 #' @param s1 spectra object 1
-#' @param s2 spectra object 1
+#' @param s2 spectra object 2
 #' @return combined spectra object
 #'
 #' @author Jose Eduardo Meireles
@@ -67,9 +67,9 @@ combine.spectra = function(s1, s2){
 
 #' Aggregate spectra
 #'
-#' Applies FUN (and FUN_meta) over over spectra aggregating by factor `by`.
+#' Applies FUN (and FUN_meta) over spectra aggregating by factor `by`.
 #'
-#' Argument FUN_meta is useful if you wnat to apply a different function to
+#' Argument FUN_meta is useful if you want to apply a different function to
 #' metadata and reflectance. If you want to aggregate spectra and metadata using
 #' `mean`, `sd`, `median` etc. but try to keep the text values, wrap you function
 #' using \code{try_keep_txt(f)}.
@@ -78,7 +78,7 @@ combine.spectra = function(s1, s2){
 #' @param by vector of factors to guide the aggregation
 #' @param FUN function to be applied to refl (and meta if FUN_meta is NULL)
 #' @param FUN_meta function to be applied to metadata. If NULL (default), same
-#'        FUN appied to reflectance is used.
+#'        FUN applied to reflectance is used.
 #' @param ... extra args to FUN
 #' @return spectra object
 #'
@@ -147,7 +147,7 @@ split.spectra = function(x, f, drop = FALSE, ...){
 #' \code{normalize} returns a spectra obj with vector normalized reflectances
 #'
 #' @param x spectra object. Wavelengths must be strictly increasing
-#' @param quiet booean. Warn about change in y value units? Defaults to FALSE
+#' @param quiet boolean. Warn about change in y value units? Defaults to FALSE
 #' @param ... nothing
 #' @return spectra object with normalized spectra
 #'

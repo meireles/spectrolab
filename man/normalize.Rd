@@ -12,7 +12,7 @@ normalize(x, quiet = FALSE, ...)
 \arguments{
 \item{x}{spectra object. Wavelengths must be strictly increasing}
 
-\item{quiet}{booean. Warn about change in y value units? Defaults to FALSE}
+\item{quiet}{boolean. Warn about change in y value units? Defaults to FALSE}
 
 \item{...}{nothing}
 }

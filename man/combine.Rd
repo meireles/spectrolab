@@ -12,7 +12,7 @@ combine(s1, s2)
 \arguments{
 \item{s1}{spectra object 1}
 
-\item{s2}{spectra object 1}
+\item{s2}{spectra object 2}
 }
 \value{
 combined spectra object
