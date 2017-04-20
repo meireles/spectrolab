@@ -125,11 +125,13 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
 #' @export
 split.spectra = function(x, f, drop = FALSE, ...){
 
-    if(nrow(x) != length(f)){
+    v = unlist(f)
+
+    if(nrow(x) != length(v)){
         stop("f must have the same length as the number of samples in x")
     }
 
-    l = split(seq.int(length(f)), f)
+    l = split(seq.int(length(v)), v)
 
     lapply(l, function(y){ x[y, ] })
 }
