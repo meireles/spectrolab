@@ -5,9 +5,9 @@
 \alias{match_sensors.spectra}
 \title{Match spectra at sensor transitions}
 \usage{
-match_sensors(x, splice_at, interpolate_wvl = 5)
+match_sensors(x, splice_at, interpolate_wvl = 5, factor_range = c(0.5, 2))
 
-\method{match_sensors}{spectra}(x, splice_at, interpolate_wvl = 5)
+\method{match_sensors}{spectra}(x, splice_at, interpolate_wvl, factor_range)
 }
 \arguments{
 \item{x}{spectra object}
@@ -16,6 +16,9 @@ match_sensors(x, splice_at, interpolate_wvl = 5)
 beginings of sensor 2 and sensor 3.}
 
 \item{interpolate_wvl}{blah}
+
+\item{factor_range}{range of acceptable correction factors (min, max).
+Defaults to c(0.5, 2)}
 }
 \value{
 spectra object

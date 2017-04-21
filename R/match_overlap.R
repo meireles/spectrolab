@@ -150,18 +150,20 @@ i_trim_sensor_overlap = function(x, splice_at){
 #' @param splice_at wavelengths that serve as splice poits. Typically the
 #'                  beginings of sensor 2 and sensor 3.
 #' @param interpolate_wvl blah
+#' @param factor_range range of acceptable correction factors (min, max).
+#'                     Defaults to c(0.5, 2)
 #' @return spectra object
 #'
 #' @author Jose Eduardo Meireles and Anna Schweiger
 #' @export
-match_sensors = function(x, splice_at, interpolate_wvl = 5){
+match_sensors = function(x, splice_at, interpolate_wvl = 5, factor_range = c(0.5, 2)){
     UseMethod("match_sensors")
 }
 
 
 #' @describeIn match_sensors Match sensor ovelap regions
 #' @export
-match_sensors.spectra = function(x, splice_at, interpolate_wvl = 5){
+match_sensors.spectra = function(x, splice_at, interpolate_wvl, factor_range){
 
     message("Warning: feature under development!")
     message("match_sensors: should not be used in poduction code.")
@@ -203,11 +205,6 @@ match_sensors.spectra = function(x, splice_at, interpolate_wvl = 5){
     f3 = rowMeans(reflectance(x[ , p23, simplify = FALSE])) /
          rowMeans(reflectance(x[ , p3, simplify = FALSE]))
 
-
-    ## Check for factors
-    factor_min = 0.5
-    factor_max = 1.5
-
     # f1_nan     = which(is.nan(f1))
     # f3_nan     = which(is.nan(f3))
     # f1_outside = which( f1 < factor_min | f1 > factor_max )
@@ -230,8 +227,8 @@ match_sensors.spectra = function(x, splice_at, interpolate_wvl = 5){
     #             paste(f3_outside, sep = " "))
     # }
 
-    f1_out_or_nan = which( f1 < factor_min | f1 > factor_max | is.nan(f1))
-    f3_out_or_nan = which( f3 < factor_min | f3 > factor_max | is.nan(f3))
+    f1_out_or_nan = which( f1 < factor_range[[1]] | f1 > factor_range[[2]] | is.nan(f1))
+    f3_out_or_nan = which( f3 < factor_range[[1]] | f3 > factor_range[[2]] | is.nan(f3))
 
     if(length(f1_out_or_nan) > 0 ){
         stop("Conversion factors to match sensors 1 and 2 are outside of reasonable values for spectra: ",
