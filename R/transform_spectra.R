@@ -244,11 +244,13 @@ i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
 #' Smooth moving average for spectra
 #'
 #' @param x spectra object
+#' @param n = NULL
+#' @param save_wvls_to_meta boolean. keep lost ends of original wvls in metadata
 #' @return spectra object
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_smooth_mav_spectra = function(x, n = NULL){
+i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
     if( !is_spectra(x) ){
         stop("Object must be of class spectra")
     }
@@ -278,9 +280,15 @@ i_smooth_mav_spectra = function(x, n = NULL){
         message("Smoothing transformed some reflectances into NAs")
         message("Those wavelengths were removed but the original refl values were kept as metadata")
     }
-    x[]     = s
-    x       = x[ , setdiff(wavelengths(x), ww) ]
-    meta(x) = matrix(r[ , w], nrow = nrow(x), dimnames = list(NULL, paste("removed_wvl_", ww, sep = "") ) )
+
+    x[] = s
+
+    if(save_wvls_to_meta){
+        x       = x[ , setdiff(wavelengths(x), ww) ]
+        meta(x) = matrix(r[ , w], nrow = nrow(x),
+                         dimnames = list(NULL, paste("removed_wvl_", ww, sep = "") ) )
+    }
+
     x
 }
 
@@ -296,8 +304,8 @@ smooth.default = stats::smooth
 #'
 #' @param x spectra object. Wavelengths must be strictly increasing
 #' @param method Choose smoothing method: "spline" (default) or "moving_average"
-#' @param ... additional parameters passed to \code{smooth.spline} or param `n`
-#'            for the moving average smoothing.
+#' @param ... additional parameters passed to \code{smooth.spline} or parameters
+#'            `n` and `save_wvls_to_meta` for the moving average smoothing.
 #' @return a spectra object of with smoothed spectra
 #'
 #' @author Jose Eduardo Meireles
