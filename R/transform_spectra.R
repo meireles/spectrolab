@@ -277,8 +277,10 @@ i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
 
     message("Simple moving average over n: ", n)
     if(length(w) != 0){
-        message("Smoothing transformed some reflectances into NAs")
-        message("Those wavelengths were removed but the original refl values were kept as metadata")
+        message("Smoothing transformed some reflectances into NAs and tose wavelengths were removed")
+        if(save_wvls_to_meta){
+            message("However, the original reflectance values for those wavelengths were kept as metadata")
+        }
     }
 
     x[] = s
