@@ -7,7 +7,8 @@
 \usage{
 match_sensors(x, splice_at, interpolate_wvl = 5, factor_range = c(0.5, 2))
 
-\method{match_sensors}{spectra}(x, splice_at, interpolate_wvl, factor_range)
+\method{match_sensors}{spectra}(x, splice_at, interpolate_wvl = 5,
+  factor_range = c(0.5, 2))
 }
 \arguments{
 \item{x}{spectra object}

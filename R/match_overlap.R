@@ -163,7 +163,7 @@ match_sensors = function(x, splice_at, interpolate_wvl = 5, factor_range = c(0.5
 
 #' @describeIn match_sensors Match sensor ovelap regions
 #' @export
-match_sensors.spectra = function(x, splice_at, interpolate_wvl, factor_range){
+match_sensors.spectra = function(x, splice_at, interpolate_wvl = 5, factor_range = c(0.5, 2)){
 
     message("Warning: feature under development!")
     message("match_sensors: should not be used in poduction code.")
