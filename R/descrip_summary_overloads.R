@@ -69,7 +69,7 @@ dim.spectra = function(x){
 #' @export
 print.spectra = function(x, ...){
     r_wvl   = range(wavelengths(x))
-    o_wvl   = i_test_increasing_wavelengths(wavelengths(x), stop = FALSE)
+    o_wvl   = i_is_increasing(wavelengths(x), stop = FALSE)
 
     ## In case I want to report if the wavelength spacings are unequal
     # d_wvl   = diff(wavelengths(x))

@@ -162,7 +162,7 @@ normalize = function(x, quiet = FALSE, ...){
 #' @export
 normalize.spectra = function(x, quiet = FALSE, ...){
 
-    i_test_increasing_wavelengths(wavelengths(x), stop = TRUE)
+    i_is_increasing(wavelengths(x), stop = TRUE)
 
     if(!quiet){
         message("Vector nomalizing spectra...")
@@ -270,25 +270,26 @@ i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
         stop("Not enough resolution to smooth using moving average. n param was 1.")
     }
 
+    message("Simple moving average over n: ", n)
+
     r   = reflectance(x)
     s   = t(apply(r, 1, i_mav, n = n))
     w   = which(apply(is.na(s), 2, all))
     ww  = wavelengths(x)[w]
+    x[] = s
+    x   = x[ , setdiff(wavelengths(x), ww) ]
 
-    message("Simple moving average over n: ", n)
     if(length(w) != 0){
-        message("Smoothing transformed some reflectances into NAs and tose wavelengths were removed")
+
+        message("Smoothing transformed some reflectances into NAs and those wavelengths were removed")
+
         if(save_wvls_to_meta){
             message("However, the original reflectance values for those wavelengths were kept as metadata")
+
+            meta(x) = matrix(r[ , w],
+                             nrow = nrow(x),
+                             dimnames = list(NULL, paste("removed_wvl_", ww, sep = "")) )
         }
-    }
-
-    x[] = s
-
-    if(save_wvls_to_meta){
-        x       = x[ , setdiff(wavelengths(x), ww) ]
-        meta(x) = matrix(r[ , w], nrow = nrow(x),
-                         dimnames = list(NULL, paste("removed_wvl_", ww, sep = "") ) )
     }
 
     x
@@ -320,7 +321,7 @@ smooth = function(x, method = "spline", ...){
 #' @export
 smooth.spectra = function(x, method = "spline", ...){
 
-    i_test_increasing_wavelengths(wavelengths(x), stop = TRUE)
+    i_is_increasing(wavelengths(x), stop = TRUE)
 
     if(method == "spline") {
         s   = i_smooth_spline_spectra(x, ...)
@@ -359,7 +360,7 @@ resample = function(x, new_wvls, ...) {
 resample.spectra = function(x, new_wvls, ...) {
 
     ## Enforce increasing wavelengths in spectra object
-    i_test_increasing_wavelengths(wavelengths(x), stop = TRUE)
+    i_is_increasing(wavelengths(x), stop = TRUE)
 
     ## Do not predict points outside the original wavelength range
     r = range(wavelengths(x))

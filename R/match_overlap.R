@@ -1,28 +1,3 @@
-#' Are wavelengths increasing
-#'
-#' \code{i_test_increasing_wavelengths} tests if wavelength values are increasing
-#'
-#' Many transform functions can only (or at least should only) be applied to
-#' spectra with monotonically varying, very likely increasing) wavelength values.
-#' \code{i_test_increasing_wavelengths} tests that case and may throw an error
-#' or return the boolen result from the test.
-#'
-#' @param x wavelengths
-#' @param stop boolean. Throw error if test fails? Defaults to TRUE
-#' @param call boolean. If stop = TRUE, should the function call be printed?
-#' @return boolean
-#'
-#' @keywords internal
-#' @author Jose Eduardo Meireles
-i_test_increasing_wavelengths = function(x, stop = TRUE, call = FALSE){
-    y = all(diff(x) >= 0.0)
-    if( !y && stop){
-        stop("Wavelength values must be strictly increasing. You probably need to run `match_overlap` first", call. = call)
-    }
-    y
-}
-
-
 #' Find sensor overlap bounds
 #'
 #' \code{i_find_sensor_overlap_bounds} finds the overlap bounds between sensors
@@ -171,7 +146,7 @@ match_sensors.spectra = function(x, splice_at, interpolate_wvl = 5, factor_range
 
     w = wavelengths(x)
 
-    if( ! i_test_increasing_wavelengths(x = w, stop = FALSE) ){
+    if( ! i_is_increasing(x = w, stop = FALSE) ){
         y = i_trim_sensor_overlap(x = x, splice_at = splice_at)
         x = y$spectra              # reassign x
         w = wavelengths(x)         # reassign w
