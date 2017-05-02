@@ -341,6 +341,12 @@ smooth.spectra = function(x, method = "spline", ...){
 #' \code{resample} returns spectra resampled to new wavelengths using smoothing.
 #' Possible to increase or decrease the spectral resolution.
 #'
+#' The function runs a couple basic checks when resampling, but they are not
+#' exaustive, so look at the data before resampling. The implemented checks are:
+#' 1. Stop if trying to predict wavelengths outside of the original range and,
+#' 2. Warn if a gap is found in wavelengths. E.g. wvls are mostly at a 1nm
+#'    resolution but go from 1530 to 1820 in the infrared. Does not check for NAs
+#'
 #' @param x spectra object. Wavelengths must be strictly increasing
 #' @param new_wvls numeric vector of wavelengths to sample from spectra
 #' @param ... additional parameters passed to the \code{smooth.spline} function.
@@ -361,6 +367,23 @@ resample.spectra = function(x, new_wvls, ...) {
 
     ## Enforce increasing wavelengths in spectra object
     i_is_increasing(wavelengths(x), stop = TRUE)
+
+
+    ## Warn about long gaps in wavelengths
+    ## Made up these thresholds, need to think harder
+    w = wavelengths(x)
+    d = diff(w)
+    l = d > quantile(d, 0.5) * 6 |
+        d > quantile(d, 0.9) * 3 |
+        d > 20
+
+    if(any(l)){
+        for(i in which(l)){
+            warning("Found long gap between wavelengths ",
+                    w[i - 1], " and ", w[ i + 1], " (", d[i], ")", "\n",
+                    "Reflectances resampled in this gap should probably be converted to NAs.")
+        }
+    }
 
     ## Do not predict points outside the original wavelength range
     r = range(wavelengths(x))

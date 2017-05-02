@@ -23,6 +23,13 @@ spectra object with resampled spectra
 \code{resample} returns spectra resampled to new wavelengths using smoothing.
 Possible to increase or decrease the spectral resolution.
 }
+\details{
+The function runs a couple basic checks when resampling, but they are not
+exaustive, so look at the data before resampling. The implemented checks are:
+1. Stop if trying to predict wavelengths outside of the original range and,
+2. Warn if a gap is found in wavelengths. E.g. wvls are mostly at a 1nm
+   resolution but go from 1530 to 1820 in the infrared. Does not check for NAs
+}
 \section{Methods (by class)}{
 \itemize{
 \item \code{spectra}: Resample spectra
