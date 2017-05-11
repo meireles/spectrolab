@@ -23,7 +23,7 @@ is_spectra = function(x){
 #' @export
 has_nir_dip = function(x){
 
-    if( !is_spectra(x) ){
+    if(!is_spectra(x)){
         stop("Object must be of class spectra")
     }
 
@@ -34,9 +34,15 @@ has_nir_dip = function(x){
     }
 
     z = apply(y, 1, diff, differences = 2)
-    w = apply(z[30:65, ], 2, function(x){
+
+    w1 = apply(z[1:50, ], 2, function(x){
+        min(x) < -0.0008
+    })
+
+    w2 = apply(z[30:65, ], 2, function(x){
         any(x > 0.0)
     })
 
-    as.vector(w)
+    as.vector(w1 & w2)
 }
+
