@@ -15,6 +15,12 @@ boolean vector
 \description{
 \code{has_nir_dip} tests if spectra have a NIR dip
 }
+\details{
+Because an NIR dip is estimated from features of the second derivative, high
+frequency noise in the spectra is likely to spoil the algorithm and give false
+positives. Make sure that the spectra has been smoothed (`spectrolab::smooth`)
+before trying to detect an NIR dip.
+}
 \author{
 Jose Eduardo Meireles
 }
