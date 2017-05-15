@@ -43,13 +43,12 @@ has_nir_dip = function(x){
     z = apply(y, 1, diff, differences = 2)
 
     w1 = apply(z[10:50, ], 2, function(x){
-        min(x) < -0.0008
+        min(x) < - 0.0008
     })
 
     w2 = apply(z[30:65, ], 2, function(x){
         any(x > 0.00005)
     })
 
-    as.vector(w1 & w2)
+    as.vector(w1 | w2)
 }
-
