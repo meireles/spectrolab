@@ -32,23 +32,19 @@ has_nir_dip = function(x){
         stop("Object must be of class spectra")
     }
 
-    message("Make sure you have smoothed your spectra first!")
+    y = suppressMessages(smooth(x, method = "moving_average", 5))
+    w = wavelengths(y)
 
-    if(any(diff(wavelengths(x)) != 1)) {
-        y = spectrolab::resample(x[ , wavelengths(x, 700, 800)], 700:800)
-    } else {
-        y = x[ , 700:800]
+    if(any(diff(w) != 1)){
+        y = suppressMessages(resample(y, seq.int(min(w), max(w), 1L)))
     }
 
+    y = suppressMessages(spectrolab::normalize(y)[ , 700 : 800])
     z = apply(y, 1, diff, differences = 2)
 
-    w1 = apply(z[10:50, ], 2, function(x){
-        min(x) < - 0.0008
+    w1 = apply(z[30:98, ], 2, function(x){
+        any(x > 3e-06)
     })
 
-    w2 = apply(z[30:65, ], 2, function(x){
-        any(x > 0.00005)
-    })
-
-    as.vector(w1 | w2)
+    as.vector(w1)
 }
