@@ -2,9 +2,12 @@
 % Please edit documentation in R/utils.R
 \name{ratio}
 \alias{ratio}
+\alias{ratio.spectra}
 \title{Pairwise reflectance ratios}
 \usage{
 ratio(x, simplify = FALSE)
+
+\method{ratio}{spectra}(x, simplify = FALSE)
 }
 \arguments{
 \item{x}{spectra}
@@ -17,6 +20,11 @@ list or matrix
 \description{
 Pairwise reflectance ratios
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{spectra}: Compute pairwise reflectance ratios
+}}
+
 \author{
 Jose Eduardo Meireles
 }

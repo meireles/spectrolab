@@ -25,6 +25,7 @@ try_keep_txt = function(f){
 
 
 
+
 #' Pairwise reflectance ratios
 #'
 #' @param x spectra
@@ -34,6 +35,13 @@ try_keep_txt = function(f){
 #' @author Jose Eduardo Meireles
 #' @export
 ratio = function(x, simplify = FALSE){
+    UseMethod("ratio")
+}
+
+
+#' @describeIn ratio Compute pairwise reflectance ratios
+#' @export
+ratio.spectra = function(x, simplify = FALSE){
     spm  = as.matrix(x)
     wvl  = wavelengths(x)
     pwc  = i_index_pairwise_combn(ncol(x))
