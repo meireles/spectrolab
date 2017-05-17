@@ -22,3 +22,36 @@ try_keep_txt = function(f){
         r
     }
 }
+
+
+
+#' Pairwise reflectance ratios
+#'
+#' @param x spectra
+#' @param simplify coerce to matrix or keep result as list
+#' @return list or matrix
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+ratio = function(x, simplify = FALSE){
+    spm  = as.matrix(x)
+    wvl  = wavelengths(x)
+    pwc  = i_index_pairwise_combn(ncol(x))
+
+    res  = lapply(names(pwc), function(y){
+        i   = as.numeric(y)
+        j   = pwc[[y]][ , "iter"]
+        mat = spm[ , i]  / spm[ , j, drop = FALSE]
+        colnames(mat) = paste(wvl[i], wvl[j], sep = "/")
+        mat
+    })
+
+    names(res) = wvl[ as.numeric(names(pwc)) ]
+
+    if(simplify){
+        res = do.call(cbind, res)
+    }
+    res
+}
+
+
