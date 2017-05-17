@@ -304,3 +304,35 @@ i_plot_exists = function(){
 i_mav = function(x, n = 3, sides = 2){
     stats::filter(x, rep( (1/n), n), sides = sides)
 }
+
+
+
+#' Pairwise index combinations
+#'
+#' \code{i_index_pairwise_combn} returns the split pairwise combinatin of idxs
+#' in a matrix
+#'
+#' @param n number of indices
+#' @return list of matrices. For each focal index up to n - 1, a matrix with the
+#' other indexes it interacts with (2nd col) and the "absolute position" of that
+#' pairwise interaction (1st column) is returned.
+#'
+#' @keywords internal
+#' @author Jose Eduardo Meireles
+i_index_pairwise_combn = function(n){
+
+    if(n < 2){
+        return(NULL)
+    }
+
+    focal_seq = seq.int(1, n - 1)
+    focal_idx = rep.int(focal_seq, rev(focal_seq))
+
+    iter_seq  = seq.int(2, n)
+    iter_idx  = unlist(sapply(iter_seq, function(x){ seq.int(x, n)} ))
+
+    pos_idx   = seq.int(along.with = iter_idx)
+
+    pcomb = data.frame("pos" = pos_idx,  "iter" = iter_idx, check.names = FALSE)
+    split(pcomb, focal_idx)
+}
