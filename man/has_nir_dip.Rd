@@ -4,10 +4,14 @@
 \alias{has_nir_dip}
 \title{Has a dip in the NIR region?}
 \usage{
-has_nir_dip(x)
+has_nir_dip(x, smooth = TRUE, ...)
 }
 \arguments{
 \item{x}{spectra object}
+
+\item{smooth}{boolean. Smooth spectra internally? Defaults to TRUE}
+
+\item{...}{additional parameters passed to `spectrolab::smooth` (method spline)}
 }
 \value{
 boolean vector
@@ -16,10 +20,11 @@ boolean vector
 \code{has_nir_dip} tests if spectra have a NIR dip
 }
 \details{
-Because an NIR dip is estimated from features of the second derivative, high
-frequency noise in the spectra is likely to spoil the algorithm and give false
-positives. Make sure that the spectra has been smoothed (`spectrolab::smooth`)
-before trying to detect an NIR dip.
+Because the NIR dip is detected using features on the second derivative, high
+frequency noise in the spectra is likely to spoil the method and give false
+positives. Ideally, spectra should have been been smoothed (`spectrolab::smooth`)
+before trying to detect an NIR dip. If param `smooth` is set to TRUE (default),
+`has_nir_dip` does some basic smoothing internally.
 }
 \author{
 Jose Eduardo Meireles

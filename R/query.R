@@ -16,23 +16,32 @@ is_spectra = function(x){
 #'
 #' \code{has_nir_dip} tests if spectra have a NIR dip
 #'
-#' Because an NIR dip is estimated from features of the second derivative, high
-#' frequency noise in the spectra is likely to spoil the algorithm and give false
-#' positives. Make sure that the spectra has been smoothed (`spectrolab::smooth`)
-#' before trying to detect an NIR dip.
+#' Because the NIR dip is detected using features on the second derivative, high
+#' frequency noise in the spectra is likely to spoil the method and give false
+#' positives. Ideally, spectra should have been been smoothed (`spectrolab::smooth`)
+#' before trying to detect an NIR dip. If param `smooth` is set to TRUE (default),
+#' `has_nir_dip` does some basic smoothing internally.
 #'
 #' @param x spectra object
+#' @param smooth boolean. Smooth spectra internally? Defaults to TRUE
+#' @param ... additional parameters passed to `spectrolab::smooth` (method spline)
 #' @return boolean vector
 #'
 #' @author Jose Eduardo Meireles
 #' @export
-has_nir_dip = function(x){
+has_nir_dip = function(x, smooth = TRUE, ...){
 
     if(!is_spectra(x)){
         stop("Object must be of class spectra")
     }
 
-    y = suppressMessages(smooth(x, method = "moving_average", 5))
+    y = x
+
+    if(smooth){
+        #y = suppressMessages(smooth(x, method = "moving_average", 5))
+        y = suppressMessages(smooth(x, method = "spline", ...))
+    }
+
     w = wavelengths(y)
 
     if(any(diff(w) != 1)){
