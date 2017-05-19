@@ -321,8 +321,8 @@ i_mav = function(x, n = 3, sides = 2){
 #' @author Jose Eduardo Meireles
 i_index_pairwise_combn = function(n){
 
-    if(n < 2){
-        return(NULL)
+    if( ! i_is_whole(n) | n < 2 ){
+        stop("n must be an integer > 1")
     }
 
     focal_seq = seq.int(1, n - 1)
