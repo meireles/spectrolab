@@ -46,19 +46,29 @@ i_remove_duplicated_wavelength = function(x, boundary){
     w = wavelengths(x)
     d = w[ which(duplicated(w)) ]
 
+    # if(length(d) > 1){
+    #     stop("can only deal with a single duplicate.")
+    # }
+
+    # i      = which(w == d)
+    # idx_rm = ifelse(d > boundary, i[1], i[2])
+
+
     if(length(d) > 1){
-        stop("can only deal with a single duplicate.")
+        message("Found more than one duplicated wavelength.\nInspect the spectra before further analyses.")
     }
 
-    i      = which(w == d)
-    idx_rm = ifelse(d > boundary, i[1], i[2])
+    idx_rm = sapply(d, function(x){
+        i = which(w %in% x)
+        ifelse(x > boundary, i[1], i[2])
+    })
 
     ## HACK. There is no easy way of subsetting wavelengths if they are
     ## duplicated. Therefore, I have to change the value of the wavelength
     ## I want to exclude and then remove that.
 
     ## Assign a dummy wavelength value to the wl to rm
-    bogus                    = 12345678911121110987654321.0
+    bogus                    = 12345678911121110987654321.0123
     wavelengths(x)[ idx_rm ] = bogus
 
     ## Now prune the spectral data
