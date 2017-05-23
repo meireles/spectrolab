@@ -238,7 +238,8 @@ i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
         c = cut(seq.int(length(r)), b, include.lowest = TRUE)
 
         s = split(r, c)
-        s = parallel::mclapply(s, function(z, ...){
+
+        s = parallel::mclapply(s, function(z){
             lapply(z, stats::smooth.spline, x = w, nknots = nknots, ...)},
             mc.cores = n)
 
