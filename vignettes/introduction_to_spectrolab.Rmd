@@ -1,6 +1,6 @@
 ---
 title: "Introduction to spectrolab"
-author: "Jose Eduardo Meireles and Anna K. Schweiger"
+author: "Jose Eduardo Meireles, Anna K. Schweiger and Jeannine Cavender-Bares"
 output:
   rmarkdown::html_vignette:
     keep_md: true
