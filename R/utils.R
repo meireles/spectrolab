@@ -4,7 +4,7 @@
 #'
 #' \code{try_keep_txt} takes a function f as argument, typically a mathematical
 #' operation such as mean, median, etc. and returns a modified version of it that
-#' will try return a string of unique values in case functin f emits a warning.
+#' will try return a string of unique values in case function f emits a warning.
 #' Useful when aggregating over spectral metadata that has both numeric values
 #' (which you want to aggregate) and text values, which you want to keep.
 #'
