@@ -226,15 +226,18 @@ i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
     r = lapply( seq.int(nrow(x)), function(y){ d[y, ]})
     w = wavelengths(x)
 
-    if(parallel) {
-        n = parallel::detectCores()
+    n = parallel::detectCores()
+    l = length(r)
+
+    if(parallel && l > 1) {
 
         if( .Platform$OS.type == "windows" ){
             message("Parallelization is not availiable for windows. Using 1 core...")
             n = 1
         }
 
-        b = floor(seq.int(1, length(r), length.out = n + 1L))
+        b = floor(seq.int(0, length(r), length.out = min(n, l) + 1L))
+
         c = cut(seq.int(length(r)), b, include.lowest = TRUE)
 
         s = split(r, c)
@@ -248,20 +251,6 @@ i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
     } else {
         return(lapply(r, stats::smooth.spline, x = w, nknots = nknots, ...))
     }
-
-
-    # if(parallel) {
-    #     n = parallel::detectCores()
-    #
-    #     if( .Platform$OS.type == "windows" ){
-    #         message("Parallelization is not availiable for windows. Using 1 core...")
-    #         n = 1
-    #     }
-    #
-    #     return(parallel::mclapply(r, stats::smooth.spline, x = w, nknots = nknots, mc.cores = n, ...))
-    # } else {
-    #     return(lapply(r, stats::smooth.spline, x = w, nknots = nknots, ...))
-    # }
 }
 
 
