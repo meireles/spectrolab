@@ -120,7 +120,7 @@ i_trim_sensor_overlap = function(x, splice_at){
 #' \code{match_sensors} scales reflectance values of sensors 1 (vis) and 3 (swir2)
 #'
 #' splice_at has no default because sensor transition points vary between vendors
-#' and individual instruments. It is an imporant parameter though, so you should
+#' and individual instruments. It is an important parameter though, so you should
 #' visually inspect your spectra before assigning it.
 #' Typical values in our own individual instruments were:
 #' SVC ~ c(990, 1900)
@@ -132,8 +132,8 @@ i_trim_sensor_overlap = function(x, splice_at){
 #' which  happens when the reflectance value for the right sensor is 0.
 #'
 #' @param x spectra object
-#' @param splice_at wavelengths that serve as splice poits. Typically the
-#'                  beginings of sensor 2 and sensor 3.
+#' @param splice_at wavelengths that serve as splice points Typically the
+#'                  beginnings of sensor 2 and sensor 3.
 #' @param interpolate_wvl blah
 #' @param factor_range range of acceptable correction factors (min, max).
 #'                     Defaults to c(0.5, 2)
@@ -146,7 +146,7 @@ match_sensors = function(x, splice_at, interpolate_wvl = 5, factor_range = c(0.5
 }
 
 
-#' @describeIn match_sensors Match sensor ovelap regions
+#' @describeIn match_sensors Match sensor overlap regions
 #' @export
 match_sensors.spectra = function(x, splice_at, interpolate_wvl = 5, factor_range = c(0.5, 2)){
 
