@@ -1,10 +1,15 @@
 # Introduction to spectrolab
 Jose Eduardo Meireles, Anna K. Schweiger and Jeannine Cavender-Bares  
 
-The goal of `spectrolab` is to provide 1) functions to read, process and visualize data from portable spectrometers as well as 2) a common interface that other packages can build on. The package introduces a `spectra` S3 class and implements various methods to read spectral files, access and subset data, perform tasks such as vector normalization, smoothing, and sensor overlap matching, plotting spectra.
+`spectrolab` provides methods to read, process and visualize data from portable spectrometers and establishes a common interface to spectra that other packages can build on. The package introduces a `spectra` S3 class and packs a ton of functionality:
+
+* Read spectra from raw spectral files or matrices
+* Access, aggregate, subset, split or combine spectra
+* Seamlessly link and manipulate metadata (such as chemistry)
+* Plot spectra or spectral quantiles, shade spectral regions (e.g. vis)
+* Perform tasks such as vector normalization, smoothing, resampling, and sensor overlap matching
 
 The source code can be found on our [GitHub repository](https://github.com/annakat/spectrolab). Please report any bugs and ask us your questions through the [issue tracker](https://github.com/annakat/spectrolab/issues).
-
 
 ## Installing and loading `spectrolab`
 
@@ -19,9 +24,6 @@ install_github("annakat/spectrolab")
 Assuming that everything went smoothly, you should be able to load `spectrolab` like any other package.
 
 
-```r
-library("spectrolab")
-```
 
 ## Reading spectra
 
@@ -55,7 +57,7 @@ achillea_spec
 
 ### Reading spectra: example with SVC's `.sig` files
 
-You shoud use the function `read_spectra()` to read raw spectra files. You can pass a vector of filenames to `read_spectra()`, but it is usually easier to pass the path to the folder where your data are.
+You should use the function `read_spectra()` to read raw spectra files. You can pass a vector of file names to `read_spectra()`, but it is usually easier to pass the path to the folder where your data are.
 
 
 ```r
@@ -78,7 +80,7 @@ Flagging "unusual" measurements during data collection speeds up the dataset cle
 
 ## Inspecting and querying spectra
 
-You can check out your spectra object in several ways. For instance, You may want to know how many spectra and how many bands are in there, retrieve the filenames. Of course you will need to plot the data, but that topic gets its own section further down.
+You can check out your spectra object in several ways. For instance, You may want to know how many spectra and how many bands are in there, retrieve the file names. Of course you will need to plot the data, but that topic gets its own section further down.
 
 
 ```r
@@ -143,7 +145,7 @@ spec_sub_byname = achillea_spec["ACHMI_7", ]
 spec_sub_byidx  = achillea_spec[ 1:3, ]
 ```
 
-The resolution of some spectra may be different from 1nm, as is the case with SVC. In those cases, the best way to subset spectra is using the `min` and `max` argguments for wavelengths:
+The resolution of some spectra may be different from 1nm, as is the case with SVC. In those cases, the best way to subset spectra is using the `min` and `max` arguments for wavelengths:
 
 
 ```r
@@ -214,7 +216,7 @@ plot_regions(achillea_spec, regions = default_spec_regions(), add = TRUE)
 
 ## Manipulating samples names, wavelength labels, metadata and reflectance
 
-You may want to edit certain simple attributes of `spectra`, such as making all sample names lowecase This is easily attainable in `spectrolab`.
+You may want to edit certain simple attributes of `spectra`, such as making all sample names lowercase This is easily attainable in `spectrolab`.
 
 
 ```r
@@ -284,8 +286,8 @@ spec_as_df[1:4, 1:5]
 
 ```
 ##   sample_name ident                   ssp N_percent        400
-## 1     ACHMI_1 10526 Achillea millefolium   2.505160 0.03734791
-## 2     ACHMI_2 10527 Achillea millefolium   2.362649 0.04608409
-## 3     ACHMI_3 10528 Achillea millefolium   2.114446 0.04058113
-## 4     ACHMI_4 10529 Achillea millefolium   2.041249 0.04063730
+## 1     ACHMI_1 10526 Achillea millefolium   2.024284 0.03734791
+## 2     ACHMI_2 10527 Achillea millefolium   1.585175 0.04608409
+## 3     ACHMI_3 10528 Achillea millefolium   1.488304 0.04058113
+## 4     ACHMI_4 10529 Achillea millefolium   1.810916 0.04063730
 ```

@@ -72,7 +72,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<p>The goal of <code>spectrolab</code> is to provide 1) functions to read, process and visualize data from portable spectrometers as well as 2) a common interface that other packages can build on. The package introduces a <code>spectra</code> S3 class and implements various methods to read spectral files, access and subset data, perform tasks such as vector normalization, smoothing, and sensor overlap matching, plotting spectra.</p>
+<p><code>spectrolab</code> provides methods to read, process and visualize data from portable spectrometers and establishes a common interface to spectra that other packages can build on. The package introduces a <code>spectra</code> S3 class and packs a ton of functionality:</p>
+<ul>
+<li>Read spectra from raw spectral files or matrices</li>
+<li>Access, aggregate, subset, split or combine spectra</li>
+<li>Seamlessly link and manipulate metadata (such as chemistry)</li>
+<li>Plot spectra or spectral quantiles, shade spectral regions (e.g. vis)</li>
+<li>Perform tasks such as vector normalization, smoothing, resampling, and sensor overlap matching</li>
+</ul>
 <p>The source code can be found on our <a href="https://github.com/annakat/spectrolab">GitHub repository</a>. Please report any bugs and ask us your questions through the <a href="https://github.com/annakat/spectrolab/issues">issue tracker</a>.</p>
 <div id="installing-and-loading-spectrolab" class="section level2">
 <h2>Installing and loading <code>spectrolab</code></h2>
@@ -80,7 +87,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;devtools&quot;</span>)
 <span class="kw">install_github</span>(<span class="st">&quot;annakat/spectrolab&quot;</span>)</code></pre></div>
 <p>Assuming that everything went smoothly, you should be able to load <code>spectrolab</code> like any other package.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;spectrolab&quot;</span>)</code></pre></div>
 </div>
 <div id="reading-spectra" class="section level2">
 <h2>Reading spectra</h2>
@@ -104,7 +110,7 @@ achillea_spec</code></pre></div>
 </div>
 <div id="reading-spectra-example-with-svcs-.sig-files" class="section level3">
 <h3>Reading spectra: example with SVC’s <code>.sig</code> files</h3>
-<p>You shoud use the function <code>read_spectra()</code> to read raw spectra files. You can pass a vector of filenames to <code>read_spectra()</code>, but it is usually easier to pass the path to the folder where your data are.</p>
+<p>You should use the function <code>read_spectra()</code> to read raw spectra files. You can pass a vector of file names to <code>read_spectra()</code>, but it is usually easier to pass the path to the folder where your data are.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># `dir_path` is the directory where our example datasets live</span>
 dir_path =<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;Acer_example&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;spectrolab&quot;</span>)
 
@@ -118,7 +124,7 @@ acer_spectra =<span class="st"> </span><span class="kw">read_spectra</span>(<spa
 </div>
 <div id="inspecting-and-querying-spectra" class="section level2">
 <h2>Inspecting and querying spectra</h2>
-<p>You can check out your spectra object in several ways. For instance, You may want to know how many spectra and how many bands are in there, retrieve the filenames. Of course you will need to plot the data, but that topic gets its own section further down.</p>
+<p>You can check out your spectra object in several ways. For instance, You may want to know how many spectra and how many bands are in there, retrieve the file names. Of course you will need to plot the data, but that topic gets its own section further down.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Simply print the object</span>
 acer_spectra</code></pre></div>
 <pre><code>## spectra object 
@@ -159,7 +165,7 @@ spec_sub_vis =<span class="st"> </span>achillea_spec[ , <span class="dv">400</sp
 <span class="co"># get the forst three samples</span>
 spec_sub_byname =<span class="st"> </span>achillea_spec[<span class="st">&quot;ACHMI_7&quot;</span>, ]
 spec_sub_byidx  =<span class="st"> </span>achillea_spec[ <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, ]</code></pre></div>
-<p>The resolution of some spectra may be different from 1nm, as is the case with SVC. In those cases, the best way to subset spectra is using the <code>min</code> and <code>max</code> argguments for wavelengths:</p>
+<p>The resolution of some spectra may be different from 1nm, as is the case with SVC. In those cases, the best way to subset spectra is using the <code>min</code> and <code>max</code> arguments for wavelengths:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">acer_spectra_trim =<span class="st"> </span>acer_spectra[ , <span class="kw">wavelengths</span>(acer_spectra, <span class="dv">400</span>, <span class="dv">2400</span>) ]</code></pre></div>
 <p>Note that you can (1) subset samples using indexes and (2) use characters or numerics to subset wavelengths. As said before, you cannot use indexes to subset wavelengths though.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subsetting samples by indexes works and so does subsetting wavelengths by numerics or characters.</span>
@@ -195,7 +201,7 @@ spec_sub_byidx[ , <span class="dv">2</span>]</code></pre></div>
 </div>
 <div id="manipulating-samples-names-wavelength-labels-metadata-and-reflectance" class="section level2">
 <h2>Manipulating samples names, wavelength labels, metadata and reflectance</h2>
-<p>You may want to edit certain simple attributes of <code>spectra</code>, such as making all sample names lowecase This is easily attainable in <code>spectrolab</code>.</p>
+<p>You may want to edit certain simple attributes of <code>spectra</code>, such as making all sample names lowercase This is easily attainable in <code>spectrolab</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">spec_new =<span class="st"> </span>achillea_spec
 
 <span class="co"># Replace names with a lowercase version</span>
@@ -233,10 +239,10 @@ spec_as_mat[<span class="dv">1</span><span class="op">:</span><span class="dv">4
 spec_as_df =<span class="st"> </span><span class="kw">as.data.frame</span>(achillea_spec, <span class="dt">fix_names =</span> <span class="st">&quot;none&quot;</span>)
 spec_as_df[<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</code></pre></div>
 <pre><code>##   sample_name ident                   ssp N_percent        400
-## 1     ACHMI_1 10526 Achillea millefolium   2.505160 0.03734791
-## 2     ACHMI_2 10527 Achillea millefolium   2.362649 0.04608409
-## 3     ACHMI_3 10528 Achillea millefolium   2.114446 0.04058113
-## 4     ACHMI_4 10529 Achillea millefolium   2.041249 0.04063730</code></pre>
+## 1     ACHMI_1 10526 Achillea millefolium   2.024284 0.03734791
+## 2     ACHMI_2 10527 Achillea millefolium   1.585175 0.04608409
+## 3     ACHMI_3 10528 Achillea millefolium   1.488304 0.04058113
+## 4     ACHMI_4 10529 Achillea millefolium   1.810916 0.04063730</code></pre>
 </div>
 </div>
 
