@@ -69,7 +69,7 @@ spec_sub_byidx[ , 2]
 
 `Error in i_match_ij_spectra(this = this, i = i, j = j) : Wavelength subscript out of bounds. Use wavelength labels instead of raw indices.`
 
-## ---- fig.height=2.5, fig.width=7, dev_svg, eval = TRUE------------------
+## ---- fig.height=2.5, fig.width=7, eval=TRUE-----------------------------
 # Simple spectra plot
 par(mfrow = c(1, 3))
 plot(achillea_spec, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")

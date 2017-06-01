@@ -211,7 +211,7 @@ plot_quantile(achillea_spec, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border 
 plot_regions(achillea_spec, regions = default_spec_regions(), add = TRUE)
 ```
 
-![](introduction_to_spectrolab_files/figure-html/dev_svg-1.png)<!-- -->
+![](introduction_to_spectrolab_files/figure-html/unnamed-chunk-12-1.svg)<!-- -->
 
 
 ## Manipulating samples names, wavelength labels, metadata and reflectance
@@ -244,7 +244,7 @@ plot(achillea_spec, col = "blue", lwd = 0.75, cex.axis = 0.75)
 plot(spec_new, col = "orange", lwd = 0.75, add = TRUE)
 ```
 
-<img src="introduction_to_spectrolab_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
+<img src="introduction_to_spectrolab_files/figure-html/unnamed-chunk-14-1.svg" style="display: block; margin: auto;" />
 
 Or you can also edit or add new metadata to the `spectra` object.
 
@@ -286,8 +286,8 @@ spec_as_df[1:4, 1:5]
 
 ```
 ##   sample_name ident                   ssp N_percent        400
-## 1     ACHMI_1 10526 Achillea millefolium   2.024284 0.03734791
-## 2     ACHMI_2 10527 Achillea millefolium   1.585175 0.04608409
-## 3     ACHMI_3 10528 Achillea millefolium   1.488304 0.04058113
-## 4     ACHMI_4 10529 Achillea millefolium   1.810916 0.04063730
+## 1     ACHMI_1 10526 Achillea millefolium   1.779944 0.03734791
+## 2     ACHMI_2 10527 Achillea millefolium   1.423414 0.04608409
+## 3     ACHMI_3 10528 Achillea millefolium   1.734838 0.04058113
+## 4     ACHMI_4 10529 Achillea millefolium   1.963573 0.04063730
 ```

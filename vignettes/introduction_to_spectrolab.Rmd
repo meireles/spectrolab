@@ -2,12 +2,15 @@
 title: "Introduction to spectrolab"
 author: "Jose Eduardo Meireles, Anna K. Schweiger and Jeannine Cavender-Bares"
 output:
+  rmarkdown::html_vignette: 
+    keep_md: yes
+    dev: 'svg'
   rmarkdown::pdf_document:
     number_sections: yes
-  rmarkdown::html_vignette:
-    keep_md: yes
-vignette: |
-  %\VignetteIndexEntry{Introduction to spectrolab} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
+vignette: > 
+  %\VignetteIndexEntry{Introduction to spectrolab}
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
 ---
 
 `spectrolab` provides methods to read, process and visualize data from portable spectrometers and establishes a common interface to spectra that other packages can build on. The package introduces a `spectra` S3 class and packs a ton of functionality:
@@ -160,7 +163,7 @@ You can also plot the quantile of a `spectra` object with `plot_quantile()`. It'
 
 Last but not least, you can also shade spectral regions with the `plot_regions()` function. `spectrolab` provides a `default_spec_regions()` matrix as an example, but you obviously can customize it for your needs.
 
-```{r, fig.height=2.5, fig.width=7, dev_svg, eval = TRUE}
+```{r, fig.height=2.5, fig.width=7, eval=TRUE}
 # Simple spectra plot
 par(mfrow = c(1, 3))
 plot(achillea_spec, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
