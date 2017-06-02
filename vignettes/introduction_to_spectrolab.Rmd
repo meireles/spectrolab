@@ -2,9 +2,10 @@
 title: "Introduction to spectrolab"
 author: "Jose Eduardo Meireles, Anna K. Schweiger and Jeannine Cavender-Bares"
 output:
-  rmarkdown::html_vignette: 
+  rmarkdown::html_document: 
     keep_md: yes
     dev: 'svg'
+    dpi: 300
   rmarkdown::pdf_document:
     number_sections: yes
 vignette: > 
