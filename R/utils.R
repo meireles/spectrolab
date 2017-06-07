@@ -24,9 +24,9 @@ try_keep_txt = function(f){
 }
 
 
-
-
 #' Pairwise reflectance ratios
+#'
+#' \code{ratio} computes pairwise ratios between bands
 #'
 #' @param x spectra
 #' @param simplify coerce to matrix or keep result as list
@@ -61,5 +61,3 @@ ratio.spectra = function(x, simplify = FALSE){
     }
     res
 }
-
-

@@ -18,7 +18,7 @@ ratio(x, simplify = FALSE)
 list or matrix
 }
 \description{
-Pairwise reflectance ratios
+\code{ratio} computes pairwise ratios between bands
 }
 \section{Methods (by class)}{
 \itemize{
