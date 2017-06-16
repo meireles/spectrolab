@@ -15,7 +15,7 @@ other indexes it interacts with (2nd col) and the "absolute position" of that
 pairwise interaction (1st column) is returned.
 }
 \description{
-\code{i_index_pairwise_combn} returns the split pairwise combinatin of idxs
+\code{i_index_pairwise_combn} returns the split pairwise combination of idxs
 in a matrix
 }
 \author{

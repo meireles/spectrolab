@@ -12,10 +12,10 @@ i_is_index(x, max_length, all = TRUE, allow_negative = FALSE,
 
 \item{max_length}{Max acceptable values for x}
 
-\item{all}{boolean. If TRUE, a single logical value is retuned. Else, a vector
+\item{all}{boolean. If TRUE, a single logical value is returned. Else, a vector
 of length = length(x) is returned}
 
-\item{allow_negative}{boolean. Allow negative integers (used in subseting?).
+\item{allow_negative}{boolean. Allow negative integers (used in subsetting?).
 defaults to FALSE}
 
 \item{quiet}{boolean. Get warnings?}

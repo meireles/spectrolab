@@ -9,7 +9,7 @@ devtools::use_package("parallel")
 #' Combine spectral datasets
 #'
 #' \code{combine} binds two spectral datasets. Both spectra must have the
-#' very same wavelenegth labels, but different metadata are acceptable
+#' very same wavelength labels, but different metadata are acceptable
 #'
 #' @param s1 spectra object 1
 #' @param s2 spectra object 2
@@ -30,7 +30,7 @@ combine.spectra = function(s1, s2){
     }
 
     if(any( suppressWarnings(wavelengths(s1) != wavelengths(s2)) )){
-        stop("Spectra must have the same wavelenegths. Consider using `resample()` first")
+        stop("Spectra must have the same wavelengths. Consider using `resample()` first")
     }
 
     r = rbind(reflectance(s1), reflectance(s2))
@@ -198,7 +198,7 @@ normalize.spectra = function(x, quiet = FALSE, ...){
 #'
 #' @param x spectra object. Wavelengths must be strictly increasing
 #' @param parallel boolean. Do computation in parallel? Defaults to TRUE.
-#'                 Unfortunately, the parallelization doesn't work on Windows.
+#'                 Unfortunately, the parallelization does not work on Windows.
 #' @param ... additional parameters passed to smooth.spline except nknots, which
 #'            is computed internally
 #' @return a list of spline functions
@@ -355,7 +355,7 @@ smooth.spectra = function(x, method = "spline", ...){
 #' Possible to increase or decrease the spectral resolution.
 #'
 #' The function runs a couple basic checks when resampling, but they are not
-#' exaustive, so look at the data before resampling. The implemented checks are:
+#' exhaustive, so look at the data before resampling. The implemented checks are:
 #' 1. Stop if trying to predict wavelengths outside of the original range and,
 #' 2. Warn if a gap is found in wavelengths. E.g. wvls are mostly at a 1nm
 #'    resolution but go from 1530 to 1820 in the infrared. Does not check for NAs

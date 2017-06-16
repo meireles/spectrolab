@@ -44,9 +44,9 @@ i_is_whole = function(x){
 #'
 #' @param x numeric values
 #' @param max_length Max acceptable values for x
-#' @param all boolean. If TRUE, a single logical value is retuned. Else, a vector
+#' @param all boolean. If TRUE, a single logical value is returned. Else, a vector
 #'                     of length = length(x) is returned
-#' @param allow_negative boolean. Allow negative integers (used in subseting?).
+#' @param allow_negative boolean. Allow negative integers (used in subsetting?).
 #'                       defaults to FALSE
 #' @param quiet boolean. Get warnings?
 #' @return boolean
@@ -309,7 +309,7 @@ i_mav = function(x, n = 3, sides = 2){
 
 #' Pairwise index combinations
 #'
-#' \code{i_index_pairwise_combn} returns the split pairwise combinatin of idxs
+#' \code{i_index_pairwise_combn} returns the split pairwise combination of idxs
 #' in a matrix
 #'
 #' @param n number of indices

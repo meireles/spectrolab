@@ -10,7 +10,7 @@ i_smooth_spline_spectra(x, parallel = TRUE, ...)
 \item{x}{spectra object. Wavelengths must be strictly increasing}
 
 \item{parallel}{boolean. Do computation in parallel? Defaults to TRUE.
-Unfortunately, the parallelization doesn't work on Windows.}
+Unfortunately, the parallelization does not work on Windows.}
 
 \item{...}{additional parameters passed to smooth.spline except nknots, which
 is computed internally}

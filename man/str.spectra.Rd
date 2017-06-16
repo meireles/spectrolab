@@ -9,7 +9,7 @@
 \arguments{
 \item{object}{spectra object}
 
-\item{...}{additioal args. not implemented}
+\item{...}{additional args. not implemented}
 }
 \value{
 prints to console

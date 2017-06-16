@@ -116,7 +116,7 @@ summary.spectra = function(object, ...){
 #' Structure of the spectra object
 #'
 #' @param object spectra object
-#' @param ... additioal args. not implemented
+#' @param ... additional args. not implemented
 #' @return prints to console
 #'
 #' @author Jose Eduardo Meireles

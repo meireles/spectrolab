@@ -19,7 +19,7 @@ combined spectra object
 }
 \description{
 \code{combine} binds two spectral datasets. Both spectra must have the
-very same wavelenegth labels, but different metadata are acceptable
+very same wavelength labels, but different metadata are acceptable
 }
 \section{Methods (by class)}{
 \itemize{
