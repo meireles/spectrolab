@@ -176,34 +176,13 @@ match_sensors.spectra = function(x, splice_at, interpolate_wvl = 5, factor_range
     if(length(p23) == 0){ p23 = max(s$sensor_2) }
     if(length(p3) == 0){ p3 = min(s$sensor_3) }
 
-    ## compute factors
+    ## compute splicing factors
     f1 = rowMeans(reflectance(x[ , p21, simplify = FALSE])) /
          rowMeans(reflectance(x[ , p1, simplify = FALSE]))
     f3 = rowMeans(reflectance(x[ , p23, simplify = FALSE])) /
          rowMeans(reflectance(x[ , p3, simplify = FALSE]))
 
-    # f1_nan     = which(is.nan(f1))
-    # f3_nan     = which(is.nan(f3))
-    # f1_outside = which( f1 < factor_min | f1 > factor_max )
-    # f3_outside = which( f3 < factor_min | f3 > factor_max )
-    #
-    # if(length(f1_nan) > 0){
-    #     stop("Conversion factor to match sensors 1 and 2 could not be computed for spectra: ", paste(f1_nan, sep = " ") )
-    # }
-    # if(length(f3_nan) > 0){
-    #     stop("Conversion factor to match sensors 2 and 3 could not be computed for spectra: ", paste(f3_nan, sep = " ") )
-    # }
-    #
-    # if(length(f1_outside) > 0 ){
-    #     warning("Conversion factors to match sensors 1 and 2 are outside of reasonable values for spectra: ",
-    #             paste(f1_outside, sep = " "))
-    # }
-    #
-    # if(length(f3_outside) > 0){
-    #     warning("Conversion factors to match sensors 2 and 3 are outside of reasonable values for spectra: ",
-    #             paste(f3_outside, sep = " "))
-    # }
-
+    ## Verify if factors for splicing are reasonable
     f1_out_or_nan = which( f1 < factor_range[[1]] | f1 > factor_range[[2]] | is.nan(f1))
     f3_out_or_nan = which( f3 < factor_range[[1]] | f3 > factor_range[[2]] | is.nan(f3))
 
