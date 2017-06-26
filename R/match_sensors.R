@@ -46,14 +46,6 @@ i_remove_duplicated_wavelength = function(x, boundary){
     w = wavelengths(x)
     d = w[ which(duplicated(w)) ]
 
-    # if(length(d) > 1){
-    #     stop("can only deal with a single duplicate.")
-    # }
-
-    # i      = which(w == d)
-    # idx_rm = ifelse(d > boundary, i[1], i[2])
-
-
     if(length(d) > 1){
         message("Found more than one duplicated wavelength.\nInspect the spectra before further analyses.")
     }

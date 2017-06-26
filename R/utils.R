@@ -61,3 +61,4 @@ ratio.spectra = function(x, simplify = FALSE){
     }
     res
 }
+
