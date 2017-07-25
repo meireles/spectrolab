@@ -20,7 +20,7 @@ between 0.0 and 1.0. Defaults to 0.95.}
 \item{add}{if add = FALSE (default), a new plot is created. Otherwise
 (add = TRUE), the quantile is added to the current plot.}
 
-\item{...}{other parameters passed to polygon().}
+\item{...}{other parameters passed to polygon() or to plot.}
 }
 \value{
 nothing. Called for its side effect.

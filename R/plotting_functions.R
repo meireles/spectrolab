@@ -52,7 +52,7 @@ plot.spectra = function(x,
 #' @param border boolean. Draw border?
 #' @param add if add = FALSE (default), a new plot is created. Otherwise
 #'            (add = TRUE), the quantile is added to the current plot.
-#' @param ... other parameters passed to polygon().
+#' @param ... other parameters passed to polygon() or to plot.
 #' @return nothing. Called for its side effect.
 #'
 #' @importFrom graphics polygon
@@ -88,7 +88,7 @@ plot_quantile = function(spec,
     yy = c( qt$reflectance[1, ], rev(qt$reflectance[2, ]) )
 
     if(!add){
-        plot(spec, type = "n")
+        plot(spec, type = "n", ...)
     }
 
     graphics::polygon(x = xx, y = yy, col = col, border = border, ...)
