@@ -52,6 +52,7 @@ plot.spectra = function(x,
 #' @param border boolean. Draw border?
 #' @param add if add = FALSE (default), a new plot is created. Otherwise
 #'            (add = TRUE), the quantile is added to the current plot.
+#' @param na.rm boolean. remove NAs before computing the quantiles?
 #' @param ... other parameters passed to polygon() or to plot.
 #' @return nothing. Called for its side effect.
 #'
@@ -64,6 +65,7 @@ plot_quantile = function(spec,
                          col        = rgb(0, 0, 0, 0.1),
                          border     = TRUE,
                          add        = FALSE,
+                         na.rm      = FALSE,
                          ...){
 
     if( !is_spectra(spec) ){
@@ -83,7 +85,7 @@ plot_quantile = function(spec,
     tail_range = c(min = 0.0 + tail_mag,
                    max = 1.0 - tail_mag )
 
-    qt = quantile(spec, probs = tail_range)
+    qt = quantile(spec, probs = tail_range, na.rm = na.rm)
     xx = c( qt$wavelengths, rev(qt$wavelengths) )
     yy = c( qt$reflectance[1, ], rev(qt$reflectance[2, ]) )
 

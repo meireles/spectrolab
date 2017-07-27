@@ -14,7 +14,7 @@ length(probs) has.}
 Must be a vector of numerics between 0.0 and 1.0.
 Defaults to c(0.025, 0.25, 0.5, 0.75, 0.975)}
 
-\item{...}{other arguments passed to quantile. not implemented for spectra}
+\item{...}{other arguments passed to quantile.}
 }
 \value{
 spectra object with one spectrum for each prob

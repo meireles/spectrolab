@@ -137,7 +137,7 @@ str.spectra = function(object, ...){
 #' @param probs Probabilities to compute quantiles.
 #'              Must be a vector of numerics between 0.0 and 1.0.
 #'              Defaults to c(0.025, 0.25, 0.5, 0.75, 0.975)
-#' @param ... other arguments passed to quantile. not implemented for spectra
+#' @param ... other arguments passed to quantile.
 #' @return spectra object with one spectrum for each prob
 #'
 #' @importFrom stats quantile
@@ -167,7 +167,7 @@ quantile.spectra = function(x,
 
 
     ## Get quantiles
-    f = function(x){ stats::quantile(x, probs) }
+    f = function(x){ stats::quantile(x, probs, ...) }
     y = apply(reflectance(x) , 2, f)
 
     ## Return spectra quantile object

@@ -5,7 +5,7 @@
 \title{Plot spectra quantiles}
 \usage{
 plot_quantile(spec, total_prob = 0.95, col = rgb(0, 0, 0, 0.1),
-  border = TRUE, add = FALSE, ...)
+  border = TRUE, add = FALSE, na.rm = FALSE, ...)
 }
 \arguments{
 \item{spec}{spectra object}
@@ -19,6 +19,8 @@ between 0.0 and 1.0. Defaults to 0.95.}
 
 \item{add}{if add = FALSE (default), a new plot is created. Otherwise
 (add = TRUE), the quantile is added to the current plot.}
+
+\item{na.rm}{boolean. remove NAs before computing the quantiles?}
 
 \item{...}{other parameters passed to polygon() or to plot.}
 }
