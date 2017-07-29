@@ -124,29 +124,53 @@ i_trim_sensor_overlap = function(x, splice_at){
 #' which  happens when the reflectance value for the right sensor is 0.
 #'
 #' @param x spectra object
-#' @param splice_at wavelengths that serve as splice points Typically the
-#'                  beginnings of sensor 2 and sensor 3.
-#' @param interpolate_wvl blah
+#' @param splice_at wavelengths that serve as splice points, i.e the beginnings
+#'                  of the rightmost sensor. Must be length 1 or 2 (max 3 sensors)
+#' @param fixed_sensor Sensor to keep fixed. Can be 1 or 2 if matching 2 sensors.
+#'                     If matching 3 sensors, `fixed_sensor` must be 2 (default).
+#' @param interpolate_wvl extent around splice_at values over which the splicing
+#'                        factors will be calculated. Defaults to 5
 #' @param factor_range range of acceptable correction factors (min, max).
 #'                     Defaults to c(0.5, 2)
 #' @return spectra object
 #'
 #' @author Jose Eduardo Meireles and Anna Schweiger
 #' @export
-match_sensors = function(x, splice_at, interpolate_wvl = 5, factor_range = c(0.5, 2)){
+match_sensors = function(x,
+                         splice_at,
+                         fixed_sensor    = 2,
+                         interpolate_wvl = 5,
+                         factor_range    = c(0.5, 2) ){
     UseMethod("match_sensors")
 }
 
 
 #' @describeIn match_sensors Match sensor overlap regions
 #' @export
-match_sensors.spectra = function(x, splice_at, interpolate_wvl = 5, factor_range = c(0.5, 2)){
+match_sensors.spectra = function(x,
+                                 splice_at,
+                                 fixed_sensor    = 2,
+                                 interpolate_wvl = 5,
+                                 factor_range    = c(0.5, 2)){
 
-    message("Warning: feature under development!")
-    message("match_sensors: should not be used in poduction code.")
-    message("match_sensors: API will change.")
+    # message("Warning: feature under development!")
+    # message("match_sensors: should not be used in poduction code.")
+    # message("match_sensors: API will change.")
 
-    w = wavelengths(x)
+    x          = x
+    w          = wavelengths(x)
+    splice_at = unlist(splice_at)
+
+    if(length(splice_at) > 2){
+        stop("matching more than 3 sensors not implemented.")
+    }
+
+    if(length(unlist(fixed_sensor)) != 1 | ! fixed_sensor %in% c(1, 2) ){
+        stop("fixed_sensor must be 1 or 2")
+    }
+
+    fixed_sensor = ifelse( length(splice_at) == 2, 2, fixed_sensor)
+
 
     if( ! i_is_increasing(x = w, stop = FALSE) ){
         y = i_trim_sensor_overlap(x = x, splice_at = splice_at)
@@ -165,54 +189,65 @@ match_sensors.spectra = function(x, splice_at, interpolate_wvl = 5, factor_range
     interpolate_wvl = rep(interpolate_wvl, length.out = length(splice_at))
 
     ## Pick wavelengths by sensor to computer factors
-    p1  = s$sensor_1[ s$sensor_1 >= splice_at[1] - interpolate_wvl[1] ]
-    p21 = s$sensor_2[1]
-    p23 = s$sensor_2[ length((s$sensor_2)) ]
-    p3  = s$sensor_3[ s$sensor_3 < splice_at[2] + interpolate_wvl[2] ]
+    wl_picks = lapply(seq_along(splice_at), function(z){
+        low   = splice_at[z] - interpolate_wvl[z]
+        high  = splice_at[z] + interpolate_wvl[z]
+        left  = s[[ z ]][ s[[ z ]]         >= low ]
+        right = s[[z + 1L ]][ s[[z + 1L ]] <= high ]
 
-    ## solve issues if any of the picks are empty
-    if(length(p1) == 0){ p1 = max(s$sensor_1) }
-    if(length(p21) == 0){ p21 = min(s$sensor_2) }
-    if(length(p23) == 0){ p23 = max(s$sensor_2) }
-    if(length(p3) == 0){ p3 = min(s$sensor_3) }
+        # solve issues if any of the picks are empty
+        if(length(left)  == 0) left = max(s[[ z ]])
+        if(length(right) == 0) left = min(s[[ z + 1L ]])
+
+        list("left"  = left, "right" = right)
+    })
+    names(wl_picks) = splice_at
 
     ## compute splicing factors
-    f1 = rowMeans(reflectance(x[ , p21, simplify = FALSE])) /
-         rowMeans(reflectance(x[ , p1, simplify = FALSE]))
-    f3 = rowMeans(reflectance(x[ , p23, simplify = FALSE])) /
-         rowMeans(reflectance(x[ , p3, simplify = FALSE]))
+    splice_factors = lapply(seq_along(wl_picks), function(z){
+        y = setNames(c(z, z + 1), c("left", "right"))
+        m = names(y[match(fixed_sensor, y)])
+
+        if(m == "right"){
+            fixed  = wl_picks[[z]]$left
+            scaled = wl_picks[[z]]$right
+        } else {
+            fixed  = wl_picks[[z]]$right
+            scaled = wl_picks[[z]]$left
+        }
+
+        rowMeans(reflectance(x[ , scaled, simplify = FALSE])) /
+        rowMeans(reflectance(x[ ,  fixed, simplify = FALSE]))
+    })
 
     ## Verify if factors for splicing are reasonable
-    f1_out_or_nan = which( f1 < factor_range[[1]] | f1 > factor_range[[2]] | is.nan(f1))
-    f3_out_or_nan = which( f3 < factor_range[[1]] | f3 > factor_range[[2]] | is.nan(f3))
+    lapply(splice_factors, function(z){
+        crap = which( z < factor_range[[1]] | z > factor_range[[2]] | is.nan(z))
+        if(length(crap) > 0 ){
+            stop("Factors to match sensors are either NaN or are outside the bounds chosen by `factor_range`:",
+                 paste(crap, sep = " "))
+        }
+    })
 
-    if(length(f1_out_or_nan) > 0 ){
-        stop("Conversion factors to match sensors 1 and 2 are outside of reasonable values for spectra: ",
-                paste(f1_out_or_nan, sep = " "))
-    }
-
-    if(length(f3_out_or_nan) > 0){
-        stop("Conversion factors to match sensors 2 and 3 are outside of reasonable values for spectra: ",
-                paste(f3_out_or_nan, sep = " "))
-    }
 
     ## Compute the factor matrices
     ## These functions need to be empirically derived. Current implementation
     ## is just a hack and should not be used in production code
 
-    fm1 = sapply(f1, function(y){
-        #seq(1.0, y, length.out = length(s$sensor_1))
-        seq(y, y, length.out = length(s$sensor_1))
-    })
+    s[fixed_sensor] = NULL
 
-    fm3 = sapply(f3, function(y){
-        #seq(y, 1.0, length.out = length(s$sensor_3))
-        seq(y, y, length.out = length(s$sensor_3))
+    factor_mat = lapply(seq_along(splice_factors), function(z){
+        #seq(1.0, y, length.out = length(s$sensor_1))
+        l = length(s[[z]])
+        sapply(splice_factors[[z]], function(w){
+            seq(w, w, length.out = l)
+        })
     })
 
     ## Transform data
-    x[ , s$sensor_1] = reflectance(x[ , s$sensor_1 ] ) * t(fm1)
-    x[ , s$sensor_3] = reflectance(x[ , s$sensor_3 ] ) * t(fm3)
+    for(i in seq_along(factor_mat)){
+        x[ , s[[i]]] = reflectance(x[ , s[[i]] ] ) * t( factor_mat[[i]] )
+    }
 
     x
 }
