@@ -1,0 +1,42 @@
+## ----setup, include=FALSE------------------------------------------------
+knitr::opts_chunk$set(echo = TRUE)
+
+## ---- warning=FALSE------------------------------------------------------
+library(spectrolab)
+
+spec = spectra(matrix(rnorm(700, 10, 0.1), ncol = 100), 1:100, 1:7)
+
+spec[ ,  1:30]  = spec[ , 1:30]    * 0.6    # sensor 1
+spec[ , 80:100] = spec[ , 80:100] * 2      # sensor 3
+
+
+a = match_sensors(spec, splice_at = c(31, 80), fixed_sensor = 2, factor_range = c(0.2, 3))
+b = match_sensors(spec, splice_at = c(31, 80), fixed_sensor = 1, factor_range = c(0.2, 3))
+c = match_sensors(spec, splice_at = c(31),     fixed_sensor = 2, factor_range = c(0.2, 3))
+d = match_sensors(spec, splice_at = c(31),     fixed_sensor = 1, factor_range = c(0.2, 3))
+e = match_sensors(spec, splice_at = c(80),     fixed_sensor = 2, factor_range = c(0.2, 3))
+f = match_sensors(spec, splice_at = c(80),     fixed_sensor = 1, factor_range = c(0.2, 3))
+
+## ---- fig.height=7, fig.width=5, echo=FALSE------------------------------
+
+par(mfrow = c(3, 2))
+
+plot(spec, main = "splice_at = c(31, 80)\nfixed_sensor = 2 ", cex.main = 1)
+plot(a, add = TRUE, col = "red")
+
+plot(spec, main = "splice_at = c(31, 80)\nfixed_sensor = 1 ", cex.main = 1)
+plot(b, add = TRUE, col = "red")
+
+plot(spec, main = "splice_at = 31\nfixed_sensor = 2 ", cex.main = 1)
+plot(c, add = TRUE, col = "red")
+
+plot(spec, main = "splice_at = 31\nfixed_sensor = 1 ", cex.main = 1)
+plot(d, add = TRUE, col = "red")
+
+plot(spec, main = "splice_at = 80\nfixed_sensor = 2 ", cex.main = 1)
+plot(e, add = TRUE, col = "red")
+
+plot(spec, main = "splice_at = 80\nfixed_sensor = 1 ", cex.main = 1)
+plot(f, add = TRUE, col = "red")
+
+
