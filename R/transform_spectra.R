@@ -378,13 +378,21 @@ resample = function(x, new_wvls, ...) {
 #' @export
 resample.spectra = function(x, new_wvls, ...) {
 
+    w = wavelengths(x)
+
+    ## Simply subset the current spectra if all new_wvls are a in the set of
+    ## current wavelengths
+
+    if(all(new_wvls %in% w)){
+        return(x[ , new_wvls ])
+    }
+
     ## Enforce increasing wavelengths in spectra object
-    i_is_increasing(wavelengths(x), stop = TRUE)
+    i_is_increasing(w, stop = TRUE)
 
 
     ## Warn about long gaps in wavelengths
     ## Made up these thresholds, need to think harder
-    w = wavelengths(x)
     d = diff(w)
     l = d > quantile(d, 0.5) * 6 |
         d > quantile(d, 0.9) * 3 |
@@ -406,10 +414,13 @@ resample.spectra = function(x, new_wvls, ...) {
     }
 
     ## Smooth and predict
+    message("Using spline to predict reflectance at new wavelengths...")
     s = i_smooth_spline_spectra(x, ...)
     f = function(o, p){ stats::predict(o, p)[["y"]] }
     g = lapply(X = s, FUN = f, p = new_wvls)
     d = i_reflectance( do.call(rbind, g) )
+    message("Beware the spectra are now partially smoothed.")
+
 
     ## Wavelength number may change, so using the "safe" setter will fail
     ## Instead of reaching inside the spectra object, I am using the "unsafe"
