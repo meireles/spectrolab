@@ -196,8 +196,12 @@ match_sensors.spectra = function(x,
         right = s[[z + 1L ]][ s[[z + 1L ]] <= high ]
 
         # solve issues if any of the picks are empty
-        if(length(left)  == 0) left = max(s[[ z ]])
-        if(length(right) == 0) left = min(s[[ z + 1L ]])
+        if(length(left)  == 0){
+            left = max(s[[ z ]])
+        }
+        if(length(right) == 0){
+            right = min(s[[ z + 1L ]])
+        }
 
         list("left"  = left, "right" = right)
     })
