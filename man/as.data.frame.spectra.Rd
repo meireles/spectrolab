@@ -5,7 +5,7 @@
 \title{Convert spectra to data.frame}
 \usage{
 \method{as.data.frame}{spectra}(x, row.names = NULL, optional = FALSE,
-  fix_names = "none", ...)
+  fix_names = "none", metadata = TRUE, ...)
 }
 \arguments{
 \item{x}{spectra object}
@@ -17,7 +17,9 @@
 \item{fix_names}{Use make.names to normalize names?
 Pick one: "none" "row" "col" "both".}
 
-\item{...}{does nothing. Here for compatibility with S3 generics}
+\item{metadata}{boolean. Include spectral metadata? Defaults to TRUE}
+
+\item{...}{extra parameters passed to the generic as.spectra}
 }
 \value{
 data.frame with: sample_name, metadata (if any) and reflectance.

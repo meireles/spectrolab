@@ -105,7 +105,8 @@ as.matrix.spectra = function(x, fix_names = "none", ...) {
 #' @param optional does nothing. Here for compatibility with S3 generics
 #' @param fix_names Use make.names to normalize names?
 #'                  Pick one: "none" "row" "col" "both".
-#' @param ... does nothing. Here for compatibility with S3 generics
+#' @param metadata boolean. Include spectral metadata? Defaults to TRUE
+#' @param ... extra parameters passed to the generic as.spectra
 #' @return data.frame with: sample_name, metadata (if any) and reflectance.
 #'
 #' @author Jose Eduardo Meireles
@@ -114,10 +115,18 @@ as.data.frame.spectra = function(x,
                                  row.names = NULL,
                                  optional = FALSE,
                                  fix_names = "none",
+                                 metadata  = TRUE,
                                  ...) {
 
-    y = as.matrix(x, fix_names = fix_names, ...)
-    m = meta(x)
+    y = as.matrix(x, fix_names = fix_names)
 
-    data.frame(sample_name = rownames(y), m, y, check.names = FALSE, row.names = NULL)
+    if(metadata){
+        m = meta(x)
+        return(data.frame(sample_name = rownames(y), m, y,
+                          check.names = FALSE, row.names = NULL, ...))
+    } else {
+        return(data.frame(sample_name = rownames(y), y,
+                          check.names = FALSE, row.names = NULL, ...))
+    }
+
 }
