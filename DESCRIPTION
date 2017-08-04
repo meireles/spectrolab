@@ -2,6 +2,7 @@ Package: spectrolab
 Type: Package
 Title: Class and methods for hyperspectral data
 Version: 0.0.1
+Date: 2017-08-04
 Authors@R: c(person("Jose Eduardo", "Meireles", email = "meireles@umn.edu", role = c("aut", "cre")), 
              person("Anna K.", "Schweiger", email =  "anna.k.schweiger@gmail.com", role = "aut"),
              person("Jeannine", "Cavender-Bares", email = "cavender@umn.edu", role = "aut")
@@ -11,6 +12,7 @@ Description: I/O, processing and visualization of data from field spectrometers,
     `spectra` that other packages can build on. Provides methods to access, plot, 
     manipulate, splice sensor overlap, vector normalize and smooth spectra.
 License: GPL-3
+URL: https://github.com/annakat/spectrolab
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
