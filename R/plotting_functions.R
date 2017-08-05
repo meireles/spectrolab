@@ -125,7 +125,8 @@ default_spec_regions = function(){
 #' @param add boolean. If TRUE (default) adds polygons to current plot (if a plot
 #'            exists) or throws an error if a plot doesn't exist.
 #'            If FALSE, a new plot is created **without** any spectra.
-#' @param names boolean. Add region column names on top of the polygons?
+#' @param add_label boolean. Add region column names on top of the polygons?
+#' @param cex_label label scale
 #' @param ... additional parameters passed to polygon().
 #' @return nothing. Called for its side effect.
 #'
@@ -156,11 +157,12 @@ default_spec_regions = function(){
 #' @author Jose Eduardo Meireles
 #' @export
 plot_regions = function(spec,
-                        regions = default_spec_regions(),
-                        col     = grDevices::rgb(0.7, 0.7, 0.7, 0.3),
-                        border  = FALSE,
-                        add     = TRUE,
-                        names   = TRUE,
+                        regions   = default_spec_regions(),
+                        col       = grDevices::rgb(0.7, 0.7, 0.7, 0.3),
+                        border    = FALSE,
+                        add       = TRUE,
+                        add_label = TRUE,
+                        cex_label = 1,
                         ...){
     if( !is_spectra(spec) ){
         stop("Object must be of class spectra")
@@ -193,7 +195,7 @@ plot_regions = function(spec,
         graphics::polygon(xx_mat[ , i], yy_vec, col = col[i], border = border, ...)
     }
 
-    if(names){
+    if(add_label){
         region_txt = colnames(m_regions)
         region_pos = colMeans(m_regions)
 
@@ -205,6 +207,6 @@ plot_regions = function(spec,
         m    = c(1.0, 0.86, 0.68, 0.60)[r]
 
         # plot margin text
-        graphics::mtext(region_txt, side = 3, at = region_pos, cex = cex * m)
+        graphics::mtext(region_txt, side = 3, at = region_pos, cex = cex * m * cex_label)
     }
 }

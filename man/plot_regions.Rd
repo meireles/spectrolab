@@ -6,7 +6,7 @@
 \usage{
 plot_regions(spec, regions = default_spec_regions(),
   col = grDevices::rgb(0.7, 0.7, 0.7, 0.3), border = FALSE, add = TRUE,
-  names = TRUE, ...)
+  add_label = TRUE, cex_label = 1, ...)
 }
 \arguments{
 \item{spec}{spectra object}
@@ -23,7 +23,9 @@ regions begins and ends. See details for how the default regions are defined.}
 exists) or throws an error if a plot doesn't exist.
 If FALSE, a new plot is created **without** any spectra.}
 
-\item{names}{boolean. Add region column names on top of the polygons?}
+\item{add_label}{boolean. Add region column names on top of the polygons?}
+
+\item{cex_label}{label scale}
 
 \item{...}{additional parameters passed to polygon().}
 }
