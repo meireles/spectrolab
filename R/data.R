@@ -6,3 +6,11 @@
 #'
 #' @author Jose Eduardo Meireles
 "spec_matrix_example"
+
+#' Example spectra with jump between sensors
+#'
+#' Spectra object of a simulated spectra with "jumps" between sensors. Used to
+#' illustrate the `match_sensors` function
+#'
+#' @author Jose Eduardo Meireles
+"spec_with_jump"
