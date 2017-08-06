@@ -206,7 +206,7 @@ spectra = function(reflectance,
               meta         = i_meta(NULL, nsample = spl_l, ...) ## *** Ideally i_meta(meta, nsample = spl_l, ...)
               )
 
-    s = structure(s, class = c("spectra")) ## *** This should be the resturned obj
+    s = structure(s, class = c("spectra")) ## *** This should be the returned obj
     meta(s) = meta                         ## *** so I shouldn't have to do this
     s
 }
