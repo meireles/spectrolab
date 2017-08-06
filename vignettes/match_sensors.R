@@ -2,26 +2,37 @@
 library("spectrolab")
 knitr::opts_chunk$set(echo = TRUE)
 
-## ---- fig.height=3.5, fig.width=4, fig.align='center'--------------------
+## ---- fig.height=3.5, fig.width=4.5, fig.align='center', echo=FALSE------
 plot(spec_with_jump, cex.lab = 0.5, cex.axis = 0.6)
 
 sensors  = matrix(data     = c(400, 970, 971, 1909, 1910, 2500), 
                   ncol     = 3,
-                  dimnames = list(c("begin", "end"), c("S1", "S2", "S3"))) 
+                  dimnames = list(c("begin", "end"), c("Sensor 1", "Sensor 2", "Sensor 3"))) 
 plot_regions(spec_with_jump, regions = sensors, border = F, lwd = 0.15, lty = 3,
              col = adjustcolor(c("green", "blue", "orange"), 0.035), cex_label = 0.75)
 
 ## ---- warning=FALSE------------------------------------------------------
+# 3-sensor case, fixing sensor 2
 a = match_sensors(spec_with_jump, splice_at = c(971, 1910), fixed_sensor = 2,
                   interpolate_wvl = c(2, 2))
+
+# 3-sensor case, tried to fix sensor 1 but sensor 2 gets fixed anyways!
 b = match_sensors(spec_with_jump, splice_at = c(971, 1910), fixed_sensor = 1,
                   interpolate_wvl = c(2, 2))
+
+# Define 2 sensors divided at 971nm. Fixing the 2nd sensor
 c = match_sensors(spec_with_jump, splice_at = c(971),       fixed_sensor = 2,
                   interpolate_wvl = c(2, 2))
+
+# Define 2 sensors divided at 971nm. Fixing the 1st sensor
 d = match_sensors(spec_with_jump, splice_at = c(971),       fixed_sensor = 1,
                   interpolate_wvl = c(2, 2))
+
+# Define 2 sensors divided at 1910nm. Fixing the 2nd sensor
 e = match_sensors(spec_with_jump, splice_at = c(1910),      fixed_sensor = 2,
                   interpolate_wvl = c(2, 2))
+
+# Define 2 sensors divided at 1910nm. Fixing the 1st sensor
 f = match_sensors(spec_with_jump, splice_at = c(1910),      fixed_sensor = 1,
                   interpolate_wvl = c(2, 2))
 
