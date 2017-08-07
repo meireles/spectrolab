@@ -111,27 +111,26 @@ i_trim_sensor_overlap = function(x, splice_at){
 #'
 #' \code{match_sensors} scales reflectance values of sensors 1 (vis) and 3 (swir2)
 #'
-#' splice_at has no default because sensor transition points vary between vendors
+#' Splice_at has no default because sensor transition points vary between vendors
 #' and individual instruments. It is an important parameter though, so you should
 #' visually inspect your spectra before assigning it.
 #' Typical values in our own individual instruments were:
-#' SVC ~ c(990, 1900)
-#' PSR ~ c()
-#' ASD ~ c(1001, 1801)
+#' SVC ~ c(990, 1900),
+#' ASD ~ c(1001, 1801).
 #'
 #' If the factors used to match spectra are unreasonable, \code{match_sensors}
-#' will throw. Unreasonable factors (f) are defined as 0.5 > f < 1.5 or NaN,
+#' will throw. Unreasonable factors (f) are defined as 0.5 > f > 3 or NaN,
 #' which  happens when the reflectance value for the right sensor is 0.
 #'
 #' @param x spectra object
 #' @param splice_at wavelengths that serve as splice points, i.e the beginnings
 #'                  of the rightmost sensor. Must be length 1 or 2 (max 3 sensors)
-#' @param fixed_sensor Sensor to keep fixed. Can be 1 or 2 if matching 2 sensors.
+#' @param fixed_sensor sensor to keep fixed. Can be 1 or 2 if matching 2 sensors.
 #'                     If matching 3 sensors, `fixed_sensor` must be 2 (default).
 #' @param interpolate_wvl extent around splice_at values over which the splicing
 #'                        factors will be calculated. Defaults to 5
 #' @param factor_range range of acceptable correction factors (min, max).
-#'                     Defaults to c(0.5, 2)
+#'                     Defaults to c(0.5, 3)
 #' @return spectra object
 #'
 #' @author Jose Eduardo Meireles and Anna Schweiger
@@ -226,7 +225,7 @@ match_sensors.spectra = function(x,
 
     ## Verify if factors for splicing are reasonable
     lapply(splice_factors, function(z){
-        crap = which( z < factor_range[[1]] | z > factor_range[[2]] | is.nan(z))
+        crap = which( z < factor_range[[1]] | z > factor_range[[3]] | is.nan(z))
         if(length(crap) > 0 ){
             stop("Factors to match sensors are either NaN or are outside the bounds chosen by `factor_range`:",
                  paste(crap, sep = " "))
