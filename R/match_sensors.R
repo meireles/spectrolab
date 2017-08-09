@@ -139,7 +139,7 @@ match_sensors = function(x,
                          splice_at,
                          fixed_sensor    = 2,
                          interpolate_wvl = 5,
-                         factor_range    = c(0.5, 2) ){
+                         factor_range    = c(0.5, 3) ){
     UseMethod("match_sensors")
 }
 
@@ -150,7 +150,7 @@ match_sensors.spectra = function(x,
                                  splice_at,
                                  fixed_sensor    = 2,
                                  interpolate_wvl = 5,
-                                 factor_range    = c(0.5, 2)){
+                                 factor_range    = c(0.5, 3)){
 
     # message("Warning: feature under development!")
     # message("match_sensors: should not be used in poduction code.")
@@ -225,7 +225,7 @@ match_sensors.spectra = function(x,
 
     ## Verify if factors for splicing are reasonable
     lapply(splice_factors, function(z){
-        crap = which( z < factor_range[[1]] | z > factor_range[[3]] | is.nan(z))
+        crap = which( z < factor_range[[1]] | z > factor_range[[2]] | is.nan(z))
         if(length(crap) > 0 ){
             stop("Factors to match sensors are either NaN or are outside the bounds chosen by `factor_range`:",
                  paste(crap, sep = " "))

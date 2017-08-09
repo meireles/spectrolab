@@ -6,10 +6,10 @@
 \title{Match spectra at sensor transitions}
 \usage{
 match_sensors(x, splice_at, fixed_sensor = 2, interpolate_wvl = 5,
-  factor_range = c(0.5, 2))
+  factor_range = c(0.5, 3))
 
 \method{match_sensors}{spectra}(x, splice_at, fixed_sensor = 2,
-  interpolate_wvl = 5, factor_range = c(0.5, 2))
+  interpolate_wvl = 5, factor_range = c(0.5, 3))
 }
 \arguments{
 \item{x}{spectra object}
