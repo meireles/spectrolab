@@ -9,6 +9,7 @@
 #' @return interactive plot
 #'
 #' @examples
+#' \dontrun{
 #' # Create a reflectance matrix.
 #' rf <- spec_matrix_example[, -1]
 #'
@@ -26,7 +27,7 @@
 #'
 #' # Start interactive plot
 #' plot_interact(spec)
-#'
+#' }
 #' @author Anna K. Schweiger
 #' @export
 

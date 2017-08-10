@@ -17,6 +17,7 @@ interactive plot
 helpful for data inspection and large datasets.
 }
 \examples{
+\dontrun{
 # Create a reflectance matrix.
 rf <- spec_matrix_example[, -1]
 
@@ -34,7 +35,7 @@ spec <- spectra(reflectance = rf, wavelengths = wl, names = sn)
 
 # Start interactive plot
 plot_interact(spec)
-
+}
 }
 \author{
 Anna K. Schweiger
