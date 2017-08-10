@@ -41,23 +41,23 @@ plot_interact <- function(spec) {
     }
     shiny::shinyApp(
         ui = shiny::fluidPage(
-  shiny::numericInput(inputId = "num1", label= "number of spectra",value = 20, min = 1,
-               width = "25%"),
-  shiny::actionButton("action2", label = "previous"),
-  shiny::actionButton("action", label = "next"),
-  shiny::verbatimTextOutput("firstlast"),
-  shiny::plotOutput("spectrum")
-  ),
+            shiny::numericInput(inputId = "num1", label= "number of spectra",value = 20, min = 1,
+                                width = "25%"),
+            shiny::actionButton("action2", label = "previous"),
+            shiny::actionButton("action", label = "next"),
+            shiny::verbatimTextOutput("firstlast"),
+            shiny::plotOutput("spectrum")
+        ),
 
-  server = function(input, output){
-  output$spectrum <-  shiny::renderPlot({
-    plot(spec[(1:input$num1)+input$num1*input$action-input$num1*input$action2,], col=1:50)
-      })
-  output$firstlast <- renderText({paste("spectra from",1+input$num1*input$action-input$num1*input$action2,
-                                    "to", input$num1+input$num1*input$action-input$num1*input$action2)})
-  }
+        server = function(input, output){
+            output$spectrum <-  shiny::renderPlot({
+                plot(spec[(1:input$num1)+input$num1*input$action-input$num1*input$action2,], col=1:50)
+            })
+            output$firstlast <- shiny::renderText({paste("spectra from",1+input$num1*input$action-input$num1*input$action2,
+                                                         "to", input$num1+input$num1*input$action-input$num1*input$action2)})
+        }
     )
-    }
+}
 
 
 
