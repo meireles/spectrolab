@@ -1,5 +1,5 @@
-################################################################################
-################################################################################
+devtools::use_package("shiny")
+
 #' Interactive spectra plot
 #'
 #' \code{plot_interact} iteratively plots a defined number of spectra. This is
@@ -28,6 +28,9 @@
 #' # Start interactive plot
 #' plot_interact(spec)
 #' }
+#'
+#' @importFrom shiny shinyApp numericInput actionButton verbatimTextOutput plotOutput renderPlot
+#'
 #' @author Anna K. Schweiger
 #' @export
 

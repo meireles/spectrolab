@@ -36,6 +36,7 @@ spec <- spectra(reflectance = rf, wavelengths = wl, names = sn)
 # Start interactive plot
 plot_interact(spec)
 }
+
 }
 \author{
 Anna K. Schweiger
