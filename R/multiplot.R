@@ -11,38 +11,38 @@ devtools::use_package("shiny")
 #' @examples
 #' \dontrun{
 #' # Create a reflectance matrix.
-#' rf <- spec_matrix_example[, -1]
+#' rf = spec_matrix_example[, -1]
 #'
 #' # Create a vector with wavelength labels.
-#' wl <- colnames(rf)
+#' wl = colnames(rf)
 #'
 #' # Sample with replacement to increase the number of spectra.
-#' rf <- rf[sample(nrow(rf),300,replace = T),]
+#' rf = rf[sample(nrow(rf),300,replace = T),]
 #'
 #' # Create a vector with sample labels that match the reflectance matrix rows.
-#' sn <- paste(rep("sp",300), 1:300, sep = "_")
+#' sn = paste(rep("sp",300), 1:300, sep = "_")
 #'
 #' # Construct the spectra object using the `spectra` constructor
-#' spec <- spectra(reflectance = rf, wavelengths = wl, names = sn)
+#' spec = spectra(reflectance = rf, wavelengths = wl, names = sn)
 #'
 #' # Start interactive plot
 #' plot_interact(spec)
 #' }
 #'
-#' @importFrom shiny shinyApp numericInput actionButton verbatimTextOutput plotOutput renderPlot
+#' @importFrom shiny shinyApp numericInput actionButton verbatimTextOutput plotOutput renderPlot renderText
 #'
 #' @author Anna K. Schweiger
 #' @export
 
-plot_interact <- function(spec) {
+plot_interact = function(spec) {
     if (!requireNamespace("shiny", quietly = TRUE)) {
         stop("Package shiny needed for this function to work. Please install it.",
              call. = FALSE)
     }
     shiny::shinyApp(
         ui = shiny::fluidPage(
-            shiny::numericInput(inputId = "num1", label= "number of spectra",value = 20, min = 1,
-                                width = "25%"),
+            shiny::numericInput(inputId = "num1", label = "number of spectra",
+                                value = 20, min = 1, width = "25%"),
             shiny::actionButton("action2", label = "previous"),
             shiny::actionButton("action", label = "next"),
             shiny::verbatimTextOutput("firstlast"),
@@ -50,14 +50,12 @@ plot_interact <- function(spec) {
         ),
 
         server = function(input, output){
-            output$spectrum <-  shiny::renderPlot({
-                plot(spec[(1:input$num1)+input$num1*input$action-input$num1*input$action2,], col=1:50)
+            output$spectrum = shiny::renderPlot({
+                plot(spec[(1 : input$num1) + input$num1 * input$action - input$num1 * input$action2, ],
+                     col = 1 : 50)
             })
-            output$firstlast <- shiny::renderText({paste("spectra from",1+input$num1*input$action-input$num1*input$action2,
-                                                         "to", input$num1+input$num1*input$action-input$num1*input$action2)})
+            output$firstlast = shiny::renderText({paste("spectra from", 1 + input$num1 * input$action - input$num1 * input$action2,
+                                                        "to", input$num1 + input$num1 * input$action - input$num1 * input$action2)})
         }
     )
 }
-
-
-

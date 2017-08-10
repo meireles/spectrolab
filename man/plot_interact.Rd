@@ -19,19 +19,19 @@ helpful for data inspection and large datasets.
 \examples{
 \dontrun{
 # Create a reflectance matrix.
-rf <- spec_matrix_example[, -1]
+rf = spec_matrix_example[, -1]
 
 # Create a vector with wavelength labels.
-wl <- colnames(rf)
+wl = colnames(rf)
 
 # Sample with replacement to increase the number of spectra.
-rf <- rf[sample(nrow(rf),300,replace = T),]
+rf = rf[sample(nrow(rf),300,replace = T),]
 
 # Create a vector with sample labels that match the reflectance matrix rows.
-sn <- paste(rep("sp",300), 1:300, sep = "_")
+sn = paste(rep("sp",300), 1:300, sep = "_")
 
 # Construct the spectra object using the `spectra` constructor
-spec <- spectra(reflectance = rf, wavelengths = wl, names = sn)
+spec = spectra(reflectance = rf, wavelengths = wl, names = sn)
 
 # Start interactive plot
 plot_interact(spec)
