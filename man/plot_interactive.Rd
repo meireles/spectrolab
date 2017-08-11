@@ -4,14 +4,14 @@
 \alias{plot_interactive}
 \title{Interactive spectra plot}
 \usage{
-plot_interactive(spec, colpalette = grDevices::colorRampPalette(c("red",
-  "orange", "blue", "purple")), ...)
+plot_interactive(spec, colpalette = function(n) RColorBrewer::brewer.pal(n,
+  "Dark2"), ...)
 }
 \arguments{
 \item{spec}{spectra object}
 
-\item{colpalette}{a color palette function, e.g. rainbow, terrain.colors, etc.
-or a function returned by `colorRampPalette`.}
+\item{colpalette}{a color palette function, e.g. rainbow, terrain.colors, or a
+function returned by colorRampPalette() or colorRamps package}
 
 \item{...}{Other arguments passed to plot}
 }

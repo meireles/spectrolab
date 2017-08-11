@@ -1,4 +1,5 @@
 devtools::use_package("shiny")
+devtools::use_package("RColorBrewer")
 
 #' Plot spectra
 #'
@@ -219,8 +220,8 @@ plot_regions = function(spec,
 #' helpful for data inspection and large datasets.
 #'
 #' @param spec spectra object
-#' @param colpalette a color palette function, e.g. rainbow, terrain.colors, etc.
-#'                   or a function returned by `colorRampPalette`.
+#' @param colpalette a color palette function, e.g. rainbow, terrain.colors, or a
+#'                   function returned by colorRampPalette() or colorRamps package
 #' @param ... Other arguments passed to plot
 #' @return interactive plot
 #'
@@ -234,13 +235,12 @@ plot_regions = function(spec,
 #' }
 #'
 #' @importFrom shiny shinyApp numericInput actionButton verbatimTextOutput plotOutput renderPlot renderText
-#' @importFrom grDevices colorRampPalette rainbow heat.colors terrain.colors
+#' @importFrom RColorBrewer brewer.pal
 #'
 #' @author Anna K. Schweiger and Jose Eduardo Meireles
 #' @export
-
 plot_interactive = function(spec,
-                            colpalette  = grDevices::colorRampPalette(c("red", "orange", "blue", "purple")),
+                            colpalette = function(n) RColorBrewer::brewer.pal(n, "Dark2"),
                             ... ){
     if (!requireNamespace("shiny", quietly = TRUE)) {
         stop("Package shiny needed for this function to work. Please install it.",
@@ -249,7 +249,7 @@ plot_interactive = function(spec,
 
     if( ! is.function(colpalette) ){
         message("colpalette must be a function! Using the default palette.")
-        colpalette = grDevices::colorRampPalette(c("red", "orange", "blue", "purple"))
+        colpalette = function(n) RColorBrewer::brewer.pal(n, "Dark2")
     }
 
     # Constants
