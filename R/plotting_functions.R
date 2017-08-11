@@ -220,7 +220,7 @@ plot_regions = function(spec,
 #'
 #' @param spec spectra object
 #' @param colpalette a color palette function, e.g. rainbow, terrain.colors, etc.
-#'                   or a function returned from `colorRampPalette`.
+#'                   or a function returned by `colorRampPalette`.
 #' @param ... Other arguments passed to plot
 #' @return interactive plot
 #'
@@ -230,7 +230,7 @@ plot_regions = function(spec,
 #' spec = as.spectra(spec_matrix_example)
 #'
 #' # Start interactive plot
-#' plot_interact(spec)
+#' plot_interactive(spec)
 #' }
 #'
 #' @importFrom shiny shinyApp numericInput actionButton verbatimTextOutput plotOutput renderPlot renderText
@@ -239,10 +239,9 @@ plot_regions = function(spec,
 #' @author Anna K. Schweiger and Jose Eduardo Meireles
 #' @export
 
-plot_interact = function(spec,
-                         colpalette = grDevices::colorRampPalette(c("red", "orange", "blue", "purple")),
-                         ... ){
-
+plot_interactive = function(spec,
+                            colpalette  = grDevices::colorRampPalette(c("red", "orange", "blue", "purple")),
+                            ... ){
     if (!requireNamespace("shiny", quietly = TRUE)) {
         stop("Package shiny needed for this function to work. Please install it.",
              call. = FALSE)
@@ -256,6 +255,8 @@ plot_interact = function(spec,
     # Constants
     n_max     = nrow(spec)
     i_display = min(10, n_max)
+    wvl_min   = min(spectrolab::wavelengths(spec))
+    wvl_max   = max(spectrolab::wavelengths(spec))
 
     # Begin shiny app
     shiny::shinyApp(
@@ -269,7 +270,15 @@ plot_interact = function(spec,
             shiny::actionButton("go_back", label = "previous"),
             shiny::actionButton("go_fwd", label = "next"),
             shiny::verbatimTextOutput("firstlast"),
-            shiny::plotOutput("spectrum")
+            shiny::plotOutput("spectrum"),
+
+            shiny::sliderInput(inputId = "w_range",
+                               label   = "Wavelengths",
+                               min     = wvl_min,
+                               max     = wvl_max,
+                               value   = c(wvl_min, wvl_max),
+                               ticks   = TRUE,
+                               width   = "100%")
         ),
 
         server = function(input, output){
@@ -310,7 +319,9 @@ plot_interact = function(spec,
             # Plot spectra
             output$spectrum = shiny::renderPlot({
                 s_range = seq(from(), to())
-                plot(spec[ s_range, ], col = colpalette(length(s_range)), ...)
+                w_range = spectrolab::wavelengths(spec, min(input$w_range), max(input$w_range))
+                plot(spec[ s_range, w_range],
+                     col = colpalette(length(s_range)), ...)
             })
 
             # Plot text
