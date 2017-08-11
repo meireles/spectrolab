@@ -4,10 +4,16 @@
 \alias{plot_interact}
 \title{Interactive spectra plot}
 \usage{
-plot_interact(spec)
+plot_interact(spec, colpalette = grDevices::colorRampPalette(c("red",
+  "orange", "blue", "purple")), ...)
 }
 \arguments{
 \item{spec}{spectra object}
+
+\item{colpalette}{a color palette function, e.g. rainbow, terrain.colors, etc.
+or a function returned from `colorRampPalette`.}
+
+\item{...}{Other arguments passed to plot}
 }
 \value{
 interactive plot
@@ -18,20 +24,8 @@ helpful for data inspection and large datasets.
 }
 \examples{
 \dontrun{
-# Create a reflectance matrix.
-rf = spec_matrix_example[, -1]
-
-# Create a vector with wavelength labels.
-wl = colnames(rf)
-
-# Sample with replacement to increase the number of spectra.
-rf = rf[sample(nrow(rf),300,replace = T),]
-
-# Create a vector with sample labels that match the reflectance matrix rows.
-sn = paste(rep("sp",300), 1:300, sep = "_")
-
-# Construct the spectra object using the `spectra` constructor
-spec = spectra(reflectance = rf, wavelengths = wl, names = sn)
+# Create a spectra object
+spec = as.spectra(spec_matrix_example)
 
 # Start interactive plot
 plot_interact(spec)
@@ -39,5 +33,5 @@ plot_interact(spec)
 
 }
 \author{
-Anna K. Schweiger
+Anna K. Schweiger and Jose Eduardo Meireles
 }
