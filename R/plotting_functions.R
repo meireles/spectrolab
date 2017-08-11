@@ -1,3 +1,6 @@
+devtools::use_package("shiny")
+devtools::use_package("RColorBrewer")
+
 #' Plot spectra
 #'
 #' \code{plot} plots spectra.
@@ -209,4 +212,122 @@ plot_regions = function(spec,
         # plot margin text
         graphics::mtext(region_txt, side = 3, at = region_pos, cex = cex * m * cex_label)
     }
+}
+
+#' Interactive spectra plot
+#'
+#' \code{plot_interact} iteratively plots a defined number of spectra. This is
+#' helpful for data inspection and large datasets.
+#'
+#' @param spec spectra object
+#' @param colpalette a color palette function, e.g. rainbow, terrain.colors, or a
+#'                   function returned by colorRampPalette() or colorRamps package
+#' @param ... Other arguments passed to plot
+#' @return interactive plot
+#'
+#' @examples
+#' \dontrun{
+#' # Create a spectra object
+#' spec = as.spectra(spec_matrix_example)
+#'
+#' # Start interactive plot
+#' plot_interactive(spec)
+#' }
+#'
+#' @importFrom shiny shinyApp numericInput actionButton verbatimTextOutput plotOutput renderPlot renderText
+#' @importFrom RColorBrewer brewer.pal
+#'
+#' @author Anna K. Schweiger and Jose Eduardo Meireles
+#' @export
+plot_interactive = function(spec,
+                            colpalette = function(n) RColorBrewer::brewer.pal(n, "Dark2"),
+                            ... ){
+    if (!requireNamespace("shiny", quietly = TRUE)) {
+        stop("Package shiny needed for this function to work. Please install it.",
+             call. = FALSE)
+    }
+
+    if( ! is.function(colpalette) ){
+        message("colpalette must be a function! Using the default palette.")
+        colpalette = function(n) RColorBrewer::brewer.pal(n, "Dark2")
+    }
+
+    # Constants
+    n_max     = nrow(spec)
+    i_display = min(10, n_max)
+    wvl_min   = min(spectrolab::wavelengths(spec))
+    wvl_max   = max(spectrolab::wavelengths(spec))
+
+    # Begin shiny app
+    shiny::shinyApp(
+        ui = shiny::fluidPage(
+            shiny::numericInput(inputId = "n_display",
+                                label   = "number of spectra",
+                                value   = i_display,
+                                min     = 1,
+                                max     = n_max,
+                                width   = "20%"),
+            shiny::actionButton("go_back", label = "previous"),
+            shiny::actionButton("go_fwd", label = "next"),
+            shiny::verbatimTextOutput("firstlast"),
+            shiny::plotOutput("spectrum"),
+
+            shiny::sliderInput(inputId = "w_range",
+                               label   = "Wavelengths",
+                               min     = wvl_min,
+                               max     = wvl_max,
+                               value   = c(wvl_min, wvl_max),
+                               ticks   = TRUE,
+                               width   = "100%")
+        ),
+
+        server = function(input, output){
+            # Initialize range variables
+            from  = shiny::reactiveVal(1)
+            to    = shiny::reactiveVal(1)
+
+            # Update `from` and `to` if next is pressed
+            shiny::observeEvent(input$go_fwd, {
+                # update from
+                old_from = from()
+                new_from = min(old_from + input$n_display, n_max)
+                from(new_from)
+
+                # update to
+                new_to   = min(from() + input$n_display - 1L, n_max)
+                to(new_to)
+            })
+
+            # Update `from` and `to` if previous is pressed
+            shiny::observeEvent(input$go_back ,{
+                # update from
+                old_from = from()
+                new_from = max(old_from - input$n_display, 1L)
+                from(new_from)
+
+                # update to
+                new_to = min(from() + input$n_display - 1L, n_max)
+                to(new_to)
+            })
+
+            # Update `to` if n_display is changed
+            shiny::observeEvent(input$n_display ,{
+                new_to   = min(from() + input$n_display - 1L, n_max)
+                to(new_to)
+            })
+
+            # Plot spectra
+            output$spectrum = shiny::renderPlot({
+                s_range = seq(from(), to())
+                w_range = spectrolab::wavelengths(spec, min(input$w_range), max(input$w_range))
+                plot(spec[ s_range, w_range],
+                     col = colpalette(length(s_range)), ...)
+            })
+
+            # Plot text
+            output$firstlast = shiny::renderText({
+                paste("spectra: ", from(), "-", to(), "/", n_max, sep = "")
+            })
+        }
+    )
 }

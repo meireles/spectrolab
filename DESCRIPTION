@@ -25,4 +25,6 @@ VignetteBuilder: knitr
 Imports: prospectr (>= 0.1.3),
     devtools,
     parallel (>= 1.13.1),
-    shiny
+    shiny,
+    grDevices,
+    RColorBrewer
