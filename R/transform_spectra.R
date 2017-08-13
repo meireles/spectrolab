@@ -70,9 +70,9 @@ combine.spectra = function(s1, s2){
 #' Applies FUN (and FUN_meta) over spectra aggregating by factor `by`.
 #'
 #' Argument FUN_meta is useful if you want to apply a different function to
-#' metadata and reflectance. If you want to aggregate spectra and metadata using
-#' `mean`, `sd`, `median` etc. but try to keep the text values, wrap you function
-#' using \code{try_keep_txt(f)}.
+#' metadata and reflectance. If you want to aggregate spectra and metadata
+#' using `mean`, `sd`, `median` etc. but try to keep the text values, wrap your
+#' function in \code{try_keep_txt(f)}.
 #'
 #' @param x spectra object
 #' @param by vector of factors to guide the aggregation
@@ -98,7 +98,6 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
 
     r = stats::aggregate(as.matrix(x), by, FUN, ...)
     m = stats::aggregate(meta(x), by, FUN_meta, ...)
-    n = r[ , 1]
     s = as.spectra(r, 1)
     meta(s) = m[ , -1]
 
