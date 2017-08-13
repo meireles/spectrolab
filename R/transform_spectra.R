@@ -155,7 +155,7 @@ split.spectra = function(x, f, drop = FALSE, ...){
 
 #' Subset spectra by factor
 #'
-#' \code{seubset_by} subsets spectra ensuring that each factor `by` appears only
+#' \code{subset_by} subsets spectra ensuring that each factor `by` appears only
 #' `max` times or less in the spectra dataset.
 #'
 #' @param x spectra object
@@ -172,7 +172,7 @@ subset_by = function(x, by, n_max, random = TRUE){
     UseMethod("subset_by")
 }
 
-#' @describeIn seubset_by Subset spectra by factor
+#' @describeIn subset_by Subset spectra by factor
 #' @export
 subset_by.spectra = function(x, by, n_max, random = TRUE){
 
