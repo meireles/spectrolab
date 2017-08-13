@@ -135,6 +135,67 @@ split.spectra = function(x, f, drop = FALSE, ...){
     lapply(l, function(y){ x[y, ] })
 }
 
+################################################################################
+# Subset by
+################################################################################
+
+#' Subset spectra by factor
+#'
+#' \code{seubset_by} subsets spectra ensuring that each factor `by` appears only
+#' `max` times or less in the spectra dataset.
+#'
+#' @param x spectra object
+#' @param by vector coercible to factor and of same length as nrow(x)
+#' @param n_max integer. keep at most this number of spectra per unique `by`
+#' @param random boolean. Sample randomly or keep first n_max? Defaults to TRUE
+#' @return spectra
+#'
+#' @importFrom utils tail
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+subset_by = function(x, by, n_max, random = TRUE){
+    UseMethod("subset_by")
+}
+
+#' @describeIn seubset_by Subset spectra by factor
+#' @export
+subset_by.spectra = function(x, by, n_max, random = TRUE){
+
+    by = unlist(by)
+    if( ! is.vector(by) || length(by) != nrow(x) ){
+        stop("`by` must be a vector length equals the number of rows in x")
+    }
+
+    if( ! is.numeric(n_max) || n_max <= 0 ){
+        stop("n_max must be a positive interger.")
+    } else {
+        n_max = ceiling( n_max[[1]] ) # in case max is a vector
+    }
+
+    excl_n_by = table(by) - n_max
+    excl_n_by = excl_n_by[ excl_n_by > 0 ]
+
+    # Nothing to subset
+    if(length(excl_n_by) == 0){
+        return(x)
+    }
+
+    # Compute indices to exclude
+    excl_idx = sapply(names(excl_n_by), function(x){
+        w = which(by == x)
+        if(random){
+            p = sample(w, excl_n_by[[x]])
+        } else {
+            p = utils::tail(w, n = excl_n_by[[x]])
+        }
+        p
+    })
+
+    excl_idx = unlist(excl_idx)
+
+    x[ - excl_idx ,  ]
+}
 
 
 ################################################################################
