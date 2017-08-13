@@ -2,9 +2,12 @@
 % Please edit documentation in R/transform_spectra.R
 \name{subset_by}
 \alias{subset_by}
+\alias{subset_by.spectra}
 \title{Subset spectra by factor}
 \usage{
 subset_by(x, by, n_max, random = TRUE)
+
+\method{subset_by}{spectra}(x, by, n_max, random = TRUE)
 }
 \arguments{
 \item{x}{spectra object}
@@ -19,9 +22,14 @@ subset_by(x, by, n_max, random = TRUE)
 spectra
 }
 \description{
-\code{seubset_by} subsets spectra ensuring that each factor `by` appears only
+\code{subset_by} subsets spectra ensuring that each factor `by` appears only
 `max` times or less in the spectra dataset.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{spectra}: Subset spectra by factor
+}}
+
 \author{
 Jose Eduardo Meireles
 }
