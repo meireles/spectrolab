@@ -26,6 +26,20 @@ very same wavelength labels, but different metadata are acceptable
 \item \code{spectra}: Combines two spectral datasets
 }}
 
+\examples{
+library("spectrolab")
+
+# Create dummy spectra datasets. Pretend that these are all different...
+s1 = as.spectra(spec_matrix_example)
+s2 = as.spectra(spec_matrix_example)
+s3 = as.spectra(spec_matrix_example)
+
+# combine 2 spectra objects
+s_1and2 = combine(s1, s2)
+
+# combine n spectra objects using the `Reduce` function
+s_n = Reduce(combine, list(s1, s2, s3))
+}
 \author{
 Jose Eduardo Meireles
 }
