@@ -5,16 +5,19 @@
 \alias{subset_by.spectra}
 \title{Subset spectra by factor}
 \usage{
-subset_by(x, by, n_max, random = TRUE)
+subset_by(x, by, n_min, n_max, random = TRUE)
 
-\method{subset_by}{spectra}(x, by, n_max, random = TRUE)
+\method{subset_by}{spectra}(x, by, n_min, n_max, random = TRUE)
 }
 \arguments{
 \item{x}{spectra object}
 
 \item{by}{vector coercible to factor and of same length as nrow(x)}
 
-\item{n_max}{integer. keep at most this number of spectra per unique `by`}
+\item{n_min}{int. only keep spectra with at least (incl) n_min number of
+samples per unique `by`.}
+
+\item{n_max}{int. keep at most (incl) this number of spectra per unique `by`}
 
 \item{random}{boolean. Sample randomly or keep first n_max? Defaults to TRUE}
 }
@@ -24,6 +27,11 @@ spectra
 \description{
 \code{subset_by} subsets spectra ensuring that each factor `by` appears only
 `max` times or less in the spectra dataset.
+}
+\details{
+Note that \code{subset_by} forces you to provide both a minimum and a maximum
+number of spectra to be kept for each unique value of `by`. In case you're
+intrested in subsetting \emph{only} based on `n_min`, set `n_max` to `Inf`.
 }
 \section{Methods (by class)}{
 \itemize{
