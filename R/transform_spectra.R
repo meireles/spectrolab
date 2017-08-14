@@ -158,9 +158,15 @@ split.spectra = function(x, f, drop = FALSE, ...){
 #' \code{subset_by} subsets spectra ensuring that each factor `by` appears only
 #' `max` times or less in the spectra dataset.
 #'
+#' Note that \code{subset_by} forces you to provide both a minimum and a maximum
+#' number of spectra to be kept for each unique value of `by`. In case you're
+#' intrested in subsetting \emph{only} based on `n_min`, set `n_max` to `Inf`.
+#'
 #' @param x spectra object
 #' @param by vector coercible to factor and of same length as nrow(x)
-#' @param n_max integer. keep at most this number of spectra per unique `by`
+#' @param n_min int. only keep spectra with at least (incl) n_min number of
+#'              samples per unique `by`.
+#' @param n_max int. keep at most (incl) this number of spectra per unique `by`
 #' @param random boolean. Sample randomly or keep first n_max? Defaults to TRUE
 #' @return spectra
 #'
@@ -168,32 +174,40 @@ split.spectra = function(x, f, drop = FALSE, ...){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
-subset_by = function(x, by, n_max, random = TRUE){
+subset_by = function(x, by, n_min, n_max, random = TRUE){
     UseMethod("subset_by")
 }
 
 #' @describeIn subset_by Subset spectra by factor
 #' @export
-subset_by.spectra = function(x, by, n_max, random = TRUE){
+subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
 
     by = unlist(by)
     if( ! is.vector(by) || length(by) != nrow(x) ){
         stop("`by` must be a vector length equals the number of rows in x")
     }
 
+    if( ! is.numeric(n_min) || n_min <= 0 ){
+        stop("n_min must be a positive interger, i.e. at least 1.")
+    } else {
+        n_min = ceiling( n_min[[1]] )
+    }
+
     if( ! is.numeric(n_max) || n_max <= 0 ){
         stop("n_max must be a positive interger.")
     } else {
-        n_max = ceiling( n_max[[1]] ) # in case max is a vector
+        n_max = ceiling( n_max[[1]] )
     }
 
+    if(n_max < n_min){
+        stop("`n_max` must be larger than `n_min`")
+    }
+
+    ########################################
+    ## Subset based on n_max
+    ########################################
     excl_n_by = table(by) - n_max
     excl_n_by = excl_n_by[ excl_n_by > 0 ]
-
-    # Nothing to subset
-    if(length(excl_n_by) == 0){
-        return(x)
-    }
 
     # Compute indices to exclude
     excl_idx = sapply(names(excl_n_by), function(x){
@@ -205,10 +219,28 @@ subset_by.spectra = function(x, by, n_max, random = TRUE){
         }
         p
     })
-
     excl_idx = unlist(excl_idx)
 
-    x[ - excl_idx ,  ]
+
+    # Exclude indices from `x` and `by` if there's something to exclude
+    if(length(excl_n_by) > 0){
+        x  = x[ - excl_idx ,  ]
+        by = by[ - excl_idx ]
+    }
+
+    ########################################
+    ## Subset based on n_min
+    ########################################
+
+    tbl_by = table(by)
+    keep   = names(tbl_by[ tbl_by >= n_min ])
+
+    if(length(keep) == 0){
+        message("chosen `n_min` excluded all spectra. returning NULL.")
+        return(NULL)
+    }
+
+    x[ keep, ]
 }
 
 
