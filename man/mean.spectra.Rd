@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{spectra}
 
-\item{na.rm}{boolean. remove NAs?}
+\item{na.rm}{boolean. remove NAs? Defaults to TRUE}
 
 \item{keep_txt_meta}{try to keep text in the metadata}
 
@@ -19,7 +19,7 @@
 single spectrum
 }
 \description{
-Mean spectrum
+\code{mean} computes the arithmetic mean spectrum.
 }
 \author{
 Jose Eduardo Meireles

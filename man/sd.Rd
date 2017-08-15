@@ -15,5 +15,6 @@ sd(x, na.rm = FALSE)
 standard deviation
 }
 \description{
-Standard deviation
+\code{var} computes the standard deviation spectrum. Note that values will not
+reflect reflectance anymore, but the sd of the reflectance instead.
 }

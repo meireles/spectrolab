@@ -15,7 +15,7 @@
 single spectrum
 }
 \description{
-Standard deviation spectrum
+Forces keep_txt_meta = TRUE
 }
 \author{
 Jose Eduardo Meireles

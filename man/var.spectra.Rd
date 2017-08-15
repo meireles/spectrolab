@@ -14,12 +14,16 @@
 \item{na.rm}{boolean. remove NAs?}
 
 \item{use}{nothing}
+
+\item{keep_txt_meta}{try to keep text in the metadata}
+
+\item{...}{further arguments passed to methods}
 }
 \value{
 single spectrum
 }
 \description{
-Variance spectrum
+Forces keep_txt_meta = TRUE
 }
 \author{
 Jose Eduardo Meireles

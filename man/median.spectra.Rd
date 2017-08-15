@@ -4,12 +4,14 @@
 \alias{median.spectra}
 \title{Median spectrum}
 \usage{
-\method{median}{spectra}(x, na.rm = TRUE, ...)
+\method{median}{spectra}(x, na.rm = TRUE, keep_txt_meta = TRUE, ...)
 }
 \arguments{
 \item{x}{spectra}
 
-\item{na.rm}{boolean. remove NAs?}
+\item{na.rm}{boolean. remove NAs? Defaults to TRUE}
+
+\item{keep_txt_meta}{try to keep text in the metadata}
 
 \item{...}{nothing}
 }
@@ -17,7 +19,7 @@
 single spectrum
 }
 \description{
-Median spectrum
+\code{median} computes the median spectrum
 }
 \author{
 Jose Eduardo Meireles

@@ -23,5 +23,6 @@ or "pairwise.complete.obs"}
 variance
 }
 \description{
-Variance
+\code{var} computes the variance spectrum. Note that values will not reflect
+reflectance anymore, but the variance of the reflectance instead.
 }
