@@ -82,7 +82,7 @@ var.default = stats::var
 #' @author Jose Eduardo Meireles
 #' @export
 var.spectra = function(x, y = NULL, na.rm = TRUE, use){
-    apply_by_band(x, stats::var, na.rm = na.rm, keep_txt_meta = TRUE, ...)
+    apply_by_band(x, stats::var, na.rm = na.rm, keep_txt_meta = TRUE)
 }
 
 #' Standard deviation
