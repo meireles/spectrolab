@@ -17,8 +17,9 @@ try_keep_txt = function(f){
     function(x, ...){
         r = tryCatch(
             { f(x, ...) },
-            warning = function(w){  paste(unique(x), collapse = ", ") }
-        )
+            warning = function(w){  paste(unique(x), collapse = ", ") },
+            error   = function(e){  paste(unique(x), collapse = ", ") }
+            )
         r
     }
 }
