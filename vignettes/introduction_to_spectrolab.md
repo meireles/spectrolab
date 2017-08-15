@@ -286,8 +286,8 @@ spec_as_df[1:4, 1:5]
 
 ```
 ##   sample_name ident                   ssp N_percent        400
-## 1     ACHMI_1 10526 Achillea millefolium   1.412107 0.03734791
-## 2     ACHMI_2 10527 Achillea millefolium   2.195633 0.04608409
-## 3     ACHMI_3 10528 Achillea millefolium   1.094265 0.04058113
-## 4     ACHMI_4 10529 Achillea millefolium   2.242511 0.04063730
+## 1     ACHMI_1 10526 Achillea millefolium   1.340215 0.03734791
+## 2     ACHMI_2 10527 Achillea millefolium   1.592891 0.04608409
+## 3     ACHMI_3 10528 Achillea millefolium   1.786394 0.04058113
+## 4     ACHMI_4 10529 Achillea millefolium   1.261204 0.04063730
 ```

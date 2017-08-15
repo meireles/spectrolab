@@ -1,0 +1,169 @@
+################################################################################
+# Common stats functions: mean, median, var, sd and coefvar
+################################################################################
+
+#' Mean spectrum
+#'
+#' \code{mean} computes the arithmetic mean spectrum.
+#'
+#' @param x spectra
+#' @param na.rm boolean. remove NAs? Defaults to TRUE
+#' @param keep_txt_meta try to keep text in the metadata
+#' @param ... nothing
+#' @return single spectrum
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+mean.spectra = function(x, na.rm = TRUE, keep_txt_meta = TRUE, ...){
+    apply_by_band(x, base::mean, na.rm = na.rm, keep_txt_meta = keep_txt_meta, ...)
+}
+
+#' Median spectrum
+#'
+#' \code{median} computes the median spectrum
+#'
+#' @param x spectra
+#' @param na.rm boolean. remove NAs? Defaults to TRUE
+#' @param keep_txt_meta try to keep text in the metadata
+#' @param ... nothing
+#' @return single spectrum
+#'
+#' @importFrom stats median
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+median.spectra = function(x, na.rm = TRUE, keep_txt_meta = TRUE, ...){
+    apply_by_band(x, stats::median, na.rm = na.rm, keep_txt_meta = keep_txt_meta, ...)
+}
+
+
+#' Variance
+#'
+#' \code{var} computes the variance spectrum. Note that values will not reflect
+#' reflectance anymore, but the variance of the reflectance instead.
+#'
+#' @param x a numeric vector, matrix or data frame
+#' @param y NULL (default) or a vector, matrix or data frame with compatible
+#'          dimensions to x.
+#' @param na.rm logical. Should missing values be removed?
+#' @param use an optional character string giving a method for computing covariances in
+#'            the presence of missing values. This must be (an abbreviation of) one of
+#'            the strings "everything", "all.obs", "complete.obs", "na.or.complete",
+#'            or "pairwise.complete.obs"
+#' @return variance
+#'
+#' @export
+var = function(x, y = NULL, na.rm = FALSE, use){
+    UseMethod("var")
+}
+
+#' Default variance
+#'
+#' @inherit stats::var
+#' @importFrom stats var
+#'
+#' @export
+var.default = stats::var
+
+#' Variance spectrum
+#'
+#' Forces keep_txt_meta = TRUE
+#'
+#' @param x spectra
+#' @param y nothing
+#' @param na.rm boolean. remove NAs?
+#' @param use nothing
+#' @param ... further arguments passed to methods
+#' @return single spectrum
+#'
+#' @importFrom stats var
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+var.spectra = function(x, y = NULL, na.rm = TRUE, use){
+    apply_by_band(x, stats::var, na.rm = na.rm, keep_txt_meta = TRUE)
+}
+
+#' Standard deviation
+#'
+#' \code{var} computes the standard deviation spectrum. Note that values will not
+#' reflect reflectance anymore, but the sd of the reflectance instead.
+#'
+#' @param x a numeric vector or an R object which is coercible to one by as.double(x)
+#' @param na.rm logical. Should missing values be removed?
+#' @return standard deviation
+#'
+#' @export
+sd = function(x, na.rm = FALSE){
+    UseMethod("sd")
+}
+
+#' Default variance
+#'
+#' @inherit stats::sd
+#' @importFrom stats sd
+#' @export
+sd.default = stats::sd
+
+#' Standard deviation spectrum
+#'
+#' Forces keep_txt_meta = TRUE
+#'
+#' @param x spectra
+#' @param na.rm boolean. remove NAs?
+#' @return single spectrum
+#'
+#' @importFrom stats sd
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+sd.spectra = function(x, na.rm = TRUE){
+    apply_by_band(x, stats::sd, na.rm = na.rm, keep_txt_meta = TRUE)
+}
+
+
+#' Compute spectra quantiles
+#'
+#' \code{quantile} computes quantiles by wavelength and returns them as `spectra`
+#'
+#' @param x spectra object. Must have at least the same number of sample that
+#'          length(probs) has.
+#' @param probs Probabilities to compute quantiles. Must be a vector of numerics
+#'              between 0.0 and 1.0. Defaults to c(0.025, 0.25, 0.5, 0.75, 0.975).
+#' @param na.rm remove NAs before computing quantiles? Defaults to TRUE
+#' @param ... other arguments passed to quantile.
+#' @return spectra object with one spectrum for each prob
+#'
+#' @importFrom stats quantile
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+quantile.spectra = function(x,
+                            probs = c(0.025, 0.25, 0.5, 0.75, 0.975),
+                            na.rm = TRUE,
+                            ...){
+
+    ## probs must be between 0 and 1
+    if( any(probs < 0.0) || any(probs > 1.0) ){
+        stop("Probs must have values between 0 and 1")
+    }
+
+    ## probs should not be duplicated
+    w = ! duplicated(probs)
+
+    if(any(!w)){
+        message("Duplicated probs being excluded: ", probs[ !w ])
+        probs = probs[ w ]
+    }
+
+    if(nrow(x) < length(probs)){
+        stop("There are less samples (", nrow(x),") than probabilities (",  length(probs), ") for `quantile` to makes sense.")
+    }
+
+    ## Return spectra quantile object
+    x = apply_by_band(x, stats::quantile, probs = probs, na.rm = na.rm,
+                      name = as.character(probs), ...)
+
+    class(x) = c(class(x), "spec_quantile")
+    x
+}
