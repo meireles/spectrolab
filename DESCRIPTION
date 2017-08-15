@@ -26,4 +26,5 @@ Imports: prospectr (>= 0.1.3),
     parallel (>= 1.13.1),
     shiny (>= 1.0.3),
     grDevices,
-    RColorBrewer(>= 1.1-2)
+    RColorBrewer(>= 1.1-2),
+    devtools
