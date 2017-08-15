@@ -47,46 +47,6 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
 }
 
 ################################################################################
-# Common stats functions: mean, median, var, sd and coefvar
-################################################################################
-
-#' Mean spectrum
-#'
-#' @param x spectra
-#' @param na.rm boolean. remove NAs?
-#' @param ... nothing
-#' @return single spectrum
-#'
-#' @author Jose Eduardo Meireles
-#' @export
-mean.spectra = function(x, na.rm = TRUE, ...){
-    s_name = "mean"
-    if(ncol(meta(x)) == 0){
-        x[1 , ]        = colMeans(as.matrix(x), na.rm = na.rm)
-        names(x[1 , ]) = s_name
-        x[1, ]
-    } else{
-        aggregate(x = x, by = rep(s_name, nrow(x)), FUN = mean, na.rm = na.rm, ...)
-    }
-}
-
-#' Median spectrum
-#'
-#' @param x spectra
-#' @param na.rm boolean. remove NAs?
-#' @param ... nothing
-#' @return single spectrum
-#'
-#' @importFrom stats median
-#'
-#' @author Jose Eduardo Meireles
-#' @export
-median.spectra = function(x, na.rm = TRUE, ...){
-    s_name = "median"
-    aggregate(x = x, by = rep(s_name, nrow(x)), FUN = stats::median, na.rm = na.rm)
-}
-
-################################################################################
 # Combine spectral datasets
 ################################################################################
 

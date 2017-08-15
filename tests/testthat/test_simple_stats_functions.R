@@ -23,12 +23,12 @@ test_that("median from spec equals the apply mat equiv.", {
 })
 
 
-# test_that("var from spec equals the apply mat equiv.", {
-#     expect_equivalent( as.vector(reflectance(var(spec))),
-#                        apply(mat, 2, var, na.rm = TRUE) )
-# })
+test_that("var from spec equals the apply mat equiv.", {
+    expect_equivalent( as.vector(reflectance(var(spec))),
+                       apply(mat, 2, var, na.rm = TRUE) )
+})
 
-# test_that("sd from spec equals the apply mat equiv.", {
-#     expect_equivalent( as.vector(reflectance(sd(spec))),
-#                        apply(mat, 2, sd, na.rm = TRUE) )
-# })
+test_that("sd from spec equals the apply mat equiv.", {
+    expect_equivalent( as.vector(reflectance(sd(spec))),
+                       apply(mat, 2, sd, na.rm = TRUE) )
+})
