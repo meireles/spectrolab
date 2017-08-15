@@ -15,8 +15,6 @@
 
 \item{use}{nothing}
 
-\item{keep_txt_meta}{try to keep text in the metadata}
-
 \item{...}{further arguments passed to methods}
 }
 \value{

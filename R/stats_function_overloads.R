@@ -73,7 +73,6 @@ var.default = stats::var
 #' @param y nothing
 #' @param na.rm boolean. remove NAs?
 #' @param use nothing
-#' @param keep_txt_meta try to keep text in the metadata
 #' @param ... further arguments passed to methods
 #' @return single spectrum
 #'
