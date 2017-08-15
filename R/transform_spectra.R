@@ -3,6 +3,90 @@ devtools::use_package("devtools")
 devtools::use_package("parallel")
 
 ################################################################################
+# Aggregate
+################################################################################
+
+#' Aggregate spectra
+#'
+#' Applies FUN (and FUN_meta) over spectra aggregating by factor `by`.
+#'
+#' Argument FUN_meta is useful if you want to apply a different function to
+#' metadata and reflectance. If you want to aggregate spectra and metadata
+#' using `mean`, `sd`, `median` etc. but try to keep the text values, wrap your
+#' function in \code{try_keep_txt(f)}.
+#'
+#' @param x spectra object
+#' @param by vector of factors to guide the aggregation
+#' @param FUN function to be applied to refl (and meta if FUN_meta is NULL)
+#' @param FUN_meta function to be applied to metadata. If NULL (default), same
+#'        FUN applied to reflectance is used.
+#' @param ... extra args to FUN
+#' @return spectra object
+#'
+#' @importFrom stats aggregate
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
+
+    if(!is.list(by)){
+        by = list(by)
+    }
+
+    if(is.null(FUN_meta)){
+        FUN_meta = FUN
+    }
+
+    r = stats::aggregate(as.matrix(x), by, FUN, ...)
+    m = stats::aggregate(meta(x), by, FUN_meta, ...)
+    s = as.spectra(r, 1)
+    meta(s) = m[ , -1]
+
+    enforce01(s) = enforce01(x)
+    s
+}
+
+################################################################################
+# Common stats functions: mean, median, var, sd and coefvar
+################################################################################
+
+#' Mean spectrum
+#'
+#' @param x spectra
+#' @param na.rm boolean. remove NAs?
+#' @param ... nothing
+#' @return single spectrum
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+mean.spectra = function(x, na.rm = TRUE, ...){
+    s_name = "mean"
+    if(ncol(meta(x)) == 0){
+        x[1 , ]        = colMeans(as.matrix(x), na.rm = na.rm)
+        names(x[1 , ]) = s_name
+        x[1, ]
+    } else{
+        aggregate(x = x, by = rep(s_name, nrow(x)), FUN = mean, na.rm = na.rm, ...)
+    }
+}
+
+#' Median spectrum
+#'
+#' @param x spectra
+#' @param na.rm boolean. remove NAs?
+#' @param ... nothing
+#' @return single spectrum
+#'
+#' @importFrom stats median
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+median.spectra = function(x, na.rm = TRUE, ...){
+    s_name = "median"
+    aggregate(x = x, by = rep(s_name, nrow(x)), FUN = stats::median, na.rm = na.rm)
+}
+
+################################################################################
 # Combine spectral datasets
 ################################################################################
 
@@ -74,50 +158,6 @@ combine.spectra = function(s1, s2){
     spectra(r, w, n, m3, e)
 }
 
-
-################################################################################
-# Aggregate
-################################################################################
-
-#' Aggregate spectra
-#'
-#' Applies FUN (and FUN_meta) over spectra aggregating by factor `by`.
-#'
-#' Argument FUN_meta is useful if you want to apply a different function to
-#' metadata and reflectance. If you want to aggregate spectra and metadata
-#' using `mean`, `sd`, `median` etc. but try to keep the text values, wrap your
-#' function in \code{try_keep_txt(f)}.
-#'
-#' @param x spectra object
-#' @param by vector of factors to guide the aggregation
-#' @param FUN function to be applied to refl (and meta if FUN_meta is NULL)
-#' @param FUN_meta function to be applied to metadata. If NULL (default), same
-#'        FUN applied to reflectance is used.
-#' @param ... extra args to FUN
-#' @return spectra object
-#'
-#' @importFrom stats aggregate
-#'
-#' @author Jose Eduardo Meireles
-#' @export
-aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
-
-    if(!is.list(by)){
-        by = list(by)
-    }
-
-    if(is.null(FUN_meta)){
-        FUN_meta = FUN
-    }
-
-    r = stats::aggregate(as.matrix(x), by, FUN, ...)
-    m = stats::aggregate(meta(x), by, FUN_meta, ...)
-    s = as.spectra(r, 1)
-    meta(s) = m[ , -1]
-
-    enforce01(s) = enforce01(x)
-    s
-}
 
 ################################################################################
 # Split spectral datasets
@@ -414,12 +454,6 @@ i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
     x
 }
 
-#' Default smoothing function
-#'
-#' @inherit stats::smooth
-#' @importFrom stats smooth
-smooth.default = stats::smooth
-
 #' Smooth spectra
 #'
 #' \code{smooth} runs each spectrum by a smoothing and returns the spectra
@@ -435,6 +469,14 @@ smooth.default = stats::smooth
 smooth = function(x, method = "spline", ...){
     UseMethod("smooth")
 }
+
+
+#' Default smoothing function
+#'
+#' @inherit stats::smooth
+#' @importFrom stats smooth
+smooth.default = stats::smooth
+
 
 #' @describeIn smooth Smooth spectra
 #' @export
