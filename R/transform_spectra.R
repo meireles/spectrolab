@@ -1,6 +1,71 @@
 library("devtools")
-devtools::use_package("devtools")
 devtools::use_package("parallel")
+
+################################################################################
+# Apply by band
+################################################################################
+
+#' Apply numeric function by band
+#'
+#' \code{apply_by_band} is conceptually similar to apply(as.matrix(x), 2, fun),
+#' but returns a spectra object while dealing with metadata and attributes.
+#' Applying a function that doesn't act on numeric values may crash the function
+#' or render change all reflecances NA.
+#'
+#' @param x spectra
+#' @param fun numeric function to be applied to each band.
+#' @param na.rm boolean. remove NAs?
+#' @param keep_txt_meta boolean. try to keep text in the metadata?
+#' @param name name for each sample in the ourput spectra. The default (NULL) will
+#'             give samples sequential numeric names. Recycled if necessary.
+#' @param ... extra arguments passed to fun
+#' @return spectra
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+apply_by_band = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, name = NULL, ...){
+    UseMethod("apply_by_band")
+}
+
+#' @describeIn apply_by_band Apply a numeric function by band
+#'
+#' @importFrom stats na.omit
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, name = NULL, ...){
+
+    # Wrap function fun to remove NAs from the computation
+    # Works for functions that don't normally take a na.rm parameter,
+    # such as sqrt or abs
+    f_na_wrap = function(fun, na.rm){
+        if(na.rm){
+            function(x, ...){ fun( stats::na.omit(x), ...) }
+        } else {
+            function(x, ...){ fun(x, ...) }
+        }
+    }
+
+    f = f_na_wrap(fun, na.rm)
+    r = apply(as.matrix(x), 2, f, ...)
+    w = wavelengths(x)
+    e = enforce01(x)
+    m = meta(x)
+
+    l = ifelse(is.vector(r), 1L, nrow(r))
+    if(is.null(name)){
+        n = seq(l)
+    } else {
+        n = rep(name, length.out = l)
+    }
+
+    if(ncol(m) != 0){
+        m = apply(m, 2, ifelse(keep_txt_meta, try_keep_txt(f), f), ...)
+    }
+
+    spectra(r, w, n, m, e)
+}
+
 
 ################################################################################
 # Aggregate
