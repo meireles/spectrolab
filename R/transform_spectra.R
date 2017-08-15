@@ -46,11 +46,14 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
         }
     }
 
-    f = f_na_wrap(fun, na.rm)
-    r = apply(as.matrix(x), 2, f, ...)
-    w = wavelengths(x)
-    e = enforce01(x)
-    m = meta(x)
+    f  = f_na_wrap(fun, na.rm)
+    fm = ifelse(keep_txt_meta, try_keep_txt(f), f)
+
+    r  = apply(as.matrix(x), 2, f, ...)
+    w  = wavelengths(x)
+    e  = enforce01(x)
+    m0 = meta(x)
+    m = m0
 
     l = ifelse(is.vector(r), 1L, nrow(r))
     if(is.null(name)){
@@ -60,10 +63,10 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
     }
 
     if(ncol(m) != 0){
-        m = apply(m, 2, ifelse(keep_txt_meta, try_keep_txt(f), f), ...)
+        m = lapply(m, fm, ...)  # Calling lapply because meta is always a data.frame
+        m = do.call(cbind, m)
     }
-
-    spectra(r, w, n, m, e)
+    spectra(reflectance = r, wavelengths = w, names = n, meta = m, enforce01 = e)
 }
 
 
