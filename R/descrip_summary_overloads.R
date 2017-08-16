@@ -108,7 +108,6 @@ print.spectra = function(x, ...){
 #' @author Jose Eduardo Meireles
 #' @export
 summary.spectra = function(object, ...){
-    cat("**Figure out something useful to do here**\n")
     print(object, ...)
 }
 
