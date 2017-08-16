@@ -7,9 +7,11 @@ Jose Eduardo Meireles, Anna K. Schweiger and Jeannine Cavender-Bares
 * Access, aggregate, subset, split or combine spectra
 * Seamlessly link and manipulate metadata (such as chemistry)
 * Plot spectra or spectral quantiles, shade spectral regions (e.g. vis)
+* Scroll though and zoom in spectra interacively. 
 * Perform tasks such as vector normalization, smoothing, resampling, and sensor overlap matching
 
 The source code can be found on our [GitHub repository](https://github.com/annakat/spectrolab). Please report any bugs and ask us your questions through the [issue tracker](https://github.com/annakat/spectrolab/issues).
+
 
 ## Installing and loading `spectrolab`
 
@@ -38,7 +40,11 @@ Here is an example using a dataset matrix named `spec_matrix_meta.csv` provided 
 
 ```r
 dir_path = system.file("extdata/spec_matrix_meta.csv", package = "spectrolab")
-spec_csv = read.csv(dir_path, check.names = F)
+
+# Read data from the CSV file. If you don't use `check.names` = FALSE when reading
+# the csv, R will usually add a letter to the column names (e.g. 'X650') which will 
+# cause problems when converting the matrix to spectra.
+spec_csv = read.csv(dir_path, check.names = FALSE)
 
 # The sample names are in column 3. Columns 1 and 2 are metadata
 achillea_spec = as.spectra(spec_csv, name_idx = 3, meta_idxs = c(1,2) )
@@ -125,12 +131,12 @@ m = meta(achillea_spec, "ssp", simplify = TRUE)
 
 ## Subsetting spectra
 
-You can subset the `spectra` using a notation *similar* to the `[i,j]` function used in matrices and data.frames. The first argument in `[i, ]` matches *sample names*, whereas the second argument `[ ,j]` matches the *wavelength names*. Here are some examples of how `[` works in `spectra`:
+You can subset the `spectra` using a notation *similar* to the `[i, j]` function used in matrices and data.frames. The first argument in `[i, ]` matches *sample names*, whereas the second argument `[ , j]` matches the *wavelength names*. Here are some examples of how `[` works in `spectra`:
 
   - `x[1:3, ]` will keep the first three samples of `x`, i.e. `1:3` are indexes.
   - `x["sp_1", ]` keeps **all** entries in `x` where sample names match `"sp_1"`
-  - `x[ ,800:900]` will keep wavelengths between `800` and `900`.
-  - `x[ ,1:5] ` will **fail**!. *wavelengths __cannot__ be subset by indexes!*
+  - `x[ , 800:900]` will keep wavelengths between `800` and `900`.
+  - `x[ , 1:5] ` will **fail**!. *wavelengths __cannot__ be subset by indexes!*
 
 Subsetting lets you, for instance, exclude noisy regions at the beginning and end of the spectrum or limit the data to specific entries.
 
@@ -140,7 +146,7 @@ Subsetting lets you, for instance, exclude noisy regions at the beginning and en
 spec_sub_vis = achillea_spec[ , 400:700 ]
 
 # Subset spectra to all entries where sample_name matches "ACHMI_7" or
-# get the forst three samples
+# get the first three samples
 spec_sub_byname = achillea_spec["ACHMI_7", ]
 spec_sub_byidx  = achillea_spec[ 1:3, ]
 ```
@@ -189,11 +195,11 @@ spec_sub_byidx[ , 2]
 
 ## Plotting
 
-The workhorse function for plotting `spectra` is `plot()`. It will jointly plot each spectrum in the `spectra` object. You should be able to pass the usual plot arguments to it, such as `col`, `ylab`, `lwd`, etc.
+The workhorse function for statically plotting `spectra` is `plot()`. It will jointly plot each spectrum in the `spectra` object. You should be able to pass the usual plot arguments to it, such as `col`, `ylab`, `lwd`, etc.
 
-You can also plot the quantile of a `spectra` object with `plot_quantile()`. It's second argument, `total_prob`, is the total "mass" that the quantile encompasses. For instance, a `total_prob = 0.95` covers 95% of the variation in the `spectra` object, i.e. it is the `0.025 to 0.975` quantile. The quantile plot can stand alone or be added to a current plot if `add = TRUE`.
+You can also plot the quantiles of a `spectra` object with `plot_quantile()`. It's second argument, `total_prob`, is the total "mass" that the quantile encompasses. For instance, a `total_prob = 0.95` covers 95% of the variation in the `spectra` object, i.e. it is the `0.025 to 0.975` quantile. The quantile plot can stand alone or be added to a current plot if `add = TRUE`.
 
-Last but not least, you can also shade spectral regions with the `plot_regions()` function. `spectrolab` provides a `default_spec_regions()` matrix as an example, but you obviously can customize it for your needs.
+The function `plot_regions()` helps shading different spectral regions. `spectrolab` provides a `default_spec_regions()` matrix as an example, but you obviously can customize it for your needs (see the help page for `plot_regions` for details).
 
 
 ```r
@@ -213,6 +219,9 @@ plot_regions(achillea_spec, regions = default_spec_regions(), add = TRUE)
 
 ![](introduction_to_spectrolab_files/figure-html/unnamed-chunk-12-1.svg)<!-- -->
 
+Last but not least, spectrolab also allows you to interactivelly explore spectra through a `shiny` app with the `plot_interactive()` function.
+
+<img src="plot_interactive_screenshot.png" alt="Drawing" style="width: 300px;"/>
 
 ## Manipulating samples names, wavelength labels, metadata and reflectance
 
@@ -257,11 +266,11 @@ meta(achillea_spec, label = "N_percent") = n_content
 
 ### Converting a `spectra` object into a matrix or data.frame
 
-It is also possible to convert a `spectra` object to a matrix or data.frame using the `as.matrix()` or `as.data.frame()` functions. This is useful if you want to export your data in a particular format, such as .csv. 
+It is also possible to convert a `spectra` object to a matrix or data.frame using the `as.matrix()` or `as.data.frame()` functions. This is useful if you want to export your data in a particular format, such as csv. 
 
 If you're converting spectra to a matrix, `spectrolab` will (1) place wavelengths in columns, assigning wavelength labels to `colnames`, and (2) samples in rows, assigning sample names to `rownames`. Since `R` imposes strict rules on column name formats and sometimes on row names, `as.matrix()` will try to fix potential dimname issues if `fix_names != "none"`. Note that `as.matrix()` will not keep metadata.
 
-Conversion to data.frame is similar, but keeps the metadata.
+Conversion to data.frame is similar, but keeps the metadata by default (unless you set the `metadata` agument to `FALSE`).
 
 
 ```r
@@ -280,14 +289,14 @@ spec_as_mat[1:4, 1:3]
 
 ```r
 # Make a matrix from a `spectra` object
-spec_as_df = as.data.frame(achillea_spec, fix_names = "none")
+spec_as_df = as.data.frame(achillea_spec, fix_names = "none", metadata = TRUE)
 spec_as_df[1:4, 1:5]
 ```
 
 ```
 ##   sample_name ident                   ssp N_percent        400
-## 1     ACHMI_1 10526 Achillea millefolium   1.340215 0.03734791
-## 2     ACHMI_2 10527 Achillea millefolium   1.592891 0.04608409
-## 3     ACHMI_3 10528 Achillea millefolium   1.786394 0.04058113
-## 4     ACHMI_4 10529 Achillea millefolium   1.261204 0.04063730
+## 1     ACHMI_1 10526 Achillea millefolium   1.915566 0.03734791
+## 2     ACHMI_2 10527 Achillea millefolium   2.496122 0.04608409
+## 3     ACHMI_3 10528 Achillea millefolium   1.910635 0.04058113
+## 4     ACHMI_4 10529 Achillea millefolium   2.060833 0.04063730
 ```
