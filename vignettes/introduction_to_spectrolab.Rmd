@@ -4,9 +4,10 @@ author: "Jose Eduardo Meireles, Anna K. Schweiger and Jeannine Cavender-Bares"
 output:
   rmarkdown::html_document: 
     keep_md: yes
-    dev: 'svg'
+    dev: 'png'
     dpi: 300
   rmarkdown::pdf_document:
+    dev: 'svg'
     number_sections: yes
 vignette: > 
   %\VignetteIndexEntry{Introduction to spectrolab}

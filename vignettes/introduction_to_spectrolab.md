@@ -217,7 +217,7 @@ plot_quantile(achillea_spec, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border 
 plot_regions(achillea_spec, regions = default_spec_regions(), add = TRUE)
 ```
 
-![](introduction_to_spectrolab_files/figure-html/unnamed-chunk-12-1.svg)<!-- -->
+![](introduction_to_spectrolab_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
 
 Last but not least, spectrolab also allows you to interactivelly explore spectra through a `shiny` app with the `plot_interactive()` function.
 
@@ -253,7 +253,7 @@ plot(achillea_spec, col = "blue", lwd = 0.75, cex.axis = 0.75)
 plot(spec_new, col = "orange", lwd = 0.75, add = TRUE)
 ```
 
-<img src="introduction_to_spectrolab_files/figure-html/unnamed-chunk-14-1.svg" style="display: block; margin: auto;" />
+<img src="introduction_to_spectrolab_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
 
 Or you can also edit or add new metadata to the `spectra` object.
 
@@ -295,8 +295,8 @@ spec_as_df[1:4, 1:5]
 
 ```
 ##   sample_name ident                   ssp N_percent        400
-## 1     ACHMI_1 10526 Achillea millefolium   1.915566 0.03734791
-## 2     ACHMI_2 10527 Achillea millefolium   2.496122 0.04608409
-## 3     ACHMI_3 10528 Achillea millefolium   1.910635 0.04058113
-## 4     ACHMI_4 10529 Achillea millefolium   2.060833 0.04063730
+## 1     ACHMI_1 10526 Achillea millefolium   1.576131 0.03734791
+## 2     ACHMI_2 10527 Achillea millefolium   2.506656 0.04608409
+## 3     ACHMI_3 10528 Achillea millefolium   2.324094 0.04058113
+## 4     ACHMI_4 10529 Achillea millefolium   2.366947 0.04063730
 ```
