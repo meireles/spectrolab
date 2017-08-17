@@ -1,5 +1,5 @@
 ################################################################################
-# Common stats functions: mean, median, var, sd and coefvar
+# Common stats functions: mean, median, var, sd and quantile
 ################################################################################
 
 #' Mean spectrum
