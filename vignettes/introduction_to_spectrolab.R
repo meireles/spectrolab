@@ -7,7 +7,11 @@ library("spectrolab")
 
 ## ---- eval=TRUE----------------------------------------------------------
 dir_path = system.file("extdata/spec_matrix_meta.csv", package = "spectrolab")
-spec_csv = read.csv(dir_path, check.names = F)
+
+# Read data from the CSV file. If you don't use `check.names` = FALSE when reading
+# the csv, R will usually add a letter to the column names (e.g. 'X650') which will 
+# cause problems when converting the matrix to spectra.
+spec_csv = read.csv(dir_path, check.names = FALSE)
 
 # The sample names are in column 3. Columns 1 and 2 are metadata
 achillea_spec = as.spectra(spec_csv, name_idx = 3, meta_idxs = c(1,2) )
@@ -46,12 +50,12 @@ r = reflectance(achillea_spec)
 # Metadata. Use simplify = TRUE to get a vector instead of a data.frame
 m = meta(achillea_spec, "ssp", simplify = TRUE)
 
-## ---- eval=TRUE----------------------------------------------------------
+## ---- eval = TRUE--------------------------------------------------------
 # Subset wavelength regions.
 spec_sub_vis = achillea_spec[ , 400:700 ]
 
 # Subset spectra to all entries where sample_name matches "ACHMI_7" or
-# get the forst three samples
+# get the first three samples
 spec_sub_byname = achillea_spec["ACHMI_7", ]
 spec_sub_byidx  = achillea_spec[ 1:3, ]
 
@@ -111,6 +115,6 @@ spec_as_mat = as.matrix(achillea_spec, fix_names = "none")
 spec_as_mat[1:4, 1:3]
 
 # Make a matrix from a `spectra` object
-spec_as_df = as.data.frame(achillea_spec, fix_names = "none")
+spec_as_df = as.data.frame(achillea_spec, fix_names = "none", metadata = TRUE)
 spec_as_df[1:4, 1:5]
 
