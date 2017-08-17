@@ -6,5 +6,5 @@
 \alias{spectrolab-package}
 \title{Spectrolab}
 \description{
-Class and methods for hyperspectral data
+Class and methods for hyperspectral data.
 }
