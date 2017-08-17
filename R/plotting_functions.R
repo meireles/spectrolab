@@ -277,7 +277,7 @@ plot_interactive = function(spec,
     dist_mag  = ceiling( log10( 1 / min(diff(sort(spec_dist))) ) )
 
     # and round it
-    spec_dist = round(spec_dist, dist_mag)
+    spec_dist    = round(spec_dist, dist_mag)
 
     # Begin shiny app
     shiny::shinyApp(
@@ -372,8 +372,14 @@ plot_interactive = function(spec,
             output$spectrum = shiny::renderPlot({
                 s_range = seq(from(), to())
                 w_range = spectrolab::wavelengths(spec, min(input$w_range), max(input$w_range))
-                plot(spec[ s_range, w_range],
-                     col = colpalette(length(s_range)), ...)
+
+                cols = if(input$highlight_by_dist == TRUE){
+                    ifelse(spec_dist[s_range] > input$dist_highlight, "red", "black")
+                } else {
+                    colpalette(length(s_range))
+                }
+
+                plot(spec[ s_range, w_range], col = cols, ...)
             })
 
             # Plot text
