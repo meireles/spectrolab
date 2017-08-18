@@ -241,8 +241,6 @@ plot_regions = function(spec,
 #' plot_interactive(spec)
 #' }
 #'
-# #' @importFrom shiny shinyApp numericInput actionButton verbatimTextOutput
-# #'             plotOutput renderPlot renderText wellPanel fluidRow
 #' @import shiny
 #' @importFrom shinyjs useShinyjs
 #' @importFrom RColorBrewer brewer.pal
@@ -269,6 +267,11 @@ plot_interactive = function(spec,
     wvl_min   = min(spectrolab::wavelengths(spec))
     wvl_max   = max(spectrolab::wavelengths(spec))
 
+    # Should be variables
+    band_threshold = 3
+    refl_threshold = 0.03
+
+
     # Find spectral distances
     spec_dist = stats::dist(rbind(as.matrix(mean(spec)), as.matrix(spec)))
     spec_dist = spec_dist[ seq.int(nrow(spec)) ]
@@ -277,7 +280,7 @@ plot_interactive = function(spec,
     dist_mag  = ceiling( log10( 1 / min(diff(sort(spec_dist))) ) )
 
     # and round it
-    spec_dist    = round(spec_dist, dist_mag)
+    spec_dist = round(spec_dist, dist_mag)
 
     # Begin shiny app
     shiny::shinyApp(
@@ -287,17 +290,18 @@ plot_interactive = function(spec,
             shiny::fluidRow(
                 shiny::column(3,
                               shiny::wellPanel(
-                                  # shiny::verbatimTextOutput("firstlast"),
-                                  shiny::actionButton("go_back", label = "previous", width = "45%"),
-                                  shiny::actionButton("go_fwd",  label = "next", width = "45%"),
-
+                                  shiny::h5(shiny::textOutput("firstlast")),
+                                  shiny::h5(shiny::textOutput("selected"))
+                              ),
+                              shiny::wellPanel(
                                   shiny::numericInput(inputId = "n_display",
                                                       label   = "display number",
                                                       value   = i_display,
                                                       min     = 1,
                                                       max     = n_max,
                                                       width   = "100%"),
-
+                                  shiny::actionButton("go_back", label = "previous", width = "45%"),
+                                  shiny::actionButton("go_fwd",  label = "next", width = "45%"),
                                   shiny::checkboxInput(inputId = "highlight_by_dist",
                                                        label   = "color by distance",
                                                        value   = FALSE, width = "100%"),
@@ -312,10 +316,10 @@ plot_interactive = function(spec,
                               )
                 ),
                 shiny::column(9,
-                              align="center",
-                              shiny::h3(shiny::textOutput("firstlast")),
+                              align = "center",
                               shiny::plotOutput("spectrum",
-                                                width = "100%"),
+                                                width = "100%",
+                                                click = "plot_click"),
                               shiny::sliderInput(inputId = "w_range",
                                                  label   = "Wavelengths",
                                                  min     = wvl_min,
@@ -329,10 +333,13 @@ plot_interactive = function(spec,
 
         server = function(input, output, session){
             # Initialize range variables
-            from  = shiny::reactiveVal(1)
-            to    = shiny::reactiveVal(1)
+            from    = shiny::reactiveVal(1)
+            to      = shiny::reactiveVal(1)
 
-            # Update `from` and `to` if next is pressed
+            # Initialize highlighted index
+            picked = shiny::reactiveVal(NULL)
+
+            # Update `from`, `to` and `picked` if next is pressed
             shiny::observeEvent(input$go_fwd, {
                 if(to() < n_max){
                     # update from
@@ -343,10 +350,13 @@ plot_interactive = function(spec,
                     # update to
                     new_to   = min(from() + input$n_display - 1L, n_max)
                     to(new_to)
+
+                    # update picked
+                    picked(NULL)
                 }
             })
 
-            # Update `from` and `to` if previous is pressed
+            # Update `from`, `to` and `picked` if previous is pressed
             shiny::observeEvent(input$go_back ,{
                 # update from
                 old_from = from()
@@ -356,16 +366,45 @@ plot_interactive = function(spec,
                 # update to
                 new_to = min(from() + input$n_display - 1L, n_max)
                 to(new_to)
+
+                # update picked
+                picked(NULL)
             })
 
-            # Update `to` if n_display is changed
+            # Update `to` and `picked` if n_display is changed
             shiny::observeEvent(input$n_display ,{
                 new_to   = min(from() + input$n_display - 1L, n_max)
+
+                if(!is.null(picked())){
+                    if(picked() > new_to){
+                        picked(NULL)
+                    }
+                }
+
                 to(new_to)
             })
 
             shiny::observeEvent(input$highlight_by_dist, {
                 shinyjs::toggleState("dist_highlight")
+            })
+
+            # Update picked spec
+            shiny::observeEvent(input$plot_click ,{
+                click_coord  = input$plot_click
+                bands        = spectrolab::wavelengths(spec) # probably should filter by w_range
+                bands_diff   = abs(bands - click_coord[[1]])
+                band_clicked = bands[ which(bands_diff == min(bands_diff) & bands_diff <= band_threshold) ]
+
+                refl         = spec[ seq(from(), to()), band_clicked]
+                refl_diff    = abs(refl -  click_coord[[2]])
+                spec_clicked = which(refl_diff == min(refl_diff) & refl_diff <= refl_threshold)
+
+                if(length(spec_clicked) == 0){
+                    picked(NULL)
+                } else {
+                    spec_clicked = from() + spec_clicked - 1L
+                    picked(spec_clicked)
+                }
             })
 
             # Plot spectra
@@ -374,17 +413,31 @@ plot_interactive = function(spec,
                 w_range = spectrolab::wavelengths(spec, min(input$w_range), max(input$w_range))
 
                 cols = if(input$highlight_by_dist == TRUE){
-                    ifelse(spec_dist[s_range] > input$dist_highlight, "red", "black")
+                    ifelse(spec_dist[s_range] > input$dist_highlight, "orange", "black")
                 } else {
                     colpalette(length(s_range))
                 }
 
-                plot(spec[ s_range, w_range], col = cols, ...)
+                plot(spec[s_range, w_range], col = cols, ...)
+
+                if( ! is.null(picked()) ){
+                    plot(spec[picked(), ], col = "red", lwd = 2, add = TRUE)
+                }
             })
 
-            # Plot text
+            # Show range of spectra
             output$firstlast = shiny::renderText({
-                paste("spectra: ", from(), " - ", to(), " / ", n_max, sep = "")
+                paste("Spectra: ", from(), "-", to(), "/", n_max, sep = "")
+            })
+
+            # Show selected spectra
+            output$selected = shiny::renderText({
+                if(!is.null(picked())){
+                    selected = picked()
+                } else {
+                    selected = "none"
+                }
+                paste("Selected: ", selected, sep = "")
             })
         }
     )
