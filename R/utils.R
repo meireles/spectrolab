@@ -1,6 +1,6 @@
 #' Wrap function to try to keep text
 #'
-#' Function operator that returns a function f that tries to keep text.
+#' Function operator returning a function f that tries to keep text.
 #'
 #' \code{try_keep_txt} takes a function f as argument, typically a mathematical
 #' operation such as mean, median, etc. and returns a modified version of it that
