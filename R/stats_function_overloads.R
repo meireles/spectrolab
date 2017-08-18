@@ -86,7 +86,7 @@ var.spectra = function(x, y = NULL, na.rm = TRUE, use){
 
 #' Standard deviation
 #'
-#' \code{var} computes the standard deviation spectrum. Note that values will not
+#' \code{sd} computes the standard deviation spectrum. Note that values will not
 #' reflect reflectance anymore, but the sd of the reflectance instead.
 #'
 #' @param x a numeric vector or an R object which is coercible to one by as.double(x)

@@ -13,7 +13,7 @@ try_keep_txt(f)
 modified function f (f').
 }
 \description{
-Function operator that returns a function f that tries to keep text.
+Function operator returning a function f that tries to keep text.
 }
 \details{
 \code{try_keep_txt} takes a function f as argument, typically a mathematical
