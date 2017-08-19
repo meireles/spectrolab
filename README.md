@@ -19,6 +19,7 @@ devtools::install_github("annakat/spectrolab")
 
 This vignette [introduces spectrolab](vignettes/introduction_to_spectrolab.md), and works you through the basics of the package.
 
-A vignette on how to [process spectra](vignettes/processing_spectra.md) using `spectrolab` showcases several useful features such as excluding bad measurements, smoothing and normalizing spectra among other things.
+This vignette shows you how to [splice sensors](vignettes/match_sensors.pdf) using the function  `match_sensors` and details about what its arguments do. A more general processing vignette is coming soon.
+
 
 We highly encourage you to read the vignette on [advanced spectrolab use](vignettes/advanced_spectrolab.md) if you're planning on contributing to or developing a package that depends on `spectrolab`.
