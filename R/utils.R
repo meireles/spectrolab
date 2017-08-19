@@ -44,7 +44,9 @@ try_keep_txt = function(f){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example)
+#'
+#' # Ratios of visible part of the spectrum
+#' spec = as.spectra(spec_matrix_example)[ , 400:700 ]
 #' spec_ratio_mat = ratio(spec)
 ratio = function(x, simplify = FALSE){
     UseMethod("ratio")
@@ -54,7 +56,7 @@ ratio = function(x, simplify = FALSE){
 #' @describeIn ratio Compute pairwise reflectance ratios
 #' @export
 ratio.spectra = function(x, simplify = FALSE){
-    message("ratio() may take a while...")
+    message("ratio may take a while...")
     spm  = as.matrix(x)
     wvl  = wavelengths(x)
     pwc  = i_index_pairwise_combn(ncol(x))

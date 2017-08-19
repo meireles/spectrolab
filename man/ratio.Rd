@@ -27,7 +27,9 @@ list or matrix
 
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example)
+
+# Ratios of visible part of the spectrum
+spec = as.spectra(spec_matrix_example)[ , 400:700 ]
 spec_ratio_mat = ratio(spec)
 }
 \author{
