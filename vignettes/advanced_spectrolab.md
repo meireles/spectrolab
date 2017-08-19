@@ -30,15 +30,10 @@ library("spectrolab")
 
 `spectrolab` defines a new S3 class called `spectra` that holds all of the different compnents of a spectral data.
 
-Without diving too much into its implementation, a `spectra` object has 
+Without diving too much into its implementation, a `spectra` object holds the important information needed for most spectral datasets: reflectance, wavelengths, etc. The class has a bunch of requirements in terms of both format and values. 
 
+Some extra requirements can be added For example, reflectances can by default take any numeric value, but you can pass `enforce01 = TRUE` to the `spectra()` constructor to ensure that all valudes will be between 0 and 1. 
 
-
-
-
-class holds the essential information used in spectral dataset: reflectance, wavelengths, etc. The class has a bunch of requirements in terms of both format and values. 
-
-Some of the requirements can be relaxed. For example, reflectance must by default be between 0 and 1, but you can pass `enforce01` to the `spectra()` constructor to supress this behaviour
 
 ## Constructing a `spectra` object _"by hand"_
 
@@ -48,7 +43,7 @@ Alternativelly to `read_spectra()` or `as.spectra()`, you can create a `spectra`
 ```r
 # (1) Create a reflectance matrix.
 #     In this case, by removing the first column that holds the species name
-rf = spec_matrix_example[, -1]
+rf = spec_matrix_example[ , -1]
 
 # (2) Create a vector with wavelength labels that match
 #     the reflectance matrix columns.
@@ -57,7 +52,7 @@ wl = colnames(rf)
 # (3) Create a vector with sample labels that match
 #     the reflectance matrix rows.
 #     In this case, use the first colum of spec_matrix_example
-sn = spec_matrix_example[, 1] 
+sn = spec_matrix_example[ , 1] 
 
 # Finally, construct the spectra object using the `spectra` constructor
 spec = spectra(reflectance = rf, wavelengths = wl, names = sn)
@@ -78,7 +73,7 @@ plot(spec)
 
 ## Getting and Setting
 
-`spectrolab` gives you acess to get and set functions for most `spectra` components. The `names()`, `wavelengths()` functions do both getting and setting, as expected in T
+`spectrolab` gives you acess to get and set functions for most `spectra` components. The `names()`, `wavelengths()` functions do both getting and setting. For example:
 
 
 ```r
@@ -88,6 +83,7 @@ wavelengths(spec)[1:4]
 
 # Setters
 names(spec)       = toupper(names(spec))
+wavelengths(spec) = wavelengths(spec) / 1000 
 ```
 
 Reflectances are set using the `[` notation. For instance:
@@ -100,12 +96,3 @@ plot(spec)
 
 ![](advanced_spectrolab_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
-You may want to fiddle with the reflectance itself. This is easy to do, but there are some constraints. For example, `spectrolab` will not allow you to have negative reflectance values or values greater than 1.
-
-However, `spectrolab` will throw an error if you try to perform an illegal operation to reflectance, for instance 
-
-
-```r
-# Trying to add 1.0 to all reflectance values will fail.
-spec[] = reflectance(spec) + 1.0
-```
