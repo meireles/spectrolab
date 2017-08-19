@@ -415,7 +415,7 @@ plot_interactive = function(spec,
                 cols = if(input$highlight_by_dist == TRUE){
                     ifelse(spec_dist[s_range] > input$dist_highlight, "orange", "black")
                 } else {
-                    colpalette(length(s_range))
+                    suppressWarnings( colpalette(length(s_range)) ) ## suppressWarnings
                 }
 
                 plot(spec[s_range, w_range], col = cols, ...)
