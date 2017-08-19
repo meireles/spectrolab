@@ -9,8 +9,8 @@ devtools::use_package("parallel")
 #'
 #' \code{apply_by_band} is conceptually similar to apply(as.matrix(x), 2, fun),
 #' but returns a spectra object while dealing with metadata and attributes.
-#' Applying a function that doesn't act on numeric values may crash the function
-#' or render change all reflecances NA.
+#' Applying a function that does not act on numeric values may crash the function
+#' or render change all reflectances NA.
 #'
 #' @param x spectra
 #' @param fun numeric function to be applied to each band.
@@ -228,7 +228,7 @@ split.spectra = function(x, f, drop = FALSE, ...){
 #'
 #' Note that \code{subset_by} forces you to provide both a minimum and a maximum
 #' number of spectra to be kept for each unique value of `by`. In case you're
-#' intrested in subsetting \emph{only} based on `n_min`, set `n_max` to `Inf`.
+#' interested in subsetting \emph{only} based on `n_min`, set `n_max` to `Inf`.
 #'
 #' @param x spectra object
 #' @param by vector coercible to factor and of same length as nrow(x)
