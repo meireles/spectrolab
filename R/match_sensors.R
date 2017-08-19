@@ -72,7 +72,7 @@ i_remove_duplicated_wavelength = function(x, boundary){
 #'
 #' @param x spectra object
 #' @param splice_at wavelengths where to splice sensors. suggests where the
-#'                  begining of sensors 2 and 3 should be.
+#'                  beginning of sensors 2 and 3 should be.
 #' @return spectra object
 #'
 #' @keywords internal

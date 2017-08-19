@@ -31,7 +31,7 @@ spectra
 \details{
 Note that \code{subset_by} forces you to provide both a minimum and a maximum
 number of spectra to be kept for each unique value of `by`. In case you're
-intrested in subsetting \emph{only} based on `n_min`, set `n_max` to `Inf`.
+interested in subsetting \emph{only} based on `n_min`, set `n_max` to `Inf`.
 }
 \section{Methods (by class)}{
 \itemize{

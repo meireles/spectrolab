@@ -31,8 +31,8 @@ spectra
 \description{
 \code{apply_by_band} is conceptually similar to apply(as.matrix(x), 2, fun),
 but returns a spectra object while dealing with metadata and attributes.
-Applying a function that doesn't act on numeric values may crash the function
-or render change all reflecances NA.
+Applying a function that does not act on numeric values may crash the function
+or render change all reflectances NA.
 }
 \section{Methods (by class)}{
 \itemize{
