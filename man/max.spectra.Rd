@@ -17,6 +17,11 @@ single numeric value
 \description{
 \code{max} Returns the maximum reflectance value in a spectra object
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+max(spec)
+}
 \author{
 Jose Eduardo Meireles
 }

@@ -30,6 +30,17 @@ sample names contain 1 and 2, you will get the spectra with names in
 c(1, 2) and not (at least necessarily) the first and second samples in the
 `spectra` object.
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+head(names(spec), n = 3)
+# by name
+spec1 = spec[ "species_7" , ]
+spec1
+# by band
+spec2 = spec[ , 400:700 ]
+spec2
+}
 \author{
 Jose Eduardo Meireles
 }

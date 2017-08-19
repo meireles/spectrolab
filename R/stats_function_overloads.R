@@ -14,6 +14,11 @@
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' mean(spec)
 mean.spectra = function(x, na.rm = TRUE, keep_txt_meta = TRUE, ...){
     apply_by_band(x, base::mean, na.rm = na.rm, keep_txt_meta = keep_txt_meta, ...)
 }
@@ -32,6 +37,11 @@ mean.spectra = function(x, na.rm = TRUE, keep_txt_meta = TRUE, ...){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' median(spec)
 median.spectra = function(x, na.rm = TRUE, keep_txt_meta = TRUE, ...){
     apply_by_band(x, stats::median, na.rm = na.rm, keep_txt_meta = keep_txt_meta, ...)
 }
@@ -80,6 +90,11 @@ var.default = stats::var
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' var(spec)
 var.spectra = function(x, y = NULL, na.rm = TRUE, use){
     apply_by_band(x, stats::var, na.rm = na.rm, keep_txt_meta = TRUE)
 }
@@ -117,6 +132,11 @@ sd.default = stats::sd
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' sd(spec)
 sd.spectra = function(x, na.rm = TRUE){
     apply_by_band(x, stats::sd, na.rm = na.rm, keep_txt_meta = TRUE)
 }
@@ -138,6 +158,11 @@ sd.spectra = function(x, na.rm = TRUE){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' quantile(spec, probs = c(0.25, 0.75))
 quantile.spectra = function(x,
                             probs = c(0.025, 0.25, 0.5, 0.75, 0.975),
                             na.rm = TRUE,

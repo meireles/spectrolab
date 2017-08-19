@@ -13,6 +13,12 @@
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' g = try_keep_txt(mean)
+#' g(c(1, 2))
+#' g(c("a", "b"))
 try_keep_txt = function(f){
     function(x, ...){
         r = tryCatch(
@@ -35,6 +41,11 @@ try_keep_txt = function(f){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' spec_ratio_mat = ratio(spec)
 ratio = function(x, simplify = FALSE){
     UseMethod("ratio")
 }
@@ -43,6 +54,7 @@ ratio = function(x, simplify = FALSE){
 #' @describeIn ratio Compute pairwise reflectance ratios
 #' @export
 ratio.spectra = function(x, simplify = FALSE){
+    message("ratio() may take a while...")
     spm  = as.matrix(x)
     wvl  = wavelengths(x)
     pwc  = i_index_pairwise_combn(ncol(x))

@@ -28,6 +28,11 @@ nothing. Called for side effect.
 \description{
 \code{plot} plots spectra.
 }
+\examples{
+library(spectrolab)
+spec  = as.spectra(spec_matrix_example)
+plot(spec, lwd = 1.2)
+}
 \author{
 Jose Eduardo Meireles
 }

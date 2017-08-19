@@ -49,6 +49,12 @@ which  happens when the reflectance value for the right sensor is 0.
 \item \code{spectra}: Match sensor overlap regions
 }}
 
+\examples{
+library(spectrolab)
+data(spec_with_jump)
+spec = spec_with_jump
+spec = match_sensors(spec, splice_at = c(971, 1910), fixed_sensor = 2)
+}
 \author{
 Jose Eduardo Meireles and Anna Schweiger
 }

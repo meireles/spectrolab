@@ -19,6 +19,11 @@ devtools::use_package("RColorBrewer")
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec  = as.spectra(spec_matrix_example)
+#' plot(spec, lwd = 1.2)
 plot.spectra = function(x,
                         ylab = "Reflectance",
                         xlab = "Wavelength",
@@ -64,6 +69,11 @@ plot.spectra = function(x,
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec  = as.spectra(spec_matrix_example)
+#' plot_quantile(spec, total_prob = 0.5)
 plot_quantile = function(spec,
                          total_prob = 0.95,
                          col        = rgb(0, 0, 0, 0.1),
@@ -113,6 +123,11 @@ plot_quantile = function(spec,
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' # matrix that defines regions on the spectra
+#' # Useful for plotting w/ plot_regions()
 default_spec_regions = function(){
     cbind("VIS"   = c(begin = 400,  end = 700),
           "NIR"   = c(begin = 800,  end = 1300),
@@ -146,8 +161,15 @@ default_spec_regions = function(){
 #'                      "NIR"   = c(begin = 800,  end = 1300),
 #'                      "SWIR1" = c(begin = 1550, end = 1800),
 #'                      "SWIR2" = c(begin = 2000, end = 2400)).
-#' @examples
 #'
+#' @importFrom grDevices rgb
+#' @importFrom graphics mtext par polygon
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+#'
+#' @examples
+#' library(spectrolab)
 #' spec = as.spectra(spec_matrix_example)
 #' plot_regions(spec, default_spec_regions())
 #' plot(spec, add = TRUE)
@@ -160,12 +182,6 @@ default_spec_regions = function(){
 #' plot_regions(spec,default_spec_regions(), col = colors)
 #' plot(spec, add = TRUE)
 #' }
-#'
-#' @importFrom grDevices rgb
-#' @importFrom graphics mtext par polygon
-#'
-#' @author Jose Eduardo Meireles
-#' @export
 plot_regions = function(spec,
                         regions   = default_spec_regions(),
                         col       = grDevices::rgb(0.7, 0.7, 0.7, 0.3),
@@ -232,6 +248,14 @@ plot_regions = function(spec,
 #' @param ... Other arguments passed to plot
 #' @return interactive plot
 #'
+#' @import shiny
+#' @importFrom shinyjs useShinyjs
+#' @importFrom RColorBrewer brewer.pal
+#' @importFrom stats dist
+#'
+#' @author Anna K. Schweiger and Jose Eduardo Meireles
+#' @export
+#'
 #' @examples
 #' \dontrun{
 #' # Create a spectra object
@@ -240,14 +264,6 @@ plot_regions = function(spec,
 #' # Start interactive plot
 #' plot_interactive(spec)
 #' }
-#'
-#' @import shiny
-#' @importFrom shinyjs useShinyjs
-#' @importFrom RColorBrewer brewer.pal
-#' @importFrom stats dist
-#'
-#' @author Anna K. Schweiger and Jose Eduardo Meireles
-#' @export
 plot_interactive = function(spec,
                             colpalette = function(n) RColorBrewer::brewer.pal(n, "Dark2"),
                             ... ){

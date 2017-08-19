@@ -17,6 +17,11 @@ nothing yet (just prints to console)
 \description{
 Summarize spectra
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+summary(spec)
+}
 \author{
 Jose Eduardo Meireles
 }

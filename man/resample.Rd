@@ -35,6 +35,11 @@ exhaustive, so look at the data before resampling. The implemented checks are:
 \item \code{spectra}: Resample spectra
 }}
 
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+spec = resample(spec, new_wvls = seq(400, 2400, 0.5), parallel = FALSE)
+}
 \author{
 Jose Eduardo Meireles
 }

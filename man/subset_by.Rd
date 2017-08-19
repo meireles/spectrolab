@@ -38,6 +38,13 @@ interested in subsetting \emph{only} based on `n_min`, set `n_max` to `Inf`.
 \item \code{spectra}: Subset spectra by factor
 }}
 
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+
+# remove spec of species with less than 4 samples
+spec = subset_by(spec, by = names(spec), n_min = 4, n_max = Inf)
+}
 \author{
 Jose Eduardo Meireles
 }

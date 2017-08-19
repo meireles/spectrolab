@@ -17,6 +17,12 @@ nothing. called for its side effect
 \description{
 \code{reflectance} Assigns the rhs to the reflectance of the lhs spectra obj
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+# scale all refletance values by 2
+reflectance(spec) = reflectance(spec) * 2
+}
 \author{
 Jose Eduardo Meireles
 }

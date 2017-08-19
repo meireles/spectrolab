@@ -30,6 +30,11 @@ metadata and reflectance. If you want to aggregate spectra and metadata
 using `mean`, `sd`, `median` etc. but try to keep the text values, wrap your
 function in \code{try_keep_txt(f)}.
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+spec_mean = aggregate(spec, by = names(spec), mean, try_keep_txt(mean))
+}
 \author{
 Jose Eduardo Meireles
 }

@@ -64,6 +64,17 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' head(names(spec), n = 3)
+#' # by name
+#' spec1 = spec[ "species_7" , ]
+#' spec1
+#' # by band
+#' spec2 = spec[ , 400:700 ]
+#' spec2
 `[.spectra` = function(x, i, j, simplify = TRUE){
 
     if(missing(i)){ i = NULL }
@@ -100,6 +111,12 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' spec[ , 400:500] = spec[ , 400:500] * 1.2
+#' spec
 `[<-.spectra` = function(x, i, j, value){
     if(missing(i)){ i = NULL }
     if(missing(j)){ j = NULL }
@@ -136,6 +153,11 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' is.matrix(reflectance(spec))
 reflectance = function(x){
     UseMethod("reflectance")
 }
@@ -150,6 +172,12 @@ reflectance = function(x){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' # scale all refletance values by 2
+#' reflectance(spec) = reflectance(spec) * 2
 `reflectance<-` = function(x, value){
     UseMethod("reflectance<-")
 }
@@ -160,7 +188,6 @@ reflectance = function(x){
 reflectance.spectra = function(x){
     x$reflectance
 }
-
 
 #' @describeIn reflectance<- Set spectra reflectance
 #' @export
@@ -181,6 +208,12 @@ reflectance.spectra = function(x){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' # is reflectance being forced to be between 0 and 1?
+#' enforce01(spec)
 enforce01 = function(x){
     UseMethod("enforce01")
 }
@@ -195,6 +228,16 @@ enforce01 = function(x){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#'
+#' # Force to be between 0 and 1.
+#' enforce01(spec) = TRUE
+#'
+#' # So this operation will throw an error
+#'  \dontrun{ reflectance(spec) = reflectance(spec) * 1000 }
 `enforce01<-` = function(x, value){
     UseMethod("enforce01<-")
 }
@@ -235,6 +278,11 @@ enforce01.spectra = function(x){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' names(spec)
 names.spectra = function(x){
     x$names
 }
@@ -250,6 +298,11 @@ names.spectra = function(x){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' names(spec) = toupper(names(spec))
 `names<-.spectra` = function(x, value){
     x$names = i_names(value, nrow(x))
     x
@@ -272,6 +325,11 @@ names.spectra = function(x){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' head(wavelengths(spec))
 wavelengths = function(x, min = NULL, max = NULL, return_num = TRUE){
     UseMethod("wavelengths")
 }
@@ -288,6 +346,11 @@ wavelengths = function(x, min = NULL, max = NULL, return_num = TRUE){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' wavelengths(spec) = wavelengths(spec) / 1000
 `wavelengths<-` = function(x, unsafe = FALSE, value){
     UseMethod("wavelengths<-")
 }
@@ -340,10 +403,16 @@ wavelengths.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
 #' @param sample sample index or name
 #' @param simplify boolean. defaults to FALSE
 #' @param quiet boolean. warn about non-existent metadata? defaults to TRUE
-#' @return TODO
+#' @return data frame or vector
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' spec = normalize(spec)
+#' meta(spec, "normalization_magnitude")
 meta = function(x, label, sample, simplify = FALSE, quiet = TRUE){
     UseMethod("meta")
 }
@@ -360,6 +429,11 @@ meta = function(x, label, sample, simplify = FALSE, quiet = TRUE){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' meta(spec, "random") = rnorm(nrow(spec), mean(10), sd = 2)
 `meta<-` = function(x, label, sample, value){
     UseMethod("meta<-")
 }

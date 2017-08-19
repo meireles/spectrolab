@@ -21,6 +21,11 @@ matrix of spectral reflectance. columns are wavelengths and rows are
 \description{
 Convert spectra to matrix
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+mat  = as.matrix(spec)
+}
 \author{
 Jose Eduardo Meireles
 }

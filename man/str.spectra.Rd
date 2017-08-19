@@ -17,6 +17,11 @@ prints to console
 \description{
 Structure of the spectra object
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+str(spec)
+}
 \author{
 Jose Eduardo Meireles
 }

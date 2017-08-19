@@ -31,6 +31,11 @@ vector of wavelengths. numeric if `return_num` = TRUE (default).
 \item \code{spectra}: Set spectra wavelength labels
 }}
 
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+head(wavelengths(spec))
+}
 \author{
 Jose Eduardo Meireles
 }

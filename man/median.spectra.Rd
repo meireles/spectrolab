@@ -21,6 +21,11 @@ single spectrum
 \description{
 \code{median} computes the median spectrum
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+median(spec)
+}
 \author{
 Jose Eduardo Meireles
 }

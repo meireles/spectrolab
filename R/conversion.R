@@ -12,6 +12,10 @@
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' as.spectra(spec_matrix_example)
 as.spectra = function(x, name_idx = 1, meta_idxs = NULL){
     UseMethod("as.spectra", x)
 }
@@ -72,6 +76,11 @@ as.spectra.matrix = function(x, name_idx = 1, meta_idxs = NULL){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' mat  = as.matrix(spec)
 as.matrix.spectra = function(x, fix_names = "none", ...) {
     r = reflectance(x)
     s = names(x)
@@ -111,6 +120,11 @@ as.matrix.spectra = function(x, fix_names = "none", ...) {
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' df   = as.data.frame(spec, fix_names = "none")
 as.data.frame.spectra = function(x,
                                  row.names = NULL,
                                  optional = FALSE,

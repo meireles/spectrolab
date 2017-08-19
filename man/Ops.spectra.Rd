@@ -18,6 +18,13 @@ Depends on the operator. c("+", "-", "*", "/", "^") return spectra
 \description{
 Overloads arithmetic operators for spectra using `Ops.`
 }
+\examples{
+library(spectrolab)
+spec  = as.spectra(spec_matrix_example)
+spec1 = spec * 2
+spec2 = spec + spec
+all(spec1 == spec2)
+}
 \author{
 Jose Eduardo Meireles
 }

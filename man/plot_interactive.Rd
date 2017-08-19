@@ -30,7 +30,6 @@ spec = as.spectra(spec_matrix_example)
 # Start interactive plot
 plot_interactive(spec)
 }
-
 }
 \author{
 Anna K. Schweiger and Jose Eduardo Meireles

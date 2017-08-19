@@ -15,6 +15,11 @@ vector of sample names
 \description{
 \code{names} returns a vector of sample names
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+names(spec)
+}
 \author{
 Jose Eduardo Meireles
 }

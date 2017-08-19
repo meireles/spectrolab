@@ -21,6 +21,11 @@ single spectrum
 \description{
 \code{mean} computes the arithmetic mean spectrum.
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+mean(spec)
+}
 \author{
 Jose Eduardo Meireles
 }

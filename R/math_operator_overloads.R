@@ -9,6 +9,13 @@
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec  = as.spectra(spec_matrix_example)
+#' spec1 = spec * 2
+#' spec2 = spec + spec
+#' all(spec1 == spec2)
 Ops.spectra = function(e1, e2) {
     mathop = c("+", "-", "*", "/", "^")
     boolop = c("==", "!=", "<", "<=", ">=", ">")

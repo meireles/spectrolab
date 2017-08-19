@@ -28,6 +28,11 @@ a spectra object of with smoothed spectra
 \item \code{spectra}: Smooth spectra
 }}
 
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+spec = smooth(spec, parallel = FALSE)
+}
 \author{
 Jose Eduardo Meireles
 }

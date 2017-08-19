@@ -22,6 +22,12 @@ will try return a string of unique values in case function f emits a warning.
 Useful when aggregating over spectral metadata that has both numeric values
 (which you want to aggregate) and text values, which you want to keep.
 }
+\examples{
+library(spectrolab)
+g = try_keep_txt(mean)
+g(c(1, 2))
+g(c("a", "b"))
+}
 \author{
 Jose Eduardo Meireles
 }

@@ -30,6 +30,11 @@ nothing. Called for its side effect.
 \description{
 \code{plot_quantile} plots polygons for the quantiles of spectra per wavelength.
 }
+\examples{
+library(spectrolab)
+spec  = as.spectra(spec_matrix_example)
+plot_quantile(spec, total_prob = 0.5)
+}
 \author{
 Jose Eduardo Meireles
 }

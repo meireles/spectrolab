@@ -27,7 +27,7 @@ very same wavelength labels, but different metadata are acceptable
 }}
 
 \examples{
-library("spectrolab")
+library(spectrolab)
 
 # Create dummy spectra datasets. Pretend that these are all different...
 s1 = as.spectra(spec_matrix_example)

@@ -29,6 +29,11 @@ Returns a data.frame that includes sample names, metadata (if present) and
 reflectance data. One advantage over as.matrix, is that the metadata are
 returned.
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+df   = as.data.frame(spec, fix_names = "none")
+}
 \author{
 Jose Eduardo Meireles
 }

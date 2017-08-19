@@ -7,6 +7,13 @@
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec  = as.spectra(spec_matrix_example)
+#' spec1 = unclass(spec)
+#' is_spectra(spec)
+#' is_spectra(spec1)
 is_spectra = function(x){
     inherits(x, "spectra")
 }
@@ -29,6 +36,17 @@ is_spectra = function(x){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec  = as.spectra(spec_matrix_example)
+#'
+#' # Find spec with NIR dip
+#' # If there many samples need testing, set parallel = TRUE
+#' dip = has_nir_dip(spec, parallel = FALSE)
+#'
+#' # remove NIR dip
+#' spec = spec[ ! dip, ]
 has_nir_dip = function(x, smooth = TRUE, ...){
 
     if(!is_spectra(x)){

@@ -17,6 +17,16 @@ nothing. has a *side effect* of changing if a constraint is enforced
 \description{
 \code{enforce01<-} sets or unsets a spectra reflectance constraint (0 - 1)
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+
+# Force to be between 0 and 1.
+enforce01(spec) = TRUE
+
+# So this operation will throw an error
+ \dontrun{ reflectance(spec) = reflectance(spec) * 1000 }
+}
 \author{
 Jose Eduardo Meireles
 }

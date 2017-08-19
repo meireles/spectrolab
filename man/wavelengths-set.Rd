@@ -19,6 +19,11 @@ nothing. called for its side effect.
 \description{
 \code{wavelengths} sets wavelength labels of lhs to the rhs values
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+wavelengths(spec) = wavelengths(spec) / 1000
+}
 \author{
 Jose Eduardo Meireles
 }

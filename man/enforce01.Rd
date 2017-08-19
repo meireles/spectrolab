@@ -23,6 +23,12 @@ Boolean
 \item \code{spectra}: Get reflectance constraint status
 }}
 
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+# is reflectance being forced to be between 0 and 1?
+enforce01(spec)
+}
 \author{
 Jose Eduardo Meireles
 }

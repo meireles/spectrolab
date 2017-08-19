@@ -17,6 +17,11 @@ single numeric value
 \description{
 \code{min} Returns the minimum reflectance value in a spectra object
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+min(spec)
+}
 \author{
 Jose Eduardo Meireles
 }

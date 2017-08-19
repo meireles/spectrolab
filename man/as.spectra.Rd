@@ -24,6 +24,10 @@ spectra object
 \description{
 Convert matrix or data frame to spectra
 }
+\examples{
+library(spectrolab)
+as.spectra(spec_matrix_example)
+}
 \author{
 Jose Eduardo Meireles
 }

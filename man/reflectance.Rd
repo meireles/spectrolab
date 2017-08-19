@@ -23,6 +23,11 @@ matrix with samples in rows and wavelengths in columns
 \item \code{spectra}: Get spectra reflectance
 }}
 
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+is.matrix(reflectance(spec))
+}
 \author{
 Jose Eduardo Meireles
 }

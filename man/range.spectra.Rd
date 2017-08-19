@@ -17,6 +17,12 @@ tuple of numeric values (min, max)
 \description{
 \code{range} Returns the range of (min, max) reflectance values in spectra
 }
+\examples{
+
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+range(spec)
+}
 \author{
 Jose Eduardo Meireles
 }

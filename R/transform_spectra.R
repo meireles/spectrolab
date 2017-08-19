@@ -23,6 +23,11 @@ devtools::use_package("parallel")
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' spec_mean = apply_by_band(spec, mean)
 apply_by_band = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, name = NULL, ...){
     UseMethod("apply_by_band")
 }
@@ -95,6 +100,11 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' spec_mean = aggregate(spec, by = names(spec), mean, try_keep_txt(mean))
 aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
 
     if(!is.list(by)){
@@ -131,7 +141,7 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
 #' @export
 #'
 #' @examples
-#' library("spectrolab")
+#' library(spectrolab)
 #'
 #' # Create dummy spectra datasets. Pretend that these are all different...
 #' s1 = as.spectra(spec_matrix_example)
@@ -204,6 +214,11 @@ combine.spectra = function(s1, s2){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' spec_list = split(spec, names(spec))
 split.spectra = function(x, f, drop = FALSE, ...){
 
     v = unlist(f)
@@ -242,6 +257,13 @@ split.spectra = function(x, f, drop = FALSE, ...){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#'
+#' # remove spec of species with less than 4 samples
+#' spec = subset_by(spec, by = names(spec), n_min = 4, n_max = Inf)
 subset_by = function(x, by, n_min, n_max, random = TRUE){
     UseMethod("subset_by")
 }
@@ -327,6 +349,11 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' spec = normalize(spec)
 normalize = function(x, quiet = FALSE, ...){
     UseMethod("normalize")
 }
@@ -400,7 +427,7 @@ i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
     r = lapply( seq.int(nrow(x)), function(y){ d[y, ]})
     w = wavelengths(x)
 
-    n = parallel::detectCores()
+    n = parallel::detectCores() - 1L
     l = length(r)
 
     if(parallel && l > 1) {
@@ -494,6 +521,11 @@ i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' spec = smooth(spec, parallel = FALSE)
 smooth = function(x, method = "spline", ...){
     UseMethod("smooth")
 }
@@ -545,6 +577,11 @@ smooth.spectra = function(x, method = "spline", ...){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' spec = resample(spec, new_wvls = seq(400, 2400, 0.5), parallel = FALSE)
 resample = function(x, new_wvls, ...) {
     UseMethod("resample")
 }

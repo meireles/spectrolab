@@ -32,6 +32,11 @@ a single `spectra` or a list of `spectra` (in case files have
 \description{
 Read files from various formats into `spectra`
 }
+\examples{
+library(spectrolab)
+dir_path = system.file("extdata", "Acer_example", package = "spectrolab")
+spec     = read_spectra(path = dir_path, format = "sig")
+}
 \author{
 Jose Eduardo Meireles
 }

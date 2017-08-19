@@ -135,6 +135,12 @@ i_trim_sensor_overlap = function(x, splice_at){
 #'
 #' @author Jose Eduardo Meireles and Anna Schweiger
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' data(spec_with_jump)
+#' spec = spec_with_jump
+#' spec = match_sensors(spec, splice_at = c(971, 1910), fixed_sensor = 2)
 match_sensors = function(x,
                          splice_at,
                          fixed_sensor    = 2,

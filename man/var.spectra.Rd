@@ -23,6 +23,11 @@ single spectrum
 \description{
 Forces keep_txt_meta = TRUE
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+var(spec)
+}
 \author{
 Jose Eduardo Meireles
 }

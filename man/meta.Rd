@@ -22,7 +22,7 @@ meta(x, label, sample, simplify = FALSE, quiet = TRUE)
 \item{quiet}{boolean. warn about non-existent metadata? defaults to TRUE}
 }
 \value{
-TODO
+data frame or vector
 }
 \description{
 \code{meta} returns metadata of spectra
@@ -32,6 +32,12 @@ TODO
 \item \code{spectra}: get metadata
 }}
 
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+spec = normalize(spec)
+meta(spec, "normalization_magnitude")
+}
 \author{
 Jose Eduardo Meireles
 }

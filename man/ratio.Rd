@@ -25,6 +25,11 @@ list or matrix
 \item \code{spectra}: Compute pairwise reflectance ratios
 }}
 
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+spec_ratio_mat = ratio(spec)
+}
 \author{
 Jose Eduardo Meireles
 }

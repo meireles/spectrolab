@@ -17,6 +17,11 @@ devtools::use_package("prospectr")
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' dir_path = system.file("extdata", "Acer_example", package = "spectrolab")
+#' spec     = read_spectra(path = dir_path, format = "sig")
 read_spectra = function(path,
                         format,
                         include_white_ref  = FALSE,

@@ -26,6 +26,17 @@ positives. Ideally, spectra should have been been smoothed (`spectrolab::smooth`
 before trying to detect an NIR dip. If param `smooth` is set to TRUE (default),
 `has_nir_dip` does some basic smoothing internally.
 }
+\examples{
+library(spectrolab)
+spec  = as.spectra(spec_matrix_example)
+
+# Find spec with NIR dip
+# If there many samples need testing, set parallel = TRUE
+dip = has_nir_dip(spec, parallel = FALSE)
+
+# remove NIR dip
+spec = spec[ ! dip, ]
+}
 \author{
 Jose Eduardo Meireles
 }

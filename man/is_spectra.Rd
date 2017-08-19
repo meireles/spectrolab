@@ -15,6 +15,13 @@ boolean
 \description{
 \code{is_spectra} tests if the argument is a spectra class object
 }
+\examples{
+library(spectrolab)
+spec  = as.spectra(spec_matrix_example)
+spec1 = unclass(spec)
+is_spectra(spec)
+is_spectra(spec1)
+}
 \author{
 Jose Eduardo Meireles
 }

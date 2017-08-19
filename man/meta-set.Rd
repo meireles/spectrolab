@@ -21,6 +21,11 @@ nothing. called for its side effect
 \description{
 \code{meta} sets metadata
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+meta(spec, "random") = rnorm(nrow(spec), mean(10), sd = 2)
+}
 \author{
 Jose Eduardo Meireles
 }

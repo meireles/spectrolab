@@ -23,6 +23,12 @@ nothing. modifies spectra as side effect
 \description{
 \code{`[<-`} assigns the rhs values to spectra
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+spec[ , 400:500] = spec[ , 400:500] * 1.2
+spec
+}
 \author{
 Jose Eduardo Meireles
 }

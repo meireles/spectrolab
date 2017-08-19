@@ -17,6 +17,11 @@ nothing. called for its side effect.
 \description{
 \code{names} assigns sample names to lhs
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+names(spec) = toupper(names(spec))
+}
 \author{
 Jose Eduardo Meireles
 }

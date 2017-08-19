@@ -39,6 +39,11 @@ or render change all reflectances NA.
 \item \code{spectra}: Apply a numeric function by band
 }}
 
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+spec_mean = apply_by_band(spec, mean)
+}
 \author{
 Jose Eduardo Meireles
 

@@ -21,6 +21,11 @@ list of spectra
 \description{
 \code{split} a spectra object into a list of spectra according to grouping f.
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+spec_list = split(spec, names(spec))
+}
 \author{
 Jose Eduardo Meireles
 }

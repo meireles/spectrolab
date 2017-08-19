@@ -27,6 +27,11 @@ spectra object with normalized spectra
 \item \code{spectra}: Vector normalize spectra
 }}
 
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+spec = normalize(spec)
+}
 \author{
 Jose Eduardo Meireles
 }

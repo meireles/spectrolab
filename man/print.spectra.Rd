@@ -17,6 +17,13 @@ nothing. called for side effect
 \description{
 \code{print} prints basic information about the spectra obj to the console
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+print(spec)
+## or simply
+spec
+}
 \author{
 Jose Eduardo Meireles
 }

@@ -8,6 +8,11 @@
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' min(spec)
 min.spectra = function(..., na.rm = FALSE){
     min(reflectance(...), na.rm = na.rm)
 }
@@ -22,6 +27,11 @@ min.spectra = function(..., na.rm = FALSE){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' max(spec)
 max.spectra = function(..., na.rm = FALSE){
     max(reflectance(...), na.rm = na.rm)
 }
@@ -36,6 +46,12 @@ max.spectra = function(..., na.rm = FALSE){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#'
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' range(spec)
 range.spectra = function(..., na.rm = FALSE){
     range(reflectance(...), na.rm = na.rm)
 }
@@ -50,6 +66,11 @@ range.spectra = function(..., na.rm = FALSE){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' dim(spec)
 dim.spectra = function(x){
     c("n_samples"     = length(names(x)),
       "n_wavelengths" = length(wavelengths(x)) )
@@ -67,6 +88,13 @@ dim.spectra = function(x){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' print(spec)
+#' ## or simply
+#' spec
 print.spectra = function(x, ...){
     r_wvl   = range(wavelengths(x))
     o_wvl   = i_is_increasing(wavelengths(x), stop = FALSE)
@@ -107,6 +135,11 @@ print.spectra = function(x, ...){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' summary(spec)
 summary.spectra = function(object, ...){
     print(object, ...)
 }
@@ -120,6 +153,11 @@ summary.spectra = function(object, ...){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as.spectra(spec_matrix_example)
+#' str(spec)
 str.spectra = function(object, ...){
     cat("The structure of a spectra object should be irrelevant.", "\n")
     cat("To access spectra components, use the provided getters and setters.", "\n\n")

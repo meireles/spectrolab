@@ -15,6 +15,11 @@ tuple of integers: c("n_samples", "n_wavelengths")
 \description{
 \code{dim} returns a vector with number of samples and bands (wavelengths)
 }
+\examples{
+library(spectrolab)
+spec = as.spectra(spec_matrix_example)
+dim(spec)
+}
 \author{
 Jose Eduardo Meireles
 }

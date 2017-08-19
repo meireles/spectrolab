@@ -43,7 +43,7 @@ spec_regions = cbind("VIS"   = c(begin = 400,  end = 700),
                      "SWIR2" = c(begin = 2000, end = 2400)).
 }
 \examples{
-
+library(spectrolab)
 spec = as.spectra(spec_matrix_example)
 plot_regions(spec, default_spec_regions())
 plot(spec, add = TRUE)
@@ -56,7 +56,6 @@ colors = col_fun(4)
 plot_regions(spec,default_spec_regions(), col = colors)
 plot(spec, add = TRUE)
 }
-
 }
 \author{
 Jose Eduardo Meireles

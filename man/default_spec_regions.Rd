@@ -12,6 +12,11 @@ matrix with default_spec_regions
 \description{
 Return default spectral regions matrix
 }
+\examples{
+library(spectrolab)
+# matrix that defines regions on the spectra
+# Useful for plotting w/ plot_regions()
+}
 \author{
 Jose Eduardo Meireles
 }
