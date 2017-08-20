@@ -5,7 +5,7 @@
 
 # spectrolab
 
-The package is being actively developed and parts of the *API may still change*. You’re welcome to give it a spin, but do so *at your own risk*. With that said, most parts of the package are pretty stable. Let us know if (or when) you find otherwise.
+The package is being actively developed and parts of the *API may still change*. You’re welcome to give it a spin, but do so *at your own risk*. With that said, most parts of the package are pretty stable. Let us know if you find otherwise.
 
 ## Installation
 
