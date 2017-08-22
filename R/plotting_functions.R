@@ -287,10 +287,9 @@ plot_interactive = function(spec,
     band_threshold = 3
     refl_threshold = 0.03
 
-
     # Find spectral distances
-    spec_dist = stats::dist(rbind(as.matrix(mean(spec)), as.matrix(spec)))
-    spec_dist = spec_dist[ seq.int(nrow(spec)) ]
+    spec_dist = t(as.matrix(spec)) - as.vector(as.matrix(mean(spec)))
+    spec_dist = sqrt(colSums(spec_dist^2 ))
 
     # find order of magnitude of spec_dist
     dist_mag  = ceiling( log10( 1 / min(diff(sort(spec_dist))) ) )
