@@ -31,7 +31,7 @@ library(spectrolab)
 spec  = as.spectra(spec_matrix_example)
 
 # Find spec with NIR dip
-# If there many samples need testing, set parallel = TRUE
+# Set parallel = TRUE if many samples need testing.
 dip = has_nir_dip(spec, parallel = FALSE)
 
 # remove NIR dip
