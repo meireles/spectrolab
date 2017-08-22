@@ -279,7 +279,8 @@ plot_interactive = function(spec,
 
     # Constants
     n_max     = nrow(spec)
-    i_display = min(10, n_max)
+    i_display = min(10,  n_max)  # Initial display = 10
+    m_display = min(600, n_max)  # Maximum display = 600
     wvl_min   = min(spectrolab::wavelengths(spec))
     wvl_max   = max(spectrolab::wavelengths(spec))
 
@@ -313,7 +314,7 @@ plot_interactive = function(spec,
                                                       label   = "display number",
                                                       value   = i_display,
                                                       min     = 1,
-                                                      max     = n_max,
+                                                      max     = m_display,
                                                       width   = "100%"),
                                   shiny::actionButton("go_back", label = "previous", width = "45%"),
                                   shiny::actionButton("go_fwd",  label = "next", width = "45%"),
@@ -388,6 +389,11 @@ plot_interactive = function(spec,
 
             # Update `to` and `picked` if n_display is changed
             shiny::observeEvent(input$n_display ,{
+
+                if(input$n_display > m_display){
+                    updateNumericInput(session, "n_display", value = m_display)
+                }
+
                 new_to   = min(from() + input$n_display - 1L, n_max)
 
                 if(!is.null(picked())){
