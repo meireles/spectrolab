@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting_functions.R
 \name{plot_interactive}
 \alias{plot_interactive}
-\title{Interactive spectra plot}
+\title{Plot spectra interactively}
 \usage{
 plot_interactive(spec, colpalette = function(n) RColorBrewer::brewer.pal(n,
   "Dark2"), ...)
@@ -19,8 +19,13 @@ function returned by colorRampPalette() or colorRamps package}
 interactive plot
 }
 \description{
-\code{plot_interact} iteratively plots a defined number of spectra. This is
-helpful for data inspection and large datasets.
+Iteratively plots spectra with a shiny app. Useful to inspect large datasets.
+}
+\details{
+\code{plot_interact} limits the number of spectra displayed at once to 600 for
+performance reasons. As of now, the function does not return anything and does
+not have side effects. This means that spectra can be selected and highlighted
+but not yet deleted or subset from the shiny app.
 }
 \examples{
 \dontrun{

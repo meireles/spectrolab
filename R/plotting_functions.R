@@ -237,10 +237,14 @@ plot_regions = function(spec,
     }
 }
 
-#' Interactive spectra plot
+#' Plot spectra interactively
 #'
-#' \code{plot_interact} iteratively plots a defined number of spectra. This is
-#' helpful for data inspection and large datasets.
+#' Iteratively plots spectra with a shiny app. Useful to inspect large datasets.
+#'
+#' \code{plot_interact} limits the number of spectra displayed at once to 600 for
+#' performance reasons. As of now, the function does not return anything and does
+#' not have side effects. This means that spectra can be selected and highlighted
+#' but not yet deleted or subset from the shiny app.
 #'
 #' @param spec spectra object
 #' @param colpalette a color palette function, e.g. rainbow, terrain.colors, or a
@@ -267,8 +271,8 @@ plot_regions = function(spec,
 plot_interactive = function(spec,
                             colpalette = function(n) RColorBrewer::brewer.pal(n, "Dark2"),
                             ... ){
-    if (!requireNamespace("shiny", quietly = TRUE)) {
-        stop("Package shiny needed for this function to work. Please install it.",
+    if (! requireNamespace("shiny", quietly = TRUE)) {
+        stop("Package 'shiny' needed for this function to work. Please install it.",
              call. = FALSE)
     }
 
@@ -290,7 +294,7 @@ plot_interactive = function(spec,
 
     # Find spectral distances
     spec_dist = t(as.matrix(spec)) - as.vector(as.matrix(mean(spec)))
-    spec_dist = sqrt(colSums(spec_dist^2 ))
+    spec_dist = sqrt(colSums(spec_dist^2))
 
     # find order of magnitude of spec_dist
     dist_mag  = ceiling( log10( 1 / min(diff(sort(spec_dist))) ) )
