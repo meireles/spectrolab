@@ -1,3 +1,28 @@
+#' Spectra Transpose
+#'
+#' spectra are not transposable. Transpose the reflectance instead
+#'
+#' @param x spectra
+#' @return nothing. operation not allowed
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' s = as.spectra(spec_matrix_example)
+#'
+#' # This will throw an error
+#' \dontrun{
+#' t(s)
+#' }
+#' # But these options should work
+#' t(reflectance(s))
+#' t(as.matrix(s))
+t.spectra = function(x){
+    stop("spectra are not transposable. You can `t(reflectance(x))` though.")
+}
+
 #' Arithmetic operators for spectra
 #'
 #' Overloads arithmetic operators for spectra using `Ops.`
