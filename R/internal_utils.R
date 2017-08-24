@@ -3,7 +3,7 @@
 #' \code{i_is_increasing} tests if wavelength values are increasing
 #'
 #' Many transform functions can only (or at least should only) be applied to
-#' spectra with monotonically varying, very likely increasing) wavelength values.
+#' spectra with monotonically varying (very likely increasing) wavelength values.
 #' \code{i_is_increasing} tests that case and may throw an error
 #' or return the boolen result from the test.
 #'
@@ -12,8 +12,8 @@
 #' @param call boolean. If stop = TRUE, should the function call be printed?
 #' @return boolean
 #'
-#' @keywords internal
 #' @author Jose Eduardo Meireles
+#' @keywords internal
 i_is_increasing = function(x, stop = TRUE, call = FALSE){
     y = all(diff(x) >= 0.0)
     if( !y && stop){
@@ -30,8 +30,8 @@ i_is_increasing = function(x, stop = TRUE, call = FALSE){
 #' @param x single value or vector of numbers
 #' @return boolean
 #'
-#' @keywords internal
 #' @author Jose Eduardo Meireles
+#' @keywords internal
 i_is_whole = function(x){
     r = suppressWarnings(as.integer(x) == x)
     r[is.na(r)] = FALSE
@@ -51,8 +51,8 @@ i_is_whole = function(x){
 #' @param quiet boolean. Get warnings?
 #' @return boolean
 #'
-#' @keywords internal
 #' @author Jose Eduardo Meireles
+#' @keywords internal
 i_is_index = function(x, max_length, all = TRUE, allow_negative = FALSE, quiet = TRUE){
     if(quiet){
         w = suppressWarnings(i_is_whole(x))
@@ -89,8 +89,8 @@ i_is_index = function(x, max_length, all = TRUE, allow_negative = FALSE, quiet =
 #'        to false
 #' @return matched indices, or list in case full = TRUE
 #'
-#' @keywords internal
 #' @author Jose Eduardo Meireles
+#' @keywords internal
 i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
 
     r = list(matched = NULL, unmatched = NULL, not_element = NULL)
@@ -146,8 +146,8 @@ i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
 #' @param allow_negative boolean. Allow indices to be negative? Defaults to FALSE
 #' @return matched indices
 #'
-#' @keywords internal
 #' @author Jose Eduardo Meireles
+#' @keywords internal
 i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE, allow_negative = FALSE){
 
 
@@ -243,10 +243,8 @@ i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE, 
             }
         }
     }
-
     stop("No match.")
 }
-
 
 
 #' Find plot boundaries in user space
@@ -258,9 +256,9 @@ i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE, 
 #'
 #' @importFrom stats setNames
 #' @importFrom graphics par
-#'
-#' @keywords internal
+#
 #' @author Jose Eduardo Meireles
+#' @keywords internal
 i_plot_boundaries = function(return_mat = FALSE) {
     bounds = stats::setNames(graphics::par("usr"), c("xmin", "xmax", "ymin", "ymax"))
 
@@ -278,11 +276,10 @@ i_plot_boundaries = function(return_mat = FALSE) {
 #'
 #' @importFrom graphics par
 #'
-#' @keywords internal
 #' @author Jose Eduardo Meireles
+#' @keywords internal
 i_plot_exists = function(){
-    tryCatch( {graphics::par(new = TRUE); TRUE},
-              warning = function(x){FALSE})
+    tryCatch( {graphics::par(new = TRUE); TRUE}, warning = function(x){FALSE})
 }
 
 
@@ -298,9 +295,9 @@ i_plot_exists = function(){
 #' @references http://stackoverflow.com/questions/743812/calculating-moving-average-in-r
 #'
 #' @importFrom stats filter
-#' @keywords internal
 #'
 #' @author Jose Eduardo Meireles
+#' @keywords internal
 i_mav = function(x, n = 3, sides = 2){
     stats::filter(x, rep( (1/n), n), sides = sides)
 }
@@ -317,8 +314,8 @@ i_mav = function(x, n = 3, sides = 2){
 #' other indexes it interacts with (2nd col) and the "absolute position" of that
 #' pairwise interaction (1st column) is returned.
 #'
-#' @keywords internal
 #' @author Jose Eduardo Meireles
+#' @keywords internal
 i_index_pairwise_combn = function(n){
 
     if( ! i_is_whole(n) | n < 2 ){
