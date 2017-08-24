@@ -270,7 +270,7 @@ plot_regions = function(spec,
 #' }
 plot_interactive = function(spec,
                             colpalette = function(n) RColorBrewer::brewer.pal(n, "Dark2"),
-                            ... ){
+                            ...){
     if (! requireNamespace("shiny", quietly = TRUE)) {
         stop("Package 'shiny' needed for this function to work. Please install it.",
              call. = FALSE)
@@ -283,8 +283,8 @@ plot_interactive = function(spec,
 
     # Constants
     n_max     = nrow(spec)
-    i_display = min(10,  n_max)  # Initial display = 10
-    m_display = min(600, n_max)  # Maximum display = 600
+    i_display = min(10,  n_max)                         ## Initial display = 10
+    m_display = min(600, n_max)                         ## Maximum display = 600
     wvl_min   = min(spectrolab::wavelengths(spec))
     wvl_max   = max(spectrolab::wavelengths(spec))
 
@@ -294,9 +294,16 @@ plot_interactive = function(spec,
 
     # Find spectral distances
     spec_dist = t(as.matrix(spec)) - as.vector(as.matrix(mean(spec)))
+
+
+    ## TODO
+    ## this maybe best done in matrix algebra
     spec_dist = sqrt(colSums(spec_dist^2))
 
     # find order of magnitude of spec_dist
+
+    ## TODO
+    ## test diff between two first ones since the vector is sorted
     dist_mag  = ceiling( log10( 1 / min(diff(sort(spec_dist))) ) )
 
     # and round it
@@ -394,19 +401,25 @@ plot_interactive = function(spec,
             # Update `to` and `picked` if n_display is changed
             shiny::observeEvent(input$n_display ,{
 
-                if(input$n_display > m_display){
-                    updateNumericInput(session, "n_display", value = m_display)
-                }
+                if( is.na(input$n_display)) {
+                    updateNumericInput(session, "n_display", value = 1)
+                } else {
 
-                new_to   = min(from() + input$n_display - 1L, n_max)
-
-                if(!is.null(picked())){
-                    if(picked() > new_to){
-                        picked(NULL)
+                    if(input$n_display > m_display){
+                        updateNumericInput(session, "n_display", value = m_display)
                     }
+
+                    new_to   = min(from() + input$n_display - 1L, n_max)
+
+                    if(!is.null(picked())){
+                        if(picked() > new_to){
+                            picked(NULL)
+                        }
+                    }
+
+                    to(new_to)
                 }
 
-                to(new_to)
             })
 
             shiny::observeEvent(input$highlight_by_dist, {
