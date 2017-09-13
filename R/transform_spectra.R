@@ -1,5 +1,5 @@
-library("devtools")
-devtools::use_package("parallel")
+# library("devtools")
+#devtools::use_package("parallel", type = "Suggests")
 
 ################################################################################
 # Apply by band
@@ -404,12 +404,16 @@ normalize.spectra = function(x, quiet = FALSE, ...){
 #'            is computed internally
 #' @return a list of spline functions
 #'
-#' @importFrom parallel detectCores mclapply
 #' @importFrom stats smooth.spline
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
 i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
+
+    ## NOTE
+    # Not using "@importFrom parallel detectCores mclapply" in the roxygen description
+    # Having parallel in the namespace messes up compilation in win-builder
+
     if( !is_spectra(x) ){
         stop("Object must be of class spectra")
     }
@@ -425,30 +429,23 @@ i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
 
     d = reflectance(x)
     r = lapply( seq.int(nrow(x)), function(y){ d[y, ]})
+    l = length(r)
     w = wavelengths(x)
 
-    n = parallel::detectCores() - 1L
-    l = length(r)
+    # parallel?
+    p = requireNamespace("parallel", quietly = TRUE)
+    p = p && parallel && l > 1 && .Platform$OS.type != "windows"
 
-    if(parallel && l > 1) {
-
-        if( .Platform$OS.type == "windows" ){
-            message("Parallelization is not availiable for windows. Using 1 core...")
-            n = 1
-        }
-
+    if(p){
+        n = parallel::detectCores() - 1L
         b = floor(seq.int(0, length(r), length.out = min(n, l) + 1L))
-
         c = cut(seq.int(length(r)), b, include.lowest = TRUE)
-
         s = split(r, c)
-
         s = parallel::mclapply(s, function(z){
             lapply(z, stats::smooth.spline, x = w, nknots = nknots, ...)},
             mc.cores = n)
 
         return(unlist(s, recursive = FALSE, use.names = FALSE))
-
     } else {
         return(lapply(r, stats::smooth.spline, x = w, nknots = nknots, ...))
     }
