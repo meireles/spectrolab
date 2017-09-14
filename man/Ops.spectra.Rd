@@ -12,8 +12,8 @@
 \item{e2}{rhs}
 }
 \value{
-Depends on the operator. c("+", "-", "*", "/", "^") return spectra
-        c("==", "!=", "<", "<=", ">=", ">") return boolean matrices
+Depends on the operator. math operators will return spectra and logical
+        or comparisson operators will return boolean matrices
 }
 \description{
 Overloads arithmetic operators for spectra using `Ops.`
