@@ -9,10 +9,16 @@ The package is being actively developed and parts of the *API may still change*.
 
 ## Installation
 
-You can install spectrolab from github with:
+You can install spectrolab from CRAN using:
 
 ```R
-# install.packages("devtools")
+install.packages("spectrolab")
+```
+
+Alternativelly, you can install it from github with:
+
+```R
+library("devtools")
 devtools::install_github("annakat/spectrolab")
 ```
 
