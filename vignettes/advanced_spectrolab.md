@@ -37,7 +37,7 @@ Some extra requirements can be added For example, reflectances can by default ta
 
 ## Constructing a `spectra` object _"by hand"_
 
-Alternativelly to `read_spectra()` or `as.spectra()`, you can create a `spectra` object "by hand"" using the more flexible `spectra()` constructor, which takes at least arguments: (1) a reflectance matrix, (2) a vector of wavelengths and (3) the sample names.
+In addition to `read_spectra()` and `as.spectra()`, you can create a `spectra` object "by hand"" using the more flexible `spectra()` constructor, which takes at least arguments: (1) a reflectance matrix, (2) a vector of wavelengths and (3) the sample names.
 
 
 ```r

@@ -105,7 +105,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="constructing-a-spectra-object-by-hand" class="section level2">
 <h2>Constructing a <code>spectra</code> object <em>“by hand”</em></h2>
-<p>Alternativelly to <code>read_spectra()</code> or <code>as.spectra()</code>, you can create a <code>spectra</code> object “by hand”&quot; using the more flexible <code>spectra()</code> constructor, which takes at least arguments: (1) a reflectance matrix, (2) a vector of wavelengths and (3) the sample names.</p>
+<p>In addition to <code>read_spectra()</code> and <code>as.spectra()</code>, you can create a <code>spectra</code> object “by hand”&quot; using the more flexible <code>spectra()</code> constructor, which takes at least arguments: (1) a reflectance matrix, (2) a vector of wavelengths and (3) the sample names.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># (1) Create a reflectance matrix.</span>
 <span class="co">#     In this case, by removing the first column that holds the species name</span>
 rf =<span class="st"> </span>spec_matrix_example[ , <span class="op">-</span><span class="dv">1</span>]
