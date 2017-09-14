@@ -5,7 +5,7 @@ output:
   rmarkdown::html_vignette:
     keep_md: true
 vignette: >
-  %\VignetteIndexEntry{3. Advanced spectrolab for package developers and contributors}
+  %\VignetteIndexEntry{Advanced spectrolab for package developers and contributors}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

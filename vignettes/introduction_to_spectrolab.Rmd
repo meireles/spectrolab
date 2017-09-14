@@ -10,7 +10,7 @@ output:
     dev: 'svg'
     number_sections: yes
 vignette: > 
-  %\VignetteIndexEntry{1. Introduction to spectrolab}
+  %\VignetteIndexEntry{Introduction to spectrolab}
   %\VignetteEngine{knitr::rmarkdown} 
   %\VignetteEncoding{UTF-8}
 ---
