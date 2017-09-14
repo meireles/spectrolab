@@ -29,8 +29,8 @@ t.spectra = function(x){
 #'
 #' @param e1 lhs
 #' @param e2 rhs
-#' @return Depends on the operator. c("+", "-", "*", "/", "^") return spectra
-#'         c("==", "!=", "<", "<=", ">=", ">") return boolean matrices
+#' @return Depends on the operator. math operators will return spectra and logical
+#'         or comparisson operators will return boolean matrices
 #'
 #' @author Jose Eduardo Meireles
 #' @export
