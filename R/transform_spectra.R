@@ -405,14 +405,11 @@ normalize.spectra = function(x, quiet = FALSE, ...){
 #' @return a list of spline functions
 #'
 #' @importFrom stats smooth.spline
+#' @importFrom parallel detectCores mclapply
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
 i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
-
-    ## NOTE
-    # Not using "@importFrom parallel detectCores mclapply" in the roxygen description
-    # Having parallel in the namespace messes up compilation in win-builder
 
     if( !is_spectra(x) ){
         stop("Object must be of class spectra")
