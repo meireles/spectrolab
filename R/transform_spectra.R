@@ -469,7 +469,6 @@ i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
 
         range   = diff(range( wavelengths(x) ))
         resol   = ceiling(range / ncol(x))
-        fullres = floor(range / resol)
         propres = floor(range / resol / scale)
         n       = max(c(scale[propres >= cutres]), 1)
     }
