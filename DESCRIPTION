@@ -2,7 +2,7 @@ Package: spectrolab
 Type: Package
 Title: Class and Methods for Hyperspectral Data
 Version: 0.0.2
-Date: 2017-08-19
+Date: 2017-09-20
 Authors@R: c(person("Jose Eduardo", "Meireles", email = "meireles@umn.edu", role = c("aut", "cre")), 
              person("Anna K.", "Schweiger", email =  "anna.k.schweiger@gmail.com", role = "aut"),
              person("Jeannine", "Cavender-Bares", email = "cavender@umn.edu", role = "aut")
@@ -20,10 +20,9 @@ Suggests: knitr (>= 1.16),
     testthat (>= 1.0.2)
 VignetteBuilder: knitr
 Imports: prospectr (>= 0.1.3),
-    shiny (>= 1.0.3),
     grDevices,
     parallel,
     RColorBrewer (>= 1.1-2),
-    devtools (>= 1.13.3),
-    shinyjs (>= 0.9.1)
-    
+    shiny (>= 1.0.3),
+    shinyjs (>= 0.9.1),
+    devtools
