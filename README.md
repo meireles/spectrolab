@@ -29,4 +29,10 @@ This vignette [introduces spectrolab](vignettes/introduction_to_spectrolab.md), 
 This vignette shows you how to [splice sensors](vignettes/match_sensors.pdf) using the function  `match_sensors` and details about what its arguments do. A more general processing vignette is coming soon.
 
 
+## Contributing
+
+In an effort to keep things tidy and in running order, __direct commits to master are discouraged__. In fact, the master branch is protected the "meireles/spectrolab" fork.
+
+I also use a [__pre-commit hook__](https://stackoverflow.com/questions/40462111/git-prevent-commits-in-master-branch) in my local repo that prevents me from breaking my own policy! I suggest you do the same. 
+
 We highly encourage you to read the vignette on [advanced spectrolab use](vignettes/advanced_spectrolab.md) if you're planning on contributing to or developing a package that depends on `spectrolab`.
