@@ -1,4 +1,4 @@
-# spectrolab 0.0.3 (DATE)
+# spectrolab 0.0.3 (2017-11-15)
  
 ## minor
 * fixed index duplication in the _match sensor_ vignette.

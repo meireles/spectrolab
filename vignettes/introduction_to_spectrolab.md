@@ -1,5 +1,19 @@
-# Introduction to spectrolab
-Jose Eduardo Meireles, Anna K. Schweiger and Jeannine Cavender-Bares  
+---
+title: "Introduction to spectrolab"
+author: "Jose Eduardo Meireles, Anna K. Schweiger and Jeannine Cavender-Bares"
+output:
+  rmarkdown::html_document: 
+    keep_md: yes
+    dev: 'png'
+    dpi: 300
+  rmarkdown::pdf_document:
+    dev: 'svg'
+    number_sections: yes
+vignette: > 
+  %\VignetteIndexEntry{Introduction to spectrolab}
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
+---
 
 `spectrolab` provides methods to read, process and visualize data from portable spectrometers and establishes a common interface to spectra that other packages can build on. The package introduces a `spectra` S3 class and packs a ton of functionality:
 
@@ -295,8 +309,8 @@ spec_as_df[1:4, 1:5]
 
 ```
 ##   sample_name ident                   ssp N_percent        400
-## 1     ACHMI_1 10526 Achillea millefolium   1.870852 0.03734791
-## 2     ACHMI_2 10527 Achillea millefolium   1.880598 0.04608409
-## 3     ACHMI_3 10528 Achillea millefolium   2.278036 0.04058113
-## 4     ACHMI_4 10529 Achillea millefolium   2.187671 0.04063730
+## 1     ACHMI_1 10526 Achillea millefolium   2.239108 0.03734791
+## 2     ACHMI_2 10527 Achillea millefolium   2.334950 0.04608409
+## 3     ACHMI_3 10528 Achillea millefolium   2.292024 0.04058113
+## 4     ACHMI_4 10529 Achillea millefolium   1.422973 0.04063730
 ```
