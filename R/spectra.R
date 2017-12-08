@@ -64,14 +64,15 @@ i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = FAL
 #'
 #' \code{i_names} constructs a sample name vector in the appropriate format
 #'
-#' @param x vector of labels. numeric or character
+#' @param x vector of labels. should be character
 #' @param nsample Integer of expected number of samples.
 #'                If NULL (default) checking is skipped.
-#' @return vector of sample names
+#' @param prefix String to use as prefix in case an element of x is numeric
+#' @return vector of sample names coerced to character
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_names = function(x, nsample = NULL){
+i_names = function(x, nsample = NULL, prefix = "spec_"){
 
     if( ! is.null(dim(x)) ){
         stop("Sample names must be one dimensional")
@@ -81,6 +82,14 @@ i_names = function(x, nsample = NULL){
 
     if( !is.null(nsample) && nsample != length(x) ){
         stop("The length of x must be the same as nsample")
+    }
+
+    # In case x has numeric elements, prepend them with `prefix`
+    n = which(suppressWarnings(!is.na(as.numeric(x))))
+    message(n)
+
+    if(length(n) > 0){
+        x[n] = paste(prefix, x[n], sep = "")
     }
 
     as.character(x)
