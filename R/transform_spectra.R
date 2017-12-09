@@ -16,7 +16,7 @@
 #' @param fun numeric function to be applied to each band.
 #' @param na.rm boolean. remove NAs?
 #' @param keep_txt_meta boolean. try to keep text in the metadata?
-#' @param name name for each sample in the ourput spectra. The default (NULL) will
+#' @param name name for each sample in the output spectra. The default (NULL) will
 #'             give samples sequential numeric names. Recycled if necessary.
 #' @param ... extra arguments passed to fun
 #' @return spectra

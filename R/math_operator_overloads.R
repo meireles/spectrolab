@@ -30,7 +30,7 @@ t.spectra = function(x){
 #' @param e1 lhs
 #' @param e2 rhs
 #' @return Depends on the operator. math operators will return spectra and logical
-#'         or comparisson operators will return boolean matrices
+#'         or comparison operators will return boolean matrices
 #'
 #' @author Jose Eduardo Meireles
 #' @export
