@@ -4,16 +4,18 @@
 \alias{i_names}
 \title{Internal constructor for sample names}
 \usage{
-i_names(x, nsample = NULL)
+i_names(x, nsample = NULL, prefix = "spec_")
 }
 \arguments{
-\item{x}{vector of labels. numeric or character}
+\item{x}{vector of labels. should be character}
 
 \item{nsample}{Integer of expected number of samples.
 If NULL (default) checking is skipped.}
+
+\item{prefix}{String to use as prefix in case an element of x is numeric}
 }
 \value{
-vector of sample names
+vector of sample names coerced to character
 }
 \description{
 \code{i_names} constructs a sample name vector in the appropriate format
