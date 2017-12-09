@@ -20,7 +20,7 @@ apply_by_band(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, name = NULL,
 
 \item{keep_txt_meta}{boolean. try to keep text in the metadata?}
 
-\item{name}{name for each sample in the ourput spectra. The default (NULL) will
+\item{name}{name for each sample in the output spectra. The default (NULL) will
 give samples sequential numeric names. Recycled if necessary.}
 
 \item{...}{extra arguments passed to fun}

@@ -13,7 +13,7 @@
 }
 \value{
 Depends on the operator. math operators will return spectra and logical
-        or comparisson operators will return boolean matrices
+        or comparison operators will return boolean matrices
 }
 \description{
 Overloads arithmetic operators for spectra using `Ops.`
