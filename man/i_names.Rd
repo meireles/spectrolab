@@ -7,12 +7,13 @@
 i_names(x, nsample = NULL, prefix = "spec_")
 }
 \arguments{
-\item{x}{vector of labels. should be character}
+\item{x}{vector of labels. Should be character. If numeric, a prefix will be added}
 
 \item{nsample}{Integer of expected number of samples.
 If NULL (default) checking is skipped.}
 
-\item{prefix}{String to use as prefix in case an element of x is numeric}
+\item{prefix}{String to use as prefix in case an element of x is numeric.
+Defaults to "spec_"}
 }
 \value{
 vector of sample names coerced to character
