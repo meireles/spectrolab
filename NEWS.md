@@ -1,3 +1,9 @@
+# spectrolab 0.0.4 (xxx)
+ 
+## minor
+* sample names in the spectra class are now required to be char. Names coercible to numeric will have a prefix added to them by default
+
+
 # spectrolab 0.0.3 (2017-11-15)
  
 ## minor
@@ -8,6 +14,3 @@
 # spectrolab 0.0.2 (2017-09-14)
  
 * Initial release
-
-
-
