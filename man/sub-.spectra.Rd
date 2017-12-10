@@ -24,11 +24,14 @@ usually a spectra object, but see param `simplify`
 \code{`[`} Subsets spectra by sample names (rows) or (and) wavelengths (columns)
 }
 \details{
-Subset operations based on samples (first argument) will match either sample
-names or indexes, in that order. That is, if you subset x[1:2 , ] and your
-sample names contain 1 and 2, you will get the spectra with names in
-c(1, 2) and not (at least necessarily) the first and second samples in the
-`spectra` object.
+Subset operations based on samples (first argument) will match sample
+names or indexes, in that order. The spectra constructor ensures that names are
+not numeric nor are coercible to numeric, such that x[1:2, ] will return the
+first and second samples in the `spectra` object. Subsetting based on wavelengths
+(second argument) matches the wavelength labels, not indices! That is, x[ , 600]
+will give you the reflectance data for the 600nm wavelength and not the 600th
+band. Boolean vectors of the appropriate length can be used to subset samples
+and wavelengths.
 }
 \examples{
 library(spectrolab)

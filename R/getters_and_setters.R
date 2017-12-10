@@ -48,11 +48,14 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #'
 #' \code{`[`} Subsets spectra by sample names (rows) or (and) wavelengths (columns)
 #'
-#' Subset operations based on samples (first argument) will match either sample
-#' names or indexes, in that order. That is, if you subset x[1:2 , ] and your
-#' sample names contain 1 and 2, you will get the spectra with names in
-#' c(1, 2) and not (at least necessarily) the first and second samples in the
-#' `spectra` object.
+#' Subset operations based on samples (first argument) will match sample
+#' names or indexes, in that order. The spectra constructor ensures that names are
+#' not numeric nor are coercible to numeric, such that x[1:2, ] will return the
+#' first and second samples in the `spectra` object. Subsetting based on wavelengths
+#' (second argument) matches the wavelength labels, not indices! That is, x[ , 600]
+#' will give you the reflectance data for the 600nm wavelength and not the 600th
+#' band. Boolean vectors of the appropriate length can be used to subset samples
+#' and wavelengths.
 #'
 #' @param x spectra object
 #' @param i Sample names (preferred), index, or a logical vector of length nrow(x)
@@ -292,6 +295,10 @@ names.spectra = function(x){
 #'
 #' \code{names} assigns sample names to lhs
 #'
+#' Sample names must not be coercible to numeric. That is, names such as "1" and
+#' "153.44" are invalid even if they are encoded as character. names will add the
+#' prefix "spec_" to any element of value that is coercible to numeric.
+#'
 #' @param x spectra object (lhs)
 #' @param value values to be assigned (rhs)
 #' @return nothing. called for its side effect.
@@ -304,7 +311,7 @@ names.spectra = function(x){
 #' spec = as.spectra(spec_matrix_example)
 #' names(spec) = toupper(names(spec))
 `names<-.spectra` = function(x, value){
-    x$names = i_names(value, nrow(x))
+    x$names = i_names(value, nrow(x), prefix = NULL)
     x
 }
 
