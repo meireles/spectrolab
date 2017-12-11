@@ -23,7 +23,7 @@ boolean
 Many transform functions can only (or at least should only) be applied to
 spectra with monotonically varying (very likely increasing) wavelength values.
 \code{i_is_increasing} tests that case and may throw an error
-or return the boolen result from the test.
+or return the boolean result from the test.
 }
 \author{
 Jose Eduardo Meireles

@@ -19,7 +19,7 @@ function returned by colorRampPalette() or colorRamps package}
 interactive plot
 }
 \description{
-Iteratively plots spectra with a shiny app. Useful to inspect large datasets.
+Interactively plots spectra with a shiny app. Useful to inspect large datasets.
 }
 \details{
 \code{plot_interact} limits the number of spectra displayed at once to 600 for

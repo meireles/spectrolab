@@ -148,7 +148,7 @@ default_spec_regions = function(){
 #' @param col color for regions. Single value or vector of length ncol (regions).
 #' @param border color for region borders. Defaults to FALSE (no border).
 #' @param add boolean. If TRUE (default) adds polygons to current plot (if a plot
-#'            exists) or throws an error if a plot doesn't exist.
+#'            exists) or throws an error if a plot does not exist.
 #'            If FALSE, a new plot is created **without** any spectra.
 #' @param add_label boolean. Add region column names on top of the polygons?
 #' @param cex_label label scale
@@ -239,7 +239,7 @@ plot_regions = function(spec,
 
 #' Plot spectra interactively
 #'
-#' Iteratively plots spectra with a shiny app. Useful to inspect large datasets.
+#' Interactively plots spectra with a shiny app. Useful to inspect large datasets.
 #'
 #' \code{plot_interact} limits the number of spectra displayed at once to 600 for
 #' performance reasons. As of now, the function does not return anything and does

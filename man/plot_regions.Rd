@@ -20,7 +20,7 @@ regions begins and ends. See details for how the default regions are defined.}
 \item{border}{color for region borders. Defaults to FALSE (no border).}
 
 \item{add}{boolean. If TRUE (default) adds polygons to current plot (if a plot
-exists) or throws an error if a plot doesn't exist.
+exists) or throws an error if a plot does not exist.
 If FALSE, a new plot is created **without** any spectra.}
 
 \item{add_label}{boolean. Add region column names on top of the polygons?}
