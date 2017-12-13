@@ -4,27 +4,32 @@
 \alias{i_is_index}
 \title{Compatible with being an index?}
 \usage{
-i_is_index(x, max_length, all = TRUE, allow_negative = FALSE,
+i_is_index(x, max_value, all = FALSE, allow_negative = FALSE,
   quiet = TRUE)
 }
 \arguments{
 \item{x}{numeric values}
 
-\item{max_length}{Max acceptable values for x}
-
 \item{all}{boolean. If TRUE, a single logical value is returned. Else, a vector
-of length = length(x) is returned}
+of length = length(x) is returned. Defaults to FALSE}
 
-\item{allow_negative}{boolean. Allow negative integers (used in subsetting?).
-defaults to FALSE}
+\item{allow_negative}{boolean. Count negative integers as indices? defaults to FALSE}
 
 \item{quiet}{boolean. Get warnings?}
+
+\item{max_length}{Max acceptable values for x (inclusive)}
 }
 \value{
 boolean
 }
 \description{
 \code{i_is_index} Tests if x fit the requirements of being indices
+}
+\details{
+This function potentially allows negative indices, given that they may be used
+in R when subsetting a data structure with the intent of removing the entry
+that corresponds to the index. Conversely, 0 is never used as an index in R
+and therefore not recognized as such here.
 }
 \author{
 Jose Eduardo Meireles

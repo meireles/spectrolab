@@ -42,42 +42,60 @@ i_is_whole = function(x){
 #'
 #' \code{i_is_index} Tests if x fit the requirements of being indices
 #'
+#' This function potentially allows negative indices, given that they may be used
+#' in R when subsetting a data structure with the intent of removing the entry
+#' that corresponds to the index. Conversely, 0 is never used as an index in R
+#' and therefore not recognized as such here.
+#'
 #' @param x numeric values
-#' @param max_length Max acceptable values for x
+#' @param max_length Max acceptable values for x (inclusive)
 #' @param all boolean. If TRUE, a single logical value is returned. Else, a vector
-#'                     of length = length(x) is returned
-#' @param allow_negative boolean. Allow negative integers (used in subsetting?).
-#'                       defaults to FALSE
+#'                     of length = length(x) is returned. Defaults to FALSE
+#' @param allow_negative boolean. Count negative integers as indices? defaults to FALSE
+#'
 #' @param quiet boolean. Get warnings?
 #' @return boolean
 #'
 #' @author Jose Eduardo Meireles
 #' @keywords internal
-i_is_index = function(x, max_length, all = TRUE, allow_negative = FALSE, quiet = TRUE){
+i_is_index = function(x, max_value, all = FALSE, allow_negative = FALSE, quiet = TRUE){
+
     if(quiet){
         w = suppressWarnings(i_is_whole(x))
     } else {
         w = i_is_whole(x)
     }
 
-    if(allow_negative){
-        ## Even if allow_negative == TRUE, I cannot allow mixing positive and
-        ## negative indices
-        if(all(x > 0)) {
-            p = x <= round(max_length, digits = 0)
-        } else if(all(x < 0)){
-            p = x >= round( - max_length, digits = 0)
+    ## In case there are no whole numbers, return result
+    if( all( ! w ) ){
+        warning("None of the indices are whole numbers.")
+        if(all){
+            return(all(w))
         } else {
-            stop("cannot mix positive and negative indices")
+            return(w)
         }
-    } else {
-        p = x > 0 & x <= round(max_length, digits = 0)
     }
 
+    ## Case some values are whole numbers.
+    ## Even if negative values are allowed, x cannot have both negative and
+    ## positive values...
+    if(all(x > 0)){
+        p = x <= round(max_value, digits = 0)
+    } else if (allow_negative){
+        p = x >= round( - max_value, digits = 0)
+    } else {
+        stop("cannot have 0 as an index nor mix positive and negative indices")
+    }
+
+    ## Combine information from `w` and `p` and return
     r = w & p
-    if(all){ r = all(r) }
+
+    if(all){
+        r = all(r)
+    }
     r
 }
+
 
 
 #' Match label
@@ -203,7 +221,7 @@ i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE, 
     ########################################
     # Now match to index
     ########################################
-    d = i_is_index(x = i, max_length = l, all = FALSE, allow_negative = allow_negative)
+    d = i_is_index(x = i, max_value = l, all = FALSE, allow_negative = allow_negative)
 
     if (any(d)){
         r = i_match_index(ii = i, dd = d, ll = l)
