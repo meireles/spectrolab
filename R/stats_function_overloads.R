@@ -67,10 +67,20 @@ var = function(x, y = NULL, na.rm = FALSE, use){
     UseMethod("var")
 }
 
-#' Default variance
+#' Variance
 #'
-#' @inherit stats::var
-#' @importFrom stats var
+#' \code{var} computes the variance spectrum. Note that values will not reflect
+#' reflectance anymore, but the variance of the reflectance instead.
+#'
+#' @param x a numeric vector, matrix or data frame
+#' @param y NULL (default) or a vector, matrix or data frame with compatible
+#'          dimensions to x.
+#' @param na.rm logical. Should missing values be removed?
+#' @param use an optional character string giving a method for computing covariances in
+#'            the presence of missing values. This must be (an abbreviation of) one of
+#'            the strings "everything", "all.obs", "complete.obs", "na.or.complete",
+#'            or "pairwise.complete.obs"
+#' @return variance
 #'
 #' @export
 var.default = stats::var
