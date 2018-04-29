@@ -1,6 +1,9 @@
 ## ---- eval=FALSE---------------------------------------------------------
+#  install.packages("spectrolab")
+
+## ---- eval=FALSE---------------------------------------------------------
 #  library("devtools")
-#  install_github("annakat/spectrolab")
+#  install_github("meireles/spectrolab")
 
 ## ---- echo=FALSE---------------------------------------------------------
 library("spectrolab")

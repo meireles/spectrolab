@@ -24,17 +24,24 @@ vignette: >
 * Scroll though and zoom in spectra interacively. 
 * Perform tasks such as vector normalization, smoothing, resampling, and sensor overlap matching
 
-The source code can be found on our [GitHub repository](https://github.com/annakat/spectrolab). Please report any bugs and ask us your questions through the [issue tracker](https://github.com/annakat/spectrolab/issues).
+The source code can be found on our [GitHub repository](https://github.com/meireles/spectrolab). Please report any bugs and ask us your questions through the [issue tracker](https://github.com/meireles/spectrolab/issues).
 
 
 ## Installing and loading `spectrolab`
 
-The best way to get `spectrolab` is to install it directly from GitHub. You will need the `devtools` package to do it.
+The latest stable version of `spectrolab` is on [CRAN](https://cran.r-project.org/web/packages/spectrolab/). Install it with:
+
+
+```r
+install.packages("spectrolab")
+```
+
+You can also install it directly from GitHub using the `devtools` package.
 
 
 ```r
 library("devtools")
-install_github("annakat/spectrolab")
+install_github("meireles/spectrolab")
 ```
 
 Assuming that everything went smoothly, you should be able to load `spectrolab` like any other package.
@@ -88,7 +95,7 @@ dir_path = system.file("extdata", "Acer_example", package = "spectrolab")
 acer_spectra = read_spectra(path = dir_path, format = "sig")
 ```
 
-It may be the case that file names of undesirable spectra where flagged in the field, e.g with "_WR" (white reference) and "_BAD" (bad measurements). You can avoid importing such files by passing those flags to the argument `exclude_if_matches` in `read_spectra()`.
+It may be the case that file names of undesirable spectra where flagged in the field. For example, we usually add the suffixes "_WR" to denote white reference and "_BAD" to denote bad measurements (you can pick whatever you want through). You can avoid importing such files by passing those flags to the argument `exclude_if_matches` in `read_spectra()`.
 
 
 ```r
@@ -96,11 +103,11 @@ It may be the case that file names of undesirable spectra where flagged in the f
 acer_spectra = read_spectra(path = dir_path, format = "sig", exclude_if_matches = c("BAD","WR"))
 ```
 
-Flagging "unusual" measurements during data collection speeds up the dataset cleanup process. However, you can also exclude bad spectra and outliers by subsetting your spectra object, as shown in the section **Subsetting spectra** further below.
+Flagging "unusual" measurements during data collection speeds up the dataset cleanup process. However, you can also exclude bad spectra and outliers by subsetting your spectra object, as shown in the section **Subsetting spectra** below.
 
 ## Inspecting and querying spectra
 
-You can check out your spectra object in several ways. For instance, You may want to know how many spectra and how many bands are in there, retrieve the file names. Of course you will need to plot the data, but that topic gets its own section further down.
+You can check out your spectra object in several ways. For instance, You may want to know how many spectra and how many bands are in there, retrieve the file names, etc. Of course you will need to plot the data, but that topic gets its own section further down.
 
 
 ```r
@@ -231,7 +238,7 @@ plot_quantile(achillea_spec, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border 
 plot_regions(achillea_spec, regions = default_spec_regions(), add = TRUE)
 ```
 
-![](introduction_to_spectrolab_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+![](introduction_to_spectrolab_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
 
 Last but not least, spectrolab also allows you to interactivelly explore spectra through a `shiny` app with the `plot_interactive()` function.
 
@@ -267,7 +274,7 @@ plot(achillea_spec, col = "blue", lwd = 0.75, cex.axis = 0.75)
 plot(spec_new, col = "orange", lwd = 0.75, add = TRUE)
 ```
 
-<img src="introduction_to_spectrolab_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
+<img src="introduction_to_spectrolab_files/figure-html/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
 
 Or you can also edit or add new metadata to the `spectra` object.
 
@@ -309,8 +316,8 @@ spec_as_df[1:4, 1:5]
 
 ```
 ##   sample_name ident                   ssp N_percent        400
-## 1     ACHMI_1 10526 Achillea millefolium   2.239108 0.03734791
-## 2     ACHMI_2 10527 Achillea millefolium   2.334950 0.04608409
-## 3     ACHMI_3 10528 Achillea millefolium   2.292024 0.04058113
-## 4     ACHMI_4 10529 Achillea millefolium   1.422973 0.04063730
+## 1     ACHMI_1 10526 Achillea millefolium  2.1818538 0.03734791
+## 2     ACHMI_2 10527 Achillea millefolium  1.9850282 0.04608409
+## 3     ACHMI_3 10528 Achillea millefolium  1.2513519 0.04058113
+## 4     ACHMI_4 10529 Achillea millefolium  0.9254733 0.04063730
 ```

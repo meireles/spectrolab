@@ -24,16 +24,22 @@ vignette: >
 * Scroll though and zoom in spectra interacively. 
 * Perform tasks such as vector normalization, smoothing, resampling, and sensor overlap matching
 
-The source code can be found on our [GitHub repository](https://github.com/annakat/spectrolab). Please report any bugs and ask us your questions through the [issue tracker](https://github.com/annakat/spectrolab/issues).
+The source code can be found on our [GitHub repository](https://github.com/meireles/spectrolab). Please report any bugs and ask us your questions through the [issue tracker](https://github.com/meireles/spectrolab/issues).
 
 
 ## Installing and loading `spectrolab`
 
-The best way to get `spectrolab` is to install it directly from GitHub. You will need the `devtools` package to do it.
+The latest stable version of `spectrolab` is on [CRAN](https://cran.r-project.org/web/packages/spectrolab/). Install it with:
+
+```{r, eval=FALSE}
+install.packages("spectrolab")
+```
+
+You can also install it directly from GitHub using the `devtools` package.
 
 ```{r, eval=FALSE}
 library("devtools")
-install_github("annakat/spectrolab")
+install_github("meireles/spectrolab")
 ```
 
 Assuming that everything went smoothly, you should be able to load `spectrolab` like any other package.
@@ -80,18 +86,18 @@ dir_path = system.file("extdata", "Acer_example", package = "spectrolab")
 acer_spectra = read_spectra(path = dir_path, format = "sig")
 ```
 
-It may be the case that file names of undesirable spectra where flagged in the field, e.g with "_WR" (white reference) and "_BAD" (bad measurements). You can avoid importing such files by passing those flags to the argument `exclude_if_matches` in `read_spectra()`.
+It may be the case that file names of undesirable spectra where flagged in the field. For example, we usually add the suffixes "_WR" to denote white reference and "_BAD" to denote bad measurements (you can pick whatever you want through). You can avoid importing such files by passing those flags to the argument `exclude_if_matches` in `read_spectra()`.
 
 ```{r, eval=TRUE}
 # use the `exclude_if_matches` argument to excluded flagged files
 acer_spectra = read_spectra(path = dir_path, format = "sig", exclude_if_matches = c("BAD","WR"))
 ```
 
-Flagging "unusual" measurements during data collection speeds up the dataset cleanup process. However, you can also exclude bad spectra and outliers by subsetting your spectra object, as shown in the section **Subsetting spectra** further below.
+Flagging "unusual" measurements during data collection speeds up the dataset cleanup process. However, you can also exclude bad spectra and outliers by subsetting your spectra object, as shown in the section **Subsetting spectra** below.
 
 ## Inspecting and querying spectra
 
-You can check out your spectra object in several ways. For instance, You may want to know how many spectra and how many bands are in there, retrieve the file names. Of course you will need to plot the data, but that topic gets its own section further down.
+You can check out your spectra object in several ways. For instance, You may want to know how many spectra and how many bands are in there, retrieve the file names, etc. Of course you will need to plot the data, but that topic gets its own section further down.
 
 ```{r, eval=TRUE}
 # Simply print the object
