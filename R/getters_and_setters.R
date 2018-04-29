@@ -196,6 +196,7 @@ reflectance.spectra = function(x){
 #' @export
 `reflectance<-.spectra` = function(x, value){
     x[] = value
+    x
 }
 
 ########################################
