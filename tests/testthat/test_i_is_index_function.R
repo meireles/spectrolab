@@ -27,8 +27,10 @@ test_that("i_is_index is given char coercible to num", {
 })
 
 test_that("x has no whole numbers", {
-    expect_equal(spectrolab:::i_is_index(num_all_non_whole, max_value), c(F, F, F))
     expect_warning(spectrolab:::i_is_index(num_all_non_whole, max_value))
+    ## suppressing warnings
+    expect_equal(suppressWarnings(spectrolab:::i_is_index(num_all_non_whole, max_value)),
+                 c(F, F, F))
 })
 
 test_that("x has some non whole numbers or contains zero", {
@@ -38,7 +40,9 @@ test_that("x has some non whole numbers or contains zero", {
 
 test_that("i_is_index is given wrong type", {
     expect_warning(spectrolab:::i_is_index(char_non_coercible, max_value))
-    expect_equal(spectrolab:::i_is_index(char_non_coercible, max_value), c(F, F, F))
+    ## suppressing warnings
+    expect_equal(suppressWarnings(spectrolab:::i_is_index(char_non_coercible, max_value)),
+                 c(F, F, F))
 })
 
 
