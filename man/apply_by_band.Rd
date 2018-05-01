@@ -32,7 +32,7 @@ spectra
 \code{apply_by_band} is conceptually similar to apply(as.matrix(x), 2, fun),
 but returns a spectra object while dealing with metadata and attributes.
 Applying a function that does not act on numeric values may crash the function
-or render change all reflectances NA.
+or render all reflectance values NA.
 }
 \section{Methods (by class)}{
 \itemize{
