@@ -1,3 +1,14 @@
+# spectrolab 0.0.5 (2018-05-31)
+
+## major 
+* Fixed bug in "reflectance" setter, where the object was not being returned
+* The parser inside read_spectra now finds the spectral data using tags instead
+  of assuming that the data starts at a specific line
+
+## minor
+* added unit tests for the read_spectra function
+* cleaned up several minor issues
+
 # spectrolab 0.0.4 (2017-12-13)
  
 ## major 
