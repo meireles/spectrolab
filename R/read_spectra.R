@@ -179,7 +179,7 @@ i_read_ascii_spectra = function(file_paths,
     ############################################################
 
     parse_skip_n   = function(x, skip = skip_first_n) {
-        utils::read.delim(x, skip = skip, sep = sep_char, header = header)
+        utils::read.delim(x, skip = skip, sep = sep_char, header = header, check.names = FALSE)
     }
 
     parse_skip_tag = function(x, tag = skip_until_tag) {
@@ -187,7 +187,7 @@ i_read_ascii_spectra = function(file_paths,
         skip  = grep(tag, trimws(readLines(x, n = max_l)))
 
         if(length(skip) == 1){
-            return(utils::read.delim(x, skip = skip, sep = sep_char, header = header))
+            return(utils::read.delim(x, skip = skip, sep = sep_char, header = header, check.names = FALSE))
         } else if (length(skip) == 0){
             stop(paste0("No match found for skip_until_tag in the first ", max_l, " lines"))
         } else {
@@ -200,7 +200,7 @@ i_read_ascii_spectra = function(file_paths,
     } else if ( ! is.null(skip_first_n) ){
         parse = parse_skip_n
     } else {
-        stop()
+        stop("Must give a skip_until_tag or skip_first_n args")
     }
 
     ############################################################
