@@ -39,6 +39,6 @@ single `spectra` or list of `spectra`
 Generic parser for SVC's `.sig` and PSR's `.sed`
 }
 \author{
-Jose Eduardo Meireles
+Jose Eduardo Meireles and Anna Schweiger
 }
 \keyword{internal}

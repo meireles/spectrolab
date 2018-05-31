@@ -83,8 +83,6 @@ read_spectra = function(path,
     ## filter files that match bad spectra
     #########################################
     if(!is.null(exclude_if_matches)){
-        # bad_tag = paste0("\\.", exclude_if_matches, "$")
-        # m       = grepl(pattern = bad_tag, i_path)
         bad_tag = exclude_if_matches
         m       = grepl(paste(bad_tag,collapse = "|"), i_path)
         i_path  = i_path[!m]
@@ -162,7 +160,7 @@ read_spectra = function(path,
 #' @importFrom utils read.delim
 #'
 #' @keywords internal
-#' @author Jose Eduardo Meireles
+#' @author Jose Eduardo Meireles and Anna Schweiger
 i_read_ascii_spectra = function(file_paths,
                                 skip_until_tag = NULL,
                                 skip_first_n = NULL,
