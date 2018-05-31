@@ -102,7 +102,8 @@ read_spectra = function(path,
 
     if(format_lookup[format_match] == "sig"){
         result = i_read_ascii_spectra(i_path,
-                                      skip_first_n      = 25,
+                                      skip_until_tag    = "data=",
+                                      skip_first_n      = NULL,         # 25
                                       sep_char          = "",
                                       header            = FALSE,
                                       wl_col            = 1,
@@ -115,7 +116,8 @@ read_spectra = function(path,
     if(format_lookup[format_match] == "sed"){
 
         result = i_read_ascii_spectra(i_path,
-                                      skip_first_n      = 26,
+                                      skip_until_tag    = "Data:",
+                                      skip_first_n      = NULL,        # 26
                                       sep_char          = "\t",
                                       header            = TRUE,
                                       wl_col            = "Wvl",
@@ -142,7 +144,11 @@ read_spectra = function(path,
 #' Generic parser for SVC's `.sig` and PSR's `.sed`
 #'
 #' @param file_paths paths for files already parsed by `read_spectra`
-#' @param skip_first_n skip the first n lines
+#' @param skip_until_tag Tag that precedes the table of reflectance data,
+#'                       indicating that lines until that tag should be skipped.
+#'                       Tag is matched with a regexpr.
+#' @param skip_first_n skip the first n lines. Only used if `skip_until_tag` is
+#'                     not given
 #' @param sep_char separator
 #' @param header boolean. keep header?
 #' @param wl_col idx or name of wavelength column
@@ -158,7 +164,8 @@ read_spectra = function(path,
 #' @keywords internal
 #' @author Jose Eduardo Meireles
 i_read_ascii_spectra = function(file_paths,
-                                skip_first_n,
+                                skip_until_tag = NULL,
+                                skip_first_n = NULL,
                                 sep_char,
                                 header,
                                 wl_col,
@@ -170,13 +177,35 @@ i_read_ascii_spectra = function(file_paths,
     ############################################################
     ## Internal function to read table
     ############################################################
-    parse = function(x) {
-        result = utils::read.delim(x, sep = sep_char,
-                                   skip = skip_first_n, header = header, ...)
+
+    parse_skip_n   = function(x, skip = skip_first_n) {
+        utils::read.delim(x, skip = skip, sep = sep_char, header = header)
+    }
+
+    parse_skip_tag = function(x, tag = skip_until_tag) {
+        max_l = 100
+        skip  = grep(tag, trimws(readLines(x, n = max_l)))
+
+        if(length(skip) == 1){
+            return(utils::read.delim(x, skip = skip, sep = sep_char, header = header))
+        } else if (length(skip) == 0){
+            stop(paste0("No match found for skip_until_tag in the first ", max_l, " lines"))
+        } else {
+            stop(paste0("More than one match found for skip_until_tag in the first ", max_l, " lines"))
+        }
+    }
+
+    if( ! is.null(parse_skip_tag) ){
+        parse = parse_skip_tag
+    } else if ( ! is.null(skip_first_n) ){
+        parse = parse_skip_n
+    } else {
+        stop()
     }
 
     ############################################################
     ## Requirements and param checks
+
 
     if(length(refl_cols) > 1 && any(i_is_whole(refl_cols)) ){
         stop("refl_cols cannot be a vector of indices.")

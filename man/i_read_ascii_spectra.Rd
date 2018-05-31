@@ -4,13 +4,18 @@
 \alias{i_read_ascii_spectra}
 \title{Internal parser for ASCII format}
 \usage{
-i_read_ascii_spectra(file_paths, skip_first_n, sep_char, header, wl_col,
-  refl_cols, divide_refl_by, include_white_ref, ...)
+i_read_ascii_spectra(file_paths, skip_until_tag = NULL, skip_first_n = NULL,
+  sep_char, header, wl_col, refl_cols, divide_refl_by, include_white_ref, ...)
 }
 \arguments{
 \item{file_paths}{paths for files already parsed by `read_spectra`}
 
-\item{skip_first_n}{skip the first n lines}
+\item{skip_until_tag}{Tag that precedes the table of reflectance data,
+indicating that lines until that tag should be skipped.
+Tag is matched with a regexpr.}
+
+\item{skip_first_n}{skip the first n lines. Only used if `skip_until_tag` is
+not given}
 
 \item{sep_char}{separator}
 
