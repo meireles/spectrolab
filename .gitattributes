@@ -1,4 +1,4 @@
 man/* linguist-documentation
 vignettes/* linguist-documentation
 *.sig linguist-generated=true
-
+*.sed linguist-generated=true
