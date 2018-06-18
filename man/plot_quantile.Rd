@@ -32,7 +32,7 @@ nothing. Called for its side effect.
 }
 \examples{
 library(spectrolab)
-spec  = as.spectra(spec_matrix_example)
+spec  = as.spectra(spec_matrix_example, name_idx = 1)
 plot_quantile(spec, total_prob = 0.5)
 }
 \author{

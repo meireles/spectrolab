@@ -3,7 +3,7 @@ library("spectrolab")
 
 context("Spectra stat overloads")
 
-spec = as.spectra(spec_matrix_example)
+spec = as.spectra(spec_matrix_example, name_idx = 1)
 
 test_that("mean(spec)[ , 400 equals mean(spec[ , 400])", {
     expect_equivalent(mean(spec)[ , 400], mean(spec[ , 400]))

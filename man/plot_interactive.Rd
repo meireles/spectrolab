@@ -30,7 +30,7 @@ but not yet deleted or subset from the shiny app.
 \examples{
 \dontrun{
 # Create a spectra object
-spec = as.spectra(spec_matrix_example)
+spec = as.spectra(spec_matrix_example, name_idx = 1)
 
 # Start interactive plot
 plot_interactive(spec)

@@ -19,7 +19,7 @@ nothing. has a *side effect* of changing if a constraint is enforced
 }
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example)
+spec = as.spectra(spec_matrix_example, name_idx = 1)
 
 # Force to be between 0 and 1.
 enforce01(spec) = TRUE

@@ -22,7 +22,7 @@ devtools::use_package("RColorBrewer")
 #'
 #' @examples
 #' library(spectrolab)
-#' spec  = as.spectra(spec_matrix_example)
+#' spec  = as.spectra(spec_matrix_example, name_idx = 1)
 #' plot(spec, lwd = 1.2)
 plot.spectra = function(x,
                         ylab = "Reflectance",
@@ -72,7 +72,7 @@ plot.spectra = function(x,
 #'
 #' @examples
 #' library(spectrolab)
-#' spec  = as.spectra(spec_matrix_example)
+#' spec  = as.spectra(spec_matrix_example, name_idx = 1)
 #' plot_quantile(spec, total_prob = 0.5)
 plot_quantile = function(spec,
                          total_prob = 0.95,
@@ -170,7 +170,7 @@ default_spec_regions = function(){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example)
+#' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' plot_regions(spec, default_spec_regions())
 #' plot(spec, add = TRUE)
 #'
@@ -263,7 +263,7 @@ plot_regions = function(spec,
 #' @examples
 #' \dontrun{
 #' # Create a spectra object
-#' spec = as.spectra(spec_matrix_example)
+#' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #'
 #' # Start interactive plot
 #' plot_interactive(spec)

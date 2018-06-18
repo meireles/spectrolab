@@ -44,7 +44,7 @@ spec_regions = cbind("VIS"   = c(begin = 400,  end = 700),
 }
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example)
+spec = as.spectra(spec_matrix_example, name_idx = 1)
 plot_regions(spec, default_spec_regions())
 plot(spec, add = TRUE)
 

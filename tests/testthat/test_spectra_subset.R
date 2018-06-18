@@ -3,7 +3,7 @@ library("spectrolab")
 
 context("Spectra subset")
 
-spec = as.spectra(spec_matrix_example)
+spec = as.spectra(spec_matrix_example, name_idx = 1)
 
 test_that("spectra wl are subset with indexes", {
     expect_error(spec[ , 1:100])

@@ -3,7 +3,7 @@ library("spectrolab")
 
 context("Spectra subsetting by")
 
-spec   = as.spectra(spec_matrix_example)
+spec   = as.spectra(spec_matrix_example, name_idx = 1)
 by_def = names(spec)
 
 test_that("by of wrong length throws", {

@@ -41,7 +41,7 @@ or render all reflectance values NA.
 
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example)
+spec = as.spectra(spec_matrix_example, name_idx = 1)
 spec_mean = apply_by_band(spec, mean)
 }
 \author{

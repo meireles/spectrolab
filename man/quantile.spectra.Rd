@@ -26,7 +26,7 @@ spectra object with one spectrum for each prob
 }
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example)
+spec = as.spectra(spec_matrix_example, name_idx = 1)
 quantile(spec, probs = c(0.25, 0.75))
 }
 \author{

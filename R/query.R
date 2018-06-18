@@ -10,7 +10,7 @@
 #'
 #' @examples
 #' library(spectrolab)
-#' spec  = as.spectra(spec_matrix_example)
+#' spec  = as.spectra(spec_matrix_example, name_idx = 1)
 #' spec1 = unclass(spec)
 #' is_spectra(spec)
 #' is_spectra(spec1)
@@ -39,7 +39,7 @@ is_spectra = function(x){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec  = as.spectra(spec_matrix_example)
+#' spec  = as.spectra(spec_matrix_example, name_idx = 1)
 #'
 #' # Find spec with NIR dip
 #' # Set parallel = TRUE if many samples need testing.

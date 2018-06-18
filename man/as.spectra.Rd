@@ -4,14 +4,14 @@
 \alias{as.spectra}
 \title{Convert matrix or data frame to spectra}
 \usage{
-as.spectra(x, name_idx = 1, meta_idxs = NULL)
+as.spectra(x, name_idx = NULL, meta_idxs = NULL)
 }
 \arguments{
 \item{x}{matrix or dataframe. Samples are in rows and wavelengths in columns.
-First column must be the sample label and the remaining columns must
-hold reflectance data.}
+Any data that are not the spectra themselves (labels or metadata)
+must have their column index included in `name_idx` or `meta_idxs`.}
 
-\item{name_idx}{column index with sample names. Defaults to 1st col. If NULL
+\item{name_idx}{column index with sample names. Defaults to NULL. If NULL
 or 0, rownames(x) or a sequence of integers will be assigned
 as names.}
 
@@ -26,7 +26,7 @@ Convert matrix or data frame to spectra
 }
 \examples{
 library(spectrolab)
-as.spectra(spec_matrix_example)
+as.spectra(spec_matrix_example, name_idx = 1)
 }
 \author{
 Jose Eduardo Meireles

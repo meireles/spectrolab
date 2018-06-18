@@ -22,7 +22,7 @@ sampl_names    = sample(names, size = n, replace = TRUE)
 
 spec_matrix_example = cbind(species = sampl_names, refl)
 
-spec_with_jump               = as.spectra(spec_matrix_example)[1, ]
+spec_with_jump               = as.spectra(spec_matrix_example, name_idx = 1)[1, ]
 spec_with_jump[ , 400:970]   = spec_with_jump[ , 400:970]   * 1.08
 spec_with_jump[ , 1910:2500] = spec_with_jump[ , 1910:2500] * 1.5
 

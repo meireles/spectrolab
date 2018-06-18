@@ -4,14 +4,12 @@
 \alias{as.spectra.data.frame}
 \title{Convert data.frame to spectra}
 \usage{
-\method{as.spectra}{data.frame}(x, name_idx = 1, meta_idxs = NULL)
+\method{as.spectra}{data.frame}(x, name_idx = NULL, meta_idxs = NULL)
 }
 \arguments{
 \item{x}{data.frame}
 
-\item{name_idx}{column index with sample names. Defaults to 1st col. If NULL
-or 0, rownames(x) or a sequence of integers will be assigned
-as names.}
+\item{name_idx}{column index with sample names. Defaults to NULL.}
 
 \item{meta_idxs}{column indices with metadata (not name and not reflectance).
 Defaults to NULL}

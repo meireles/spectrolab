@@ -29,7 +29,7 @@ list or matrix
 library(spectrolab)
 
 # Ratios of visible part of the spectrum
-spec = as.spectra(spec_matrix_example)[ , 400:700 ]
+spec = as.spectra(spec_matrix_example, name_idx = 1)[ , 400:700 ]
 spec_ratio_mat = ratio(spec)
 }
 \author{

@@ -11,7 +11,7 @@
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example)
+#' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' min(spec)
 min.spectra = function(..., na.rm = FALSE){
     min(reflectance(...), na.rm = na.rm)
@@ -30,7 +30,7 @@ min.spectra = function(..., na.rm = FALSE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example)
+#' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' max(spec)
 max.spectra = function(..., na.rm = FALSE){
     max(reflectance(...), na.rm = na.rm)
@@ -50,7 +50,7 @@ max.spectra = function(..., na.rm = FALSE){
 #' @examples
 #'
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example)
+#' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' range(spec)
 range.spectra = function(..., na.rm = FALSE){
     range(reflectance(...), na.rm = na.rm)
@@ -69,7 +69,7 @@ range.spectra = function(..., na.rm = FALSE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example)
+#' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' dim(spec)
 dim.spectra = function(x){
     c("n_samples"     = length(names(x)),
@@ -91,7 +91,7 @@ dim.spectra = function(x){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example)
+#' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' print(spec)
 #' ## or simply
 #' spec
@@ -138,7 +138,7 @@ print.spectra = function(x, ...){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example)
+#' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' summary(spec)
 summary.spectra = function(object, ...){
     print(object, ...)
@@ -156,7 +156,7 @@ summary.spectra = function(object, ...){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example)
+#' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' str(spec)
 str.spectra = function(object, ...){
     cat("The structure of a spectra object should be irrelevant.", "\n")

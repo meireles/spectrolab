@@ -28,7 +28,7 @@ before trying to detect an NIR dip. If param `smooth` is set to TRUE (default),
 }
 \examples{
 library(spectrolab)
-spec  = as.spectra(spec_matrix_example)
+spec  = as.spectra(spec_matrix_example, name_idx = 1)
 
 # Find spec with NIR dip
 # Set parallel = TRUE if many samples need testing.

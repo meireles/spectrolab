@@ -25,7 +25,7 @@ Boolean
 
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example)
+spec = as.spectra(spec_matrix_example, name_idx = 1)
 # is reflectance being forced to be between 0 and 1?
 enforce01(spec)
 }

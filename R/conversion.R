@@ -1,9 +1,9 @@
 #' Convert matrix or data frame to spectra
 #'
 #' @param x matrix or dataframe. Samples are in rows and wavelengths in columns.
-#'          First column must be the sample label and the remaining columns must
-#'          hold reflectance data.
-#' @param name_idx column index with sample names. Defaults to 1st col. If NULL
+#'          Any data that are not the spectra themselves (labels or metadata)
+#'          must have their column index included in `name_idx` or `meta_idxs`.
+#' @param name_idx column index with sample names. Defaults to NULL. If NULL
 #'                 or 0, rownames(x) or a sequence of integers will be assigned
 #'                 as names.
 #' @param meta_idxs column indices with metadata (not name and not reflectance).
@@ -15,24 +15,22 @@
 #'
 #' @examples
 #' library(spectrolab)
-#' as.spectra(spec_matrix_example)
-as.spectra = function(x, name_idx = 1, meta_idxs = NULL){
+#' as.spectra(spec_matrix_example, name_idx = 1)
+as.spectra = function(x, name_idx = NULL, meta_idxs = NULL){
     UseMethod("as.spectra", x)
 }
 
 #' Convert data.frame to spectra
 #'
 #' @param x data.frame
-#' @param name_idx column index with sample names. Defaults to 1st col. If NULL
-#'                 or 0, rownames(x) or a sequence of integers will be assigned
-#'                 as names.
+#' @param name_idx column index with sample names. Defaults to NULL.
 #' @param meta_idxs column indices with metadata (not name and not reflectance).
 #'                  Defaults to NULL
 #' @return spectra object
 #'
 #' @author Jose Eduardo Meireles
 #' @export
-as.spectra.data.frame = function(x, name_idx = 1, meta_idxs = NULL){
+as.spectra.data.frame = function(x, name_idx = NULL, meta_idxs = NULL){
 
     if( is.null(name_idx) || name_idx == 0){
         name_idx = NULL
@@ -53,14 +51,14 @@ as.spectra.data.frame = function(x, name_idx = 1, meta_idxs = NULL){
 #' Convert matrix to spectra
 #'
 #' @param x matrix
-#' @param name_idx column index with sample names. Defaults to 1st col
+#' @param name_idx column index with sample names. Defaults to NULL
 #' @param meta_idxs column indices with metadata (not name and not reflectance).
 #'                  Defaults to NULL
 #' @return spectra object
 #'
 #' @author Jose Eduardo Meireles
 #' @export
-as.spectra.matrix = function(x, name_idx = 1, meta_idxs = NULL){
+as.spectra.matrix = function(x, name_idx = NULL, meta_idxs = NULL){
     as.spectra(as.data.frame(x), name_idx = name_idx, meta_idxs = meta_idxs)
 }
 
@@ -79,7 +77,7 @@ as.spectra.matrix = function(x, name_idx = 1, meta_idxs = NULL){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example)
+#' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' mat  = as.matrix(spec)
 as.matrix.spectra = function(x, fix_names = "none", ...) {
     r = reflectance(x)
@@ -123,7 +121,7 @@ as.matrix.spectra = function(x, fix_names = "none", ...) {
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example)
+#' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' df   = as.data.frame(spec, fix_names = "none")
 as.data.frame.spectra = function(x,
                                  row.names = NULL,

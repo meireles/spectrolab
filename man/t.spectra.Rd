@@ -17,7 +17,7 @@ spectra are not transposable. Transpose the reflectance instead
 }
 \examples{
 library(spectrolab)
-s = as.spectra(spec_matrix_example)
+s = as.spectra(spec_matrix_example, name_idx = 1)
 
 # This will throw an error
 \dontrun{
