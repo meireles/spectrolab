@@ -1,5 +1,14 @@
-# Advanced spectrolab for package developers and contributors
-Jose Eduardo Meireles and Anna K. Schweiger  
+---
+title: "Advanced spectrolab for package developers and contributors"
+author: "Jose Eduardo Meireles and Anna K. Schweiger"
+output:
+  rmarkdown::html_vignette:
+    keep_md: true
+vignette: >
+  %\VignetteIndexEntry{Advanced spectrolab for package developers and contributors}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
 
 ## Style guide and conventions
 
@@ -31,9 +40,6 @@ library("spectrolab")
 `spectrolab` defines a new S3 class called `spectra` that holds all of the different compnents of a spectral data.
 
 Without diving too much into its implementation, a `spectra` object holds the important information needed for most spectral datasets: reflectance, wavelengths, etc. The class has a bunch of requirements in terms of both format and values. 
-
-Some extra requirements can be added For example, reflectances can by default take any numeric value, but you can pass `enforce01 = TRUE` to the `spectra()` constructor to ensure that all valudes will be between 0 and 1. 
-
 
 ## Constructing a `spectra` object _"by hand"_
 
