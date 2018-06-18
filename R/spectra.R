@@ -14,13 +14,11 @@
 #'                     If NULL (default) checking is skipped.
 #' @param nsample Integer of expected number of samples.
 #'                If NULL (default) checking is skipped.
-#' @param enforce01 Boolean. enforce reflectance to be between 0.0 and 1.0?
-#'                  Defaults to FALSE
 #' @return data conformable to relative reflectance: numeric matrix
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = FALSE) {
+i_reflectance = function(x, nwavelengths = NULL, nsample = NULL) {
 
     ## test if x dimensions conform to nwavelengths and nsample
     if(is.vector(x)) {
@@ -46,16 +44,8 @@ i_reflectance = function(x, nwavelengths = NULL, nsample = NULL, enforce01 = FAL
         stop("Number of rows in x must be equal nsample")
     }
 
-    ## test if all values of x are between 0 and 1
-    if(enforce01 && any(any(x < 0.0), any(x > 1.0)) ){
-        stop("Reflectance values must be between 0 and 1")
-    }
-
     ## Clean up matrix dimensio names
     dimnames(x) = NULL
-
-    ## add enforce01 attribute
-    attr(x, which = "enforce01") = enforce01
 
     x
 }
@@ -187,7 +177,6 @@ i_meta = function(x, nsample, allow_null = TRUE, ...){
 #' @param names sample names in vector of length N
 #' @param meta spectra metadata. defaults to NULL. Must be either of length or nrow
 #'             equals to the number of samples (nrow(reflectance) or length(names))
-#' @param enforce01 Force reflectance to be between 0 and 1. defaults to FALSE
 #' @param ... additional arguments to metadata creation. not implemented yet
 #' @return spectra object
 #'
@@ -217,7 +206,6 @@ spectra = function(reflectance,
                    wavelengths,
                    names,
                    meta      = NULL,
-                   enforce01 = FALSE,
                    ...){
 
     ## HACK!!! affected blocks marked with ***
@@ -236,8 +224,7 @@ spectra = function(reflectance,
 
     s = list( reflectance  = i_reflectance(reflectance,
                                            nwavelengths = wl_l,
-                                           nsample      = spl_l,
-                                           enforce01    = enforce01),
+                                           nsample      = spl_l),
               wavelengths  = i_wavelengths(wavelengths),
               names        = i_names(names, prefix = NULL),     ## relies of the default prefix inside i_names
               meta         = i_meta(NULL, nsample = spl_l, ...) ## *** Ideally i_meta(meta, nsample = spl_l, ...)

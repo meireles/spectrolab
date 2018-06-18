@@ -56,7 +56,6 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
 
     r  = apply(as.matrix(x), 2, f, ...)
     w  = wavelengths(x)
-    e  = enforce01(x)
     m0 = meta(x)
     m = m0
 
@@ -71,7 +70,7 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
         m = lapply(m, fm, ...)  # Calling lapply because meta is always a data.frame
         m = do.call(cbind, m)
     }
-    spectra(reflectance = r, wavelengths = w, names = n, meta = m, enforce01 = e)
+    spectra(reflectance = r, wavelengths = w, names = n, meta = m)
 }
 
 
@@ -120,7 +119,6 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
     s = as.spectra(r, 1)
     meta(s) = m[ , -1]
 
-    enforce01(s) = enforce01(x)
     s
 }
 
@@ -173,13 +171,6 @@ combine.spectra = function(s1, s2){
     n = c(names(s1), names(s2))
     w = wavelengths(s1)               ## OK because I tested for equality before
 
-    if(enforce01(s1) != enforce01(s2)){
-        warning("Spectra objects have different enforce01 requirements.\n  Setting enforce01 to FALSE...")
-        e = FALSE
-    } else {
-        e = enforce01(s1)             ## OK because I tested for inequality before
-    }
-
     ## Merge metadata
     m1 = meta(s1)
     m2 = meta(s2)
@@ -193,7 +184,7 @@ combine.spectra = function(s1, s2){
     m3[1 : nrow(m1), names(m1)] = m1
     m3[(1 + nrow(m1)) : nrow(m3), names(m2)] = m2
 
-    spectra(r, w, n, m3, e)
+    spectra(r, w, n, m3)
 }
 
 

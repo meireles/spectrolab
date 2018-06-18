@@ -4,6 +4,7 @@
 * *NOT backwards compatible!*. Now, as.spectra() does not assume by default that
   the first column of a matrix or data.frame contains the names for the spectra.
   Users must explicitly use the `name_idx` argument to pick the correct column
+* *NOT backwards compatible!*. `enforce01` functions and attibute deprecared.
 
 ## minor
 * XXX

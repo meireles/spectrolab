@@ -94,8 +94,8 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
         out = spectra(reflectance = reflectance(x)[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ],
                       wavelengths = wavelengths(x)[ m[["c_idx"]] ],
                       names       = names(x)[ m[["r_idx"]] ],
-                      meta        = meta(x, label = NULL, sample =  m[["r_idx"]]),
-                      enforce01   = enforce01(x) )
+                      meta        = meta(x, label = NULL, sample =  m[["r_idx"]])
+                      )
         return(out)
     }
 }
@@ -125,7 +125,6 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
     if(missing(j)){ j = NULL }
     m = i_match_ij_spectra(x = x, i = i, j = j, allow_negative = FALSE)
     l = lapply(m, length)
-    e = enforce01(x)
 
     if(is_spectra(value)){
         value = reflectance(value)
@@ -138,7 +137,9 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
         l = list(NULL)   ## assign the two elements in `l` to NULL
     }
 
-    x$reflectance[ m[["r_idx"]], m[["c_idx"]] ] = i_reflectance(value, nwavelengths = l[["c_idx"]], nsample = l[["r_idx"]], enforce01 = e)
+    x$reflectance[ m[["r_idx"]], m[["c_idx"]] ] = i_reflectance(value,
+                                                                nwavelengths = l[["c_idx"]],
+                                                                nsample = l[["r_idx"]])
 
     x
 }
@@ -199,74 +200,6 @@ reflectance.spectra = function(x){
     x
 }
 
-########################################
-# Reflectance: SIDE EFFECT!
-########################################
-
-#' reflectance constraint status
-#'
-#' \code{enforce01} gets if a reflectance constraint (0 - 1) is being enforced
-#'
-#' @param x spectra object
-#' @return Boolean
-#'
-#' @author Jose Eduardo Meireles
-#' @export
-#'
-#' @examples
-#' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
-#' # is reflectance being forced to be between 0 and 1?
-#' enforce01(spec)
-enforce01 = function(x){
-    UseMethod("enforce01")
-}
-
-#' Enforce reflectance between 0 and 1
-#'
-#' \code{enforce01<-} sets or unsets a spectra reflectance constraint (0 - 1)
-#'
-#' @param x spectra object
-#' @param value boolean.
-#' @return nothing. has a *side effect* of changing if a constraint is enforced
-#'
-#' @author Jose Eduardo Meireles
-#' @export
-#'
-#' @examples
-#' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
-#'
-#' # Force to be between 0 and 1.
-#' enforce01(spec) = TRUE
-#'
-#' # So this operation will throw an error
-#'  \dontrun{ reflectance(spec) = reflectance(spec) * 1000 }
-`enforce01<-` = function(x, value){
-    UseMethod("enforce01<-")
-}
-
-#' @describeIn enforce01 Get reflectance constraint status
-#' @export
-enforce01.spectra = function(x){
-    attr(x$reflectance, "enforce01")
-}
-
-#' @describeIn enforce01<- Set reflectance constraint status
-#' @export
-`enforce01<-.spectra` = function(x, value){
-    if(! is.logical(value)){
-        stop("value must be boolean")
-    }
-    if(value){
-        if(min(range(x)) < 0 || max(range(x)) > 1.0){
-            stop("Cannot set enforce01 = TRUE because reflectance values outside 0-1 were found. Take care of those refletance values and try again.")
-        }
-    }
-
-    attr(x$reflectance, "enforce01") <- value
-    x
-}
 
 
 ########################################

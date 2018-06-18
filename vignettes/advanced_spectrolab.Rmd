@@ -40,9 +40,6 @@ library("spectrolab")
 
 Without diving too much into its implementation, a `spectra` object holds the important information needed for most spectral datasets: reflectance, wavelengths, etc. The class has a bunch of requirements in terms of both format and values. 
 
-Some extra requirements can be added For example, reflectances can by default take any numeric value, but you can pass `enforce01 = TRUE` to the `spectra()` constructor to ensure that all valudes will be between 0 and 1. 
-
-
 ## Constructing a `spectra` object _"by hand"_
 
 In addition to `read_spectra()` and `as.spectra()`, you can create a `spectra` object "by hand"" using the more flexible `spectra()` constructor, which takes at least arguments: (1) a reflectance matrix, (2) a vector of wavelengths and (3) the sample names.
