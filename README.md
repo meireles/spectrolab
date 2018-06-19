@@ -24,7 +24,7 @@ This vignette shows how to [splice sensors](vignettes/match_sensors.pdf) using t
 
 ## Contributing
 
-In an effort to keep things tidy and in running order, __direct commits to master are discouraged__. The master branch of the "meireles/spectrolab" forkis is protected.
+In an effort to keep things tidy and in running order, __direct commits to master are discouraged__. The master branch of the "meireles/spectrolab" fork is protected.
 
 I also use a [__pre-commit hook__](https://stackoverflow.com/questions/40462111/git-prevent-commits-in-master-branch) in my local repo that prevents me from breaking my own policy! I suggest you do the same. 
 
