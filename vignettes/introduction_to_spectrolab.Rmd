@@ -2,12 +2,7 @@
 title: "Introduction to spectrolab"
 author: "Jose Eduardo Meireles, Anna K. Schweiger and Jeannine Cavender-Bares"
 output:
-  rmarkdown::html_document: 
-    keep_md: yes
-    dev: 'png'
-    dpi: 300
   rmarkdown::pdf_document:
-    dev: 'svg'
     number_sections: yes
 vignette: > 
   %\VignetteIndexEntry{Introduction to spectrolab}
@@ -21,7 +16,7 @@ vignette: >
 * Access, aggregate, subset, split or combine spectra
 * Seamlessly link and manipulate metadata (such as chemistry)
 * Plot spectra or spectral quantiles, shade spectral regions (e.g. vis)
-* Scroll though and zoom in spectra interacively. 
+* Scroll through and zoom in spectra interacively. 
 * Perform tasks such as vector normalization, smoothing, resampling, and sensor overlap matching
 
 The source code can be found on our [GitHub repository](https://github.com/meireles/spectrolab). Please report any bugs and ask us your questions through the [issue tracker](https://github.com/meireles/spectrolab/issues).

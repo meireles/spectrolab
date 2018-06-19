@@ -2,8 +2,7 @@
 title: "Advanced spectrolab for package developers and contributors"
 author: "Jose Eduardo Meireles and Anna K. Schweiger"
 output:
-  rmarkdown::html_vignette:
-    keep_md: true
+  rmarkdown::pdf_document:
 vignette: >
   %\VignetteIndexEntry{Advanced spectrolab for package developers and contributors}
   %\VignetteEngine{knitr::rmarkdown}
