@@ -229,8 +229,8 @@ split.spectra = function(x, f, drop = FALSE, ...){
 
 #' Subset spectra by factor
 #'
-#' \code{subset_by} subsets spectra ensuring that each factor `by` appears only
-#' `max` times or less in the spectra dataset.
+#' \code{subset_by} subsets spectra by a factor `by` ensuring that it appears at
+#' most `n_max` times **and** at least `n_min` times in the dataset.
 #'
 #' Note that \code{subset_by} forces you to provide both a minimum and a maximum
 #' number of spectra to be kept for each unique value of `by`. In case you're
@@ -238,8 +238,8 @@ split.spectra = function(x, f, drop = FALSE, ...){
 #'
 #' @param x spectra object
 #' @param by vector coercible to factor and of same length as nrow(x)
-#' @param n_min int. only keep spectra with at least (incl) n_min number of
-#'              samples per unique `by`.
+#' @param n_min int. only keep spectra with at least (inclusive) `n_min` number
+#'              of samples per unique `by`.
 #' @param n_max int. keep at most (incl) this number of spectra per unique `by`
 #' @param random boolean. Sample randomly or keep first n_max? Defaults to TRUE
 #' @return spectra
@@ -264,6 +264,7 @@ subset_by = function(x, by, n_min, n_max, random = TRUE){
 subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
 
     by = unlist(by)
+
     if( ! is.vector(by) || length(by) != nrow(x) ){
         stop("`by` must be a vector length equals the number of rows in x")
     }
@@ -284,9 +285,28 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
         stop("`n_max` must be larger than `n_min`")
     }
 
+
+    ########################################
+    ## Subset based on n_min
+    ########################################
+
+    tbl_by   = table(by)
+
+    keep_lbl = names(tbl_by[ tbl_by >= n_min ])
+    keep_idx = which(by %in% keep_lbl)
+
+    if(length(keep_idx) == 0){
+        message("chosen `n_min` excluded all spectra. returning NULL.")
+        return(NULL)
+    } else {
+        x  = x[ keep_idx, ]
+        by = by[ keep_idx ]
+    }
+
     ########################################
     ## Subset based on n_max
     ########################################
+
     excl_n_by = table(by) - n_max
     excl_n_by = excl_n_by[ excl_n_by > 0 ]
 
@@ -300,28 +320,57 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
         }
         p
     })
+
     excl_idx = unlist(excl_idx)
 
-
     # Exclude indices from `x` and `by` if there's something to exclude
-    if(length(excl_n_by) > 0){
+    if(length(excl_idx) > 0){
         x  = x[ - excl_idx ,  ]
-        by = by[ - excl_idx ]
     }
 
     ########################################
-    ## Subset based on n_min
+    ## return
     ########################################
+    x
 
-    tbl_by = table(by)
-    keep   = names(tbl_by[ tbl_by >= n_min ])
-
-    if(length(keep) == 0){
-        message("chosen `n_min` excluded all spectra. returning NULL.")
-        return(NULL)
-    }
-
-    x[ keep, ]
+    # ########################################
+    # ## Subset based on n_max
+    # ########################################
+    # excl_n_by = table(by) - n_max
+    # excl_n_by = excl_n_by[ excl_n_by > 0 ]
+    #
+    # # Compute indices to exclude
+    # excl_idx = sapply(names(excl_n_by), function(x){
+    #     w = which(by == x)
+    #     if(random){
+    #         p = sample(w, excl_n_by[[x]])
+    #     } else {
+    #         p = utils::tail(w, n = excl_n_by[[x]])
+    #     }
+    #     p
+    # })
+    # excl_idx = unlist(excl_idx)
+    #
+    #
+    # # Exclude indices from `x` and `by` if there's something to exclude
+    # if(length(excl_n_by) > 0){
+    #     x  = x[ - excl_idx ,  ]
+    #     by = by[ - excl_idx ]
+    # }
+    #
+    # ########################################
+    # ## Subset based on n_min
+    # ########################################
+    #
+    # tbl_by = table(by)
+    # keep   = names(tbl_by[ tbl_by >= n_min ])
+    #
+    # if(length(keep) == 0){
+    #     message("chosen `n_min` excluded all spectra. returning NULL.")
+    #     return(NULL)
+    # }
+    #
+    # x[ keep, ]
 }
 
 

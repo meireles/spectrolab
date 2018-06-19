@@ -5,6 +5,12 @@ context("Spectra subsetting by")
 
 spec   = as.spectra(spec_matrix_example, name_idx = 1)
 by_def = names(spec)
+by_rnd = c(rep(1, 5), rep(2, 10), rep(3, 35))
+
+test_that("by factor that isn't a sample name works", {
+    expect_true( nrow(subset_by(spec, by = by_rnd, n_min = 6, n_max = 20)) == 30 )
+})
+
 
 test_that("by of wrong length throws", {
     expect_error( subset_by(spec, by = by_def[ 1 : floor(nrow(spec) / 2)],
@@ -32,11 +38,9 @@ test_that("n_min = 5 will return a subetted obj", {
     expect_lt( nrow(subset_by(spec, by = by_def, n_min = 5, n_max = Inf)), nrow(spec) )
 })
 
-
 test_that("null if n_min is too large", {
     expect_null( subset_by(spec, by = by_def, n_min = 100, n_max = Inf) )
 })
-
 
 test_that("same spec obj is returned if n_min and n_max are wide enough", {
     expect_true( nrow(subset_by(spec, by = by_def,

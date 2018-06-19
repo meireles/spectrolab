@@ -14,8 +14,8 @@ subset_by(x, by, n_min, n_max, random = TRUE)
 
 \item{by}{vector coercible to factor and of same length as nrow(x)}
 
-\item{n_min}{int. only keep spectra with at least (incl) n_min number of
-samples per unique `by`.}
+\item{n_min}{int. only keep spectra with at least (inclusive) `n_min` number
+of samples per unique `by`.}
 
 \item{n_max}{int. keep at most (incl) this number of spectra per unique `by`}
 
@@ -25,8 +25,8 @@ samples per unique `by`.}
 spectra
 }
 \description{
-\code{subset_by} subsets spectra ensuring that each factor `by` appears only
-`max` times or less in the spectra dataset.
+\code{subset_by} subsets spectra by a factor `by` ensuring that it appears at
+most `n_max` times **and** at least `n_min` times in the dataset.
 }
 \details{
 Note that \code{subset_by} forces you to provide both a minimum and a maximum
