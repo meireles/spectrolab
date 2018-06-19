@@ -1,14 +1,13 @@
-# spectrolab X.X.X (XXXX-XX-XX)
+# spectrolab 0.0.6 (2018-06-19)
 
 ## major 
 * *NOT backwards compatible!*. Now, as.spectra() does not assume by default that
   the first column of a matrix or data.frame contains the names for the spectra.
   Users must explicitly use the `name_idx` argument to pick the correct column
-* *NOT backwards compatible!*. `enforce01` functions and attibute deprecared.
+* *NOT backwards compatible!*. `enforce01` functions and attribute deprecated.
 
 ## minor
-* XXX
-
+* fixed bug in subset_by, where n_min was matching sample names instead of indices.
 
 # spectrolab 0.0.5 (2018-05-31)
 
