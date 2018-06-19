@@ -20,33 +20,6 @@ as.spectra = function(x, name_idx = NULL, meta_idxs = NULL){
     UseMethod("as.spectra", x)
 }
 
-#' Convert data.frame to spectra
-#'
-#' @param x data.frame
-#' @param name_idx column index with sample names. Defaults to NULL.
-#' @param meta_idxs column indices with metadata (not name and not reflectance).
-#'                  Defaults to NULL
-#' @return spectra object
-#'
-#' @author Jose Eduardo Meireles
-#' @export
-as.spectra.data.frame = function(x, name_idx = NULL, meta_idxs = NULL){
-
-    if( is.null(name_idx) || name_idx == 0){
-        name_idx = NULL
-        s        = rownames(x)
-    } else {
-        s = x[ , name_idx, drop = TRUE]
-    }
-
-    m = x[ , meta_idxs, drop = FALSE]
-    p = setdiff(seq(ncol(x)), c(name_idx, meta_idxs))
-    r = x[ , p, drop = FALSE]
-    w = colnames(r)
-
-    spectra(r, w, s, m)
-}
-
 
 #' Convert matrix to spectra
 #'
@@ -59,8 +32,39 @@ as.spectra.data.frame = function(x, name_idx = NULL, meta_idxs = NULL){
 #' @author Jose Eduardo Meireles
 #' @export
 as.spectra.matrix = function(x, name_idx = NULL, meta_idxs = NULL){
-    as.spectra(as.data.frame(x), name_idx = name_idx, meta_idxs = meta_idxs)
+
+    if( is.null(name_idx) || name_idx == 0){
+        name_idx = NULL
+        s        = rownames(x)
+        if(is.null(s)){
+            s = seq(nrow(x))
+        }
+    } else {
+        s = x[ , name_idx, drop = TRUE]
+    }
+
+    m = x[ , meta_idxs, drop = FALSE]
+    p = setdiff(seq(ncol(x)), c(name_idx, meta_idxs))
+    r = x[ , p, drop = FALSE]
+    w = colnames(r)
+
+    spectra(r, w, s, m)
 }
+
+#' Convert data.frame to spectra
+#'
+#' @param x data.frame
+#' @param name_idx column index with sample names. Defaults to NULL.
+#' @param meta_idxs column indices with metadata (not name and not reflectance).
+#'                  Defaults to NULL
+#' @return spectra object
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+as.spectra.data.frame = function(x, name_idx = NULL, meta_idxs = NULL){
+    as.spectra(as.matrix(x), name_idx = name_idx, meta_idxs = meta_idxs)
+}
+
 
 
 #' Convert spectra to matrix
@@ -125,7 +129,7 @@ as.matrix.spectra = function(x, fix_names = "none", ...) {
 #' df   = as.data.frame(spec, fix_names = "none")
 as.data.frame.spectra = function(x,
                                  row.names = NULL,
-                                 optional = FALSE,
+                                 optional  = FALSE,
                                  fix_names = "none",
                                  metadata  = TRUE,
                                  ...) {
