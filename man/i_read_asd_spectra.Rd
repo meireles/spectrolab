@@ -5,7 +5,7 @@
 \title{Parser for ASD's `.asd`}
 \usage{
 i_read_asd_spectra(file_paths, format = c("binary", "txt"), divide_refl_by,
-  include_white_ref, ...)
+  ...)
 }
 \arguments{
 \item{file_paths}{paths for files already parsed by `read_spectra`}
@@ -13,9 +13,6 @@ i_read_asd_spectra(file_paths, format = c("binary", "txt"), divide_refl_by,
 \item{format}{choice of ASD format. Either "binary" or "txt"}
 
 \item{divide_refl_by}{divide reflectance values by this}
-
-\item{include_white_ref}{NOT USED YET, but should read the write reference
-from each file}
 
 \item{...}{NOT USED YET}
 }

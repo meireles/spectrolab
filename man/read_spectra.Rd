@@ -4,16 +4,14 @@
 \alias{read_spectra}
 \title{Read files from various formats into `spectra`}
 \usage{
-read_spectra(path, format, include_white_ref = FALSE, recursive = FALSE,
-  exclude_if_matches = NULL, ignore_extension = FALSE, ...)
+read_spectra(path, format, recursive = FALSE, exclude_if_matches = NULL,
+  ignore_extension = FALSE, ...)
 }
 \arguments{
 \item{path}{Path to directory or input files}
 
 \item{format}{file formats. "asd" (for ASD); "sig" or "svc" (for SVC);
 "sed" or "psr" (for SpecEvo PSR).}
-
-\item{include_white_ref}{boolean. include white reference. NOT IMPLEMENTED YET}
 
 \item{recursive}{read files recursively}
 

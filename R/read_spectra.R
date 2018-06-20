@@ -5,7 +5,6 @@ devtools::use_package("prospectr")
 #' @param path Path to directory or input files
 #' @param format file formats. "asd" (for ASD); "sig" or "svc" (for SVC);
 #'               "sed" or "psr" (for SpecEvo PSR).
-#' @param include_white_ref boolean. include white reference. NOT IMPLEMENTED YET
 #' @param recursive read files recursively
 #' @param exclude_if_matches excludes files that match this regular expression.
 #'                           Example: "BAD"
@@ -24,7 +23,6 @@ devtools::use_package("prospectr")
 #' spec     = read_spectra(path = dir_path, format = "sig")
 read_spectra = function(path,
                         format,
-                        include_white_ref  = FALSE,
                         recursive          = FALSE,
                         exclude_if_matches = NULL,
                         ignore_extension   = FALSE,
@@ -106,8 +104,7 @@ read_spectra = function(path,
                                       header            = FALSE,
                                       wl_col            = 1,
                                       refl_cols         = 4,
-                                      divide_refl_by    = 100,
-                                      include_white_ref = include_white_ref)
+                                      divide_refl_by    = 100)
         return(result)
     }
 
@@ -121,7 +118,6 @@ read_spectra = function(path,
                                       wl_col            = "Wvl",
                                       refl_cols         = c("Reflect. %", "Reflect. [1.0]"),
                                       divide_refl_by    = c(100, 1),
-                                      include_white_ref = include_white_ref,
                                       check.names       = FALSE)
         return(result)
     }
@@ -130,7 +126,6 @@ read_spectra = function(path,
         result = i_read_asd_spectra(i_path,
                                     format            = "binary",
                                     divide_refl_by    = 1,
-                                    include_white_ref = FALSE,
                                     ...)
         return(result)
     }
@@ -152,8 +147,6 @@ read_spectra = function(path,
 #' @param wl_col idx or name of wavelength column
 #' @param refl_cols idx or name of reflectance columns. MULTIPLE
 #' @param divide_refl_by divide reflectance values by this. MULTIPLE
-#' @param include_white_ref NOT USED YET, but should read the write reference
-#'                          from each file
 #' @param ... additional arguments passed to read table
 #' @return single `spectra` or list of `spectra`
 #'
@@ -169,7 +162,6 @@ i_read_ascii_spectra = function(file_paths,
                                 wl_col,
                                 refl_cols,
                                 divide_refl_by,
-                                include_white_ref,
                                 ...){
 
     ############################################################
@@ -281,8 +273,6 @@ i_read_ascii_spectra = function(file_paths,
 #' @param file_paths paths for files already parsed by `read_spectra`
 #' @param format choice of ASD format. Either "binary" or "txt"
 #' @param divide_refl_by divide reflectance values by this
-#' @param include_white_ref NOT USED YET, but should read the write reference
-#'                          from each file
 #' @param ... NOT USED YET
 #' @return spectra object
 #'
@@ -293,7 +283,6 @@ i_read_ascii_spectra = function(file_paths,
 i_read_asd_spectra = function(file_paths,
                               format = c("binary", "txt"),
                               divide_refl_by,
-                              include_white_ref,
                               ...){
 
     rf = prospectr::readASD(fnames = file_paths, out_format = "matrix")
