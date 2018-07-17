@@ -1,3 +1,11 @@
+# spectrolab 0.0.X (2018-XX-XX)
+
+## major 
+* 
+## minor
+* `quantile` now allows the user to choose names for the spectra
+
+
 # spectrolab 0.0.6 (2018-06-19)
 
 ## major 
