@@ -121,25 +121,72 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #' spec[ , 400:500] = spec[ , 400:500] * 1.2
 #' spec
 `[<-.spectra` = function(x, i, j, value){
+
+    ####################################################
+    ###   ORIGINAL setter
+
+    # if(missing(i)){ i = NULL }
+    # if(missing(j)){ j = NULL }
+    # m = i_match_ij_spectra(x = x, i = i, j = j, allow_negative = FALSE)
+    # l = lapply(m, length)
+    #
+    # if(is_spectra(value)){
+    #     value = reflectance(value)
+    # }
+    #
+    # ## In case `value` is a scalar:
+    # ##   1. Do not check for dimension constraints, which leads to
+    # ##   2. assiging `value` to all elements in the reflectance matrix
+    # if(is.vector(value) && length(value) == 1){
+    #     l = list(NULL)   ## assign the two elements in `l` to NULL
+    # }
+    #
+    # x$reflectance[ m[["r_idx"]], m[["c_idx"]] ] = i_reflectance(value,
+    #                                                             nwavelengths = l[["c_idx"]],
+    #                                                             nsample = l[["r_idx"]])
+    # x
+    ####################################################
+
+
     if(missing(i)){ i = NULL }
     if(missing(j)){ j = NULL }
+
     m = i_match_ij_spectra(x = x, i = i, j = j, allow_negative = FALSE)
     l = lapply(m, length)
 
+
+
+    ## In case "value" is a spectra object, every compoennt of spectra must be updated
     if(is_spectra(value)){
-        value = reflectance(value)
-    }
+        if( !identical(wavelengths(x)[m$c_idx], wavelengths(value))){
+           stop("wavelenegths not compatible")
+        }
 
-    ## In case `value` is a scalar:
-    ##   1. Do not check for dimension constraints, which leads to
-    ##   2. assiging `value` to all elements in the reflectance matrix
-    if(is.vector(value) && length(value) == 1){
-        l = list(NULL)   ## assign the two elements in `l` to NULL
-    }
+        if( any(colnames(meta(x)) !=  colnames(meta(value))) ){
+            stop("metadata columns not compatible. names must be exactly the same")
+        }
 
-    x$reflectance[ m[["r_idx"]], m[["c_idx"]] ] = i_reflectance(value,
-                                                                nwavelengths = l[["c_idx"]],
-                                                                nsample = l[["r_idx"]])
+        if(l$r_idx == nrow(value)){
+            reflectance(x)[m$r_idx, m$c_idx] = reflectance(value)
+            names(x)[m$r_idx]                = names(value)
+            meta(x)[m$r_idx, ]               = meta(value)
+        } else if ( nrow(value) == 1){
+            reflectance(x)[m$r_idx, m$c_idx] = reflectance(value)[ rep(x = 1, l$r_idx), ]
+            names(x)[m$r_idx]                = rep(names(value), l$r_idx)
+            meta(x)[m$r_idx, ]               = meta(value)[rep(1, l$r_idx), ]
+        } else {
+            stop("spectra not compatible.")
+        }
+    } else {
+        ## In case "value" is something else, only update the reflectance
+
+        ## If value is a scalar
+        if(is.vector(value) && length(value) == 1){
+            reflectance(x)[ m$r_idx , m$c_idx ] = matrix(value, l$r_idx, l$c_idx)
+        } else {
+            reflectance(x)[ m$r_idx , m$c_idx ] = value
+        }
+    }
 
     x
 }
@@ -196,10 +243,15 @@ reflectance.spectra = function(x){
 #' @describeIn reflectance<- Set spectra reflectance
 #' @export
 `reflectance<-.spectra` = function(x, value){
-    x[] = value
+
+    ### ORIGINAL code was calling the spectra setter ###
+    # x[] = value
+    # x
+    ####################################################
+
+    x$reflectance = i_reflectance(value, nwavelengths = ncol(x), nsample = nrow(x))
     x
 }
-
 
 
 ########################################
