@@ -1,14 +1,14 @@
-# spectrolab 0.0.X (2018-XX-XX)
+# spectrolab 0.0.7 (2018-07-24)
 
-## major 
-* 
+## major
+* Fixed major bug. Spectrum replacement (e.g. spec_a[i, ] = spec_b[1, ]) only
+  replaced the reflectance and not the other information (names, metadata, etc.)
 ## minor
 * `quantile` now allows the user to choose names for the spectra
 
-
 # spectrolab 0.0.6 (2018-06-19)
 
-## major 
+## major
 * *NOT backwards compatible!*. Now, as.spectra() does not assume by default that
   the first column of a matrix or data.frame contains the names for the spectra.
   Users must explicitly use the `name_idx` argument to pick the correct column
@@ -19,7 +19,7 @@
 
 # spectrolab 0.0.5 (2018-05-31)
 
-## major 
+## major
 * Fixed bug in "reflectance" setter, where the object was not being returned
 * The parser inside read_spectra now finds the spectral data using tags instead
   of assuming that the data starts at a specific line
@@ -29,8 +29,8 @@
 * cleaned up several minor issues
 
 # spectrolab 0.0.4 (2017-12-13)
- 
-## major 
+
+## major
 * sample names in the spectra class are now required to be char. Names coercible to numeric will have a prefix added to them by default. This may break existing code!
 
 ## minor
@@ -39,12 +39,12 @@
 * added unit tests for i_is_index function
 
 # spectrolab 0.0.3 (2017-11-15)
- 
+
 ## minor
 * fixed index duplication in the _match sensor_ vignette.
 * added CRAN installation instructions to readme.md
 * internal spline smoothing now requires the parallel package
 
 # spectrolab 0.0.2 (2017-09-14)
- 
+
 * Initial release
