@@ -5,7 +5,7 @@
 \title{Compute spectra quantiles}
 \usage{
 \method{quantile}{spectra}(x, probs = c(0.025, 0.25, 0.5, 0.75, 0.975),
-  na.rm = TRUE, ...)
+  na.rm = TRUE, names = NULL, ...)
 }
 \arguments{
 \item{x}{spectra object. Must have at least the same number of sample that
@@ -15,6 +15,9 @@ length(probs) has.}
 between 0.0 and 1.0. Defaults to c(0.025, 0.25, 0.5, 0.75, 0.975).}
 
 \item{na.rm}{remove NAs before computing quantiles? Defaults to TRUE}
+
+\item{names}{names for each quantile spectrum. If NULL (default), names are set
+to probs. A char vector should otherwise be given. Recyled.}
 
 \item{...}{other arguments passed to quantile.}
 }

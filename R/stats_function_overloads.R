@@ -161,6 +161,8 @@ sd.spectra = function(x, na.rm = TRUE){
 #' @param probs Probabilities to compute quantiles. Must be a vector of numerics
 #'              between 0.0 and 1.0. Defaults to c(0.025, 0.25, 0.5, 0.75, 0.975).
 #' @param na.rm remove NAs before computing quantiles? Defaults to TRUE
+#' @param names names for each quantile spectrum. If NULL (default), names are set
+#'              to probs. A char vector should otherwise be given. Recyled.
 #' @param ... other arguments passed to quantile.
 #' @return spectra object with one spectrum for each prob
 #'
@@ -176,6 +178,7 @@ sd.spectra = function(x, na.rm = TRUE){
 quantile.spectra = function(x,
                             probs = c(0.025, 0.25, 0.5, 0.75, 0.975),
                             na.rm = TRUE,
+                            names = NULL,
                             ...){
 
     ## probs must be between 0 and 1
@@ -195,9 +198,16 @@ quantile.spectra = function(x,
         stop("There are less samples (", nrow(x),") than probabilities (",  length(probs), ") for `quantile` to makes sense.")
     }
 
+    ## Construct sample names
+    if(is.null(names) | any(is.na(names))){
+        n = as.character(probs)
+    } else {
+        n = as.character(names)
+    }
+
     ## Return spectra quantile object
     x = apply_by_band(x, stats::quantile, probs = probs, na.rm = na.rm,
-                      name = as.character(probs), ...)
+                      name = n, ...)
 
     class(x) = c(class(x), "spec_quantile")
     x
