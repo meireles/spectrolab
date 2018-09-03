@@ -33,5 +33,5 @@ spec = as.spectra(spec_matrix_example, name_idx = 1)
 spec = normalize(spec)
 }
 \author{
-Jose Eduardo Meireles
+Jose Eduardo Meireles and Anna K. Schweiger
 }

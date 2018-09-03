@@ -1,6 +1,6 @@
 ---
 title: "How to match sensors in raw spectra"
-author: "Jose Eduardo Meireles and Anna Schweiger"
+author: "Jose Eduardo Meireles and Anna K.Schweiger"
 output:
   rmarkdown::pdf_document:
 vignette: > 

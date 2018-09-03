@@ -4,8 +4,8 @@
 \alias{plot_interactive}
 \title{Plot spectra interactively}
 \usage{
-plot_interactive(spec, colpalette = function(n) RColorBrewer::brewer.pal(n,
-  "Dark2"), ...)
+plot_interactive(spec, colpalette = function(n)
+  RColorBrewer::brewer.pal(n, "Dark2"), ...)
 }
 \arguments{
 \item{spec}{spectra object}

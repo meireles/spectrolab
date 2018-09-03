@@ -4,8 +4,8 @@
 \alias{i_read_asd_spectra}
 \title{Parser for ASD's `.asd`}
 \usage{
-i_read_asd_spectra(file_paths, format = c("binary", "txt"), divide_refl_by,
-  ...)
+i_read_asd_spectra(file_paths, format = c("binary", "txt"),
+  divide_refl_by, ...)
 }
 \arguments{
 \item{file_paths}{paths for files already parsed by `read_spectra`}

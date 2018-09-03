@@ -41,5 +41,5 @@ s_1and2 = combine(s1, s2)
 s_n = Reduce(combine, list(s1, s2, s3))
 }
 \author{
-Jose Eduardo Meireles
+Jose Eduardo Meireles and Anna K. Schweiger
 }
