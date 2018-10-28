@@ -5,8 +5,8 @@
 \title{Plot polygons for spectral regions}
 \usage{
 plot_regions(spec, regions = default_spec_regions(),
-  col = grDevices::rgb(0.7, 0.7, 0.7, 0.3), border = FALSE, add = TRUE,
-  add_label = TRUE, cex_label = 1, ...)
+  col = grDevices::rgb(0.7, 0.7, 0.7, 0.3), border = FALSE,
+  add = TRUE, add_label = TRUE, cex_label = 1, ...)
 }
 \arguments{
 \item{spec}{spectra object}
