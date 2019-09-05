@@ -135,7 +135,7 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
 #' @param s2 spectra object 2
 #' @return combined spectra object
 #'
-#' @author Jose Eduardo Meireles
+#' @author Jose Eduardo Meireles and Anna K. Schweiger
 #' @export
 #'
 #' @examples
@@ -181,8 +181,8 @@ combine.spectra = function(s1, s2){
                            dimnames = list(NULL, mn)),
                     check.names = FALSE)
 
-    m3[1 : nrow(m1), names(m1)] = m1
-    m3[(1 + nrow(m1)) : nrow(m3), names(m2)] = m2
+    m3[1 : nrow(m1), names(m1)] = as.matrix(m1)
+    m3[(1 + nrow(m1)) : nrow(m3), names(m2)] = as.matrix(m2)
 
     spectra(r, w, n, m3)
 }
@@ -387,7 +387,7 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
 #' @param ... nothing
 #' @return spectra object with normalized spectra
 #'
-#' @author Jose Eduardo Meireles
+#' @author Jose Eduardo Meireles and Anna K. Schweiger
 #' @export
 #'
 #' @examples
