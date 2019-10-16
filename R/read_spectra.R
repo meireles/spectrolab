@@ -1,10 +1,12 @@
-devtools::use_package("prospectr")
+# devtools::use_package("prospectr")
 
 #' Read files from various formats into `spectra`
 #'
 #' @param path Path to directory or input files
 #' @param format file formats. "asd" (for ASD); "sig" or "svc" (for SVC);
 #'               "sed" or "psr" (for SpecEvo PSR).
+#' @param type Data type to read. "target_refl", "target_rad", "reference_rad".
+#'             Defaults to "target_refl".
 #' @param recursive read files recursively
 #' @param exclude_if_matches excludes files that match this regular expression.
 #'                           Example: "BAD"
@@ -23,6 +25,7 @@ devtools::use_package("prospectr")
 #' spec     = read_spectra(path = dir_path, format = "sig")
 read_spectra = function(path,
                         format,
+                        type               = "target_refl",
                         recursive          = FALSE,
                         exclude_if_matches = NULL,
                         ignore_extension   = FALSE,
@@ -36,7 +39,7 @@ read_spectra = function(path,
                       sed = "sed",
                       psr = "sed",
                       asd = "asd")
-    format_match  = pmatch( tolower(format), names(format_lookup))
+    format_match  = pmatch(tolower(format), names(format_lookup))
 
     ## Error if format isn't found
     if(length(format_match) == 0){ stop("Format not supported") }
@@ -97,18 +100,42 @@ read_spectra = function(path,
     #############################################################
 
     if(format_lookup[format_match] == "sig"){
+
+        if(type == "target_refl"){
+            refl_cols = 4
+        } else if (type == "target_rad") {
+            refl_cols = 3
+        } else if (type == "reference_rad") {
+            refl_cols = 2
+        } else {
+            stop("type must be either target_refl, target_rad or reference_rad")
+        }
+
         result = i_read_ascii_spectra(i_path,
                                       skip_until_tag    = "data=",
                                       skip_first_n      = NULL,         # 25
                                       sep_char          = "",
                                       header            = FALSE,
                                       wl_col            = 1,
-                                      refl_cols         = 4,
+                                      refl_cols         = refl_cols,
                                       divide_refl_by    = 100)
         return(result)
     }
 
     if(format_lookup[format_match] == "sed"){
+
+        if(type == "target_refl"){
+            refl_cols      = c("Reflect. %", "Reflect. [1.0]")
+            divide_refl_by = c(100, 1)
+        } else if (type == "target_rad") {
+            refl_cols      = "Rad. (Target)"
+            divide_refl_by = 1
+        } else if (type == "reference_rad") {
+            refl_cols      = "Rad. (Ref.)"
+            divide_refl_by = 1
+        } else {
+            stop("type must be either target_refl, target_rad or reference_rad")
+        }
 
         result = i_read_ascii_spectra(i_path,
                                       skip_until_tag    = "Data:",
@@ -116,14 +143,15 @@ read_spectra = function(path,
                                       sep_char          = "\t",
                                       header            = TRUE,
                                       wl_col            = "Wvl",
-                                      refl_cols         = c("Reflect. %", "Reflect. [1.0]"),
-                                      divide_refl_by    = c(100, 1),
+                                      refl_cols         = refl_cols,
+                                      divide_refl_by    = divide_refl_by,
                                       check.names       = FALSE)
         return(result)
     }
 
     if(format_lookup[format_match] == "asd"){
         result = i_read_asd_spectra(i_path,
+                                    type              = type,
                                     format            = "binary",
                                     divide_refl_by    = 1,
                                     ...)
@@ -156,7 +184,7 @@ read_spectra = function(path,
 #' @author Jose Eduardo Meireles and Anna Schweiger
 i_read_ascii_spectra = function(file_paths,
                                 skip_until_tag = NULL,
-                                skip_first_n = NULL,
+                                skip_first_n   = NULL,
                                 sep_char,
                                 header,
                                 wl_col,
@@ -271,6 +299,8 @@ i_read_ascii_spectra = function(file_paths,
 #' Parser for ASD's `.asd`
 #'
 #' @param file_paths paths for files already parsed by `read_spectra`
+#' @param type Data type to read. "target_refl", "target_rad", "reference_rad".
+#'             Defaults to "target_refl".
 #' @param format choice of ASD format. Either "binary" or "txt"
 #' @param divide_refl_by divide reflectance values by this
 #' @param ... NOT USED YET
@@ -281,13 +311,35 @@ i_read_ascii_spectra = function(file_paths,
 #' @keywords internal
 #' @author Jose Eduardo Meireles
 i_read_asd_spectra = function(file_paths,
+                              type   = "target_refl",
                               format = c("binary", "txt"),
                               divide_refl_by,
                               ...){
 
-    rf = prospectr::readASD(fnames = file_paths, out_format = "matrix")
-    wl = colnames(rf)
-    nm = gsub(".asd$", "",rownames(rf))
-    spectra(rf, wl, nm)
+    if(type == "target_refl"){
+        rf = prospectr::readASD(fnames = file_paths, out_format = "matrix")
+        wl = colnames(rf)
+        nm = gsub(".asd$", "",rownames(rf))
+
+        return(spectra(rf, wl, nm))
+
+    } else if (type == "target_rad"){
+        l   = prospectr::readASD(fnames = file_paths, out_format = "list")
+        rf  = do.call(rbind, lapply(l, `[[`, "radiance"))
+        nm  = gsub(".asd$", "",rownames(rf))
+        wl  = l[[1]][["wavelength"]]
+
+        return(spectra(rf, wl, nm))
+
+    } else if (type == "reference_rad"){
+        l   = prospectr::readASD(fnames = file_paths, out_format = "list")
+        rf  = do.call(rbind, lapply(l, `[[`, "reference"))
+        nm  = gsub(".asd$", "",rownames(rf))
+        wl  = l[[1]][["wavelength"]]
+
+        return(spectra(rf, wl, nm))
+    } else {
+        stop("type must be either target_refl, target_rad or reference_rad")
+    }
 }
 
