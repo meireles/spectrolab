@@ -1,6 +1,6 @@
 library(PEcAnRTM)
-library(devtools)
-library(spectrolab)
+library("devtools")
+library("spectrolab")
 
 n = 50
 params = matrix( c(rnorm(n, 1.2, 0.05),

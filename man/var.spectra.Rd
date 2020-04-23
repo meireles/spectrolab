@@ -14,8 +14,6 @@
 \item{na.rm}{boolean. remove NAs?}
 
 \item{use}{nothing}
-
-\item{...}{further arguments passed to methods}
 }
 \value{
 single spectrum
