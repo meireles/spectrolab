@@ -4,8 +4,13 @@
 \alias{i_match_label_or_idx}
 \title{Match label or index}
 \usage{
-i_match_label_or_idx(x, i, full = FALSE, allow_empty_lookup = FALSE,
-  allow_negative = FALSE)
+i_match_label_or_idx(
+  x,
+  i,
+  full = FALSE,
+  allow_empty_lookup = FALSE,
+  allow_negative = FALSE
+)
 }
 \arguments{
 \item{x}{label vector}

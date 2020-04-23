@@ -2,37 +2,18 @@
 % Please edit documentation in R/transform_spectra.R
 \name{smooth}
 \alias{smooth}
-\alias{smooth.spectra}
-\title{Smooth spectra}
+\title{Generic Smoothing function}
 \usage{
-smooth(x, method = "spline", ...)
-
-\method{smooth}{spectra}(x, method = "spline", ...)
+smooth(x, ...)
 }
 \arguments{
-\item{x}{spectra object. Wavelengths must be strictly increasing}
+\item{x}{data to smooth over}
 
-\item{method}{Choose smoothing method: "spline" (default) or "moving_average"}
-
-\item{...}{additional parameters passed to \code{smooth.spline} or parameters
-`n` and `save_wvls_to_meta` for the moving average smoothing.}
+\item{...}{additional arguments}
 }
 \value{
-a spectra object of with smoothed spectra
+smoothed data
 }
 \description{
-\code{smooth} runs each spectrum by a smoothing and returns the spectra
-}
-\section{Methods (by class)}{
-\itemize{
-\item \code{spectra}: Smooth spectra
-}}
-
-\examples{
-library(spectrolab)
-spec = as.spectra(spec_matrix_example, name_idx = 1)
-spec = smooth(spec, parallel = FALSE)
-}
-\author{
-Jose Eduardo Meireles
+Generic Smoothing function
 }

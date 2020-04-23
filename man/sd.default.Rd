@@ -7,22 +7,26 @@
 \method{sd}{default}(x, na.rm = FALSE)
 }
 \arguments{
-\item{x}{a numeric vector or an \R object which is coercible to one
-    by \code{as.double(x)}.}
+\item{x}{a numeric vector or an \R object but not a
+    \code{\link{factor}} coercible to numeric by \code{as.double(x)}.}
 
 \item{na.rm}{logical.  Should missing values be removed?}
 }
 \description{
-Default variance
+This function computes the standard deviation of the values in
+  \code{x}.
+  If \code{na.rm} is \code{TRUE} then missing values are removed before
+  computation proceeds.
 }
 \details{
-Like \code{\link{var}} this uses denominator \eqn{n - 1}.
+Like \code{\link[stats]{var}} this uses denominator \eqn{n - 1}.
 
-  The standard deviation of a zero-length vector (after removal of
-  \code{NA}s if \code{na.rm = TRUE}) is not defined and gives an error.
-  The standard deviation of a length-one vector is \code{NA}.
+  The standard deviation of a length-one or zero-length vector is \code{NA}.
+}
+\examples{
+sd(1:2) ^ 2
 }
 \seealso{
-\code{\link{var}} for its square, and \code{\link{mad}}, the most
+\code{\link[stats]{var}} for its square, and \code{\link[stats]{mad}}, the most
   robust alternative.
 }

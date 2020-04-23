@@ -4,8 +4,15 @@
 \alias{plot_quantile}
 \title{Plot spectra quantiles}
 \usage{
-plot_quantile(spec, total_prob = 0.95, col = rgb(0, 0, 0, 0.1),
-  border = TRUE, add = FALSE, na.rm = TRUE, ...)
+plot_quantile(
+  spec,
+  total_prob = 0.95,
+  col = rgb(0, 0, 0, 0.1),
+  border = TRUE,
+  add = FALSE,
+  na.rm = TRUE,
+  ...
+)
 }
 \arguments{
 \item{spec}{spectra object}

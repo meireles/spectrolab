@@ -7,8 +7,7 @@
 \usage{
 meta(x, label, sample, simplify = FALSE, quiet = TRUE)
 
-\method{meta}{spectra}(x, label = NULL, sample = NULL, simplify = FALSE,
-  quiet = TRUE)
+\method{meta}{spectra}(x, label = NULL, sample = NULL, simplify = FALSE, quiet = TRUE)
 }
 \arguments{
 \item{x}{spectra object}

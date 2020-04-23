@@ -7,8 +7,7 @@
 \usage{
 wavelengths(x, min = NULL, max = NULL, return_num = TRUE)
 
-\method{wavelengths}{spectra}(x, min = NULL, max = NULL,
-  return_num = TRUE)
+\method{wavelengths}{spectra}(x, min = NULL, max = NULL, return_num = TRUE)
 }
 \arguments{
 \item{x}{spectra object}

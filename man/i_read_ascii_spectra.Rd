@@ -4,8 +4,17 @@
 \alias{i_read_ascii_spectra}
 \title{Internal parser for ASCII format}
 \usage{
-i_read_ascii_spectra(file_paths, skip_until_tag = NULL, skip_first_n = NULL,
-  sep_char, header, wl_col, refl_cols, divide_refl_by, ...)
+i_read_ascii_spectra(
+  file_paths,
+  skip_until_tag = NULL,
+  skip_first_n = NULL,
+  sep_char,
+  header,
+  wl_col,
+  refl_cols,
+  divide_refl_by,
+  ...
+)
 }
 \arguments{
 \item{file_paths}{paths for files already parsed by `read_spectra`}

@@ -4,8 +4,15 @@
 \alias{plot.spectra}
 \title{Plot spectra}
 \usage{
-\method{plot}{spectra}(x, ylab = "Reflectance", xlab = "Wavelength",
-  col = "black", lty = 1, type = "l", ...)
+\method{plot}{spectra}(
+  x,
+  ylab = "Reflectance",
+  xlab = "Wavelength",
+  col = "black",
+  lty = 1,
+  type = "l",
+  ...
+)
 }
 \arguments{
 \item{x}{spectra object}

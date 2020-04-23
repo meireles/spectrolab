@@ -1,3 +1,10 @@
+# spectrolab 0.0.8 (2018-10-28)
+
+## major
+* switched to usethis::use_package from devtools deprecated version
+* generic "smooth" function has its own interface and the default now
+  calls stats::smooth internally. Work in progress.
+
 # spectrolab 0.0.7 (2018-07-24)
 
 ## major

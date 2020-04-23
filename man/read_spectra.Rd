@@ -4,8 +4,15 @@
 \alias{read_spectra}
 \title{Read files from various formats into `spectra`}
 \usage{
-read_spectra(path, format, type = "target_refl", recursive = FALSE,
-  exclude_if_matches = NULL, ignore_extension = FALSE, ...)
+read_spectra(
+  path,
+  format,
+  type = "target_refl",
+  recursive = FALSE,
+  exclude_if_matches = NULL,
+  ignore_extension = FALSE,
+  ...
+)
 }
 \arguments{
 \item{path}{Path to directory or input files}

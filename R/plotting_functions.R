@@ -1,6 +1,6 @@
-devtools::use_package("shiny")
-devtools::use_package("shinyjs")
-devtools::use_package("RColorBrewer")
+usethis::use_package("shiny")
+usethis::use_package("shinyjs")
+usethis::use_package("RColorBrewer")
 
 #' Plot spectra
 #'

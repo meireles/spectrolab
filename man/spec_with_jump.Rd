@@ -4,7 +4,9 @@
 \name{spec_with_jump}
 \alias{spec_with_jump}
 \title{Example spectra with jump between sensors}
-\format{An object of class \code{spectra} with 1 rows and 2101 columns.}
+\format{
+An object of class \code{spectra} with 1 rows and 2101 columns.
+}
 \usage{
 spec_with_jump
 }

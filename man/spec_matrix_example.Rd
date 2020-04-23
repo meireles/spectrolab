@@ -4,7 +4,9 @@
 \name{spec_matrix_example}
 \alias{spec_matrix_example}
 \title{Example spectral dataset}
-\format{An object of class \code{matrix} with 50 rows and 2102 columns.}
+\format{
+An object of class \code{matrix} with 50 rows and 2102 columns.
+}
 \usage{
 spec_matrix_example
 }

@@ -4,8 +4,13 @@
 \alias{quantile.spectra}
 \title{Compute spectra quantiles}
 \usage{
-\method{quantile}{spectra}(x, probs = c(0.025, 0.25, 0.5, 0.75, 0.975),
-  na.rm = TRUE, names = NULL, ...)
+\method{quantile}{spectra}(
+  x,
+  probs = c(0.025, 0.25, 0.5, 0.75, 0.975),
+  na.rm = TRUE,
+  names = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{spectra object. Must have at least the same number of sample that

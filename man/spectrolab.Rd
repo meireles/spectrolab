@@ -3,7 +3,6 @@
 \docType{package}
 \name{spectrolab}
 \alias{spectrolab}
-\alias{spectrolab-package}
 \title{Spectrolab}
 \description{
 Class and methods for hyperspectral data.

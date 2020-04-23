@@ -4,8 +4,14 @@
 \alias{as.data.frame.spectra}
 \title{Convert spectra to data.frame}
 \usage{
-\method{as.data.frame}{spectra}(x, row.names = NULL, optional = FALSE,
-  fix_names = "none", metadata = TRUE, ...)
+\method{as.data.frame}{spectra}(
+  x,
+  row.names = NULL,
+  optional = FALSE,
+  fix_names = "none",
+  metadata = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{spectra object}
