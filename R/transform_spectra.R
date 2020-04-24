@@ -1,5 +1,4 @@
-# library("devtools")
-#devtools::use_package("parallel", type = "Suggests")
+#usethis::use_package("parallel", type = "Suggests")
 
 ################################################################################
 # Apply by band
@@ -433,6 +432,59 @@ normalize.spectra = function(x, quiet = FALSE, ...){
 # Smoothing functions
 ################################################################################
 
+#' Generic Smoothing function
+#'
+#' @param x data to smooth over
+#' @param ... additional arguments
+#' @return smoothed data
+#'
+#' @export
+smooth = function(x, ...){
+    UseMethod("smooth")
+}
+
+#' Default smoothing function
+#'
+#' @param x data to smooth over
+#' @param ... additional arguments
+#' @return smoothed data
+#'
+#' @importFrom stats smooth
+#' @export
+smooth.default = function(x, ...){
+    stats::smooth(x, ...)
+    }
+
+#' Smooth spectra
+#'
+#' \code{smooth} runs each spectrum by a smoothing and returns the spectra
+#'
+#' @param x spectra object. Wavelengths must be strictly increasing
+#' @param method Choose smoothing method: "spline" (default) or "moving_average"
+#' @param ... additional parameters passed to \code{smooth.spline} or parameters
+#'            `n` and `save_wvls_to_meta` for the moving average smoothing.
+#' @return a spectra object of with smoothed spectra
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+#'
+#' @examples
+#' library(spectrolab)
+#'
+#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = smooth(spec, parallel = FALSE)
+smooth.spectra = function(x, method = "spline", ...){
+    i_is_increasing(wavelengths(x), stop = TRUE)
+
+    if(method == "spline") {
+        s   = i_smooth_spline_spectra(x, ...)
+        x[] = do.call(rbind, sapply(s, `[`, "y"))
+        return(x)
+    } else if (method == "moving_average") {
+        i_smooth_mav_spectra(x, ...)
+    }
+}
+
 #' Smooth spline functions for spectra
 #'
 #' Gets spline functions for each spectrum in a spectra object.
@@ -540,50 +592,6 @@ i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
     }
 
     x
-}
-
-#' Smooth spectra
-#'
-#' \code{smooth} runs each spectrum by a smoothing and returns the spectra
-#'
-#' @param x spectra object. Wavelengths must be strictly increasing
-#' @param method Choose smoothing method: "spline" (default) or "moving_average"
-#' @param ... additional parameters passed to \code{smooth.spline} or parameters
-#'            `n` and `save_wvls_to_meta` for the moving average smoothing.
-#' @return a spectra object of with smoothed spectra
-#'
-#' @author Jose Eduardo Meireles
-#' @export
-#'
-#' @examples
-#' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
-#' spec = smooth(spec, parallel = FALSE)
-smooth = function(x, method = "spline", ...){
-    UseMethod("smooth")
-}
-
-
-#' Default smoothing function
-#'
-#' @inherit stats::smooth
-#' @importFrom stats smooth
-smooth.default = stats::smooth
-
-
-#' @describeIn smooth Smooth spectra
-#' @export
-smooth.spectra = function(x, method = "spline", ...){
-
-    i_is_increasing(wavelengths(x), stop = TRUE)
-
-    if(method == "spline") {
-        s   = i_smooth_spline_spectra(x, ...)
-        x[] = do.call(rbind, sapply(s, `[`, "y"))
-        return(x)
-    } else if (method == "moving_average") {
-        i_smooth_mav_spectra(x, ...)
-    }
 }
 
 ################################################################################

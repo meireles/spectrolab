@@ -5,11 +5,11 @@
 \alias{apply_by_band.spectra}
 \title{Apply numeric function by band}
 \usage{
-apply_by_band(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, name = NULL,
-  ...)
-
-\method{apply_by_band}{spectra}(x, fun, na.rm = TRUE, keep_txt_meta = TRUE,
+apply_by_band(x, fun, na.rm = TRUE, keep_txt_meta = TRUE,
   name = NULL, ...)
+
+\method{apply_by_band}{spectra}(x, fun, na.rm = TRUE,
+  keep_txt_meta = TRUE, name = NULL, ...)
 }
 \arguments{
 \item{x}{spectra}
