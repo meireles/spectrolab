@@ -5,21 +5,9 @@
 \alias{match_sensors.spectra}
 \title{Match spectra at sensor transitions}
 \usage{
-match_sensors(
-  x,
-  splice_at,
-  fixed_sensor = 2,
-  interpolate_wvl = 5,
-  factor_range = c(0.5, 3)
-)
+match_sensors(x, splice_at, fixed_sensor = 2, interpolate_wvl = c(5, 1))
 
-\method{match_sensors}{spectra}(
-  x,
-  splice_at,
-  fixed_sensor = 2,
-  interpolate_wvl = 5,
-  factor_range = c(0.5, 3)
-)
+\method{match_sensors}{spectra}(x, splice_at, fixed_sensor = 2, interpolate_wvl = c(5, 1))
 }
 \arguments{
 \item{x}{spectra object}
@@ -32,9 +20,6 @@ If matching 3 sensors, `fixed_sensor` must be 2 (default).}
 
 \item{interpolate_wvl}{extent around splice_at values over which the splicing
 factors will be calculated. Defaults to 5}
-
-\item{factor_range}{range of acceptable correction factors (min, max).
-Defaults to c(0.5, 3)}
 }
 \value{
 spectra object
