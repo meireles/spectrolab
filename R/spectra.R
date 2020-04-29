@@ -10,7 +10,7 @@
 #' which is a numeric matrix with no dimension names.
 #'
 #' @param x numeric matrix, dataframe or vector (in case of single spectrum)
-#' @param nwavelengths Integer of expected number of wavelengths.
+#' @param nbands Integer of expected number of bands.
 #'                     If NULL (default) checking is skipped.
 #' @param nsample Integer of expected number of samples.
 #'                If NULL (default) checking is skipped.
@@ -18,9 +18,9 @@
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_value = function(x, nwavelengths = NULL, nsample = NULL) {
+i_value = function(x, nbands = NULL, nsample = NULL) {
 
-    ## test if x dimensions conform to nwavelengths and nsample
+    ## test if x dimensions conform to nbands and nsample
     if(is.vector(x)) {
         x = t(matrix(as.numeric(as.character(x))))
     }
@@ -35,9 +35,9 @@ i_value = function(x, nwavelengths = NULL, nsample = NULL) {
         mode(x) = "numeric"
     }
 
-    ## test if x dimensions conform to nwavelengths and nsample
-    if( !is.null(nwavelengths) && nwavelengths != ncol(x) ){
-        stop("Number of columns in x must be equal nwavelengths")
+    ## test if x dimensions conform to nbands and nsample
+    if( !is.null(nbands) && nbands != ncol(x) ){
+        stop("Number of columns in x must be equal nbands")
     }
 
     if( !is.null(nsample) && nsample != nrow(x) ){
@@ -96,30 +96,30 @@ i_names = function(x, nsample = NULL, prefix = "spec_"){
 }
 
 
-#' Internal wavelength constructor for spectra
+#' Internal band constructor for spectra
 #'
-#' \code{i_wavelengths} constructs wavelength labels in the appropriate format
+#' \code{i_bands} constructs band labels in the appropriate format
 #'
-#' @param x vector of wavelengths. Either numeric or character
-#' @param nwavelengths Integer of expected number of wavelengths.
+#' @param x vector of bands. Either numeric or character
+#' @param nbands Integer of expected number of bands.
 #'                     If NULL (default) checking is skipped.
-#' @return vector of wavelengths
+#' @return vector of bands
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_wavelengths = function(x, nwavelengths = NULL) {
+i_bands = function(x, nbands = NULL) {
     if(! is.vector(x)) {
-        stop("Wavelengths names must be in a vector")
+        stop("bands names must be in a vector")
     }
 
-    if( !is.null(nwavelengths) && nwavelengths != length(x) ){
-        stop("The length of x must be the same as nwavelengths")
+    if( !is.null(nbands) && nbands != length(x) ){
+        stop("The length of x must be the same as nbands")
     }
 
     x = suppressWarnings(as.numeric(x))
     n = is.na(x)
     if( any(n) ){
-        stop("Wavelength cannot be converted to numeric: ", x[n])
+        stop("band cannot be converted to numeric: ", x[n])
     }
 
     x
@@ -171,9 +171,9 @@ i_meta = function(x, nsample, allow_null = TRUE, ...){
 #'
 #' \code{spectra} "manually" creates a spectra object
 #'
-#' @param value N by M numeric matrix. N samples in rows and M wavelengths
+#' @param value N by M numeric matrix. N samples in rows and M bands
 #'                    in columns
-#' @param wavelengths wavelength names in vector of length M
+#' @param bands band names in vector of length M
 #' @param names sample names in vector of length N
 #' @param meta spectra metadata. defaults to NULL. Must be either of length or nrow
 #'             equals to the number of samples (nrow(value) or length(names))
@@ -191,7 +191,7 @@ i_meta = function(x, nsample, allow_null = TRUE, ...){
 #' #    In this case, by removing the first column that holds the species name
 #' rf = spec_matrix_example[ , -1]
 #'
-#' # (2) Create a vector with wavelength labels that match
+#' # (2) Create a vector with band labels that match
 #' #     the value matrix columns.
 #' wl = colnames(rf)
 #'
@@ -201,9 +201,9 @@ i_meta = function(x, nsample, allow_null = TRUE, ...){
 #' sn = spec_matrix_example[ , 1]
 #'
 #' # Finally, construct the spectra object using the `spectra` constructor
-#' spec = spectra(value = rf, wavelengths = wl, names = sn)
+#' spec = spectra(value = rf, bands = wl, names = sn)
 spectra = function(value,
-                   wavelengths,
+                   bands,
                    names,
                    meta      = NULL,
                    ...){
@@ -219,16 +219,16 @@ spectra = function(value,
     ## I will resort to an ugly hack to tackle that issue, but this should be
     ## fixed soon.
 
-    wl_l  = length(wavelengths)
+    wl_l  = length(bands)
     spl_l = length(names)
 
     s = list( value  = i_value(value,
-                               nwavelengths = wl_l,
+                               nbands = wl_l,
                                nsample      = spl_l),
-              wavelengths  = i_wavelengths(wavelengths),
+              bands  = i_bands(bands),
               names        = i_names(names, prefix = NULL),     ## relies of the default prefix inside i_names
               meta         = i_meta(NULL, nsample = spl_l, ...) ## *** Ideally i_meta(meta, nsample = spl_l, ...)
-              )
+    )
 
     s = structure(s, class = c("spectra")) ## *** This should be the returned obj
     meta(s) = meta                         ## *** so I shouldn't have to do this

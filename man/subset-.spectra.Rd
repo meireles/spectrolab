@@ -11,7 +11,7 @@
 
 \item{i}{Sample names (preferred), index, or a logical vector of length nrow(x)}
 
-\item{j}{Wavelength labels, as numeric or character
+\item{j}{band labels, as numeric or character
 or a logical vector of length ncol(x). Do not use indexes!}
 
 \item{value}{value to be assigned (rhs). Must either data coercible to numeric

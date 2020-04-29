@@ -7,7 +7,7 @@
 i_find_sensor_overlap_bounds(x, idx = TRUE)
 }
 \arguments{
-\item{x}{wavelength vector}
+\item{x}{band vector}
 
 \item{idx}{boolean. return indices? defaults to TRUE}
 }

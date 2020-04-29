@@ -4,12 +4,12 @@
 \alias{i_value}
 \title{Internal constructor for value matrix}
 \usage{
-i_value(x, nwavelengths = NULL, nsample = NULL)
+i_value(x, nbands = NULL, nsample = NULL)
 }
 \arguments{
 \item{x}{numeric matrix, dataframe or vector (in case of single spectrum)}
 
-\item{nwavelengths}{Integer of expected number of wavelengths.
+\item{nbands}{Integer of expected number of bands.
 If NULL (default) checking is skipped.}
 
 \item{nsample}{Integer of expected number of samples.

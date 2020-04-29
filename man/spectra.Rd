@@ -4,13 +4,13 @@
 \alias{spectra}
 \title{Spectra object constructor}
 \usage{
-spectra(value, wavelengths, names, meta = NULL, ...)
+spectra(value, bands, names, meta = NULL, ...)
 }
 \arguments{
-\item{value}{N by M numeric matrix. N samples in rows and M wavelengths
+\item{value}{N by M numeric matrix. N samples in rows and M bands
 in columns}
 
-\item{wavelengths}{wavelength names in vector of length M}
+\item{bands}{band names in vector of length M}
 
 \item{names}{sample names in vector of length N}
 
@@ -35,7 +35,7 @@ library(spectrolab)
 #    In this case, by removing the first column that holds the species name
 rf = spec_matrix_example[ , -1]
 
-# (2) Create a vector with wavelength labels that match
+# (2) Create a vector with band labels that match
 #     the value matrix columns.
 wl = colnames(rf)
 
@@ -45,7 +45,7 @@ wl = colnames(rf)
 sn = spec_matrix_example[ , 1]
 
 # Finally, construct the spectra object using the `spectra` constructor
-spec = spectra(value = rf, wavelengths = wl, names = sn)
+spec = spectra(value = rf, bands = wl, names = sn)
 }
 \author{
 Jose Eduardo Meireles

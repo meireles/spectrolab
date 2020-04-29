@@ -24,7 +24,7 @@ test_that("Set spectrum to another spectrum replaces names and meta too", {
 })
 
 
-test_that("Setting fails if wavelengths or meta are incompatible", {
+test_that("Setting fails if bands or meta are incompatible", {
     expect_error( s1[1:2, ] <- s2[1:2, ] )
     expect_error( s1[1, ] <- s3[1, ] )
 })

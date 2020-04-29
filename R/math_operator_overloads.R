@@ -73,13 +73,13 @@ Ops.spectra = function(e1, e2) {
                 return(do.call(.Generic, list( e1, value(e2)) ))
             }
         }
-    # both arguments are spectra
+        # both arguments are spectra
     } else {
         if( any(dim(e1) != dim(e2)) ){
             stop("incompatible spectra dimensions")
         }
-        if( any(wavelengths(e1) != wavelengths(e2)) ) {
-            stop("wavelength labels must be identical")
+        if( any(bands(e1) != bands(e2)) ) {
+            stop("band labels must be identical")
         }
         if(.Generic %in% mathop){
             e1[] = do.call(.Generic, list(value(e1), value(e2)) )

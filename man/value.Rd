@@ -13,7 +13,7 @@ value(x)
 \item{x}{spectra object}
 }
 \value{
-matrix with samples in rows and wavelengths in columns
+matrix with samples in rows and bands in columns
 }
 \description{
 \code{value} returns the value matrix from spectra

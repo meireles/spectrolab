@@ -49,7 +49,7 @@ There are two ways to get spectra into R: 1) converting a matrix or data.frame t
 
 ### Create spectra from a matrix or data.frame
 
-If you already have your spectra in a matrix or data frame (e.g. when you read your data from a .csv file), you can use the function `as.spectra()` to convert it to a `spectra` object. The matrix **must** have samples in rows and wavelengths in columns. The header of the wavelengths columns must be (numeric) wavelength labels. You also should declare which column has the sample names (which are mandatory) using the `name_idx` argument. If other columns are present (other than sample name and values), their indices must be passed to `as.spectra` as the `meta_idxs` argument.
+If you already have your spectra in a matrix or data frame (e.g. when you read your data from a .csv file), you can use the function `as.spectra()` to convert it to a `spectra` object. The matrix **must** have samples in rows and bands in columns. The header of the bands columns must be (numeric) band labels. You also should declare which column has the sample names (which are mandatory) using the `name_idx` argument. If other columns are present (other than sample name and values), their indices must be passed to `as.spectra` as the `meta_idxs` argument.
 
 Here is an example using a dataset matrix named `spec_matrix_meta.csv` provided by the package.
 
@@ -102,15 +102,15 @@ acer_spectra
 dim(acer_spectra)
 ```
 
-`spectrolab` also lets you access the individual components of the `spectra`. This is done with the functions `names()` for sample names, `wavelengths()` for wavelength labels, `value()` for the value matrix, and `meta()` for the associated metadata (in case you have any).
+`spectrolab` also lets you access the individual components of the `spectra`. This is done with the functions `names()` for sample names, `bands()` for band labels, `value()` for the value matrix, and `meta()` for the associated metadata (in case you have any).
 
 
 ```{r, eval=TRUE}
 # Vector of all sample names. Note: Duplicated sample names are permitted
 n = names(achillea_spec)
 
-# Vector of wavelengths
-w = wavelengths(achillea_spec)
+# Vector of bands
+w = bands(achillea_spec)
 
 # value matrix
 r = value(achillea_spec)
@@ -121,17 +121,17 @@ m = meta(achillea_spec, "ssp", simplify = TRUE)
 
 ## Subsetting spectra
 
-You can subset the `spectra` using a notation *similar* to the `[i, j]` function used in matrices and data.frames. The first argument in `[i, ]` matches *sample names*, whereas the second argument `[ , j]` matches the *wavelength names*. Here are some examples of how `[` works in `spectra`:
+You can subset the `spectra` using a notation *similar* to the `[i, j]` function used in matrices and data.frames. The first argument in `[i, ]` matches *sample names*, whereas the second argument `[ , j]` matches the *band names*. Here are some examples of how `[` works in `spectra`:
 
   - `x[1:3, ]` will keep the first three samples of `x`, i.e. `1:3` are indexes.
   - `x["sp_1", ]` keeps **all** entries in `x` where sample names match `"sp_1"`
-  - `x[ , 800:900]` will keep wavelengths between `800` and `900`.
-  - `x[ , 1:5] ` will **fail**!. *wavelengths __cannot__ be subset by indexes!*
+  - `x[ , 800:900]` will keep bands between `800` and `900`.
+  - `x[ , 1:5] ` will **fail**!. *bands __cannot__ be subset by indexes!*
 
 Subsetting lets you, for instance, exclude noisy regions at the beginning and end of the spectrum or limit the data to specific entries.
 
 ```{r, eval = TRUE}
-# Subset wavelength regions.
+# Subset band regions.
 spec_sub_vis = achillea_spec[ , 400:700 ]
 
 # Subset spectra to all entries where sample_name matches "ACHMI_7" or
@@ -140,27 +140,27 @@ spec_sub_byname = achillea_spec["ACHMI_7", ]
 spec_sub_byidx  = achillea_spec[ 1:3, ]
 ```
 
-The resolution of some spectra may be different from 1nm, as is the case with SVC. In those cases, the best way to subset spectra is using the `min` and `max` arguments for wavelengths:
+The resolution of some spectra may be different from 1nm, as is the case with SVC. In those cases, the best way to subset spectra is using the `min` and `max` arguments for bands:
 
 ```{r, eval=TRUE}
-acer_spectra_trim = acer_spectra[ , wavelengths(acer_spectra, 400, 2400) ]
+acer_spectra_trim = acer_spectra[ , bands(acer_spectra, 400, 2400) ]
 ```
 
-Note that you can (1) subset samples using indexes and (2) use characters or numerics to subset wavelengths. As said before, you cannot use indexes to subset wavelengths though.
+Note that you can (1) subset samples using indexes and (2) use characters or numerics to subset bands. As said before, you cannot use indexes to subset bands though.
 
 ```{r, eval=TRUE}
-# Subsetting samples by indexes works and so does subsetting wavelengths by numerics or characters.
+# Subsetting samples by indexes works and so does subsetting bands by numerics or characters.
 spec_sub_byidx[1, "405"] == spec_sub_byidx[1, 405]
 ```
 
-*But remember that you CANNOT use indexes to subset wavelengths!*
+*But remember that you CANNOT use indexes to subset bands!*
 
 ```{r, eval=T, error=T}
 # Something that is obvioulsy an index, like using 2 instead of 401 (the 2nd band 
 # in our case), will fail.
 spec_sub_byidx[ , 2]
 
-`Error in i_match_ij_spectra(this = this, i = i, j = j) : Wavelength subscript out of bounds. Use wavelength labels instead of raw indices.`
+`Error in i_match_ij_spectra(this = this, i = i, j = j) : band subscript out of bounds. Use band labels instead of raw indices.`
 ```
 
 
@@ -191,7 +191,7 @@ Last but not least, spectrolab also allows you to interactivelly explore spectra
 
 <img src="plot_interactive_screenshot.png" alt="Drawing" style="width: 300px;"/>
 
-## Manipulating samples names, wavelength labels, metadata and value
+## Manipulating samples names, band labels, metadata and value
 
 You may want to edit certain simple attributes of `spectra`, such as making all sample names lowercase This is easily attainable in `spectrolab`.
 
@@ -227,7 +227,7 @@ meta(achillea_spec, label = "N_percent") = n_content
 
 It is also possible to convert a `spectra` object to a matrix or data.frame using the `as.matrix()` or `as.data.frame()` functions. This is useful if you want to export your data in a particular format, such as csv. 
 
-If you're converting spectra to a matrix, `spectrolab` will (1) place wavelengths in columns, assigning wavelength labels to `colnames`, and (2) samples in rows, assigning sample names to `rownames`. Since `R` imposes strict rules on column name formats and sometimes on row names, `as.matrix()` will try to fix potential dimname issues if `fix_names != "none"`. Note that `as.matrix()` will not keep metadata.
+If you're converting spectra to a matrix, `spectrolab` will (1) place bands in columns, assigning band labels to `colnames`, and (2) samples in rows, assigning sample names to `rownames`. Since `R` imposes strict rules on column name formats and sometimes on row names, `as.matrix()` will try to fix potential dimname issues if `fix_names != "none"`. Note that `as.matrix()` will not keep metadata.
 
 Conversion to data.frame is similar, but keeps the metadata by default (unless you set the `metadata` agument to `FALSE`).
 

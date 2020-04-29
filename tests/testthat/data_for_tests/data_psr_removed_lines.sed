@@ -6,7 +6,7 @@ Dark Mode: AUTO,AUTO
 Foreoptic: FIBER1 {RADIANCE}, FIBER1 {RADIANCE}
 Radiometric Calibration: RADIANCE
 Units: W/m^2/sr/nm
-Wavelength Range: 350,2500
+band Range: 350,2500
 Latitude: n/a
 Longitude: n/a
 Altitude: n/a

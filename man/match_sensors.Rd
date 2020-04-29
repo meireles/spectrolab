@@ -24,7 +24,7 @@ match_sensors(
 \arguments{
 \item{x}{spectra object}
 
-\item{splice_at}{wavelengths that serve as splice points, i.e the beginnings
+\item{splice_at}{bands that serve as splice points, i.e the beginnings
 of the rightmost sensor. Must be length 1 or 2 (max 3 sensors)}
 
 \item{fixed_sensor}{sensor to keep fixed. Can be 1 or 2 if matching 2 sensors.

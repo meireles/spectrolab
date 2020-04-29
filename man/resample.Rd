@@ -10,9 +10,9 @@ resample(x, new_wvls, ...)
 \method{resample}{spectra}(x, new_wvls, ...)
 }
 \arguments{
-\item{x}{spectra object. Wavelengths must be strictly increasing}
+\item{x}{spectra object. bands must be strictly increasing}
 
-\item{new_wvls}{numeric vector of wavelengths to sample from spectra}
+\item{new_wvls}{numeric vector of bands to sample from spectra}
 
 \item{...}{additional parameters passed to the \code{smooth.spline} function.}
 }
@@ -20,14 +20,14 @@ resample(x, new_wvls, ...)
 spectra object with resampled spectra
 }
 \description{
-\code{resample} returns spectra resampled to new wavelengths using smoothing.
+\code{resample} returns spectra resampled to new bands using smoothing.
 Possible to increase or decrease the spectral resolution.
 }
 \details{
 The function runs a couple basic checks when resampling, but they are not
 exhaustive, so look at the data before resampling. The implemented checks are:
-1. Stop if trying to predict wavelengths outside of the original range and,
-2. Warn if a gap is found in wavelengths. E.g. wvls are mostly at a 1nm
+1. Stop if trying to predict bands outside of the original range and,
+2. Warn if a gap is found in bands. E.g. wvls are mostly at a 1nm
    resolution but go from 1530 to 1820 in the infrared. Does not check for NAs
 }
 \section{Methods (by class)}{

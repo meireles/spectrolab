@@ -1,6 +1,6 @@
 #' Convert matrix or data frame to spectra
 #'
-#' @param x matrix or dataframe. Samples are in rows and wavelengths in columns.
+#' @param x matrix or dataframe. Samples are in rows and bands in columns.
 #'          Any data that are not the spectra themselves (labels or metadata)
 #'          must have their column index included in `name_idx` or `meta_idxs`.
 #' @param name_idx column index with sample names. Defaults to NULL. If NULL
@@ -73,7 +73,7 @@ as.spectra.data.frame = function(x, name_idx = NULL, meta_idxs = NULL){
 #' @param fix_names Use make.names to normalize names?
 #'                  Pick one: "none" "row" "col" "both".
 #' @param ... does nothing. Here for compatibility with S3 generics
-#' @return matrix of spectral value. columns are wavelengths and rows are
+#' @return matrix of spectral value. columns are bands and rows are
 #'         samples
 #'
 #' @author Jose Eduardo Meireles
@@ -86,7 +86,7 @@ as.spectra.data.frame = function(x, name_idx = NULL, meta_idxs = NULL){
 as.matrix.spectra = function(x, fix_names = "none", ...) {
     r = value(x)
     s = names(x)
-    w = wavelengths(x)
+    w = bands(x)
     o = c("none", "row", "col", "both")
 
     if( length(intersect(fix_names, o)) != 1 ){

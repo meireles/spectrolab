@@ -44,8 +44,8 @@ dim(acer_spectra)
 # Vector of all sample names. Note: Duplicated sample names are permitted
 n = names(achillea_spec)
 
-# Vector of wavelengths
-w = wavelengths(achillea_spec)
+# Vector of bands
+w = bands(achillea_spec)
 
 # value matrix
 r = value(achillea_spec)
@@ -54,7 +54,7 @@ r = value(achillea_spec)
 m = meta(achillea_spec, "ssp", simplify = TRUE)
 
 ## ---- eval = TRUE-------------------------------------------------------------
-# Subset wavelength regions.
+# Subset band regions.
 spec_sub_vis = achillea_spec[ , 400:700 ]
 
 # Subset spectra to all entries where sample_name matches "ACHMI_7" or
@@ -63,10 +63,10 @@ spec_sub_byname = achillea_spec["ACHMI_7", ]
 spec_sub_byidx  = achillea_spec[ 1:3, ]
 
 ## ---- eval=TRUE---------------------------------------------------------------
-acer_spectra_trim = acer_spectra[ , wavelengths(acer_spectra, 400, 2400) ]
+acer_spectra_trim = acer_spectra[ , bands(acer_spectra, 400, 2400) ]
 
 ## ---- eval=TRUE---------------------------------------------------------------
-# Subsetting samples by indexes works and so does subsetting wavelengths by numerics or characters.
+# Subsetting samples by indexes works and so does subsetting bands by numerics or characters.
 spec_sub_byidx[1, "405"] == spec_sub_byidx[1, 405]
 
 ## ---- eval=T, error=T---------------------------------------------------------
@@ -74,7 +74,7 @@ spec_sub_byidx[1, "405"] == spec_sub_byidx[1, 405]
 # in our case), will fail.
 spec_sub_byidx[ , 2]
 
-`Error in i_match_ij_spectra(this = this, i = i, j = j) : Wavelength subscript out of bounds. Use wavelength labels instead of raw indices.`
+`Error in i_match_ij_spectra(this = this, i = i, j = j) : band subscript out of bounds. Use band labels instead of raw indices.`
 
 ## ---- fig.height=2.5, fig.width=7, eval=TRUE----------------------------------
 # Simple spectra plot

@@ -1,13 +1,13 @@
 #' Is increasing
 #'
-#' \code{i_is_increasing} tests if wavelength values are increasing
+#' \code{i_is_increasing} tests if band values are increasing
 #'
 #' Many transform functions can only (or at least should only) be applied to
-#' spectra with monotonically varying (very likely increasing) wavelength values.
+#' spectra with monotonically varying (very likely increasing) band values.
 #' \code{i_is_increasing} tests that case and may throw an error
 #' or return the boolean result from the test.
 #'
-#' @param x wavelengths
+#' @param x bands
 #' @param stop boolean. Throw error if test fails? Defaults to TRUE
 #' @param call boolean. If stop = TRUE, should the function call be printed?
 #' @return boolean
@@ -17,7 +17,7 @@
 i_is_increasing = function(x, stop = TRUE, call = FALSE){
     y = all(diff(x) >= 0.0)
     if( !y && stop){
-        stop("Wavelength values must be strictly increasing. You probably need to run `match_overlap` first", call. = call)
+        stop("band values must be strictly increasing. You probably need to run `match_overlap` first", call. = call)
     }
     y
 }

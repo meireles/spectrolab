@@ -35,7 +35,7 @@ file in path regardless of the expected extension.}
 }
 \value{
 a single `spectra` or a list of `spectra` (in case files have
-        incompatible band number or wavelengths values)
+        incompatible band number or bands values)
 }
 \description{
 Read files from various formats into `spectra`

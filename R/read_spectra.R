@@ -14,7 +14,7 @@ usethis::use_package("prospectr")
 #'                         file in path regardless of the expected extension.
 #' @param ... nothing yet
 #' @return a single `spectra` or a list of `spectra` (in case files have
-#'         incompatible band number or wavelengths values)
+#'         incompatible band number or bands values)
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -172,7 +172,7 @@ read_spectra = function(path,
 #'                     not given
 #' @param sep_char separator
 #' @param header boolean. keep header?
-#' @param wl_col idx or name of wavelength column
+#' @param wl_col idx or name of band column
 #' @param refl_cols idx or name of value columns. MULTIPLE
 #' @param divide_refl_by divide value values by this. MULTIPLE
 #' @param ... additional arguments passed to read table
@@ -266,7 +266,7 @@ i_read_ascii_spectra = function(file_paths,
     }
 
 
-    ## there mabye files with different number of bands or wavelength values
+    ## there mabye files with different number of bands or band values
     ## check for them and split the data if needed
     wl_factor = unlist(
         lapply(data, function(x){
@@ -288,7 +288,7 @@ i_read_ascii_spectra = function(file_paths,
     })
 
     if(length(spec) > 1){
-        warning("Returning a list of `spectra` because some files had different number of bands or wavelength values. If you want to make those data compatible, consider resampling (with resample) and then combining them (with combine)")
+        warning("Returning a list of `spectra` because some files had different number of bands or band values. If you want to make those data compatible, consider resampling (with resample) and then combining them (with combine)")
         return(spec)
     } else {
         return(spec[[1]])
@@ -327,7 +327,7 @@ i_read_asd_spectra = function(file_paths,
         l   = prospectr::readASD(fnames = file_paths, out_format = "list")
         rf  = do.call(rbind, lapply(l, `[[`, "radiance"))
         nm  = gsub(".asd$", "",rownames(rf))
-        wl  = l[[1]][["wavelength"]]
+        wl  = l[[1]][["band"]]
 
         return(spectra(rf, wl, nm))
 
@@ -335,7 +335,7 @@ i_read_asd_spectra = function(file_paths,
         l   = prospectr::readASD(fnames = file_paths, out_format = "list")
         rf  = do.call(rbind, lapply(l, `[[`, "reference"))
         nm  = gsub(".asd$", "",rownames(rf))
-        wl  = l[[1]][["wavelength"]]
+        wl  = l[[1]][["band"]]
 
         return(spectra(rf, wl, nm))
     } else {

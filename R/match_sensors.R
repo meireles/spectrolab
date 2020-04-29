@@ -2,7 +2,7 @@
 #'
 #' \code{i_find_sensor_overlap_bounds} finds the overlap bounds between sensors
 #'
-#' @param x wavelength vector
+#' @param x band vector
 #' @param idx boolean. return indices? defaults to TRUE
 #' @return data.frame with sensor bounds
 #'
@@ -26,13 +26,13 @@ i_find_sensor_overlap_bounds = function(x, idx = TRUE){
 }
 
 
-#' Remove duplicated wavelength
+#' Remove duplicated band
 #'
-#' \code{i_remove_duplicated_wavelength} removes a duplicated wavelength
+#' \code{i_remove_duplicated_band} removes a duplicated band
 #'
-#' SVC instruments usually have a certain wavelength that is repeated in the
+#' SVC instruments usually have a certain band that is repeated in the
 #' overlap region of different sensors, e.g. 1005.5 nm. The choice of which
-#' duplicate wavelength to remove (1005.5 in sensor 1 or sensor 2) will depend
+#' duplicate band to remove (1005.5 in sensor 1 or sensor 2) will depend
 #' on boundary. If the duplicated value is greater than boundary, the first
 #' sensor duplicate is removed. Else, the second dup is removed.
 #'
@@ -42,12 +42,12 @@ i_find_sensor_overlap_bounds = function(x, idx = TRUE){
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_remove_duplicated_wavelength = function(x, boundary){
-    w = wavelengths(x)
+i_remove_duplicated_band = function(x, boundary){
+    w = bands(x)
     d = w[ which(duplicated(w)) ]
 
     if(length(d) > 1){
-        message("Found more than one duplicated wavelength.\nInspect the spectra before further analyses.")
+        message("Found more than one duplicated band.\nInspect the spectra before further analyses.")
     }
 
     idx_rm = sapply(d, function(x){
@@ -55,23 +55,23 @@ i_remove_duplicated_wavelength = function(x, boundary){
         ifelse(x > boundary, i[1], i[2])
     })
 
-    ## HACK. There is no easy way of subsetting wavelengths if they are
-    ## duplicated. Therefore, I have to change the value of the wavelength
+    ## HACK. There is no easy way of subsetting bands if they are
+    ## duplicated. Therefore, I have to change the value of the band
     ## I want to exclude and then remove that.
 
-    ## Assign a dummy wavelength value to the wl to rm
+    ## Assign a dummy band value to the wl to rm
     bogus                    = 12345678911121110987654321.0123
-    wavelengths(x)[ idx_rm ] = bogus
+    bands(x)[ idx_rm ] = bogus
 
     ## Now prune the spectral data
-    x[ , wavelengths(x)[ wavelengths(x) != bogus ] ]
+    x[ , bands(x)[ bands(x) != bogus ] ]
 }
 
 
 #' Trim sensor overlap
 #'
 #' @param x spectra object
-#' @param splice_at wavelengths where to splice sensors. suggests where the
+#' @param splice_at bands where to splice sensors. suggests where the
 #'                  beginning of sensors 2 and 3 should be.
 #' @return spectra object
 #'
@@ -79,8 +79,8 @@ i_remove_duplicated_wavelength = function(x, boundary){
 #' @author Jose Eduardo Meireles
 i_trim_sensor_overlap = function(x, splice_at){
 
-    x = i_remove_duplicated_wavelength(x = x, boundary =  splice_at[1])
-    w = wavelengths(x)
+    x = i_remove_duplicated_band(x = x, boundary =  splice_at[1])
+    w = bands(x)
     b = i_find_sensor_overlap_bounds(w)
 
     if(ncol(b) == 1){
@@ -95,7 +95,7 @@ i_trim_sensor_overlap = function(x, splice_at){
         w[ seq.int(y[[1]], y[[2]]) ]
     })
 
-    ## trim wavelength lists
+    ## trim band lists
     for(i in 1:length(splice_at) ){
         right      = which(s[[i + 1]] >=  splice_at[i])
         s[[i + 1]] = s[[i + 1]][ right ]
@@ -123,7 +123,7 @@ i_trim_sensor_overlap = function(x, splice_at){
 #' which  happens when the value value for the right sensor is 0.
 #'
 #' @param x spectra object
-#' @param splice_at wavelengths that serve as splice points, i.e the beginnings
+#' @param splice_at bands that serve as splice points, i.e the beginnings
 #'                  of the rightmost sensor. Must be length 1 or 2 (max 3 sensors)
 #' @param fixed_sensor sensor to keep fixed. Can be 1 or 2 if matching 2 sensors.
 #'                     If matching 3 sensors, `fixed_sensor` must be 2 (default).
@@ -157,7 +157,7 @@ match_sensors.spectra = function(x,
     # message("match_sensors: API will change.")
 
     x          = x
-    w          = wavelengths(x)
+    w          = bands(x)
     splice_at = unlist(splice_at)
 
     if(length(splice_at) > 2){
@@ -174,7 +174,7 @@ match_sensors.spectra = function(x,
     if( ! i_is_increasing(x = w, stop = FALSE) ){
         y = i_trim_sensor_overlap(x = x, splice_at = splice_at)
         x = y$spectra              # reassign x
-        w = wavelengths(x)         # reassign w
+        w = bands(x)         # reassign w
         s = split(w, y$sensor)
     } else {
         s = cut(x              = w,
@@ -187,7 +187,7 @@ match_sensors.spectra = function(x,
 
     interpolate_wvl = rep(interpolate_wvl, length.out = length(splice_at))
 
-    ## Pick wavelengths by sensor to computer factors
+    ## Pick bands by sensor to computer factors
     wl_picks = lapply(seq_along(splice_at), function(z){
         low   = splice_at[z] - interpolate_wvl[z]
         high  = splice_at[z] + interpolate_wvl[z]
@@ -220,7 +220,7 @@ match_sensors.spectra = function(x,
         }
 
         rowMeans(value(x[ , scaled, simplify = FALSE])) /
-        rowMeans(value(x[ ,  fixed, simplify = FALSE]))
+            rowMeans(value(x[ ,  fixed, simplify = FALSE]))
     })
 
     ## Verify if factors for splicing are reasonable

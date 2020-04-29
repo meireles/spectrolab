@@ -57,7 +57,7 @@ has_nir_dip = function(x, smooth = TRUE, ...){
         x = suppressMessages(smooth(x, method = "spline", ...))
     }
 
-    w = wavelengths(x)
+    w = bands(x)
 
     if(any(diff(w) != 1)){
         x = suppressMessages(resample(x, seq.int(min(w), max(w), 1L)))

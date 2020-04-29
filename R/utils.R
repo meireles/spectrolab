@@ -25,7 +25,7 @@ try_keep_txt = function(f){
             { f(x, ...) },
             warning = function(w){  paste(unique(x), collapse = ", ") },
             error   = function(e){  paste(unique(x), collapse = ", ") }
-            )
+        )
         r
     }
 }
@@ -58,7 +58,7 @@ ratio = function(x, simplify = FALSE){
 ratio.spectra = function(x, simplify = FALSE){
     message("ratio may take a while...")
     spm  = as.matrix(x)
-    wvl  = wavelengths(x)
+    wvl  = bands(x)
     pwc  = i_index_pairwise_combn(ncol(x))
 
     res  = lapply(names(pwc), function(y){

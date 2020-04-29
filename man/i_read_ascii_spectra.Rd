@@ -30,7 +30,7 @@ not given}
 
 \item{header}{boolean. keep header?}
 
-\item{wl_col}{idx or name of wavelength column}
+\item{wl_col}{idx or name of band column}
 
 \item{refl_cols}{idx or name of value columns. MULTIPLE}
 

@@ -153,7 +153,7 @@ sd.spectra = function(x, na.rm = TRUE){
 
 #' Compute spectra quantiles
 #'
-#' \code{quantile} computes quantiles by wavelength and returns them as `spectra`
+#' \code{quantile} computes quantiles by band and returns them as `spectra`
 #'
 #' @param x spectra object. Must have at least the same number of sample that
 #'          length(probs) has.

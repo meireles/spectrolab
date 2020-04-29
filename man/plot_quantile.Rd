@@ -35,7 +35,7 @@ between 0.0 and 1.0. Defaults to 0.95.}
 nothing. Called for its side effect.
 }
 \description{
-\code{plot_quantile} plots polygons for the quantiles of spectra per wavelength.
+\code{plot_quantile} plots polygons for the quantiles of spectra per band.
 }
 \examples{
 library(spectrolab)

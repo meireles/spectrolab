@@ -14,7 +14,7 @@
 #' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' min(spec)
 min.spectra = function(..., na.rm = FALSE){
-    min(value(...), na.rm = na.rm)
+  min(value(...), na.rm = na.rm)
 }
 
 #' Maximum value
@@ -33,7 +33,7 @@ min.spectra = function(..., na.rm = FALSE){
 #' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' max(spec)
 max.spectra = function(..., na.rm = FALSE){
-    max(value(...), na.rm = na.rm)
+  max(value(...), na.rm = na.rm)
 }
 
 #' Range of value values
@@ -53,16 +53,16 @@ max.spectra = function(..., na.rm = FALSE){
 #' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' range(spec)
 range.spectra = function(..., na.rm = FALSE){
-    range(value(...), na.rm = na.rm)
+  range(value(...), na.rm = na.rm)
 }
 
 
 #' Get dimension of spectra
 #'
-#' \code{dim} returns a vector with number of samples and bands (wavelengths)
+#' \code{dim} returns a vector with number of samples and bands (bands)
 #'
 #' @param x spectra object
-#' @return tuple of integers: c("n_samples", "n_wavelengths")
+#' @return tuple of integers: c("n_samples", "n_bands")
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -72,8 +72,8 @@ range.spectra = function(..., na.rm = FALSE){
 #' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' dim(spec)
 dim.spectra = function(x){
-    c("n_samples"     = length(names(x)),
-      "n_wavelengths" = length(wavelengths(x)) )
+  c("n_samples"     = length(names(x)),
+    "n_bands" = length(bands(x)) )
 }
 
 #' Print spectra
@@ -96,34 +96,34 @@ dim.spectra = function(x){
 #' ## or simply
 #' spec
 print.spectra = function(x, ...){
-    r_wvl   = range(wavelengths(x))
-    o_wvl   = i_is_increasing(wavelengths(x), stop = FALSE)
+  r_wvl   = range(bands(x))
+  o_wvl   = i_is_increasing(bands(x), stop = FALSE)
 
-    ## In case I want to report if the wavelength spacings are unequal
-    # d_wvl   = diff(wavelengths(x))
-    # d_wvl   = all(d_wvl[1] == d_wvl)
+  ## In case I want to report if the band spacings are unequal
+  # d_wvl   = diff(bands(x))
+  # d_wvl   = all(d_wvl[1] == d_wvl)
 
-    n_met   = names(meta(x, simplify = FALSE))
-    l_met   = length(n_met)
-    l_max   = 3L
+  n_met   = names(meta(x, simplify = FALSE))
+  l_met   = length(n_met)
+  l_max   = 3L
 
-    if(l_met > l_max){
-        n_met = c( utils::head(n_met, l_max) , "...")    ## overwriting n_met
-        l_met = paste(l_max, "of", l_met)                ## overwriting l_met
-    }
+  if(l_met > l_max){
+    n_met = c( utils::head(n_met, l_max) , "...")    ## overwriting n_met
+    l_met = paste(l_max, "of", l_met)                ## overwriting l_met
+  }
 
-    cat("spectra object", "\n")
-    cat("number of samples:", nrow(x),"\n")
-    cat("wavelengths: ", r_wvl[1], " to ", r_wvl[2], " (", ncol(x), " bands",
-        ifelse(!o_wvl, ", **overlap not matched**", ""),
-        ")", "\n", sep = "")
+  cat("spectra object", "\n")
+  cat("number of samples:", nrow(x),"\n")
+  cat("bands: ", r_wvl[1], " to ", r_wvl[2], " (", ncol(x), " bands",
+      ifelse(!o_wvl, ", **overlap not matched**", ""),
+      ")", "\n", sep = "")
 
-    if(l_met == 0){
-        cat("metadata: none", "\n")
-    } else {
-        cat("metadata (", l_met, "): ", sep = "")
-        cat(paste(n_met, collapse = ", "), sep = "")
-    }
+  if(l_met == 0){
+    cat("metadata: none", "\n")
+  } else {
+    cat("metadata (", l_met, "): ", sep = "")
+    cat(paste(n_met, collapse = ", "), sep = "")
+  }
 }
 
 
@@ -141,7 +141,7 @@ print.spectra = function(x, ...){
 #' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' summary(spec)
 summary.spectra = function(object, ...){
-    print(object, ...)
+  print(object, ...)
 }
 
 
@@ -159,7 +159,7 @@ summary.spectra = function(object, ...){
 #' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' str(spec)
 str.spectra = function(object, ...){
-    cat("The structure of a spectra object should be irrelevant.", "\n")
-    cat("To access spectra components, use the provided getters and setters.", "\n\n")
-    print(object)
+  cat("The structure of a spectra object should be irrelevant.", "\n")
+  cat("To access spectra components, use the provided getters and setters.", "\n\n")
+  print(object)
 }
