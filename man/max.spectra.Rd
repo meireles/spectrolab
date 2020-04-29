@@ -2,7 +2,7 @@
 % Please edit documentation in R/descrip_summary_overloads.R
 \name{max.spectra}
 \alias{max.spectra}
-\title{Maximum reflectance}
+\title{Maximum value}
 \usage{
 \method{max}{spectra}(..., na.rm = FALSE)
 }
@@ -15,7 +15,7 @@
 single numeric value
 }
 \description{
-\code{max} Returns the maximum reflectance value in a spectra object
+\code{max} Returns the maximum value value in a spectra object
 }
 \examples{
 library(spectrolab)

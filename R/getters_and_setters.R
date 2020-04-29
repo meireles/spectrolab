@@ -53,7 +53,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #' not numeric nor are coercible to numeric, such that x[1:2, ] will return the
 #' first and second samples in the `spectra` object. Subsetting based on wavelengths
 #' (second argument) matches the wavelength labels, not indices! That is, x[ , 600]
-#' will give you the reflectance data for the 600nm wavelength and not the 600th
+#' will give you the value data for the 600nm wavelength and not the 600th
 #' band. Boolean vectors of the appropriate length can be used to subset samples
 #' and wavelengths.
 #'
@@ -62,7 +62,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #' @param j Wavelength labels, as numeric or character
 #'          or a logical vector of length ncol(x). Do not use indexes!
 #' @param simplify Boolean. If TRUE (default), single band selections
-#'                 are returned as a named vector of reflectance values
+#'                 are returned as a named vector of value values
 #' @return usually a spectra object, but see param `simplify`
 #'
 #' @author Jose Eduardo Meireles
@@ -86,12 +86,12 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
     m = i_match_ij_spectra(x = x, i = i, j = j, allow_negative = TRUE)
 
     if(simplify && length(m[["c_idx"]]) == 1) {
-        out        = reflectance(x)[ m[["r_idx"]] , m[["c_idx"]], drop = TRUE ]
+        out        = value(x)[ m[["r_idx"]] , m[["c_idx"]], drop = TRUE ]
         names(out) = names(x)[ m[["r_idx"]] ]
         return(out)
 
     } else {
-        out = spectra(reflectance = reflectance(x)[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ],
+        out = spectra(value = value(x)[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ],
                       wavelengths = wavelengths(x)[ m[["c_idx"]] ],
                       names       = names(x)[ m[["r_idx"]] ],
                       meta        = meta(x, label = NULL, sample =  m[["r_idx"]])
@@ -100,7 +100,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
     }
 }
 
-#' Assign reflectance values to spectra
+#' Assign value values to spectra
 #'
 #' \code{`[<-`} assigns the rhs values to spectra
 #'
@@ -131,17 +131,17 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
     # l = lapply(m, length)
     #
     # if(is_spectra(value)){
-    #     value = reflectance(value)
+    #     value = value(value)
     # }
     #
     # ## In case `value` is a scalar:
     # ##   1. Do not check for dimension constraints, which leads to
-    # ##   2. assiging `value` to all elements in the reflectance matrix
+    # ##   2. assiging `value` to all elements in the value matrix
     # if(is.vector(value) && length(value) == 1){
     #     l = list(NULL)   ## assign the two elements in `l` to NULL
     # }
     #
-    # x$reflectance[ m[["r_idx"]], m[["c_idx"]] ] = i_reflectance(value,
+    # x$value[ m[["r_idx"]], m[["c_idx"]] ] = i_value(value,
     #                                                             nwavelengths = l[["c_idx"]],
     #                                                             nsample = l[["r_idx"]])
     # x
@@ -167,24 +167,24 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
         }
 
         if(l$r_idx == nrow(value)){
-            reflectance(x)[m$r_idx, m$c_idx] = reflectance(value)
+            value(x)[m$r_idx, m$c_idx] = value(value)
             names(x)[m$r_idx]                = names(value)
             meta(x)[m$r_idx, ]               = meta(value)
         } else if ( nrow(value) == 1){
-            reflectance(x)[m$r_idx, m$c_idx] = reflectance(value)[ rep(x = 1, l$r_idx), ]
+            value(x)[m$r_idx, m$c_idx] = value(value)[ rep(x = 1, l$r_idx), ]
             names(x)[m$r_idx]                = rep(names(value), l$r_idx)
             meta(x)[m$r_idx, ]               = meta(value)[rep(1, l$r_idx), ]
         } else {
             stop("spectra not compatible.")
         }
     } else {
-        ## In case "value" is something else, only update the reflectance
+        ## In case "value" is something else, only update the value
 
         ## If value is a scalar
         if(is.vector(value) && length(value) == 1){
-            reflectance(x)[ m$r_idx , m$c_idx ] = matrix(value, l$r_idx, l$c_idx)
+            value(x)[ m$r_idx , m$c_idx ] = matrix(value, l$r_idx, l$c_idx)
         } else {
-            reflectance(x)[ m$r_idx , m$c_idx ] = value
+            value(x)[ m$r_idx , m$c_idx ] = value
         }
     }
 
@@ -192,12 +192,12 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 }
 
 ########################################
-# reflectance
+# value
 ########################################
 
-#' Get spectra reflectance
+#' Get spectra value
 #'
-#' \code{reflectance} returns the reflectance matrix from spectra
+#' \code{value} returns the value matrix from spectra
 #'
 #' @param x spectra object
 #' @return matrix with samples in rows and wavelengths in columns
@@ -208,14 +208,14 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #' @examples
 #' library(spectrolab)
 #' spec = as.spectra(spec_matrix_example, name_idx = 1)
-#' is.matrix(reflectance(spec))
-reflectance = function(x){
-    UseMethod("reflectance")
+#' is.matrix(value(spec))
+value = function(x){
+    UseMethod("value")
 }
 
-#' Set spectra reflectance
+#' Set spectra value
 #'
-#' \code{reflectance} Assigns the rhs to the reflectance of the lhs spectra obj
+#' \code{value} Assigns the rhs to the value of the lhs spectra obj
 #'
 #' @param x spectra object
 #' @param value value to be assigned to the lhs
@@ -228,28 +228,28 @@ reflectance = function(x){
 #' library(spectrolab)
 #' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' # scale all refletance values by 2
-#' reflectance(spec) = reflectance(spec) * 2
-`reflectance<-` = function(x, value){
-    UseMethod("reflectance<-")
+#' value(spec) = value(spec) * 2
+`value<-` = function(x, value){
+    UseMethod("value<-")
 }
 
 
-#' @describeIn reflectance Get spectra reflectance
+#' @describeIn value Get spectra value
 #' @export
-reflectance.spectra = function(x){
-    x$reflectance
+value.spectra = function(x){
+    x$value
 }
 
-#' @describeIn reflectance<- Set spectra reflectance
+#' @describeIn value<- Set spectra value
 #' @export
-`reflectance<-.spectra` = function(x, value){
+`value<-.spectra` = function(x, value){
 
     ### ORIGINAL code was calling the spectra setter ###
     # x[] = value
     # x
     ####################################################
 
-    x$reflectance = i_reflectance(value, nwavelengths = ncol(x), nsample = nrow(x))
+    x$value = i_value(value, nwavelengths = ncol(x), nsample = nrow(x))
     x
 }
 

@@ -12,6 +12,6 @@
 # ones_r = rep.int(1, nrow(spec))
 #
 # test_that("spectra mat multiplication", {
-#     expect_equivalent( reflectance(spec) %*% ones_c, spec %*% ones_c )
-#     expect_equivalent( ones_r %*% reflectance(spec), ones_r %*% spec )
+#     expect_equivalent( value(spec) %*% ones_c, spec %*% ones_c )
+#     expect_equivalent( ones_r %*% value(spec), ones_r %*% spec )
 # })

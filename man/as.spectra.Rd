@@ -15,7 +15,7 @@ must have their column index included in `name_idx` or `meta_idxs`.}
 or 0, rownames(x) or a sequence of integers will be assigned
 as names.}
 
-\item{meta_idxs}{column indices with metadata (not name and not reflectance).
+\item{meta_idxs}{column indices with metadata (not name and not value).
 Defaults to NULL}
 }
 \value{

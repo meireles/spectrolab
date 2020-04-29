@@ -16,5 +16,5 @@ standard deviation
 }
 \description{
 \code{sd} computes the standard deviation spectrum. Note that values will not
-reflect reflectance anymore, but the sd of the reflectance instead.
+reflect value anymore, but the sd of the value instead.
 }

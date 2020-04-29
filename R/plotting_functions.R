@@ -7,7 +7,7 @@ usethis::use_package("RColorBrewer")
 #' \code{plot} plots spectra.
 #'
 #' @param x spectra object
-#' @param ylab label for y axis. Defaults to "Reflectance".
+#' @param ylab label for y axis. Defaults to "value".
 #' @param xlab label for x axis. Defaults to "Wavelength".
 #' @param col line color. Defaults to "black".
 #' @param lty line type. Defaults to 1.
@@ -25,7 +25,7 @@ usethis::use_package("RColorBrewer")
 #' spec  = as.spectra(spec_matrix_example, name_idx = 1)
 #' plot(spec, lwd = 1.2)
 plot.spectra = function(x,
-                        ylab = "Reflectance",
+                        ylab = "value",
                         xlab = "Wavelength",
                         col  = "black",
                         lty  = 1,
@@ -41,7 +41,7 @@ plot.spectra = function(x,
     ## anywhere, but graphics::plot is not directly called by this method.
 
     graphics::matplot(x    = wavelengths(x),
-                      y    = t(reflectance(x)),
+                      y    = t(value(x)),
                       type = type,
                       ylab = ylab,
                       xlab = xlab,
@@ -102,12 +102,12 @@ plot_quantile = function(spec,
     qt = quantile(spec, probs = tail_range, na.rm = na.rm)
     # xx = c( qt$wavelengths,
     #         rev(qt$wavelengths) )
-    # yy = c( qt$reflectance[1, ], rev(qt$reflectance[2, ]) )
+    # yy = c( qt$value[1, ], rev(qt$value[2, ]) )
 
     xx = c(wavelengths(qt),
            rev(wavelengths(qt)))
-    yy = c(reflectance(qt)[1, ],
-           rev( reflectance(qt)[2, ]))
+    yy = c(value(qt)[1, ],
+           rev( value(qt)[2, ]))
 
     if(!add){
         plot(spec, type = "n", ...)

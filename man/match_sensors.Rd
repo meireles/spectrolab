@@ -40,7 +40,7 @@ Defaults to c(0.5, 3)}
 spectra object
 }
 \description{
-\code{match_sensors} scales reflectance values of sensors 1 (vis) and 3 (swir2)
+\code{match_sensors} scales value values of sensors 1 (vis) and 3 (swir2)
 }
 \details{
 Splice_at has no default because sensor transition points vary between vendors
@@ -52,19 +52,13 @@ ASD ~ c(1001, 1801).
 
 If the factors used to match spectra are unreasonable, \code{match_sensors}
 will throw. Unreasonable factors (f) are defined as 0.5 > f > 3 or NaN,
-which  happens when the reflectance value for the right sensor is 0.
+which  happens when the value value for the right sensor is 0.
 }
 \section{Methods (by class)}{
 \itemize{
 \item \code{spectra}: Match sensor overlap regions
 }}
 
-\examples{
-library(spectrolab)
-data(spec_with_jump)
-spec = spec_with_jump
-spec = match_sensors(spec, splice_at = c(971, 1910), fixed_sensor = 2)
-}
 \author{
 Jose Eduardo Meireles and Anna Schweiger
 }

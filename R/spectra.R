@@ -2,11 +2,11 @@
 # Internal constructor helper for each spectra component
 ################################################################################
 
-#' Internal constructor for reflectance matrix
+#' Internal constructor for value matrix
 #'
-#' \code{i_reflectance} constructs reflectance matrix in the appropriate format
+#' \code{i_value} constructs value matrix in the appropriate format
 #'
-#' Coerces input form different formats into data conformable to reflectance,
+#' Coerces input form different formats into data conformable to value,
 #' which is a numeric matrix with no dimension names.
 #'
 #' @param x numeric matrix, dataframe or vector (in case of single spectrum)
@@ -14,11 +14,11 @@
 #'                     If NULL (default) checking is skipped.
 #' @param nsample Integer of expected number of samples.
 #'                If NULL (default) checking is skipped.
-#' @return data conformable to relative reflectance: numeric matrix
+#' @return data conformable to relative value: numeric matrix
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_reflectance = function(x, nwavelengths = NULL, nsample = NULL) {
+i_value = function(x, nwavelengths = NULL, nsample = NULL) {
 
     ## test if x dimensions conform to nwavelengths and nsample
     if(is.vector(x)) {
@@ -171,12 +171,12 @@ i_meta = function(x, nsample, allow_null = TRUE, ...){
 #'
 #' \code{spectra} "manually" creates a spectra object
 #'
-#' @param reflectance N by M numeric matrix. N samples in rows and M wavelengths
+#' @param value N by M numeric matrix. N samples in rows and M wavelengths
 #'                    in columns
 #' @param wavelengths wavelength names in vector of length M
 #' @param names sample names in vector of length N
 #' @param meta spectra metadata. defaults to NULL. Must be either of length or nrow
-#'             equals to the number of samples (nrow(reflectance) or length(names))
+#'             equals to the number of samples (nrow(value) or length(names))
 #' @param ... additional arguments to metadata creation. not implemented yet
 #' @return spectra object
 #'
@@ -187,22 +187,22 @@ i_meta = function(x, nsample, allow_null = TRUE, ...){
 #'
 #' @examples
 #' library(spectrolab)
-#' # 1. Create a reflectance matrix.
+#' # 1. Create a value matrix.
 #' #    In this case, by removing the first column that holds the species name
 #' rf = spec_matrix_example[ , -1]
 #'
 #' # (2) Create a vector with wavelength labels that match
-#' #     the reflectance matrix columns.
+#' #     the value matrix columns.
 #' wl = colnames(rf)
 #'
 #' # (3) Create a vector with sample labels that match
-#' #     the reflectance matrix rows.
+#' #     the value matrix rows.
 #' #     In this case, use the first colum of spec_matrix_example
 #' sn = spec_matrix_example[ , 1]
 #'
 #' # Finally, construct the spectra object using the `spectra` constructor
-#' spec = spectra(reflectance = rf, wavelengths = wl, names = sn)
-spectra = function(reflectance,
+#' spec = spectra(value = rf, wavelengths = wl, names = sn)
+spectra = function(value,
                    wavelengths,
                    names,
                    meta      = NULL,
@@ -222,9 +222,9 @@ spectra = function(reflectance,
     wl_l  = length(wavelengths)
     spl_l = length(names)
 
-    s = list( reflectance  = i_reflectance(reflectance,
-                                           nwavelengths = wl_l,
-                                           nsample      = spl_l),
+    s = list( value  = i_value(value,
+                               nwavelengths = wl_l,
+                               nsample      = spl_l),
               wavelengths  = i_wavelengths(wavelengths),
               names        = i_names(names, prefix = NULL),     ## relies of the default prefix inside i_names
               meta         = i_meta(NULL, nsample = spl_l, ...) ## *** Ideally i_meta(meta, nsample = spl_l, ...)

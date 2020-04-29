@@ -12,23 +12,23 @@ spec   = as.spectra(mat, name_idx = NULL, meta_idxs = NULL)
 
 
 test_that("mean from spec equals the colMeans equiv.", {
-    expect_equivalent( as.vector(reflectance(mean(spec))),
+    expect_equivalent( as.vector(value(mean(spec))),
                        colMeans(mat, na.rm = TRUE) )
 })
 
 
 test_that("median from spec equals the apply mat equiv.", {
-    expect_equivalent( as.vector(reflectance(median(spec))),
+    expect_equivalent( as.vector(value(median(spec))),
                        apply(mat, 2, median, na.rm = TRUE) )
 })
 
 
 test_that("var from spec equals the apply mat equiv.", {
-    expect_equivalent( as.vector(reflectance(var(spec))),
+    expect_equivalent( as.vector(value(var(spec))),
                        apply(mat, 2, var, na.rm = TRUE) )
 })
 
 test_that("sd from spec equals the apply mat equiv.", {
-    expect_equivalent( as.vector(reflectance(sd(spec))),
+    expect_equivalent( as.vector(value(sd(spec))),
                        apply(mat, 2, sd, na.rm = TRUE) )
 })

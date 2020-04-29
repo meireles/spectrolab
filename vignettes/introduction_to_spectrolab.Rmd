@@ -49,7 +49,7 @@ There are two ways to get spectra into R: 1) converting a matrix or data.frame t
 
 ### Create spectra from a matrix or data.frame
 
-If you already have your spectra in a matrix or data frame (e.g. when you read your data from a .csv file), you can use the function `as.spectra()` to convert it to a `spectra` object. The matrix **must** have samples in rows and wavelengths in columns. The header of the wavelengths columns must be (numeric) wavelength labels. You also should declare which column has the sample names (which are mandatory) using the `name_idx` argument. If other columns are present (other than sample name and reflectances), their indices must be passed to `as.spectra` as the `meta_idxs` argument.
+If you already have your spectra in a matrix or data frame (e.g. when you read your data from a .csv file), you can use the function `as.spectra()` to convert it to a `spectra` object. The matrix **must** have samples in rows and wavelengths in columns. The header of the wavelengths columns must be (numeric) wavelength labels. You also should declare which column has the sample names (which are mandatory) using the `name_idx` argument. If other columns are present (other than sample name and values), their indices must be passed to `as.spectra` as the `meta_idxs` argument.
 
 Here is an example using a dataset matrix named `spec_matrix_meta.csv` provided by the package.
 
@@ -102,7 +102,7 @@ acer_spectra
 dim(acer_spectra)
 ```
 
-`spectrolab` also lets you access the individual components of the `spectra`. This is done with the functions `names()` for sample names, `wavelengths()` for wavelength labels, `reflectance()` for the reflectance matrix, and `meta()` for the associated metadata (in case you have any).
+`spectrolab` also lets you access the individual components of the `spectra`. This is done with the functions `names()` for sample names, `wavelengths()` for wavelength labels, `value()` for the value matrix, and `meta()` for the associated metadata (in case you have any).
 
 
 ```{r, eval=TRUE}
@@ -112,8 +112,8 @@ n = names(achillea_spec)
 # Vector of wavelengths
 w = wavelengths(achillea_spec)
 
-# Reflectance matrix
-r = reflectance(achillea_spec)
+# value matrix
+r = value(achillea_spec)
 
 # Metadata. Use simplify = TRUE to get a vector instead of a data.frame
 m = meta(achillea_spec, "ssp", simplify = TRUE)
@@ -191,7 +191,7 @@ Last but not least, spectrolab also allows you to interactivelly explore spectra
 
 <img src="plot_interactive_screenshot.png" alt="Drawing" style="width: 300px;"/>
 
-## Manipulating samples names, wavelength labels, metadata and reflectance
+## Manipulating samples names, wavelength labels, metadata and value
 
 You may want to edit certain simple attributes of `spectra`, such as making all sample names lowercase This is easily attainable in `spectrolab`.
 
@@ -205,9 +205,9 @@ names(spec_new) = tolower(names(achillea_spec))
 names(spec_new)[1:5]
 ```
 
-If you want to fiddle with the reflectance itself, this is easy, too.
+If you want to fiddle with the value itself, this is easy, too.
 ```{r,  fig.height=3, fig.width=4, fig.align="center", eval=T}
-# Scale reflectance by 0.75
+# Scale value by 0.75
 spec_new = spec_new * 0.75
 
 # Plot the results

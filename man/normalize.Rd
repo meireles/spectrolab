@@ -20,7 +20,7 @@ normalize(x, quiet = FALSE, ...)
 spectra object with normalized spectra
 }
 \description{
-\code{normalize} returns a spectra obj with vector normalized reflectances
+\code{normalize} returns a spectra obj with vector normalized values
 }
 \section{Methods (by class)}{
 \itemize{

@@ -1,6 +1,6 @@
-#' Minimum reflectance
+#' Minimum value
 #'
-#' \code{min} Returns the minimum reflectance value in a spectra object
+#' \code{min} Returns the minimum value value in a spectra object
 #'
 #' @param ... spectra object
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
@@ -14,12 +14,12 @@
 #' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' min(spec)
 min.spectra = function(..., na.rm = FALSE){
-    min(reflectance(...), na.rm = na.rm)
+    min(value(...), na.rm = na.rm)
 }
 
-#' Maximum reflectance
+#' Maximum value
 #'
-#' \code{max} Returns the maximum reflectance value in a spectra object
+#' \code{max} Returns the maximum value value in a spectra object
 #'
 #' @param ... spectra object
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
@@ -33,12 +33,12 @@ min.spectra = function(..., na.rm = FALSE){
 #' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' max(spec)
 max.spectra = function(..., na.rm = FALSE){
-    max(reflectance(...), na.rm = na.rm)
+    max(value(...), na.rm = na.rm)
 }
 
-#' Range of reflectance values
+#' Range of value values
 #'
-#' \code{range} Returns the range of (min, max) reflectance values in spectra
+#' \code{range} Returns the range of (min, max) value values in spectra
 #'
 #' @param ... spectra object
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
@@ -53,7 +53,7 @@ max.spectra = function(..., na.rm = FALSE){
 #' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' range(spec)
 range.spectra = function(..., na.rm = FALSE){
-    range(reflectance(...), na.rm = na.rm)
+    range(value(...), na.rm = na.rm)
 }
 
 

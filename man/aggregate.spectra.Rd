@@ -14,7 +14,7 @@
 \item{FUN}{function to be applied to refl (and meta if FUN_meta is NULL)}
 
 \item{FUN_meta}{function to be applied to metadata. If NULL (default), same
-FUN applied to reflectance is used.}
+FUN applied to value is used.}
 
 \item{...}{extra args to FUN}
 }
@@ -26,7 +26,7 @@ Applies FUN (and FUN_meta) over spectra aggregating by factor `by`.
 }
 \details{
 Argument FUN_meta is useful if you want to apply a different function to
-metadata and reflectance. If you want to aggregate spectra and metadata
+metadata and value. If you want to aggregate spectra and metadata
 using `mean`, `sd`, `median` etc. but try to keep the text values, wrap your
 function in \code{try_keep_txt(f)}.
 }

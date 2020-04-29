@@ -31,7 +31,7 @@ try_keep_txt = function(f){
 }
 
 
-#' Pairwise reflectance ratios
+#' Pairwise value ratios
 #'
 #' \code{ratio} computes pairwise ratios between bands
 #'
@@ -53,7 +53,7 @@ ratio = function(x, simplify = FALSE){
 }
 
 
-#' @describeIn ratio Compute pairwise reflectance ratios
+#' @describeIn ratio Compute pairwise value ratios
 #' @export
 ratio.spectra = function(x, simplify = FALSE){
     message("ratio may take a while...")

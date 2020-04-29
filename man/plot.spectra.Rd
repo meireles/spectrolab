@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{spectra}(
   x,
-  ylab = "Reflectance",
+  ylab = "value",
   xlab = "Wavelength",
   col = "black",
   lty = 1,
@@ -17,7 +17,7 @@
 \arguments{
 \item{x}{spectra object}
 
-\item{ylab}{label for y axis. Defaults to "Reflectance".}
+\item{ylab}{label for y axis. Defaults to "value".}
 
 \item{xlab}{label for x axis. Defaults to "Wavelength".}
 

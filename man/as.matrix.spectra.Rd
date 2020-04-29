@@ -15,7 +15,7 @@ Pick one: "none" "row" "col" "both".}
 \item{...}{does nothing. Here for compatibility with S3 generics}
 }
 \value{
-matrix of spectral reflectance. columns are wavelengths and rows are
+matrix of spectral value. columns are wavelengths and rows are
         samples
 }
 \description{

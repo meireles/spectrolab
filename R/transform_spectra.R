@@ -9,7 +9,7 @@
 #' \code{apply_by_band} is conceptually similar to apply(as.matrix(x), 2, fun),
 #' but returns a spectra object while dealing with metadata and attributes.
 #' Applying a function that does not act on numeric values may crash the function
-#' or render all reflectance values NA.
+#' or render all value values NA.
 #'
 #' @param x spectra
 #' @param fun numeric function to be applied to each band.
@@ -69,7 +69,7 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
         m = lapply(m, fm, ...)  # Calling lapply because meta is always a data.frame
         m = do.call(cbind, m)
     }
-    spectra(reflectance = r, wavelengths = w, names = n, meta = m)
+    spectra(value = r, wavelengths = w, names = n, meta = m)
 }
 
 
@@ -82,7 +82,7 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
 #' Applies FUN (and FUN_meta) over spectra aggregating by factor `by`.
 #'
 #' Argument FUN_meta is useful if you want to apply a different function to
-#' metadata and reflectance. If you want to aggregate spectra and metadata
+#' metadata and value. If you want to aggregate spectra and metadata
 #' using `mean`, `sd`, `median` etc. but try to keep the text values, wrap your
 #' function in \code{try_keep_txt(f)}.
 #'
@@ -90,7 +90,7 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
 #' @param by vector of factors to guide the aggregation
 #' @param FUN function to be applied to refl (and meta if FUN_meta is NULL)
 #' @param FUN_meta function to be applied to metadata. If NULL (default), same
-#'        FUN applied to reflectance is used.
+#'        FUN applied to value is used.
 #' @param ... extra args to FUN
 #' @return spectra object
 #'
@@ -166,7 +166,7 @@ combine.spectra = function(s1, s2){
         stop("Spectra must have the same wavelengths. Consider using `resample()` first")
     }
 
-    r = rbind(reflectance(s1), reflectance(s2))
+    r = rbind(value(s1), value(s2))
     n = c(names(s1), names(s2))
     w = wavelengths(s1)               ## OK because I tested for equality before
 
@@ -379,7 +379,7 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
 
 #' Vector normalize spectra
 #'
-#' \code{normalize} returns a spectra obj with vector normalized reflectances
+#' \code{normalize} returns a spectra obj with vector normalized values
 #'
 #' @param x spectra object. Wavelengths must be strictly increasing
 #' @param quiet boolean. Warn about change in y value units? Defaults to FALSE
@@ -406,21 +406,21 @@ normalize.spectra = function(x, quiet = FALSE, ...){
 
     if(!quiet){
         message("Vector nomalizing spectra...")
-        message("Note that y values will not be true reflectances anymore!")
+        message("Note that y values will not be true values anymore!")
 
         if( "normalization_magnitude" %in% names(meta(x)) ){
             warning("spectra were apparently already vector normalized.\n  normalization magnitudes may not make sense.")
         }
     }
 
-    refl            = reflectance(x)
+    refl            = value(x)
     refl_squared    = refl * refl
     vec_ones        = rep.int(1L, ncol(refl_squared))
     spec_sq_rowsum  = refl_squared %*% vec_ones
     magnitudes      = as.vector(sqrt(spec_sq_rowsum))
 
     # normalize and construct a `spectra` object
-    x[] = i_reflectance(refl / magnitudes)
+    x[] = i_value(refl / magnitudes)
 
     # add a magnitute attribute to the`spectra` object
     meta(x, "normalization_magnitude") = magnitudes
@@ -516,7 +516,7 @@ i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
     propres = floor(range / resol * scale)
     nknots  = min( propres[propres >= cutres], fullres)
 
-    d = reflectance(x)
+    d = value(x)
     r = lapply( seq.int(nrow(x)), function(y){ d[y, ]})
     l = length(r)
     w = wavelengths(x)
@@ -571,7 +571,7 @@ i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
 
     message("Simple moving average over n: ", n)
 
-    r   = reflectance(x)
+    r   = value(x)
     s   = t(apply(r, 1, i_mav, n = n))
     w   = which(apply(is.na(s), 2, all))
     ww  = wavelengths(x)[w]
@@ -580,10 +580,10 @@ i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
 
     if(length(w) != 0){
 
-        message("Smoothing transformed some reflectances into NAs and those wavelengths were removed")
+        message("Smoothing transformed some values into NAs and those wavelengths were removed")
 
         if(save_wvls_to_meta){
-            message("However, the original reflectance values for those wavelengths were kept as metadata")
+            message("However, the original value values for those wavelengths were kept as metadata")
 
             meta(x) = matrix(r[ , w],
                              nrow = nrow(x),
@@ -656,7 +656,7 @@ resample.spectra = function(x, new_wvls, ...) {
         for(i in which(l)){
             warning("Found long gap between wavelengths ",
                     w[i - 1], " and ", w[ i + 1], " (", d[i], ")", "\n",
-                    "Reflectances resampled in this gap should probably be converted to NAs.")
+                    "values resampled in this gap should probably be converted to NAs.")
         }
     }
 
@@ -668,11 +668,11 @@ resample.spectra = function(x, new_wvls, ...) {
     }
 
     ## Smooth and predict
-    message("Using spline to predict reflectance at new wavelengths...")
+    message("Using spline to predict value at new wavelengths...")
     s = i_smooth_spline_spectra(x, ...)
     f = function(o, p){ stats::predict(o, p)[["y"]] }
     g = lapply(X = s, FUN = f, p = new_wvls)
-    d = i_reflectance( do.call(rbind, g) )
+    d = i_value( do.call(rbind, g) )
     message("Beware the spectra are now partially smoothed.")
 
 
@@ -681,8 +681,8 @@ resample.spectra = function(x, new_wvls, ...) {
     ## version of the wavelength setter.
     wavelengths(x, unsafe = TRUE) = new_wvls
 
-    ## THIS IS BAD. Figure out an "unsafe" version of the reflectance setter
-    x[["reflectance"]] = d
+    ## THIS IS BAD. Figure out an "unsafe" version of the value setter
+    x[["value"]] = d
 
     x
 }

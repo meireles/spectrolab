@@ -15,7 +15,7 @@
 or a logical vector of length ncol(x). Do not use indexes!}
 
 \item{simplify}{Boolean. If TRUE (default), single band selections
-are returned as a named vector of reflectance values}
+are returned as a named vector of value values}
 }
 \value{
 usually a spectra object, but see param `simplify`
@@ -29,7 +29,7 @@ names or indexes, in that order. The spectra constructor ensures that names are
 not numeric nor are coercible to numeric, such that x[1:2, ] will return the
 first and second samples in the `spectra` object. Subsetting based on wavelengths
 (second argument) matches the wavelength labels, not indices! That is, x[ , 600]
-will give you the reflectance data for the 600nm wavelength and not the 600th
+will give you the value data for the 600nm wavelength and not the 600th
 band. Boolean vectors of the appropriate length can be used to subset samples
 and wavelengths.
 }

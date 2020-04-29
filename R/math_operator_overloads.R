@@ -1,6 +1,6 @@
 #' Spectra Transpose
 #'
-#' spectra are not transposable. Transpose the reflectance instead
+#' spectra are not transposable. Transpose the value instead
 #'
 #' @param x spectra
 #' @return nothing. operation not allowed
@@ -17,10 +17,10 @@
 #' t(s)
 #' }
 #' # But these options should work
-#' t(reflectance(s))
+#' t(value(s))
 #' t(as.matrix(s))
 t.spectra = function(x){
-    stop("spectra are not transposable. You can `t(reflectance(x))` though.")
+    stop("spectra are not transposable. You can `t(value(x))` though.")
 }
 
 #' Arithmetic operators for spectra
@@ -56,21 +56,21 @@ Ops.spectra = function(e1, e2) {
         # spectra is first
         if( w_is_spec == 1 ){
             if(.Generic %in% mathop){
-                e1[] = do.call(.Generic, list( reflectance(e1), e2) )
+                e1[] = do.call(.Generic, list( value(e1), e2) )
                 return(e1)
             }
             if(.Generic %in% boolop){
-                return(do.call(.Generic, list( reflectance(e1), e2) ))
+                return(do.call(.Generic, list( value(e1), e2) ))
             }
         }
         # spectra is second
         if(w_is_spec == 2) {
             if(.Generic %in% mathop){
-                e2[] = do.call(.Generic, list( e1, reflectance(e2)) )
+                e2[] = do.call(.Generic, list( e1, value(e2)) )
                 return(e2)
             }
             if(.Generic %in% boolop){
-                return(do.call(.Generic, list( e1, reflectance(e2)) ))
+                return(do.call(.Generic, list( e1, value(e2)) ))
             }
         }
     # both arguments are spectra
@@ -82,7 +82,7 @@ Ops.spectra = function(e1, e2) {
             stop("wavelength labels must be identical")
         }
         if(.Generic %in% mathop){
-            e1[] = do.call(.Generic, list(reflectance(e1), reflectance(e2)) )
+            e1[] = do.call(.Generic, list(value(e1), value(e2)) )
             if(any(names(e1) != names(e2))){
                 warning("sample names not identical: removing sample names...")
                 names(e1) = rep(NA, dim(e1)["n_samples"])
@@ -90,7 +90,7 @@ Ops.spectra = function(e1, e2) {
             return(e1)
         }
         if(.Generic %in% boolop){
-            return(do.call(.Generic, list(reflectance(e1), reflectance(e2)) ))
+            return(do.call(.Generic, list(value(e1), value(e2)) ))
         }
     }
 }
@@ -137,11 +137,11 @@ Ops.spectra = function(e1, e2) {
 #     if( is_spectra(y)){ y = as.matrix(y) }
 #
 #     # The as.matrix() may keep some dimname info in the result matrix
-#     # in contrast to reflectance()
+#     # in contrast to value()
 #     # Also, benchmark and decide.
 #
-#     # x = if(is_spectra(x)) reflectance(x)
-#     # y = if( is_spectra(y)) reflectance(y)
+#     # x = if(is_spectra(x)) value(x)
+#     # y = if( is_spectra(y)) value(y)
 #
 #     x %*% y
 #

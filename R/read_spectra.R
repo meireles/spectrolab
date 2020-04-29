@@ -165,7 +165,7 @@ read_spectra = function(path,
 #' Generic parser for SVC's `.sig` and PSR's `.sed`
 #'
 #' @param file_paths paths for files already parsed by `read_spectra`
-#' @param skip_until_tag Tag that precedes the table of reflectance data,
+#' @param skip_until_tag Tag that precedes the table of value data,
 #'                       indicating that lines until that tag should be skipped.
 #'                       Tag is matched with a regexpr.
 #' @param skip_first_n skip the first n lines. Only used if `skip_until_tag` is
@@ -173,8 +173,8 @@ read_spectra = function(path,
 #' @param sep_char separator
 #' @param header boolean. keep header?
 #' @param wl_col idx or name of wavelength column
-#' @param refl_cols idx or name of reflectance columns. MULTIPLE
-#' @param divide_refl_by divide reflectance values by this. MULTIPLE
+#' @param refl_cols idx or name of value columns. MULTIPLE
+#' @param divide_refl_by divide value values by this. MULTIPLE
 #' @param ... additional arguments passed to read table
 #' @return single `spectra` or list of `spectra`
 #'
@@ -229,7 +229,7 @@ i_read_ascii_spectra = function(file_paths,
         stop("refl_cols cannot be a vector of indices.")
     }
 
-    ## Deal with cases where multiple reflectance columns or multiple reflectance
+    ## Deal with cases where multiple value columns or multiple value
     ## scalars (divide_refl_by) are given
     if(length(refl_cols) < length(divide_refl_by)) {
         warning("Length of divide_refl_by should be either 1 or equals to the length of refl_cols. divide_refl_by has been prunned to length", length(refl_cols), ".")
@@ -243,7 +243,7 @@ i_read_ascii_spectra = function(file_paths,
     names(data) = file_paths
 
     ############################################################
-    ## Choose right reflectance columns from parsed data
+    ## Choose right value columns from parsed data
     ## Updates refl_cols to an INDEX
     if(length(refl_cols) > 1) {
 
@@ -302,7 +302,7 @@ i_read_ascii_spectra = function(file_paths,
 #' @param type Data type to read. "target_refl", "target_rad", "reference_rad".
 #'             Defaults to "target_refl".
 #' @param format choice of ASD format. Either "binary" or "txt"
-#' @param divide_refl_by divide reflectance values by this
+#' @param divide_refl_by divide value values by this
 #' @param ... NOT USED YET
 #' @return spectra object
 #'
