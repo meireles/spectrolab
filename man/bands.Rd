@@ -27,7 +27,7 @@ vector of bands. numeric if `return_num` = TRUE (default).
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{spectra}: Set spectra band labels
+\item \code{spectra}: Get spectra band labels
 }}
 
 \examples{

@@ -38,7 +38,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
     }
 
     r_idx = i_match_label_or_idx( names(x) , i, allow_negative = allow_negative)
-    c_idx = i_match_label(bands(x), j)
+    c_idx = i_match_label(bands(x), j, allow_negative = allow_negative)
 
     list(r_idx = r_idx, c_idx = c_idx)
 }
@@ -93,8 +93,8 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
     } else {
         out = spectra(value = value(x)[ m[["r_idx"]] , m[["c_idx"]], drop = FALSE ],
                       bands = bands(x)[ m[["c_idx"]] ],
-                      names       = names(x)[ m[["r_idx"]] ],
-                      meta        = meta(x, label = NULL, sample =  m[["r_idx"]])
+                      names = names(x)[ m[["r_idx"]] ],
+                      meta  = meta(x, label = NULL, sample =  m[["r_idx"]])
         )
         return(out)
     }
@@ -349,7 +349,7 @@ bands = function(x, min = NULL, max = NULL, return_num = TRUE){
 }
 
 
-#' @describeIn bands Set spectra band labels
+#' @describeIn bands Get spectra band labels
 #' @export
 bands.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
 

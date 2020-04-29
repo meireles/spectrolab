@@ -4,7 +4,13 @@
 \alias{i_match_label}
 \title{Match label}
 \usage{
-i_match_label(x, i, full = FALSE, allow_empty_lookup = FALSE)
+i_match_label(
+  x,
+  i,
+  full = FALSE,
+  allow_empty_lookup = FALSE,
+  allow_negative = FALSE
+)
 }
 \arguments{
 \item{x}{label vector}
@@ -15,6 +21,8 @@ i_match_label(x, i, full = FALSE, allow_empty_lookup = FALSE)
 
 \item{allow_empty_lookup}{boolean. If TRUE, x is allowed to be NULL. Defaults
 to false}
+
+\item{allow_negative}{boolean. Allow labels to be negative? Defaults to FALSE}
 }
 \value{
 matched indices, or list in case full = TRUE

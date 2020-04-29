@@ -224,10 +224,10 @@ spectra = function(value,
 
     s = list( value  = i_value(value,
                                nbands = wl_l,
-                               nsample      = spl_l),
+                               nsample = spl_l),
               bands  = i_bands(bands),
-              names        = i_names(names, prefix = NULL),     ## relies of the default prefix inside i_names
-              meta         = i_meta(NULL, nsample = spl_l, ...) ## *** Ideally i_meta(meta, nsample = spl_l, ...)
+              names  = i_names(names, prefix = NULL),     ## relies of the default prefix inside i_names
+              meta   = i_meta(NULL, nsample = spl_l, ...) ## *** Ideally i_meta(meta, nsample = spl_l, ...)
     )
 
     s = structure(s, class = c("spectra")) ## *** This should be the returned obj

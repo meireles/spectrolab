@@ -94,11 +94,12 @@ i_is_index = function(x, max_value, allow_negative = FALSE){
 #' @param full boolean. If TRUE, a full list of results is returned
 #' @param allow_empty_lookup boolean. If TRUE, x is allowed to be NULL. Defaults
 #'        to false
+#' @param allow_negative boolean. Allow labels to be negative? Defaults to FALSE
 #' @return matched indices, or list in case full = TRUE
 #'
 #' @author Jose Eduardo Meireles
 #' @keywords internal
-i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
+i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE, allow_negative = FALSE){
 
     r = list(matched = NULL, unmatched = NULL, not_element = NULL)
     l = length(x)
@@ -123,13 +124,28 @@ i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE){
         }
     }
 
+    flip_match_unmatch = FALSE
+
+    # In case of negative subsetting
+    if(all(i < 0) & allow_negative){
+        i = abs(as.numeric(i))
+        flip_match_unmatch = TRUE
+    }
+
     ds = match(x, i)
     dw = which(!is.na(ds))
     ds = order(ds[dw])
 
-    m = dw[ds]
-    u = which(! x %in% i)
-    n = setdiff(i, x)
+
+    if(flip_match_unmatch){
+        m = which(! x %in% i)
+        u = dw[ds]
+        n = setdiff(i, x)
+    } else {
+        m = dw[ds]
+        u = which(! x %in% i)
+        n = setdiff(i, x)
+    }
 
     if(full){
         r[] = list(m, u, n)
