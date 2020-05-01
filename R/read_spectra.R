@@ -5,8 +5,8 @@ usethis::use_package("prospectr")
 #' @param path Path to directory or input files
 #' @param format file formats. "asd" (for ASD); "sig" or "svc" (for SVC);
 #'               "sed" or "psr" (for SpecEvo PSR).
-#' @param type Data type to read. "target_refl", "target_rad", "reference_rad".
-#'             Defaults to "target_refl".
+#' @param type Data type to read. "target_reflectance", "target_radiance", or
+#'             "reference_radiance". Defaults to "target_reflectance".
 #' @param recursive read files recursively
 #' @param exclude_if_matches excludes files that match this regular expression.
 #'                           Example: "BAD"
@@ -22,10 +22,12 @@ usethis::use_package("prospectr")
 #' @examples
 #' library(spectrolab)
 #' dir_path = system.file("extdata", "Acer_example", package = "spectrolab")
+#'
+#' # Relative reflectance is re
 #' spec     = read_spectra(path = dir_path, format = "sig")
 read_spectra = function(path,
                         format,
-                        type               = "target_refl",
+                        type               = "target_reflectance",
                         recursive          = FALSE,
                         exclude_if_matches = NULL,
                         ignore_extension   = FALSE,
@@ -101,14 +103,14 @@ read_spectra = function(path,
 
     if(format_lookup[format_match] == "sig"){
 
-        if(type == "target_refl"){
+        if(type == "target_reflectance"){
             refl_cols = 4
-        } else if (type == "target_rad") {
+        } else if (type == "target_radiance") {
             refl_cols = 3
-        } else if (type == "reference_rad") {
+        } else if (type == "reference_radiance") {
             refl_cols = 2
         } else {
-            stop("type must be either target_refl, target_rad or reference_rad")
+            stop("type must be either target_reflectance, target_radiance or reference_radiance")
         }
 
         result = i_read_ascii_spectra(i_path,
@@ -124,17 +126,17 @@ read_spectra = function(path,
 
     if(format_lookup[format_match] == "sed"){
 
-        if(type == "target_refl"){
+        if(type == "target_reflectance"){
             refl_cols      = c("Reflect. %", "Reflect. [1.0]")
             divide_refl_by = c(100, 1)
-        } else if (type == "target_rad") {
+        } else if (type == "target_radiance") {
             refl_cols      = "Rad. (Target)"
             divide_refl_by = 1
-        } else if (type == "reference_rad") {
+        } else if (type == "reference_radiance") {
             refl_cols      = "Rad. (Ref.)"
             divide_refl_by = 1
         } else {
-            stop("type must be either target_refl, target_rad or reference_rad")
+            stop("type must be either target_reflectance, target_radiance or reference_radiance")
         }
 
         result = i_read_ascii_spectra(i_path,
@@ -316,14 +318,13 @@ i_read_asd_spectra = function(file_paths,
                               divide_refl_by,
                               ...){
 
-    if(type == "target_refl"){
+    if(type == "target_reflectance"){
         rf = prospectr::readASD(fnames = file_paths, out_format = "matrix")
         wl = colnames(rf)
         nm = gsub(".asd$", "",rownames(rf))
 
         return(spectra(rf, wl, nm))
-
-    } else if (type == "target_rad"){
+    } else if (type == "target_radiance"){
         l   = prospectr::readASD(fnames = file_paths, out_format = "list")
         rf  = do.call(rbind, lapply(l, `[[`, "radiance"))
         nm  = gsub(".asd$", "",rownames(rf))
@@ -331,7 +332,7 @@ i_read_asd_spectra = function(file_paths,
 
         return(spectra(rf, wl, nm))
 
-    } else if (type == "reference_rad"){
+    } else if (type == "reference_radiance"){
         l   = prospectr::readASD(fnames = file_paths, out_format = "list")
         rf  = do.call(rbind, lapply(l, `[[`, "reference"))
         nm  = gsub(".asd$", "",rownames(rf))
@@ -339,7 +340,7 @@ i_read_asd_spectra = function(file_paths,
 
         return(spectra(rf, wl, nm))
     } else {
-        stop("type must be either target_refl, target_rad or reference_rad")
+        stop("type must be either target_reflectance, target_radiance or reference_radiance")
     }
 }
 
