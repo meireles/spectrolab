@@ -318,7 +318,8 @@ plot_interactive = function(spec,
                 shiny::column(3,
                               shiny::wellPanel(
                                   shiny::h5(shiny::textOutput("firstlast")),
-                                  shiny::h5(shiny::textOutput("selected"))
+                                  shiny::h5(shiny::textOutput("selected")),
+                                  shiny::h5(shiny::textOutput("selected_band"))
                               ),
                               shiny::wellPanel(
                                   shiny::numericInput(inputId = "n_display",
@@ -364,7 +365,8 @@ plot_interactive = function(spec,
             to      = shiny::reactiveVal(1)
 
             # Initialize highlighted index
-            picked = shiny::reactiveVal(NULL)
+            picked      = shiny::reactiveVal()
+            picked_band = shiny::reactiveVal()
 
             # Update `from`, `to` and `picked` if next is pressed
             shiny::observeEvent(input$go_fwd, {
@@ -380,6 +382,7 @@ plot_interactive = function(spec,
 
                     # update picked
                     picked(NULL)
+                    picked_band(NULL)
                 }
             })
 
@@ -396,6 +399,7 @@ plot_interactive = function(spec,
 
                 # update picked
                 picked(NULL)
+                picked_band(NULL)
             })
 
             # Update `to` and `picked` if n_display is changed
@@ -414,12 +418,11 @@ plot_interactive = function(spec,
                     if(!is.null(picked())){
                         if(picked() > new_to){
                             picked(NULL)
+                            picked_band(NULL)
                         }
                     }
-
                     to(new_to)
                 }
-
             })
 
             shiny::observeEvent(input$highlight_by_dist, {
@@ -439,9 +442,12 @@ plot_interactive = function(spec,
 
                 if(length(spec_clicked) == 0){
                     picked(NULL)
+                    picked_band(NULL)
                 } else {
                     spec_clicked = from() + spec_clicked - 1L
+
                     picked(spec_clicked)
+                    picked_band(band_clicked)
                 }
             })
 
@@ -459,7 +465,11 @@ plot_interactive = function(spec,
                 plot(spec[s_range, w_range], col = cols, ...)
 
                 if( ! is.null(picked()) ){
-                    plot(spec[picked(), ], col = "red", lwd = 2, add = TRUE)
+                    plot(spec[picked(), ],
+                         col = "red", lwd = 2, add = TRUE)
+                    points(x = picked_band(),
+                           y = spec[picked(), picked_band()],
+                           pch = 25, fg = "red", bg = "red")
                 }
             })
 
@@ -475,8 +485,20 @@ plot_interactive = function(spec,
                 } else {
                     selected = "none"
                 }
-                paste("Selected: ", selected, sep = "")
+                paste("Selected spectrum: ", selected, sep = "")
             })
+
+
+            # Show selected band
+            output$selected_band = shiny::renderText({
+                if(!is.null(picked_band())){
+                    selected_band = picked_band()
+                } else {
+                    selected_band = "none"
+                }
+                paste("Selected band: ", selected_band, sep = "")
+            })
+
         }
     )
 }
