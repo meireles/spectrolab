@@ -41,6 +41,11 @@ read_spectra = function(path,
                       sed = "sed",
                       psr = "sed",
                       asd = "asd")
+
+    if(missing(format)){
+        stop("please provide the the file format.")
+    }
+
     format_match  = pmatch(tolower(format), names(format_lookup))
 
     ## Error if format isn't found
