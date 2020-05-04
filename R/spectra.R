@@ -116,13 +116,13 @@ i_bands = function(x, nbands = NULL) {
         stop("The length of x must be the same as nbands")
     }
 
-    x = suppressWarnings(as.numeric(x))
-    n = is.na(x)
+    y = suppressWarnings(as.numeric(x))
+    n = is.na(y)
     if( any(n) ){
         stop("band cannot be converted to numeric: ", x[n])
     }
 
-    x
+    y
 }
 
 #' Internal metadata constructor for spectra
