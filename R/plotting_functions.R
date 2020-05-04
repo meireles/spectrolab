@@ -213,7 +213,7 @@ plot_regions = function(spec,
     }
 
     if( (!i_plot_exists()) && add) {
-        warning("No plot exists for `regions` to be added to, but `add` is set to TRUE.\n  Plotting regions anyways." )
+        warning("No plot exists for `regions` to be added to, but `add` is set to TRUE.\n Plotting regions anyways." )
         plot(spec, type = "n")
     }
 
@@ -437,7 +437,7 @@ plot_interactive = function(spec,
                 band_clicked = bands[ which(bands_diff == min(bands_diff) & bands_diff <= band_threshold) ]
 
                 refl         = spec[ seq(from(), to()), band_clicked]
-                refl_diff    = abs(refl -  click_coord[[2]])
+                refl_diff    = abs(refl - click_coord[[2]])
                 spec_clicked = which(refl_diff == min(refl_diff) & refl_diff <= refl_threshold)
 
                 if(length(spec_clicked) == 0){

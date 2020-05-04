@@ -120,7 +120,7 @@ i_trim_sensor_overlap = function(x, splice_at){
 #'
 #' If the factors used to match spectra are unreasonable, \code{match_sensors}
 #' will throw. Unreasonable factors (f) are defined as 0.5 > f > 3 or NaN,
-#' which  happens when the value value for the right sensor is 0.
+#' which happens when the value value for the right sensor is 0.
 #'
 #' @param x spectra object
 #' @param splice_at bands that serve as splice points, i.e the beginnings
