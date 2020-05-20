@@ -256,7 +256,7 @@ plot_regions = function(spec,
 #' @importFrom shinyjs useShinyjs
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom stats dist
-#'
+#' @importFrom graphics points
 #' @author Anna K. Schweiger and Jose Eduardo Meireles
 #' @export
 #'
@@ -467,9 +467,9 @@ plot_interactive = function(spec,
                 if( ! is.null(picked()) ){
                     plot(spec[picked(), ],
                          col = "red", lwd = 2, add = TRUE)
-                    points(x = picked_band(),
-                           y = spec[picked(), picked_band()],
-                           pch = 25, fg = "red", bg = "red")
+                    graphics::points(x = picked_band(),
+                                     y = spec[picked(), picked_band()],
+                                     pch = 25, fg = "red", bg = "red")
                 }
             })
 
