@@ -52,7 +52,7 @@ ASD ~ c(1001, 1801).
 
 If the factors used to match spectra are unreasonable, \code{match_sensors}
 will throw. Unreasonable factors (f) are defined as 0.5 > f > 3 or NaN,
-which  happens when the value value for the right sensor is 0.
+which happens when the value value for the right sensor is 0.
 }
 \section{Methods (by class)}{
 \itemize{
