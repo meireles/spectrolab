@@ -1,3 +1,10 @@
+# spectrolab 0.0.9 (2020-05-21)
+
+## major
+* Breaking backwards compatibility! 
+* weavelengths function is now caled bands
+* reflectance function is now called value
+
 # spectrolab 0.0.8 (2018-10-28)
 
 ## major
