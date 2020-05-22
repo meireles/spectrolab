@@ -152,7 +152,7 @@ i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE, allow_n
         return(r)
     } else {
         if( length(n) != 0 || length(n) == length(i) ){
-            stop("Following labels not found: ", n)
+            stop(length(n), " labels not found: ", paste(n, collapse = ","), call. = FALSE)
         }
         return(m)
     }
