@@ -50,7 +50,7 @@ median.spectra = function(x, na.rm = TRUE, keep_txt_meta = TRUE, ...){
 #' Variance
 #'
 #' \code{var} computes the variance spectrum. Note that values will not reflect
-#' reflectance anymore, but the variance of the reflectance instead.
+#' value anymore, but the variance of the value instead.
 #'
 #' @param x a numeric vector, matrix or data frame
 #' @param y NULL (default) or a vector, matrix or data frame with compatible
@@ -70,7 +70,7 @@ var = function(x, y = NULL, na.rm = FALSE, use){
 #' Variance
 #'
 #' \code{var} computes the variance spectrum. Note that values will not reflect
-#' reflectance anymore, but the variance of the reflectance instead.
+#' value anymore, but the variance of the value instead.
 #'
 #' @param x a numeric vector, matrix or data frame
 #' @param y NULL (default) or a vector, matrix or data frame with compatible
@@ -111,7 +111,7 @@ var.spectra = function(x, y = NULL, na.rm = TRUE, use){
 #' Standard deviation
 #'
 #' \code{sd} computes the standard deviation spectrum. Note that values will not
-#' reflect reflectance anymore, but the sd of the reflectance instead.
+#' reflect value anymore, but the sd of the value instead.
 #'
 #' @param x a numeric vector or an R object which is coercible to one by as.double(x)
 #' @param na.rm logical. Should missing values be removed?
@@ -153,7 +153,7 @@ sd.spectra = function(x, na.rm = TRUE){
 
 #' Compute spectra quantiles
 #'
-#' \code{quantile} computes quantiles by wavelength and returns them as `spectra`
+#' \code{quantile} computes quantiles by band and returns them as `spectra`
 #'
 #' @param x spectra object. Must have at least the same number of sample that
 #'          length(probs) has.

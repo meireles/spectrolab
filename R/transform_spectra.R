@@ -9,7 +9,7 @@
 #' \code{apply_by_band} is conceptually similar to apply(as.matrix(x), 2, fun),
 #' but returns a spectra object while dealing with metadata and attributes.
 #' Applying a function that does not act on numeric values may crash the function
-#' or render all reflectance values NA.
+#' or render all value values NA.
 #'
 #' @param x spectra
 #' @param fun numeric function to be applied to each band.
@@ -54,7 +54,7 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
     fm = ifelse(keep_txt_meta, try_keep_txt(f), f)
 
     r  = apply(as.matrix(x), 2, f, ...)
-    w  = wavelengths(x)
+    w  = bands(x)
     m0 = meta(x)
     m = m0
 
@@ -69,7 +69,7 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
         m = lapply(m, fm, ...)  # Calling lapply because meta is always a data.frame
         m = do.call(cbind, m)
     }
-    spectra(reflectance = r, wavelengths = w, names = n, meta = m)
+    spectra(value = r, bands = w, names = n, meta = m)
 }
 
 
@@ -82,7 +82,7 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
 #' Applies FUN (and FUN_meta) over spectra aggregating by factor `by`.
 #'
 #' Argument FUN_meta is useful if you want to apply a different function to
-#' metadata and reflectance. If you want to aggregate spectra and metadata
+#' metadata and value. If you want to aggregate spectra and metadata
 #' using `mean`, `sd`, `median` etc. but try to keep the text values, wrap your
 #' function in \code{try_keep_txt(f)}.
 #'
@@ -90,7 +90,7 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
 #' @param by vector of factors to guide the aggregation
 #' @param FUN function to be applied to refl (and meta if FUN_meta is NULL)
 #' @param FUN_meta function to be applied to metadata. If NULL (default), same
-#'        FUN applied to reflectance is used.
+#'        FUN applied to value is used.
 #' @param ... extra args to FUN
 #' @return spectra object
 #'
@@ -128,7 +128,7 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
 #' Combine spectral datasets
 #'
 #' \code{combine} binds two spectral datasets. Both spectra must have the
-#' very same wavelength labels, but different metadata are acceptable
+#' very same band labels, but different metadata are acceptable
 #'
 #' @param s1 spectra object 1
 #' @param s2 spectra object 2
@@ -151,7 +151,7 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
 #' # combine n spectra objects using the `Reduce` function
 #' s_n = Reduce(combine, list(s1, s2, s3))
 combine = function(s1, s2){
-   UseMethod("combine")
+    UseMethod("combine")
 }
 
 
@@ -162,13 +162,13 @@ combine.spectra = function(s1, s2){
         stop("Object `b` must be of class spectra")
     }
 
-    if(any( suppressWarnings(wavelengths(s1) != wavelengths(s2)) )){
-        stop("Spectra must have the same wavelengths. Consider using `resample()` first")
+    if(any( suppressWarnings(bands(s1) != bands(s2)) )){
+        stop("Spectra must have the same bands. Consider using `resample()` first")
     }
 
-    r = rbind(reflectance(s1), reflectance(s2))
+    r = rbind(value(s1), value(s2))
     n = c(names(s1), names(s2))
-    w = wavelengths(s1)               ## OK because I tested for equality before
+    w = bands(s1)               ## OK because I tested for equality before
 
     ## Merge metadata
     m1 = meta(s1)
@@ -379,9 +379,9 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
 
 #' Vector normalize spectra
 #'
-#' \code{normalize} returns a spectra obj with vector normalized reflectances
+#' \code{normalize} returns a spectra obj with vector normalized values
 #'
-#' @param x spectra object. Wavelengths must be strictly increasing
+#' @param x spectra object. bands must be strictly increasing
 #' @param quiet boolean. Warn about change in y value units? Defaults to FALSE
 #' @param ... nothing
 #' @return spectra object with normalized spectra
@@ -402,25 +402,25 @@ normalize = function(x, quiet = FALSE, ...){
 #' @export
 normalize.spectra = function(x, quiet = FALSE, ...){
 
-    i_is_increasing(wavelengths(x), stop = TRUE)
+    i_is_increasing(bands(x), stop = TRUE)
 
     if(!quiet){
         message("Vector nomalizing spectra...")
-        message("Note that y values will not be true reflectances anymore!")
+        message("Note that y values will not be true values anymore!")
 
         if( "normalization_magnitude" %in% names(meta(x)) ){
-            warning("spectra were apparently already vector normalized.\n  normalization magnitudes may not make sense.")
+            warning("spectra were apparently already vector normalized.\n normalization magnitudes may not make sense.")
         }
     }
 
-    refl            = reflectance(x)
+    refl            = value(x)
     refl_squared    = refl * refl
     vec_ones        = rep.int(1L, ncol(refl_squared))
     spec_sq_rowsum  = refl_squared %*% vec_ones
     magnitudes      = as.vector(sqrt(spec_sq_rowsum))
 
     # normalize and construct a `spectra` object
-    x[] = i_reflectance(refl / magnitudes)
+    x[] = i_value(refl / magnitudes)
 
     # add a magnitute attribute to the`spectra` object
     meta(x, "normalization_magnitude") = magnitudes
@@ -453,13 +453,13 @@ smooth = function(x, ...){
 #' @export
 smooth.default = function(x, ...){
     stats::smooth(x, ...)
-    }
+}
 
 #' Smooth spectra
 #'
 #' \code{smooth} runs each spectrum by a smoothing and returns the spectra
 #'
-#' @param x spectra object. Wavelengths must be strictly increasing
+#' @param x spectra object. bands must be strictly increasing
 #' @param method Choose smoothing method: "spline" (default) or "moving_average"
 #' @param ... additional parameters passed to \code{smooth.spline} or parameters
 #'            `n` and `save_wvls_to_meta` for the moving average smoothing.
@@ -474,7 +474,7 @@ smooth.default = function(x, ...){
 #' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' spec = smooth(spec, parallel = FALSE)
 smooth.spectra = function(x, method = "spline", ...){
-    i_is_increasing(wavelengths(x), stop = TRUE)
+    i_is_increasing(bands(x), stop = TRUE)
 
     if(method == "spline") {
         s   = i_smooth_spline_spectra(x, ...)
@@ -489,7 +489,7 @@ smooth.spectra = function(x, method = "spline", ...){
 #'
 #' Gets spline functions for each spectrum in a spectra object.
 #'
-#' @param x spectra object. Wavelengths must be strictly increasing
+#' @param x spectra object. bands must be strictly increasing
 #' @param parallel boolean. Do computation in parallel? Defaults to TRUE.
 #'                 Unfortunately, the parallelization does not work on Windows.
 #' @param ... additional parameters passed to smooth.spline except nknots, which
@@ -510,16 +510,16 @@ i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
     scale   = c(0.1, 0.25, 0.5)
     cutres  = 100
 
-    range   = diff(range( wavelengths(x) ))
+    range   = diff(range( bands(x) ))
     resol   = ceiling(range / ncol(x))
     fullres = floor(range / resol)
     propres = floor(range / resol * scale)
     nknots  = min( propres[propres >= cutres], fullres)
 
-    d = reflectance(x)
+    d = value(x)
     r = lapply( seq.int(nrow(x)), function(y){ d[y, ]})
     l = length(r)
-    w = wavelengths(x)
+    w = bands(x)
 
     # parallel?
     p = requireNamespace("parallel", quietly = TRUE)
@@ -559,7 +559,7 @@ i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
         scale   = c(2, 3, 4, 5, 7, 10, 15, 20)
         cutres  = 150
 
-        range   = diff(range( wavelengths(x) ))
+        range   = diff(range( bands(x) ))
         resol   = ceiling(range / ncol(x))
         propres = floor(range / resol / scale)
         n       = max(c(scale[propres >= cutres]), 1)
@@ -571,19 +571,19 @@ i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
 
     message("Simple moving average over n: ", n)
 
-    r   = reflectance(x)
+    r   = value(x)
     s   = t(apply(r, 1, i_mav, n = n))
     w   = which(apply(is.na(s), 2, all))
-    ww  = wavelengths(x)[w]
+    ww  = bands(x)[w]
     x[] = s
-    x   = x[ , setdiff(wavelengths(x), ww) ]
+    x   = x[ , setdiff(bands(x), ww) ]
 
     if(length(w) != 0){
 
-        message("Smoothing transformed some reflectances into NAs and those wavelengths were removed")
+        message("Smoothing transformed some values into NAs and those bands were removed")
 
         if(save_wvls_to_meta){
-            message("However, the original reflectance values for those wavelengths were kept as metadata")
+            message("However, the original value values for those bands were kept as metadata")
 
             meta(x) = matrix(r[ , w],
                              nrow = nrow(x),
@@ -600,17 +600,17 @@ i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
 
 #' Resample spectra
 #'
-#' \code{resample} returns spectra resampled to new wavelengths using smoothing.
+#' \code{resample} returns spectra resampled to new bands using smoothing.
 #' Possible to increase or decrease the spectral resolution.
 #'
 #' The function runs a couple basic checks when resampling, but they are not
 #' exhaustive, so look at the data before resampling. The implemented checks are:
-#' 1. Stop if trying to predict wavelengths outside of the original range and,
-#' 2. Warn if a gap is found in wavelengths. E.g. wvls are mostly at a 1nm
+#' 1. Stop if trying to predict bands outside of the original range and,
+#' 2. Warn if a gap is found in bands. E.g. wvls are mostly at a 1nm
 #'    resolution but go from 1530 to 1820 in the infrared. Does not check for NAs
 #'
-#' @param x spectra object. Wavelengths must be strictly increasing
-#' @param new_wvls numeric vector of wavelengths to sample from spectra
+#' @param x spectra object. bands must be strictly increasing
+#' @param new_wvls numeric vector of bands to sample from spectra
 #' @param ... additional parameters passed to the \code{smooth.spline} function.
 #' @return spectra object with resampled spectra
 #'
@@ -632,20 +632,20 @@ resample = function(x, new_wvls, ...) {
 #' @export
 resample.spectra = function(x, new_wvls, ...) {
 
-    w = wavelengths(x)
+    w = bands(x)
 
     ## Simply subset the current spectra if all new_wvls are a in the set of
-    ## current wavelengths
+    ## current bands
 
     if(all(new_wvls %in% w)){
         return(x[ , new_wvls ])
     }
 
-    ## Enforce increasing wavelengths in spectra object
+    ## Enforce increasing bands in spectra object
     i_is_increasing(w, stop = TRUE)
 
 
-    ## Warn about long gaps in wavelengths
+    ## Warn about long gaps in bands
     ## Made up these thresholds, need to think harder
     d = diff(w)
     l = d > quantile(d, 0.5) * 6 |
@@ -654,35 +654,35 @@ resample.spectra = function(x, new_wvls, ...) {
 
     if(any(l)){
         for(i in which(l)){
-            warning("Found long gap between wavelengths ",
+            warning("Found long gap between bands ",
                     w[i - 1], " and ", w[ i + 1], " (", d[i], ")", "\n",
-                    "Reflectances resampled in this gap should probably be converted to NAs.")
+                    "values resampled in this gap should probably be converted to NAs.")
         }
     }
 
-    ## Do not predict points outside the original wavelength range
-    r = range(wavelengths(x))
+    ## Do not predict points outside the original band range
+    r = range(bands(x))
 
     if(min(new_wvls) < r[1] || max(new_wvls) > r[2]){
-        stop("New wavelength values must be within the data's range: ", r[1], " to ", r[2])
+        stop("New band values must be within the data's range: ", r[1], " to ", r[2])
     }
 
     ## Smooth and predict
-    message("Using spline to predict reflectance at new wavelengths...")
+    message("Using spline to predict value at new bands...")
     s = i_smooth_spline_spectra(x, ...)
     f = function(o, p){ stats::predict(o, p)[["y"]] }
     g = lapply(X = s, FUN = f, p = new_wvls)
-    d = i_reflectance( do.call(rbind, g) )
+    d = i_value( do.call(rbind, g) )
     message("Beware the spectra are now partially smoothed.")
 
 
-    ## Wavelength number may change, so using the "safe" setter will fail
+    ## band number may change, so using the "safe" setter will fail
     ## Instead of reaching inside the spectra object, I am using the "unsafe"
-    ## version of the wavelength setter.
-    wavelengths(x, unsafe = TRUE) = new_wvls
+    ## version of the band setter.
+    bands(x, unsafe = TRUE) = new_wvls
 
-    ## THIS IS BAD. Figure out an "unsafe" version of the reflectance setter
-    x[["reflectance"]] = d
+    ## THIS IS BAD. Figure out an "unsafe" version of the value setter
+    x[["value"]] = d
 
     x
 }

@@ -7,7 +7,7 @@
 i_is_increasing(x, stop = TRUE, call = FALSE)
 }
 \arguments{
-\item{x}{wavelengths}
+\item{x}{bands}
 
 \item{stop}{boolean. Throw error if test fails? Defaults to TRUE}
 
@@ -17,11 +17,11 @@ i_is_increasing(x, stop = TRUE, call = FALSE)
 boolean
 }
 \description{
-\code{i_is_increasing} tests if wavelength values are increasing
+\code{i_is_increasing} tests if band values are increasing
 }
 \details{
 Many transform functions can only (or at least should only) be applied to
-spectra with monotonically varying (very likely increasing) wavelength values.
+spectra with monotonically varying (very likely increasing) band values.
 \code{i_is_increasing} tests that case and may throw an error
 or return the boolean result from the test.
 }

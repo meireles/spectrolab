@@ -30,7 +30,7 @@ to probs. A char vector should otherwise be given. Recyled.}
 spectra object with one spectrum for each prob
 }
 \description{
-\code{quantile} computes quantiles by wavelength and returns them as `spectra`
+\code{quantile} computes quantiles by band and returns them as `spectra`
 }
 \examples{
 library(spectrolab)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/descrip_summary_overloads.R
 \name{min.spectra}
 \alias{min.spectra}
-\title{Minimum reflectance}
+\title{Minimum value}
 \usage{
 \method{min}{spectra}(..., na.rm = FALSE)
 }
@@ -15,7 +15,7 @@
 single numeric value
 }
 \description{
-\code{min} Returns the minimum reflectance value in a spectra object
+\code{min} Returns the minimum value value in a spectra object
 }
 \examples{
 library(spectrolab)

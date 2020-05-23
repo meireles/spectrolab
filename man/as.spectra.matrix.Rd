@@ -11,7 +11,7 @@
 
 \item{name_idx}{column index with sample names. Defaults to NULL}
 
-\item{meta_idxs}{column indices with metadata (not name and not reflectance).
+\item{meta_idxs}{column indices with metadata (not name and not value).
 Defaults to NULL}
 }
 \value{

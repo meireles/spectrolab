@@ -7,7 +7,7 @@
 as.spectra(x, name_idx = NULL, meta_idxs = NULL)
 }
 \arguments{
-\item{x}{matrix or dataframe. Samples are in rows and wavelengths in columns.
+\item{x}{matrix or dataframe. Samples are in rows and bands in columns.
 Any data that are not the spectra themselves (labels or metadata)
 must have their column index included in `name_idx` or `meta_idxs`.}
 
@@ -15,7 +15,7 @@ must have their column index included in `name_idx` or `meta_idxs`.}
 or 0, rownames(x) or a sequence of integers will be assigned
 as names.}
 
-\item{meta_idxs}{column indices with metadata (not name and not reflectance).
+\item{meta_idxs}{column indices with metadata (not name and not value).
 Defaults to NULL}
 }
 \value{

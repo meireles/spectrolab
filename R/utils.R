@@ -25,13 +25,13 @@ try_keep_txt = function(f){
             { f(x, ...) },
             warning = function(w){  paste(unique(x), collapse = ", ") },
             error   = function(e){  paste(unique(x), collapse = ", ") }
-            )
+        )
         r
     }
 }
 
 
-#' Pairwise reflectance ratios
+#' Pairwise value ratios
 #'
 #' \code{ratio} computes pairwise ratios between bands
 #'
@@ -53,12 +53,12 @@ ratio = function(x, simplify = FALSE){
 }
 
 
-#' @describeIn ratio Compute pairwise reflectance ratios
+#' @describeIn ratio Compute pairwise value ratios
 #' @export
 ratio.spectra = function(x, simplify = FALSE){
     message("ratio may take a while...")
     spm  = as.matrix(x)
-    wvl  = wavelengths(x)
+    wvl  = bands(x)
     pwc  = i_index_pairwise_combn(ncol(x))
 
     res  = lapply(names(pwc), function(y){

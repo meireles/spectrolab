@@ -19,7 +19,7 @@ plot_regions(
 \item{spec}{spectra object}
 
 \item{regions}{matrix with spectral regions in columns and only two rows named
-"begin" and "end". Values are the wavelengths where a spectral
+"begin" and "end". Values are the bands where a spectral
 regions begins and ends. See details for how the default regions are defined.}
 
 \item{col}{color for regions. Single value or vector of length ncol (regions).}

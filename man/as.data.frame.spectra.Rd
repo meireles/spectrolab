@@ -28,11 +28,11 @@ Pick one: "none" "row" "col" "both".}
 \item{...}{extra parameters passed to the generic as.spectra}
 }
 \value{
-data.frame with: sample_name, metadata (if any) and reflectance.
+data.frame with: sample_name, metadata (if any) and value.
 }
 \description{
 Returns a data.frame that includes sample names, metadata (if present) and
-reflectance data. One advantage over as.matrix, is that the metadata are
+value data. One advantage over as.matrix, is that the metadata are
 returned.
 }
 \examples{

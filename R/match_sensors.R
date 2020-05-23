@@ -43,7 +43,7 @@ i_find_sensor_overlap_bounds = function(x, idx = TRUE){
 #' @keywords internal
 #' @author Jose Eduardo Meireles
 i_remove_duplicated_wavelength = function(x, boundary){
-    w = wavelengths(x)
+    w = bands(x)
     d = w[ which(duplicated(w)) ]
 
     if(length(d) > 1){
@@ -55,23 +55,23 @@ i_remove_duplicated_wavelength = function(x, boundary){
         ifelse(x > boundary, i[1], i[2])
     })
 
-    ## HACK. There is no easy way of subsetting wavelengths if they are
+    ## HACK. There is no easy way of subsetting bands if they are
     ## duplicated. Therefore, I have to change the value of the wavelength
     ## I want to exclude and then remove that.
 
     ## Assign a dummy wavelength value to the wl to rm
     bogus                    = 12345678911121110987654321.0123
-    wavelengths(x)[ idx_rm ] = bogus
+    bands(x)[ idx_rm ] = bogus
 
     ## Now prune the spectral data
-    x[ , wavelengths(x)[ wavelengths(x) != bogus ] ]
+    x[ , bands(x)[ bands(x) != bogus ] ]
 }
 
 
 #' Trim sensor overlap
 #'
 #' @param x spectra object
-#' @param splice_at wavelengths where to splice sensors. suggests where the
+#' @param splice_at bands where to splice sensors. suggests where the
 #'                  beginning of sensors 2 and 3 should be.
 #' @return spectra object
 #'
@@ -80,7 +80,7 @@ i_remove_duplicated_wavelength = function(x, boundary){
 i_trim_sensor_overlap = function(x, splice_at){
 
     x = i_remove_duplicated_wavelength(x = x, boundary =  splice_at[1])
-    w = wavelengths(x)
+    w = bands(x)
     b = i_find_sensor_overlap_bounds(w)
 
     if(ncol(b) == 1){
@@ -109,7 +109,7 @@ i_trim_sensor_overlap = function(x, splice_at){
 
 #' Match spectra at sensor transitions
 #'
-#' \code{match_sensors} scales reflectance values of sensors 1 (vis) and 3 (swir2)
+#' \code{match_sensors} scales value of sensors 1 (vis) and 3 (swir2)
 #'
 #' Splice_at has no default because sensor transition points vary between vendors
 #' and individual instruments. It is an important parameter though, so you should
@@ -120,10 +120,10 @@ i_trim_sensor_overlap = function(x, splice_at){
 #'
 #' If the factors used to match spectra are unreasonable, \code{match_sensors}
 #' will throw. Unreasonable factors (f) are defined as 0.5 > f > 3 or NaN,
-#' which  happens when the reflectance value for the right sensor is 0.
+#' which  happens when the value for the right sensor is 0.
 #'
 #' @param x spectra object
-#' @param splice_at wavelengths that serve as splice points, i.e the beginnings
+#' @param splice_at bands that serve as splice points, i.e the beginnings
 #'                  of the rightmost sensor. Must be length 1 or 2 (max 3 sensors)
 #' @param fixed_sensor sensor to keep fixed. Can be 1 or 2 if matching 2 sensors.
 #'                     If matching 3 sensors, `fixed_sensor` must be 2 (default).
@@ -131,14 +131,11 @@ i_trim_sensor_overlap = function(x, splice_at){
 #'                        factors will be calculated. Defaults to 5
 #' @return spectra object
 #'
+#' @importFrom stats approx
+#'
 #' @author Jose Eduardo Meireles and Anna Schweiger
 #' @export
 #'
-#' @examples
-#' library(spectrolab)
-#' data(spec_with_jump)
-#' spec = spec_with_jump
-#' spec = match_sensors(spec, splice_at = c(971, 1910), fixed_sensor = 2)
 match_sensors = function(x,
                          splice_at,
                          fixed_sensor    = 2,
@@ -155,19 +152,19 @@ match_sensors.spectra = function(x,
                                  interpolate_wvl = c(5, 1)){
 
     x            = x
-    w            = wavelengths(x)
+    w            = bands(x)
     splice_at    = unlist(splice_at)
     fixed_sensor = ifelse( length(splice_at) == 2, 2, fixed_sensor)
 
 
     y = i_trim_sensor_overlap(x = x, splice_at = splice_at)
     x = y$spectra              # reassign x
-    w = wavelengths(x)         # reassign w
+    w = bands(x)               # reassign w
     s = split(w, y$sensor)
 
     interpolate_wvl = rep(interpolate_wvl, length.out = length(splice_at))
 
-    ## Pick wavelengths by sensor to computer factors
+    ## Pick bands by sensor to computer factors
     wl_picks = lapply(seq_along(splice_at), function(z){
         low   = splice_at[z] - interpolate_wvl[z]
         high  = splice_at[z] + interpolate_wvl[z]
@@ -199,8 +196,8 @@ match_sensors.spectra = function(x,
             scaled = wl_picks[[z]]$left
         }
 
-        rowMeans(reflectance(x[ , scaled, simplify = FALSE])) /
-        rowMeans(reflectance(x[ ,  fixed, simplify = FALSE]))
+        rowMeans(value(x[ , scaled, simplify = FALSE])) /
+        rowMeans(value(x[ ,  fixed, simplify = FALSE]))
     })
 
     ## Compute the factor matrices
@@ -221,9 +218,9 @@ match_sensors.spectra = function(x,
 
     ## Transform data
     # for(i in seq_along(factor_mat)){
-    #     x[ , s[[i]]] = reflectance(x[ , s[[i]] ] ) * t( factor_mat[[i]] )
+    #     x[ , s[[i]]] = value(x[ , s[[i]] ] ) * t( factor_mat[[i]] )
     # }
 
-    x[ , s[[1]] ] = reflectance(x[ , s[[1]] ] ) * t( factor_mat[[1]] )
+    x[ , s[[1]] ] = value(x[ , s[[1]] ] ) * t( factor_mat[[1]] )
     x
 }

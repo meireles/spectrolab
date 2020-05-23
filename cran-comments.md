@@ -7,7 +7,7 @@
 
 0 errors | 0 warnings | 0 note
 
-* Update from release 0.0.7.
+* Update from release 0.0.8.
 
 ## Reverse dependencies
 

@@ -7,8 +7,8 @@ usethis::use_package("RColorBrewer")
 #' \code{plot} plots spectra.
 #'
 #' @param x spectra object
-#' @param ylab label for y axis. Defaults to "Reflectance".
-#' @param xlab label for x axis. Defaults to "Wavelength".
+#' @param ylab label for y axis. Defaults to "value".
+#' @param xlab label for x axis. Defaults to "band".
 #' @param col line color. Defaults to "black".
 #' @param lty line type. Defaults to 1.
 #' @param type type of plot. Meant to take either line "l" or no plotting "n".
@@ -25,8 +25,8 @@ usethis::use_package("RColorBrewer")
 #' spec  = as.spectra(spec_matrix_example, name_idx = 1)
 #' plot(spec, lwd = 1.2)
 plot.spectra = function(x,
-                        ylab = "Reflectance",
-                        xlab = "Wavelength",
+                        ylab = "value",
+                        xlab = "band",
                         col  = "black",
                         lty  = 1,
                         type = "l",
@@ -40,8 +40,8 @@ plot.spectra = function(x,
     ## Also using "@importFrom graphics plot" because a generic plot is not declared
     ## anywhere, but graphics::plot is not directly called by this method.
 
-    graphics::matplot(x    = wavelengths(x),
-                      y    = t(reflectance(x)),
+    graphics::matplot(x    = bands(x),
+                      y    = t(value(x)),
                       type = type,
                       ylab = ylab,
                       xlab = xlab,
@@ -52,7 +52,7 @@ plot.spectra = function(x,
 
 #' Plot spectra quantiles
 #'
-#' \code{plot_quantile} plots polygons for the quantiles of spectra per wavelength.
+#' \code{plot_quantile} plots polygons for the quantiles of spectra per band.
 #'
 #' @param spec spectra object
 #' @param total_prob total probability mass to encompass. Single number
@@ -100,14 +100,14 @@ plot_quantile = function(spec,
                    max = 1.0 - tail_mag )
 
     qt = quantile(spec, probs = tail_range, na.rm = na.rm)
-    # xx = c( qt$wavelengths,
-    #         rev(qt$wavelengths) )
-    # yy = c( qt$reflectance[1, ], rev(qt$reflectance[2, ]) )
+    # xx = c( qt$bands,
+    #         rev(qt$bands) )
+    # yy = c( qt$value[1, ], rev(qt$value[2, ]) )
 
-    xx = c(wavelengths(qt),
-           rev(wavelengths(qt)))
-    yy = c(reflectance(qt)[1, ],
-           rev( reflectance(qt)[2, ]))
+    xx = c(bands(qt),
+           rev(bands(qt)))
+    yy = c(value(qt)[1, ],
+           rev( value(qt)[2, ]))
 
     if(!add){
         plot(spec, type = "n", ...)
@@ -143,7 +143,7 @@ default_spec_regions = function(){
 #'
 #' @param spec spectra object
 #' @param regions matrix with spectral regions in columns and only two rows named
-#'                "begin" and "end". Values are the wavelengths where a spectral
+#'                "begin" and "end". Values are the bands where a spectral
 #'                regions begins and ends. See details for how the default regions are defined.
 #' @param col color for regions. Single value or vector of length ncol (regions).
 #' @param border color for region borders. Defaults to FALSE (no border).
@@ -213,7 +213,7 @@ plot_regions = function(spec,
     }
 
     if( (!i_plot_exists()) && add) {
-        warning("No plot exists for `regions` to be added to, but `add` is set to TRUE.\n  Plotting regions anyways." )
+        warning("No plot exists for `regions` to be added to, but `add` is set to TRUE.\n Plotting regions anyways." )
         plot(spec, type = "n")
     }
 
@@ -256,7 +256,7 @@ plot_regions = function(spec,
 #' @importFrom shinyjs useShinyjs
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom stats dist
-#'
+#' @importFrom graphics points
 #' @author Anna K. Schweiger and Jose Eduardo Meireles
 #' @export
 #'
@@ -285,8 +285,8 @@ plot_interactive = function(spec,
     n_max     = nrow(spec)
     i_display = min(10,  n_max)                         ## Initial display = 10
     m_display = min(600, n_max)                         ## Maximum display = 600
-    wvl_min   = min(spectrolab::wavelengths(spec))
-    wvl_max   = max(spectrolab::wavelengths(spec))
+    wvl_min   = min(spectrolab::bands(spec))
+    wvl_max   = max(spectrolab::bands(spec))
 
     # Should be variables
     band_threshold = 3
@@ -318,7 +318,8 @@ plot_interactive = function(spec,
                 shiny::column(3,
                               shiny::wellPanel(
                                   shiny::h5(shiny::textOutput("firstlast")),
-                                  shiny::h5(shiny::textOutput("selected"))
+                                  shiny::h5(shiny::textOutput("selected")),
+                                  shiny::h5(shiny::textOutput("selected_band"))
                               ),
                               shiny::wellPanel(
                                   shiny::numericInput(inputId = "n_display",
@@ -348,7 +349,7 @@ plot_interactive = function(spec,
                                                 width = "100%",
                                                 click = "plot_click"),
                               shiny::sliderInput(inputId = "w_range",
-                                                 label   = "Wavelengths",
+                                                 label   = "bands",
                                                  min     = wvl_min,
                                                  max     = wvl_max,
                                                  value   = c(wvl_min, wvl_max),
@@ -364,7 +365,8 @@ plot_interactive = function(spec,
             to      = shiny::reactiveVal(1)
 
             # Initialize highlighted index
-            picked = shiny::reactiveVal(NULL)
+            picked      = shiny::reactiveVal()
+            picked_band = shiny::reactiveVal()
 
             # Update `from`, `to` and `picked` if next is pressed
             shiny::observeEvent(input$go_fwd, {
@@ -380,6 +382,7 @@ plot_interactive = function(spec,
 
                     # update picked
                     picked(NULL)
+                    picked_band(NULL)
                 }
             })
 
@@ -396,6 +399,7 @@ plot_interactive = function(spec,
 
                 # update picked
                 picked(NULL)
+                picked_band(NULL)
             })
 
             # Update `to` and `picked` if n_display is changed
@@ -414,12 +418,11 @@ plot_interactive = function(spec,
                     if(!is.null(picked())){
                         if(picked() > new_to){
                             picked(NULL)
+                            picked_band(NULL)
                         }
                     }
-
                     to(new_to)
                 }
-
             })
 
             shiny::observeEvent(input$highlight_by_dist, {
@@ -429,26 +432,29 @@ plot_interactive = function(spec,
             # Update picked spec
             shiny::observeEvent(input$plot_click ,{
                 click_coord  = input$plot_click
-                bands        = spectrolab::wavelengths(spec) # probably should filter by w_range
+                bands        = spectrolab::bands(spec) # probably should filter by w_range
                 bands_diff   = abs(bands - click_coord[[1]])
                 band_clicked = bands[ which(bands_diff == min(bands_diff) & bands_diff <= band_threshold) ]
 
                 refl         = spec[ seq(from(), to()), band_clicked]
-                refl_diff    = abs(refl -  click_coord[[2]])
+                refl_diff    = abs(refl - click_coord[[2]])
                 spec_clicked = which(refl_diff == min(refl_diff) & refl_diff <= refl_threshold)
 
                 if(length(spec_clicked) == 0){
                     picked(NULL)
+                    picked_band(NULL)
                 } else {
                     spec_clicked = from() + spec_clicked - 1L
+
                     picked(spec_clicked)
+                    picked_band(band_clicked)
                 }
             })
 
             # Plot spectra
             output$spectrum = shiny::renderPlot({
                 s_range = seq(from(), to())
-                w_range = spectrolab::wavelengths(spec, min(input$w_range), max(input$w_range))
+                w_range = spectrolab::bands(spec, min(input$w_range), max(input$w_range))
 
                 cols = if(input$highlight_by_dist == TRUE){
                     ifelse(spec_dist[s_range] > input$dist_highlight, "orange", "black")
@@ -459,7 +465,11 @@ plot_interactive = function(spec,
                 plot(spec[s_range, w_range], col = cols, ...)
 
                 if( ! is.null(picked()) ){
-                    plot(spec[picked(), ], col = "red", lwd = 2, add = TRUE)
+                    plot(spec[picked(), ],
+                         col = "red", lwd = 2, add = TRUE)
+                    graphics::points(x = picked_band(),
+                                     y = spec[picked(), picked_band()],
+                                     pch = 25, fg = "red", bg = "red")
                 }
             })
 
@@ -475,8 +485,20 @@ plot_interactive = function(spec,
                 } else {
                     selected = "none"
                 }
-                paste("Selected: ", selected, sep = "")
+                paste("Selected spectrum: ", selected, sep = "")
             })
+
+
+            # Show selected band
+            output$selected_band = shiny::renderText({
+                if(!is.null(picked_band())){
+                    selected_band = picked_band()
+                } else {
+                    selected_band = "none"
+                }
+                paste("Selected band: ", selected_band, sep = "")
+            })
+
         }
     )
 }

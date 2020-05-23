@@ -24,5 +24,5 @@ variance
 }
 \description{
 \code{var} computes the variance spectrum. Note that values will not reflect
-reflectance anymore, but the variance of the reflectance instead.
+value anymore, but the variance of the value instead.
 }

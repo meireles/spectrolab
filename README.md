@@ -5,7 +5,7 @@
 
 # spectrolab
 
-**We are planning a major and exciting overhaul of** ``spectrolab``, but the planned improvments will probably **break backwards compatibility!** Please use the package to provide us with feedback, but **do not rely heavily on our API just yet**. 
+``spectrolab`` **breaks backwards compatibility!** The function `wavelengths` is now `bands` and the function `reflectance` is now `value`. Please use the `legacy` branch if you want to use the older api. 
 
 
 ~~The package is being actively developed and parts of the *API may still change*. You’re welcome to give it a spin, but do so *at your own risk*. With that said, most parts of the package are pretty stable. Let us know if you find otherwise~~.

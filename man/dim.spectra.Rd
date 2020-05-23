@@ -10,10 +10,10 @@
 \item{x}{spectra object}
 }
 \value{
-tuple of integers: c("n_samples", "n_wavelengths")
+tuple of integers: c("n_samples", "n_bands")
 }
 \description{
-\code{dim} returns a vector with number of samples and bands (wavelengths)
+\code{dim} returns a vector with number of samples and bands (bands)
 }
 \examples{
 library(spectrolab)

@@ -3,7 +3,7 @@
 \name{ratio}
 \alias{ratio}
 \alias{ratio.spectra}
-\title{Pairwise reflectance ratios}
+\title{Pairwise value ratios}
 \usage{
 ratio(x, simplify = FALSE)
 
@@ -22,7 +22,7 @@ list or matrix
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{spectra}: Compute pairwise reflectance ratios
+\item \code{spectra}: Compute pairwise value ratios
 }}
 
 \examples{

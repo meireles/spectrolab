@@ -5,14 +5,14 @@ context("Spectra combine")
 
 spec = as.spectra(spec_matrix_example, name_idx = 1)
 s1   = spec
-wavelengths(s1) = seq(ncol(s1))
+bands(s1) = seq(ncol(s1))
 s2   = spec[ , 400:2000]
 
 test_that("combining wrong class throws", {
     expect_error( combine(spec, as.matrix(spec)) )
 })
 
-test_that("combining incompatible wavelength values throws", {
+test_that("combining incompatible band values throws", {
     expect_error( combine(spec, s1) )
 })
 

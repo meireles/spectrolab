@@ -10,7 +10,7 @@ normalize(x, quiet = FALSE, ...)
 \method{normalize}{spectra}(x, quiet = FALSE, ...)
 }
 \arguments{
-\item{x}{spectra object. Wavelengths must be strictly increasing}
+\item{x}{spectra object. bands must be strictly increasing}
 
 \item{quiet}{boolean. Warn about change in y value units? Defaults to FALSE}
 
@@ -20,7 +20,7 @@ normalize(x, quiet = FALSE, ...)
 spectra object with normalized spectra
 }
 \description{
-\code{normalize} returns a spectra obj with vector normalized reflectances
+\code{normalize} returns a spectra obj with vector normalized values
 }
 \section{Methods (by class)}{
 \itemize{

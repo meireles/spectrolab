@@ -4,22 +4,14 @@
 \alias{plot.spectra}
 \title{Plot spectra}
 \usage{
-\method{plot}{spectra}(
-  x,
-  ylab = "Reflectance",
-  xlab = "Wavelength",
-  col = "black",
-  lty = 1,
-  type = "l",
-  ...
-)
+\method{plot}{spectra}(x, ylab = "value", xlab = "band", col = "black", lty = 1, type = "l", ...)
 }
 \arguments{
 \item{x}{spectra object}
 
-\item{ylab}{label for y axis. Defaults to "Reflectance".}
+\item{ylab}{label for y axis. Defaults to "value".}
 
-\item{xlab}{label for x axis. Defaults to "Wavelength".}
+\item{xlab}{label for x axis. Defaults to "band".}
 
 \item{col}{line color. Defaults to "black".}
 

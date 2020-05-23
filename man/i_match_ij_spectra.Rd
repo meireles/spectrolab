@@ -11,7 +11,7 @@ i_match_ij_spectra(x, i = NULL, j = NULL, allow_negative = FALSE)
 
 \item{i}{sample names or indices or boolean vector}
 
-\item{j}{wavelengths or boolean vector, NOT INDICES}
+\item{j}{bands or boolean vector, NOT INDICES}
 
 \item{allow_negative}{boolean. Allow indices i to be negative? Defaults to
 FALSE}

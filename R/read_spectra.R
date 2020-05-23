@@ -5,8 +5,8 @@ usethis::use_package("prospectr")
 #' @param path Path to directory or input files
 #' @param format file formats. "asd" (for ASD); "sig" or "svc" (for SVC);
 #'               "sed" or "psr" (for SpecEvo PSR).
-#' @param type Data type to read. "target_refl", "target_rad", "reference_rad".
-#'             Defaults to "target_refl".
+#' @param type Data type to read. "target_reflectance", "target_radiance", or
+#'             "reference_radiance". Defaults to "target_reflectance".
 #' @param recursive read files recursively
 #' @param exclude_if_matches excludes files that match this regular expression.
 #'                           Example: "BAD"
@@ -14,7 +14,7 @@ usethis::use_package("prospectr")
 #'                         file in path regardless of the expected extension.
 #' @param ... nothing yet
 #' @return a single `spectra` or a list of `spectra` (in case files have
-#'         incompatible band number or wavelengths values)
+#'         incompatible band number or bands values)
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -22,10 +22,12 @@ usethis::use_package("prospectr")
 #' @examples
 #' library(spectrolab)
 #' dir_path = system.file("extdata", "Acer_example", package = "spectrolab")
+#'
+#' # Relative reflectance is re
 #' spec     = read_spectra(path = dir_path, format = "sig")
 read_spectra = function(path,
                         format,
-                        type               = "target_refl",
+                        type               = "target_reflectance",
                         recursive          = FALSE,
                         exclude_if_matches = NULL,
                         ignore_extension   = FALSE,
@@ -39,6 +41,11 @@ read_spectra = function(path,
                       sed = "sed",
                       psr = "sed",
                       asd = "asd")
+
+    if(missing(format)){
+        stop("please provide the the file format.")
+    }
+
     format_match  = pmatch(tolower(format), names(format_lookup))
 
     ## Error if format isn't found
@@ -101,14 +108,14 @@ read_spectra = function(path,
 
     if(format_lookup[format_match] == "sig"){
 
-        if(type == "target_refl"){
+        if(type == "target_reflectance"){
             refl_cols = 4
-        } else if (type == "target_rad") {
+        } else if (type == "target_radiance") {
             refl_cols = 3
-        } else if (type == "reference_rad") {
+        } else if (type == "reference_radiance") {
             refl_cols = 2
         } else {
-            stop("type must be either target_refl, target_rad or reference_rad")
+            stop("type must be either target_reflectance, target_radiance or reference_radiance")
         }
 
         result = i_read_ascii_spectra(i_path,
@@ -124,17 +131,17 @@ read_spectra = function(path,
 
     if(format_lookup[format_match] == "sed"){
 
-        if(type == "target_refl"){
+        if(type == "target_reflectance"){
             refl_cols      = c("Reflect. %", "Reflect. [1.0]")
             divide_refl_by = c(100, 1)
-        } else if (type == "target_rad") {
+        } else if (type == "target_radiance") {
             refl_cols      = "Rad. (Target)"
             divide_refl_by = 1
-        } else if (type == "reference_rad") {
+        } else if (type == "reference_radiance") {
             refl_cols      = "Rad. (Ref.)"
             divide_refl_by = 1
         } else {
-            stop("type must be either target_refl, target_rad or reference_rad")
+            stop("type must be either target_reflectance, target_radiance or reference_radiance")
         }
 
         result = i_read_ascii_spectra(i_path,
@@ -165,16 +172,16 @@ read_spectra = function(path,
 #' Generic parser for SVC's `.sig` and PSR's `.sed`
 #'
 #' @param file_paths paths for files already parsed by `read_spectra`
-#' @param skip_until_tag Tag that precedes the table of reflectance data,
+#' @param skip_until_tag Tag that precedes the table of value data,
 #'                       indicating that lines until that tag should be skipped.
 #'                       Tag is matched with a regexpr.
 #' @param skip_first_n skip the first n lines. Only used if `skip_until_tag` is
 #'                     not given
 #' @param sep_char separator
 #' @param header boolean. keep header?
-#' @param wl_col idx or name of wavelength column
-#' @param refl_cols idx or name of reflectance columns. MULTIPLE
-#' @param divide_refl_by divide reflectance values by this. MULTIPLE
+#' @param wl_col idx or name of band column
+#' @param refl_cols idx or name of value columns. MULTIPLE
+#' @param divide_refl_by divide value values by this. MULTIPLE
 #' @param ... additional arguments passed to read table
 #' @return single `spectra` or list of `spectra`
 #'
@@ -229,7 +236,7 @@ i_read_ascii_spectra = function(file_paths,
         stop("refl_cols cannot be a vector of indices.")
     }
 
-    ## Deal with cases where multiple reflectance columns or multiple reflectance
+    ## Deal with cases where multiple value columns or multiple value
     ## scalars (divide_refl_by) are given
     if(length(refl_cols) < length(divide_refl_by)) {
         warning("Length of divide_refl_by should be either 1 or equals to the length of refl_cols. divide_refl_by has been prunned to length", length(refl_cols), ".")
@@ -243,7 +250,7 @@ i_read_ascii_spectra = function(file_paths,
     names(data) = file_paths
 
     ############################################################
-    ## Choose right reflectance columns from parsed data
+    ## Choose right value columns from parsed data
     ## Updates refl_cols to an INDEX
     if(length(refl_cols) > 1) {
 
@@ -266,7 +273,7 @@ i_read_ascii_spectra = function(file_paths,
     }
 
 
-    ## there mabye files with different number of bands or wavelength values
+    ## there mabye files with different number of bands or band values
     ## check for them and split the data if needed
     wl_factor = unlist(
         lapply(data, function(x){
@@ -288,7 +295,7 @@ i_read_ascii_spectra = function(file_paths,
     })
 
     if(length(spec) > 1){
-        warning("Returning a list of `spectra` because some files had different number of bands or wavelength values. If you want to make those data compatible, consider resampling (with resample) and then combining them (with combine)")
+        warning("Returning a list of `spectra` because some files had different number of bands or band values. If you want to make those data compatible, consider resampling (with resample) and then combining them (with combine)")
         return(spec)
     } else {
         return(spec[[1]])
@@ -302,7 +309,7 @@ i_read_ascii_spectra = function(file_paths,
 #' @param type Data type to read. "target_refl", "target_rad", "reference_rad".
 #'             Defaults to "target_refl".
 #' @param format choice of ASD format. Either "binary" or "txt"
-#' @param divide_refl_by divide reflectance values by this
+#' @param divide_refl_by divide value values by this
 #' @param ... NOT USED YET
 #' @return spectra object
 #'
@@ -316,30 +323,29 @@ i_read_asd_spectra = function(file_paths,
                               divide_refl_by,
                               ...){
 
-    if(type == "target_refl"){
+    if(type == "target_reflectance"){
         rf = prospectr::readASD(fnames = file_paths, out_format = "matrix")
         wl = colnames(rf)
         nm = gsub(".asd$", "",rownames(rf))
 
         return(spectra(rf, wl, nm))
-
-    } else if (type == "target_rad"){
+    } else if (type == "target_radiance"){
         l   = prospectr::readASD(fnames = file_paths, out_format = "list")
         rf  = do.call(rbind, lapply(l, `[[`, "radiance"))
         nm  = gsub(".asd$", "",rownames(rf))
-        wl  = l[[1]][["wavelength"]]
+        wl  = l[[1]][["band"]]
 
         return(spectra(rf, wl, nm))
 
-    } else if (type == "reference_rad"){
+    } else if (type == "reference_radiance"){
         l   = prospectr::readASD(fnames = file_paths, out_format = "list")
         rf  = do.call(rbind, lapply(l, `[[`, "reference"))
         nm  = gsub(".asd$", "",rownames(rf))
-        wl  = l[[1]][["wavelength"]]
+        wl  = l[[1]][["band"]]
 
         return(spectra(rf, wl, nm))
     } else {
-        stop("type must be either target_refl, target_rad or reference_rad")
+        stop("type must be either target_reflectance, target_radiance or reference_radiance")
     }
 }
 

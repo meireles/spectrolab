@@ -1,3 +1,10 @@
+# spectrolab 0.0.9 (2020-05-21)
+
+## major
+* Breaking backwards compatibility! 
+* weavelengths function is now caled bands
+* reflectance function is now called value
+
 # spectrolab 0.0.8 (2018-10-28)
 
 ## major
@@ -9,7 +16,7 @@
 
 ## major
 * Fixed major bug. Spectrum replacement (e.g. spec_a[i, ] = spec_b[1, ]) only
-  replaced the reflectance and not the other information (names, metadata, etc.)
+  replaced the value and not the other information (names, metadata, etc.)
 ## minor
 * `quantile` now allows the user to choose names for the spectra
 
@@ -27,7 +34,7 @@
 # spectrolab 0.0.5 (2018-05-31)
 
 ## major
-* Fixed bug in "reflectance" setter, where the object was not being returned
+* Fixed bug in "value" setter, where the object was not being returned
 * The parser inside read_spectra now finds the spectral data using tags instead
   of assuming that the data starts at a specific line
 

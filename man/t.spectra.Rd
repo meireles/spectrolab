@@ -13,7 +13,7 @@
 nothing. operation not allowed
 }
 \description{
-spectra are not transposable. Transpose the reflectance instead
+spectra are not transposable. Transpose the value instead
 }
 \examples{
 library(spectrolab)
@@ -24,7 +24,7 @@ s = as.spectra(spec_matrix_example, name_idx = 1)
 t(s)
 }
 # But these options should work
-t(reflectance(s))
+t(value(s))
 t(as.matrix(s))
 }
 \author{

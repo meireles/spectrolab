@@ -13,7 +13,7 @@ Version: 2.2
 File Name: C:\Users\SOL COMPUTER\Desktop\leaftrait20160624\ACSA_F_B_SU_20160624_00005.sed
 Instrument: PSR+3500_SN1566058 [3]
 Detectors: 512,256,256
-Measurement: REFLECTANCE
+Measurement: value
 Date: 06/24/2016,06/24/2016
 Time: 14:40:52.86,14:41:51.47
 Temperature (C): 35.32,9.01,-5.30,35.40,9.01,-5.30
@@ -24,7 +24,7 @@ Dark Mode: AUTO,AUTO
 Foreoptic: FIBER1 {RADIANCE}, FIBER1 {RADIANCE}
 Radiometric Calibration: RADIANCE
 Units: W/m^2/sr/nm
-Wavelength Range: 350,2500
+band Range: 350,2500
 Latitude: n/a
 Longitude: n/a
 Altitude: n/a

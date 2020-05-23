@@ -4,18 +4,18 @@
 \alias{spectra}
 \title{Spectra object constructor}
 \usage{
-spectra(reflectance, wavelengths, names, meta = NULL, ...)
+spectra(value, bands, names, meta = NULL, ...)
 }
 \arguments{
-\item{reflectance}{N by M numeric matrix. N samples in rows and M wavelengths
+\item{value}{N by M numeric matrix. N samples in rows and M bands
 in columns}
 
-\item{wavelengths}{wavelength names in vector of length M}
+\item{bands}{band names in vector of length M}
 
 \item{names}{sample names in vector of length N}
 
 \item{meta}{spectra metadata. defaults to NULL. Must be either of length or nrow
-equals to the number of samples (nrow(reflectance) or length(names))}
+equals to the number of samples (nrow(value) or length(names))}
 
 \item{...}{additional arguments to metadata creation. not implemented yet}
 }
@@ -31,21 +31,21 @@ This function resorts to an ugly hack to deal with metadata assignment.
 }
 \examples{
 library(spectrolab)
-# 1. Create a reflectance matrix.
+# 1. Create a value matrix.
 #    In this case, by removing the first column that holds the species name
 rf = spec_matrix_example[ , -1]
 
-# (2) Create a vector with wavelength labels that match
-#     the reflectance matrix columns.
+# (2) Create a vector with band labels that match
+#     the value matrix columns.
 wl = colnames(rf)
 
 # (3) Create a vector with sample labels that match
-#     the reflectance matrix rows.
+#     the value matrix rows.
 #     In this case, use the first colum of spec_matrix_example
 sn = spec_matrix_example[ , 1]
 
 # Finally, construct the spectra object using the `spectra` constructor
-spec = spectra(reflectance = rf, wavelengths = wl, names = sn)
+spec = spectra(value = rf, bands = wl, names = sn)
 }
 \author{
 Jose Eduardo Meireles
