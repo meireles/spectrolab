@@ -292,23 +292,6 @@ plot_interactive = function(spec,
     band_threshold = 3
     refl_threshold = 0.03
 
-    # Find spectral distances
-    spec_dist = t(as.matrix(spec)) - as.vector(as.matrix(mean(spec)))
-
-
-    ## TODO
-    ## this maybe best done in matrix algebra
-    spec_dist = sqrt(colSums(spec_dist^2))
-
-    # find order of magnitude of spec_dist
-
-    ## TODO
-    ## test diff between two first ones since the vector is sorted
-    dist_mag  = ceiling( log10( 1 / min(diff(sort(spec_dist))) ) )
-
-    # and round it
-    spec_dist = round(spec_dist, dist_mag)
-
     # Begin shiny app
     shiny::shinyApp(
         ui = shiny::fluidPage(
@@ -329,18 +312,7 @@ plot_interactive = function(spec,
                                                       max     = m_display,
                                                       width   = "100%"),
                                   shiny::actionButton("go_back", label = "previous", width = "45%"),
-                                  shiny::actionButton("go_fwd",  label = "next", width = "45%"),
-                                  shiny::checkboxInput(inputId = "highlight_by_dist",
-                                                       label   = "color by distance",
-                                                       value   = FALSE, width = "100%"),
-                                  shiny::sliderInput(inputId = "dist_highlight",
-                                                     label   = "distance from mean",
-                                                     min     = min(spec_dist),
-                                                     max     = max(spec_dist),
-                                                     value   = mean(spec_dist),
-                                                     sep     = "",
-                                                     ticks   = TRUE,
-                                                     width   = "100%")
+                                  shiny::actionButton("go_fwd",  label = "next", width = "45%")
                               )
                 ),
                 shiny::column(9,
@@ -432,13 +404,18 @@ plot_interactive = function(spec,
             # Update picked spec
             shiny::observeEvent(input$plot_click ,{
                 click_coord  = input$plot_click
-                bands        = spectrolab::bands(spec) # probably should filter by w_range
+
+                bands        = spectrolab::bands(spec)
                 bands_diff   = abs(bands - click_coord[[1]])
                 band_clicked = bands[ which(bands_diff == min(bands_diff) & bands_diff <= band_threshold) ]
 
-                refl         = spec[ seq(from(), to()), band_clicked]
-                refl_diff    = abs(refl - click_coord[[2]])
-                spec_clicked = which(refl_diff == min(refl_diff) & refl_diff <= refl_threshold)
+                if(length(band_clicked) == 0){
+                    spec_clicked = NULL
+                } else {
+                    refl         = spec[ seq(from(), to()), band_clicked]
+                    refl_diff    = abs(refl - click_coord[[2]])
+                    spec_clicked = which(refl_diff == min(refl_diff) & refl_diff <= refl_threshold)
+                }
 
                 if(length(spec_clicked) == 0){
                     picked(NULL)
@@ -456,11 +433,7 @@ plot_interactive = function(spec,
                 s_range = seq(from(), to())
                 w_range = spectrolab::bands(spec, min(input$w_range), max(input$w_range))
 
-                cols = if(input$highlight_by_dist == TRUE){
-                    ifelse(spec_dist[s_range] > input$dist_highlight, "orange", "black")
-                } else {
-                    suppressWarnings( colpalette(length(s_range)) ) ## suppressWarnings
-                }
+                cols = suppressWarnings( colpalette(length(s_range)) ) ## suppressWarnings
 
                 plot(spec[s_range, w_range], col = cols, ...)
 
