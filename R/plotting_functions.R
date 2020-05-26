@@ -431,18 +431,15 @@ plot_interactive = function(spec,
             # Plot spectra
             output$spectrum = shiny::renderPlot({
                 s_range = seq(from(), to())
-
-                #w_range = spectrolab::bands(spec, min(input$w_range), max(input$w_range))
+                w_range = spectrolab::bands(spec, min(input$w_range), max(input$w_range))
 
                 cols = suppressWarnings( colpalette(length(s_range)) ) ## suppressWarnings
 
-                #plot( spec[s_range, w_range] , col = cols, ...)
-                plot( spec[s_range, ], col = cols, xlim = input$w_range, ...)
+                plot(spec[s_range, w_range], col = cols, ...)
 
                 if( ! is.null(picked()) ){
-                    #plot(spec[picked(), w_range ], col = "red", lwd = 2, add = TRUE)
-                    plot(spec[picked(), ], col = "red", lwd = 2, add = TRUE)
-
+                    plot(spec[picked(), ],
+                         col = "red", lwd = 2, add = TRUE)
                     graphics::points(x = picked_band(),
                                      y = spec[picked(), picked_band()],
                                      pch = 25, fg = "red", bg = "red")
