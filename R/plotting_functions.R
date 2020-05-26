@@ -100,9 +100,6 @@ plot_quantile = function(spec,
                    max = 1.0 - tail_mag )
 
     qt = quantile(spec, probs = tail_range, na.rm = na.rm)
-    # xx = c( qt$bands,
-    #         rev(qt$bands) )
-    # yy = c( qt$value[1, ], rev(qt$value[2, ]) )
 
     xx = c(bands(qt),
            rev(bands(qt)))
