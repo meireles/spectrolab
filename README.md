@@ -12,10 +12,11 @@ The function `wavelengths` is now `bands` and the function `reflectance` is now 
 
 ## Installation
 
-You can install spectrolab from CRAN using:
+You can install spectrolab from Github using:
 
 ```R
-install.packages("spectrolab")
+library("devtools")
+install_github("meireles/spectrolab")
 ```
 
 ## Using `spectrolab`
