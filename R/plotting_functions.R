@@ -417,7 +417,6 @@ plot_interactive = function(spec,
                     picked_band(NULL)
                 } else {
                     spec_clicked = from() + spec_clicked - 1L
-
                     picked(spec_clicked)
                     picked_band(band_clicked)
                 }
@@ -435,7 +434,7 @@ plot_interactive = function(spec,
                 if( ! is.null(picked()) ){
                     plot(spec[picked(), ],
                          col = "red", lwd = 2, add = TRUE)
-                    graphics::points(x = picked_band(),
+                    graphics::points(x = rep(picked_band(), length(picked())),
                                      y = spec[picked(), picked_band()],
                                      pch = 25, fg = "red", bg = "red")
                 }
@@ -453,7 +452,9 @@ plot_interactive = function(spec,
                 } else {
                     selected = "none"
                 }
-                paste("Selected spectrum: ", selected, sep = "")
+                paste("Selected spectrum: ",
+                      paste0(head(selected), collapse = ", "),
+                      sep = "")
             })
 
 
