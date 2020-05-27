@@ -285,10 +285,6 @@ plot_interactive = function(spec,
     wvl_min   = min(spectrolab::bands(spec))
     wvl_max   = max(spectrolab::bands(spec))
 
-    # Should be variables
-    band_threshold = 3
-    refl_threshold = 0.03
-
     # Begin shiny app
     shiny::shinyApp(
         ui = shiny::fluidPage(
@@ -336,6 +332,7 @@ plot_interactive = function(spec,
             # Initialize highlighted index
             picked      = shiny::reactiveVal()
             picked_band = shiny::reactiveVal()
+
 
             # Update `from`, `to` and `picked` if next is pressed
             shiny::observeEvent(input$go_fwd, {
@@ -394,24 +391,25 @@ plot_interactive = function(spec,
                 }
             })
 
-            shiny::observeEvent(input$highlight_by_dist, {
-                shinyjs::toggleState("dist_highlight")
-            })
-
             # Update picked spec
             shiny::observeEvent(input$plot_click ,{
-                click_coord  = input$plot_click
 
-                bands        = spectrolab::bands(spec)
-                bands_diff   = abs(bands - click_coord[[1]])
-                band_clicked = bands[ which(bands_diff == min(bands_diff) & bands_diff <= band_threshold) ]
+                click_coord    = input$plot_click
+                bands          = spectrolab::bands(spec,
+                                                   min = min(input$w_range),
+                                                   max = max(input$w_range))
+
+                band_threshold = max(abs(diff(input$w_range)) * 0.01, mean(abs(diff(bands))))
+                bands_diff     = abs(bands - click_coord[[1]])
+                band_clicked   = bands[ which(bands_diff == min(bands_diff) & bands_diff <= band_threshold) ]
 
                 if(length(band_clicked) == 0){
                     spec_clicked = NULL
                 } else {
-                    refl         = spec[ seq(from(), to()), band_clicked]
-                    refl_diff    = abs(refl - click_coord[[2]])
-                    spec_clicked = which(refl_diff == min(refl_diff) & refl_diff <= refl_threshold)
+                    refl           = spec[ seq(from(), to()), bands ]
+                    refl_threshold = abs(diff(range(refl))) * 0.02
+                    refl_diff      = abs(refl[ , band_clicked] - click_coord[[2]])
+                    spec_clicked   = which(refl_diff == min(refl_diff) & refl_diff <= refl_threshold)
                 }
 
                 if(length(spec_clicked) == 0){
