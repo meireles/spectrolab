@@ -5,30 +5,26 @@
 
 # spectrolab
 
-``spectrolab`` **breaks backwards compatibility!** The function `wavelengths` is now `bands` and the function `reflectance` is now `value`. Please use the `legacy` branch if you want to use the older api. 
+``spectrolab`` 0.09 **Breaks Backwards Compatibility!**
 
+The function `wavelengths` is now `bands` and the function `reflectance` is now `value`. We suggest that you update your code to reflect that change. If you really need to use the older api, install ``spectrolab`` from the `legacy` branch.
 
-~~The package is being actively developed and parts of the *API may still change*. You’re welcome to give it a spin, but do so *at your own risk*. With that said, most parts of the package are pretty stable. Let us know if you find otherwise~~.
 
 ## Installation
 
-You can install spectrolab from CRAN using:
+You can install spectrolab from Github using:
 
 ```R
-install.packages("spectrolab")
+library("devtools")
+install_github("meireles/spectrolab")
 ```
 
 ## Using `spectrolab`
 
 This vignette [introduces spectrolab](vignettes/introduction_to_spectrolab.pdf), and walks you through the basics of the package.
 
-This vignette shows how to [splice sensors](vignettes/match_sensors.pdf) using the function  `match_sensors` and explains the details about how its arguments work. A more general processing vignette is coming soon.
-
-
 ## Contributing
 
 In an effort to keep things tidy and in running order, __direct commits to master are discouraged__. The master branch of the "meireles/spectrolab" fork is protected.
 
 I also use a [__pre-commit hook__](https://stackoverflow.com/questions/40462111/git-prevent-commits-in-master-branch) in my local repo that prevents me from breaking my own policy! I suggest you do the same. 
-
-We highly encourage you to read the vignette on [advanced spectrolab use](vignettes/advanced_spectrolab.pdf) if you're planning on contributing to or developing a package that depends on `spectrolab`.

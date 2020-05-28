@@ -122,6 +122,22 @@ i_bands = function(x, nbands = NULL) {
         stop("band cannot be converted to numeric: ", x[n])
     }
 
+    d = which(duplicated(y))
+
+    if(length(d) > 0){
+
+        position = d
+        original = y[d]
+
+        y[d] = y[d] + 0.001 * min(abs(diff(y))) # add 0.1% of smallest band diff
+
+        updated = y[d]
+
+        cat("Duplicated band values are not allowed.\n")
+        cat("Bands updated as follows:\n")
+        print(data.frame(position, original, updated), row.names = FALSE)
+    }
+
     y
 }
 
