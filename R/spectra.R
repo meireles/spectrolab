@@ -133,9 +133,13 @@ i_bands = function(x, nbands = NULL) {
 
         updated = y[d]
 
-        cat("Duplicated band values are not allowed.\n")
+        cat("Duplicated band values are not allowed!\n")
         cat("Bands updated as follows:\n")
-        print(data.frame(position, original, updated), row.names = FALSE)
+        print(data.frame("band_position"  = position,
+                         "original_value" = original,
+                         "updated_value"  = updated,
+                         check.names = FALSE),
+              row.names = FALSE)
     }
 
     y
