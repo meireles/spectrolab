@@ -114,7 +114,18 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
     }
 
     r = stats::aggregate(as.matrix(x), by, FUN, ...)
-    m = stats::aggregate(meta(x), by, FUN_meta, ...)
+    #m = stats::aggregate(meta(x), by, FUN_meta, ...)
+
+    m = tryCatch({
+        stats::aggregate(meta(x), by, FUN_meta, ...)
+        },
+        warning = function(w){
+            message("Issues found when aggregating the metadata")
+            message("This usualy happens when a mathematical function is applied to non-numeric data.")
+            message("Here are the original warnings: ", w)
+            suppressWarnings(stats::aggregate(meta(x), by, FUN_meta, ...))
+        })
+
     s = as.spectra(r, 1)
     meta(s) = m[ , -1]
 
