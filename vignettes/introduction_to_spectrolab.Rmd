@@ -16,7 +16,7 @@ vignette: >
 * Access, aggregate, subset, split or combine spectra
 * Seamlessly link and manipulate metadata (such as chemistry)
 * Plot spectra or spectral quantiles, shade spectral regions (e.g. vis)
-* Scroll through and zoom in spectra interacively. 
+* Scroll through and zoom in spectra interactively. 
 * Perform tasks such as vector normalization, smoothing, resampling, and sensor overlap matching
 
 The source code can be found on our [GitHub repository](https://github.com/meireles/spectrolab). Please report any bugs and ask us your questions through the [issue tracker](https://github.com/meireles/spectrolab/issues).
@@ -187,7 +187,7 @@ plot_quantile(achillea_spec, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border 
 plot_regions(achillea_spec, regions = default_spec_regions(), add = TRUE)
 ```
 
-Last but not least, spectrolab also allows you to interactivelly explore spectra through a `shiny` app with the `plot_interactive()` function.
+Last but not least, spectrolab also allows you to interactively explore spectra through a `shiny` app with the `plot_interactive()` function.
 
 <img src="plot_interactive_screenshot.png" alt="Drawing" style="width: 300px;"/>
 
@@ -229,7 +229,7 @@ It is also possible to convert a `spectra` object to a matrix or data.frame usin
 
 If you're converting spectra to a matrix, `spectrolab` will (1) place bands in columns, assigning band labels to `colnames`, and (2) samples in rows, assigning sample names to `rownames`. Since `R` imposes strict rules on column name formats and sometimes on row names, `as.matrix()` will try to fix potential dimname issues if `fix_names != "none"`. Note that `as.matrix()` will not keep metadata.
 
-Conversion to data.frame is similar, but keeps the metadata by default (unless you set the `metadata` agument to `FALSE`).
+Conversion to data.frame is similar, but keeps the metadata by default (unless you set the `metadata` argument to `FALSE`).
 
 ```{r, eval=T}
 # Make a matrix from a `spectra` object

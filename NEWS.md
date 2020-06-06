@@ -2,7 +2,7 @@
 
 ## major
 * Breaking backwards compatibility! 
-* weavelengths function is now caled bands
+* wavelengths function is now called bands
 * reflectance function is now called value
 
 # spectrolab 0.0.8 (2018-10-28)
