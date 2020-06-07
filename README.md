@@ -20,7 +20,7 @@ install_github("meireles/spectrolab")
 
 ## Using `spectrolab`
 
-This vignette [introduces spectrolab]("vignettes/introduction_to_spectrolab.pdf"), and walks you through the basics of the package.
+This vignette [introduces spectrolab](spectrolab/vignettes/introduction_to_spectrolab.pdf), and walks you through the basics of the package.
 
 ## Contributing
 
