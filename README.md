@@ -2,7 +2,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/meireles/spectrolab/badge.svg?branch=master)](https://coveralls.io/github/meireles/spectrolab?branch=master)
 [![CRAN Status](https://www.r-pkg.org/badges/version/spectrolab)](https://cran.r-project.org/package=spectrolab)
 
-
 # spectrolab
 
 ``spectrolab`` 0.09 **Breaks Backwards Compatibility!**
@@ -21,7 +20,7 @@ install_github("meireles/spectrolab")
 
 ## Using `spectrolab`
 
-This vignette [introduces spectrolab](vignettes/introduction_to_spectrolab.pdf), and walks you through the basics of the package.
+This vignette [introduces spectrolab](https://github.com/meireles/spectrolab/blob/master/vignettes/introduction_to_spectrolab.pdf), and walks you through the basics of the package.
 
 ## Contributing
 
