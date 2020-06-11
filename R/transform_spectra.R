@@ -413,7 +413,9 @@ normalize = function(x, quiet = FALSE, ...){
 #' @export
 normalize.spectra = function(x, quiet = FALSE, ...){
 
-    i_is_increasing(bands(x), stop = TRUE)
+    if(i_is_increasing(bands(x))){
+        stop("band values must be strictly increasing. Match sensor overlap before attempting to normalize the spectra")
+    }
 
     if(!quiet){
         message("Vector nomalizing spectra...")
@@ -485,7 +487,11 @@ smooth.default = function(x, ...){
 #' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' spec = smooth(spec, parallel = FALSE)
 smooth.spectra = function(x, method = "spline", ...){
-    i_is_increasing(bands(x), stop = TRUE)
+
+    if(i_is_increasing(bands(x))){
+        stop("band values must be strictly increasing. Please match the sensor overlaps before attempting to smooth the spectra.")
+    }
+
 
     if(method == "spline") {
         s   = i_smooth_spline_spectra(x, ...)
@@ -653,8 +659,9 @@ resample.spectra = function(x, new_wvls, ...) {
     }
 
     ## Enforce increasing bands in spectra object
-    i_is_increasing(w, stop = TRUE)
-
+    if(i_is_increasing(bands(x))){
+        stop("band values must be strictly increasing. Please match the sensor overlaps before attempting to resample the spectra.")
+    }
 
     ## Warn about long gaps in bands
     ## Made up these thresholds, need to think harder

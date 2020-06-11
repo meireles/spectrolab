@@ -97,7 +97,7 @@ dim.spectra = function(x){
 #' spec
 print.spectra = function(x, ...){
   r_wvl   = range(bands(x))
-  o_wvl   = i_is_increasing(bands(x), stop = FALSE)
+  o_wvl   = i_is_increasing(bands(x))
 
   ## In case I want to report if the band spacings are unequal
   # d_wvl   = diff(bands(x))

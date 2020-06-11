@@ -171,7 +171,7 @@ match_sensors.spectra = function(x,
     fixed_sensor = ifelse( length(splice_at) == 2, 2, fixed_sensor)
 
 
-    if( ! i_is_increasing(x = w, stop = FALSE) ){
+    if( ! i_is_increasing(x = w) ){
         y = i_trim_sensor_overlap(x = x, splice_at = splice_at)
         x = y$spectra              # reassign x
         w = bands(x)         # reassign w
