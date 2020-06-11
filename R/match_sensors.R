@@ -26,48 +26,6 @@ i_find_sensor_overlap_bounds = function(x, idx = TRUE){
 }
 
 
-#' Remove duplicated band
-#'
-#' \code{i_remove_duplicated_band} removes a duplicated band
-#'
-#' SVC instruments usually have a certain band that is repeated in the
-#' overlap region of different sensors, e.g. 1005.5 nm. The choice of which
-#' duplicate band to remove (1005.5 in sensor 1 or sensor 2) will depend
-#' on boundary. If the duplicated value is greater than boundary, the first
-#' sensor duplicate is removed. Else, the second dup is removed.
-#'
-#' @param x spectra object
-#' @param boundary boundary (double). If < wvl value, the first dup is pruned
-#' @return spectra object
-#'
-#' @keywords internal
-#' @author Jose Eduardo Meireles
-i_remove_duplicated_band = function(x, boundary){
-    w = bands(x)
-    d = w[ which(duplicated(w)) ]
-
-    if(length(d) > 1){
-        message("Found more than one duplicated band.\nInspect the spectra before further analyses.")
-    }
-
-    idx_rm = sapply(d, function(x){
-        i = which(w %in% x)
-        ifelse(x > boundary, i[1], i[2])
-    })
-
-    ## HACK. There is no easy way of subsetting bands if they are
-    ## duplicated. Therefore, I have to change the value of the band
-    ## I want to exclude and then remove that.
-
-    ## Assign a dummy band value to the wl to rm
-    bogus                    = 12345678911121110987654321.0123
-    bands(x)[ idx_rm ] = bogus
-
-    ## Now prune the spectral data
-    x[ , bands(x)[ bands(x) != bogus ] ]
-}
-
-
 #' Trim sensor overlap
 #'
 #' @param x spectra object
@@ -79,7 +37,6 @@ i_remove_duplicated_band = function(x, boundary){
 #' @author Jose Eduardo Meireles
 i_trim_sensor_overlap = function(x, splice_at){
 
-    x = i_remove_duplicated_band(x = x, boundary =  splice_at[1])
     w = bands(x)
     b = i_find_sensor_overlap_bounds(w)
 
