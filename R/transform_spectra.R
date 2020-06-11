@@ -413,7 +413,7 @@ normalize = function(x, quiet = FALSE, ...){
 #' @export
 normalize.spectra = function(x, quiet = FALSE, ...){
 
-    if(i_is_increasing(bands(x))){
+    if(! i_is_increasing(bands(x))){
         stop("band values must be strictly increasing. Match sensor overlap before attempting to normalize the spectra")
     }
 
@@ -488,7 +488,7 @@ smooth.default = function(x, ...){
 #' spec = smooth(spec, parallel = FALSE)
 smooth.spectra = function(x, method = "spline", ...){
 
-    if(i_is_increasing(bands(x))){
+    if(! i_is_increasing(bands(x))){
         stop("band values must be strictly increasing. Please match the sensor overlaps before attempting to smooth the spectra.")
     }
 
@@ -659,7 +659,7 @@ resample.spectra = function(x, new_wvls, ...) {
     }
 
     ## Enforce increasing bands in spectra object
-    if(i_is_increasing(bands(x))){
+    if(! i_is_increasing(bands(x))){
         stop("band values must be strictly increasing. Please match the sensor overlaps before attempting to resample the spectra.")
     }
 
