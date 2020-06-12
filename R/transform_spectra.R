@@ -9,7 +9,7 @@
 #' \code{apply_by_band} is conceptually similar to apply(as.matrix(x), 2, fun),
 #' but returns a spectra object while dealing with metadata and attributes.
 #' Applying a function that does not act on numeric values may crash the function
-#' or render all value values NA.
+#' or render all values NA.
 #'
 #' @param x spectra
 #' @param fun numeric function to be applied to each band.
@@ -56,7 +56,7 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
     r  = apply(as.matrix(x), 2, f, ...)
     w  = bands(x)
     m0 = meta(x)
-    m = m0
+    m  = m0
 
     l = ifelse(is.vector(r), 1L, nrow(r))
     if(is.null(name)){
@@ -343,44 +343,6 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
     ########################################
     x
 
-    # ########################################
-    # ## Subset based on n_max
-    # ########################################
-    # excl_n_by = table(by) - n_max
-    # excl_n_by = excl_n_by[ excl_n_by > 0 ]
-    #
-    # # Compute indices to exclude
-    # excl_idx = sapply(names(excl_n_by), function(x){
-    #     w = which(by == x)
-    #     if(random){
-    #         p = sample(w, excl_n_by[[x]])
-    #     } else {
-    #         p = utils::tail(w, n = excl_n_by[[x]])
-    #     }
-    #     p
-    # })
-    # excl_idx = unlist(excl_idx)
-    #
-    #
-    # # Exclude indices from `x` and `by` if there's something to exclude
-    # if(length(excl_n_by) > 0){
-    #     x  = x[ - excl_idx ,  ]
-    #     by = by[ - excl_idx ]
-    # }
-    #
-    # ########################################
-    # ## Subset based on n_min
-    # ########################################
-    #
-    # tbl_by = table(by)
-    # keep   = names(tbl_by[ tbl_by >= n_min ])
-    #
-    # if(length(keep) == 0){
-    #     message("chosen `n_min` excluded all spectra. returning NULL.")
-    #     return(NULL)
-    # }
-    #
-    # x[ keep, ]
 }
 
 
@@ -414,7 +376,7 @@ normalize = function(x, quiet = FALSE, ...){
 normalize.spectra = function(x, quiet = FALSE, ...){
 
     if(! i_is_increasing(bands(x))){
-        stop("band values must be strictly increasing. Match sensor overlap before attempting to normalize the spectra")
+        stop("normalize requires strictly increasing band values.\nMatch sensor overlap before attempting to normalize the spectra.")
     }
 
     if(!quiet){
@@ -489,8 +451,8 @@ smooth.default = function(x, ...){
 smooth.spectra = function(x, method = "spline", ...){
 
     if(! i_is_increasing(bands(x))){
-        stop("band values must be strictly increasing. Please match the sensor overlaps before attempting to smooth the spectra.")
-    }
+        stop("smooth requires strictly increasing band values.\nMatch sensor overlap before attempting to smooth the spectra.")
+        }
 
 
     if(method == "spline") {
@@ -660,7 +622,7 @@ resample.spectra = function(x, new_wvls, ...) {
 
     ## Enforce increasing bands in spectra object
     if(! i_is_increasing(bands(x))){
-        stop("band values must be strictly increasing. Please match the sensor overlaps before attempting to resample the spectra.")
+        stop("resample requires strictly increasing band values.\nMatch sensor overlap before attempting to resample the spectra.")
     }
 
     ## Warn about long gaps in bands
