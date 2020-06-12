@@ -11,7 +11,7 @@
 #' @author Jose Eduardo Meireles
 #' @keywords internal
 i_is_increasing = function(x){
-    all(diff(x) >= 0.0)
+    all(diff(x) > 0.0)
 }
 
 
