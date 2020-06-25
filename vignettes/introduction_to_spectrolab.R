@@ -54,7 +54,7 @@ r = value(achillea_spec)
 m = meta(achillea_spec, "ssp", simplify = TRUE)
 
 ## ---- eval = TRUE-------------------------------------------------------------
-# Subset band regions.
+# Subset band regions. Here we know that bands are integers (e.g. 400, 401, ...)
 spec_sub_vis = achillea_spec[ , 400:700 ]
 
 # Subset spectra to all entries where sample_name matches "ACHMI_7" or
