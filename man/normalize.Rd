@@ -21,6 +21,7 @@ spectra object with normalized spectra
 }
 \description{
 \code{normalize} returns a spectra obj with vector normalized values
+Normalization value for each spectrum is computed as sqrt(sum(x_i^2))
 }
 \section{Methods (by class)}{
 \itemize{
