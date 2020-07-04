@@ -354,6 +354,8 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
 #'
 #' \code{normalize} returns a spectra obj with vector normalized values
 #'
+#' Normalization value for each spectrum computed as sqrt(sum(x^2))
+#'
 #' @param x spectra object. bands must be strictly increasing
 #' @param quiet boolean. Warn about change in y value units? Defaults to FALSE
 #' @param ... nothing
@@ -388,14 +390,9 @@ normalize.spectra = function(x, quiet = FALSE, ...){
         }
     }
 
-    refl            = value(x)
-    refl_squared    = refl * refl
-    vec_ones        = rep.int(1L, ncol(refl_squared))
-    spec_sq_rowsum  = refl_squared %*% vec_ones
-    magnitudes      = as.vector(sqrt(spec_sq_rowsum))
-
-    # normalize and construct a `spectra` object
-    x[] = i_value(refl / magnitudes)
+    refl        = value(x)
+    magnitudes  = sqrt(apply(refl^2, 1, sum))
+    x[]         = refl / magnitudes
 
     # add a magnitute attribute to the`spectra` object
     meta(x, "normalization_magnitude") = magnitudes
