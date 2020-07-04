@@ -355,6 +355,8 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
 #' \code{normalize} returns a spectra obj with vector normalized values
 #' Normalization value for each spectrum is computed as sqrt(sum(x_i^2))
 #'
+#' Normalization value for each spectrum computed as sqrt(sum(x^2))
+#'
 #' @param x spectra object. bands must be strictly increasing
 #' @param quiet boolean. Warn about change in y value units? Defaults to FALSE
 #' @param ... nothing
