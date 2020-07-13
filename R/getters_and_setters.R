@@ -100,7 +100,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
     }
 }
 
-#' Assign value values to spectra
+#' Assign values to spectra
 #'
 #' \code{`[<-`} assigns the rhs values to spectra
 #'
@@ -122,32 +122,6 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #' spec
 `[<-.spectra` = function(x, i, j, value){
 
-    ####################################################
-    ###   ORIGINAL setter
-
-    # if(missing(i)){ i = NULL }
-    # if(missing(j)){ j = NULL }
-    # m = i_match_ij_spectra(x = x, i = i, j = j, allow_negative = FALSE)
-    # l = lapply(m, length)
-    #
-    # if(is_spectra(value)){
-    #     value = value(value)
-    # }
-    #
-    # ## In case `value` is a scalar:
-    # ##   1. Do not check for dimension constraints, which leads to
-    # ##   2. assiging `value` to all elements in the value matrix
-    # if(is.vector(value) && length(value) == 1){
-    #     l = list(NULL)   ## assign the two elements in `l` to NULL
-    # }
-    #
-    # x$value[ m[["r_idx"]], m[["c_idx"]] ] = i_value(value,
-    #                                                             nbands = l[["c_idx"]],
-    #                                                             nsample = l[["r_idx"]])
-    # x
-    ####################################################
-
-
     if(missing(i)){ i = NULL }
     if(missing(j)){ j = NULL }
 
@@ -155,8 +129,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
     l = lapply(m, length)
 
 
-
-    ## In case "value" is a spectra object, every compoennt of spectra must be updated
+    ## In case "value" is a spectra object, every component of spectra must be updated
     if(is_spectra(value)){
         if( !identical(bands(x)[m$c_idx], bands(value))){
             stop("wavelenegths not compatible")
