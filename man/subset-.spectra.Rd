@@ -2,7 +2,7 @@
 % Please edit documentation in R/getters_and_setters.R
 \name{[<-.spectra}
 \alias{[<-.spectra}
-\title{Assign value values to spectra}
+\title{Assign values to spectra}
 \usage{
 \method{[}{spectra}(x, i, j) <- value
 }
