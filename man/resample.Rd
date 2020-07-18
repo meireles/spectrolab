@@ -20,15 +20,11 @@ resample(x, new_wvls, ...)
 spectra object with resampled spectra
 }
 \description{
-\code{resample} returns spectra resampled to new bands using smoothing.
+\code{resample} returns spectra resampled to new bands using spline smoothing.
 Possible to increase or decrease the spectral resolution.
 }
 \details{
-The function runs a couple basic checks when resampling, but they are not
-exhaustive, so look at the data before resampling. The implemented checks are:
-1. Stop if trying to predict bands outside of the original range and,
-2. Warn if a gap is found in bands. E.g. wvls are mostly at a 1nm
-   resolution but go from 1530 to 1820 in the infrared. Does not check for NAs
+\code{resample} doesn't predict values for bands outside of the original range.
 }
 \section{Methods (by class)}{
 \itemize{

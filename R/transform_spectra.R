@@ -577,14 +577,10 @@ i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
 
 #' Resample spectra
 #'
-#' \code{resample} returns spectra resampled to new bands using smoothing.
+#' \code{resample} returns spectra resampled to new bands using spline smoothing.
 #' Possible to increase or decrease the spectral resolution.
 #'
-#' The function runs a couple basic checks when resampling, but they are not
-#' exhaustive, so look at the data before resampling. The implemented checks are:
-#' 1. Stop if trying to predict bands outside of the original range and,
-#' 2. Warn if a gap is found in bands. E.g. wvls are mostly at a 1nm
-#'    resolution but go from 1530 to 1820 in the infrared. Does not check for NAs
+#' \code{resample} doesn't predict values for bands outside of the original range.
 #'
 #' @param x spectra object. bands must be strictly increasing
 #' @param new_wvls numeric vector of bands to sample from spectra
@@ -613,7 +609,6 @@ resample.spectra = function(x, new_wvls, ...) {
 
     ## Simply subset the current spectra if all new_wvls are a in the set of
     ## current bands
-
     if(all(new_wvls %in% w)){
         return(x[ , new_wvls ])
     }
@@ -621,21 +616,6 @@ resample.spectra = function(x, new_wvls, ...) {
     ## Enforce increasing bands in spectra object
     if(! i_is_increasing(bands(x))){
         stop("resample requires strictly increasing band values.\nMatch sensor overlap before attempting to resample the spectra.")
-    }
-
-    ## Warn about long gaps in bands
-    ## Made up these thresholds, need to think harder
-    d = diff(w)
-    l = d > quantile(d, 0.5) * 6 |
-        d > quantile(d, 0.9) * 3 |
-        d > 20
-
-    if(any(l)){
-        for(i in which(l)){
-            warning("Found long gap between bands ",
-                    w[i - 1], " and ", w[ i + 1], " (", d[i], ")", "\n",
-                    "values resampled in this gap should probably be converted to NAs.")
-        }
     }
 
     ## Do not predict points outside the original band range
@@ -650,17 +630,12 @@ resample.spectra = function(x, new_wvls, ...) {
     s = i_smooth_spline_spectra(x, ...)
     f = function(o, p){ stats::predict(o, p)[["y"]] }
     g = lapply(X = s, FUN = f, p = new_wvls)
-    d = i_value( do.call(rbind, g) )
     message("Beware the spectra are now partially smoothed.")
 
+    ## Construct new spectra object and return
+    spectra(value = do.call(rbind, g),
+            bands = new_wvls,
+            names = names(x),
+            meta  = meta(x))
 
-    ## band number may change, so using the "safe" setter will fail
-    ## Instead of reaching inside the spectra object, I am using the "unsafe"
-    ## version of the band setter.
-    bands(x, unsafe = TRUE) = new_wvls
-
-    ## THIS IS BAD. Figure out an "unsafe" version of the value setter
-    x[["value"]] = d
-
-    x
 }
