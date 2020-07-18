@@ -4,12 +4,10 @@
 \alias{bands<-}
 \title{Set band labels}
 \usage{
-bands(x, unsafe = FALSE) <- value
+bands(x) <- value
 }
 \arguments{
 \item{x}{spectra object (lhs)}
-
-\item{unsafe}{boolean. Skip length safety check? Defaults to FALSE}
 
 \item{value}{rhs}
 }

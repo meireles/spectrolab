@@ -306,7 +306,6 @@ bands = function(x, min = NULL, max = NULL, return_num = TRUE){
 #' \code{bands} sets band labels of lhs to the rhs values
 #'
 #' @param x spectra object (lhs)
-#' @param unsafe boolean. Skip length safety check? Defaults to FALSE
 #' @param value rhs
 #' @return nothing. called for its side effect.
 #'
@@ -317,7 +316,7 @@ bands = function(x, min = NULL, max = NULL, return_num = TRUE){
 #' library(spectrolab)
 #' spec = as.spectra(spec_matrix_example, name_idx = 1)
 #' bands(spec) = bands(spec) / 1000
-`bands<-` = function(x, unsafe = FALSE, value){
+`bands<-` = function(x, value){
     UseMethod("bands<-")
 }
 
@@ -345,13 +344,8 @@ bands.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
 
 #' @describeIn bands<- Set spectra band labels
 #' @export
-`bands<-.spectra` = function(x, unsafe = FALSE, value){
-
-    if(unsafe){
-        x$bands = i_bands(value, NULL)
-    } else {
-        x$bands = i_bands(value, ncol(x))
-    }
+`bands<-.spectra` = function(x, value){
+    x$bands = i_bands(value, ncol(x))
     x
 }
 
