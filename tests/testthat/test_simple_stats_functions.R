@@ -8,7 +8,7 @@ mat    = matrix( c(10, 4, 2, 2,  10,
                    9,  6, 2, NA, 20),
                  ncol = 5, byrow = TRUE, dimnames = list(NULL, c(1, 2, 3, 4, 5)))
 
-spec   = as.spectra(mat, name_idx = NULL, meta_idxs = NULL)
+spec   = as_spectra(mat, name_idx = NULL, meta_idxs = NULL)
 
 
 test_that("mean from spec equals the colMeans equiv.", {

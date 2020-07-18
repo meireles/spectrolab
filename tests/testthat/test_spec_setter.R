@@ -3,7 +3,7 @@ library("spectrolab")
 
 context("Spectra setter")
 
-s0 = as.spectra(spec_matrix_example[1:3, ], name_idx = 1)
+s0 = as_spectra(spec_matrix_example[1:3, ], name_idx = 1)
 meta(s0, "bogus") = c("a", "b", "c")
 
 s1 = s2 = s3 = s0

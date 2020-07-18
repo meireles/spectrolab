@@ -25,7 +25,7 @@ nothing. modifies spectra as side effect
 }
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 spec[ , 400:500] = spec[ , 400:500] * 1.2
 spec
 }

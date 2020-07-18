@@ -7,7 +7,7 @@
 #
 # context("Spectra matrix operations")
 #
-# spec   = as.spectra(spec_matrix_example)
+# spec   = as_spectra(spec_matrix_example)
 # ones_c = rep.int(1, ncol(spec))
 # ones_r = rep.int(1, nrow(spec))
 #

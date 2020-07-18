@@ -3,7 +3,7 @@ library("spectrolab")
 
 context("Spectra combine")
 
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 s1   = spec
 bands(s1) = seq(ncol(s1))
 s2   = spec[ , 400:2000]

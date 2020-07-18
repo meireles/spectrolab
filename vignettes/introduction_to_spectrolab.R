@@ -17,7 +17,7 @@ dir_path = system.file("extdata/spec_matrix_meta.csv", package = "spectrolab")
 spec_csv = read.csv(dir_path, check.names = FALSE)
 
 # The sample names are in column 3. Columns 1 and 2 are metadata
-achillea_spec = as.spectra(spec_csv, name_idx = 3, meta_idxs = c(1,2) )
+achillea_spec = as_spectra(spec_csv, name_idx = 3, meta_idxs = c(1,2) )
 
 # And now you have a spectra object with sample names and metadata...
 achillea_spec

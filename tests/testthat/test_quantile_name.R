@@ -3,7 +3,7 @@ library("spectrolab")
 
 context("Quantile naming scheme")
 
-s  = as.spectra(spec_matrix_example, name_idx = 1)
+s  = as_spectra(spec_matrix_example, name_idx = 1)
 
 
 q  = quantile(s, probs = c(0, 0.5, 1), names = NULL)

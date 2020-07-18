@@ -70,7 +70,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' head(names(spec), n = 3)
 #' # by name
 #' spec1 = spec[ "species_7" , ]
@@ -117,7 +117,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec[ , 400:500] = spec[ , 400:500] * 1.2
 #' spec
 `[<-.spectra` = function(x, i, j, value){
@@ -180,7 +180,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' is.matrix(value(spec))
 value = function(x){
     UseMethod("value")
@@ -199,7 +199,7 @@ value = function(x){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' # scale all refletance values by 2
 #' value(spec) = value(spec) * 2
 `value<-` = function(x, value){
@@ -243,7 +243,7 @@ value.spectra = function(x){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' names(spec)
 names.spectra = function(x){
     x$names
@@ -267,7 +267,7 @@ names.spectra = function(x){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' names(spec) = toupper(names(spec))
 `names<-.spectra` = function(x, value){
     x$names = i_names(value, nrow(x), prefix = NULL)
@@ -294,7 +294,7 @@ names.spectra = function(x){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' head(bands(spec))
 bands = function(x, min = NULL, max = NULL, return_num = TRUE){
     UseMethod("bands")
@@ -314,7 +314,7 @@ bands = function(x, min = NULL, max = NULL, return_num = TRUE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' bands(spec) = bands(spec) / 1000
 `bands<-` = function(x, value){
     UseMethod("bands<-")
@@ -370,7 +370,7 @@ bands.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec = normalize(spec)
 #' meta(spec, "normalization_magnitude")
 meta = function(x, label, sample, simplify = FALSE, quiet = TRUE){
@@ -392,7 +392,7 @@ meta = function(x, label, sample, simplify = FALSE, quiet = TRUE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' meta(spec, "random") = rnorm(nrow(spec), mean(10), sd = 2)
 `meta<-` = function(x, label, sample, value){
     UseMethod("meta<-")

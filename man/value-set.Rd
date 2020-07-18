@@ -19,7 +19,7 @@ nothing. called for its side effect
 }
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 # scale all refletance values by 2
 value(spec) = value(spec) * 2
 }

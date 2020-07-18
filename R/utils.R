@@ -46,7 +46,7 @@ try_keep_txt = function(f){
 #' library(spectrolab)
 #'
 #' # Ratios of visible part of the spectrum
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)[ , 400:700 ]
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)[ , 400:700 ]
 #' spec_ratio_mat = ratio(spec)
 ratio = function(x, simplify = FALSE){
     UseMethod("ratio")

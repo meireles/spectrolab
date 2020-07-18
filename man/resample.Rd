@@ -33,7 +33,7 @@ Possible to increase or decrease the spectral resolution.
 
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 spec = resample(spec, new_wvls = seq(400, 2400, 0.5), parallel = FALSE)
 }
 \author{

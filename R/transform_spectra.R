@@ -25,7 +25,7 @@
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec_mean = apply_by_band(spec, mean)
 apply_by_band = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, name = NULL, ...){
     UseMethod("apply_by_band")
@@ -101,7 +101,7 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec_mean = aggregate(spec, by = names(spec), mean, try_keep_txt(mean))
 aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
 
@@ -126,7 +126,7 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
             suppressWarnings(stats::aggregate(meta(x), by, FUN_meta, ...))
         })
 
-    s = as.spectra(r, 1)
+    s = as_spectra(r, 1)
     meta(s) = m[ , -1]
 
     s
@@ -152,9 +152,9 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
 #' library(spectrolab)
 #'
 #' # Create dummy spectra datasets. Pretend that these are all different...
-#' s1 = as.spectra(spec_matrix_example, name_idx = 1)
-#' s2 = as.spectra(spec_matrix_example, name_idx = 1)
-#' s3 = as.spectra(spec_matrix_example, name_idx = 1)
+#' s1 = as_spectra(spec_matrix_example, name_idx = 1)
+#' s2 = as_spectra(spec_matrix_example, name_idx = 1)
+#' s3 = as_spectra(spec_matrix_example, name_idx = 1)
 #'
 #' # combine 2 spectra objects
 #' s_1and2 = combine(s1, s2)
@@ -218,7 +218,7 @@ combine.spectra = function(s1, s2){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec_list = split(spec, names(spec))
 split.spectra = function(x, f, drop = FALSE, ...){
 
@@ -261,7 +261,7 @@ split.spectra = function(x, f, drop = FALSE, ...){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #'
 #' # remove spec of species with less than 4 samples
 #' spec = subset_by(spec, by = names(spec), n_min = 4, n_max = Inf)
@@ -367,7 +367,7 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec = normalize(spec)
 normalize = function(x, quiet = FALSE, ...){
     UseMethod("normalize")
@@ -444,7 +444,7 @@ smooth.default = function(x, ...){
 #' @examples
 #' library(spectrolab)
 #'
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec = smooth(spec, parallel = FALSE)
 smooth.spectra = function(x, method = "spline", ...){
 
@@ -594,7 +594,7 @@ i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec = resample(spec, new_wvls = seq(400, 2400, 0.5), parallel = FALSE)
 resample = function(x, new_wvls, ...) {
     UseMethod("resample")
