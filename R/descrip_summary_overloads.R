@@ -147,6 +147,7 @@ summary.spectra = function(object, ...){
 #' @param object spectra object
 #' @param ... additional args. not implemented
 #' @return prints to console
+#' @importFrom utils str
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -156,7 +157,5 @@ summary.spectra = function(object, ...){
 #' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' str(spec)
 str.spectra = function(object, ...){
-  cat("The structure of a spectra object should be irrelevant.", "\n")
-  cat("To access spectra components, use the provided getters and setters.", "\n\n")
-  print(object)
+  str(unclass(object))
 }
