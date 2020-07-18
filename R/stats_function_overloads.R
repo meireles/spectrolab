@@ -153,12 +153,13 @@ sd.spectra = function(x, na.rm = TRUE){
 
 #' Compute spectra quantiles
 #'
-#' \code{quantile} computes quantiles by band and returns them as `spectra`
+#' \code{quantile} computes quantiles by band and returns them as `spectra`.
 #'
 #' @param x spectra object. Must have at least the same number of sample that
 #'          length(probs) has.
 #' @param probs Probabilities to compute quantiles. Must be a vector of numerics
 #'              between 0.0 and 1.0. Defaults to c(0.025, 0.25, 0.5, 0.75, 0.975).
+#'              Duplicated probs will be removed.
 #' @param na.rm remove NAs before computing quantiles? Defaults to TRUE
 #' @param names names for each quantile spectrum. If NULL (default), names are set
 #'              to probs. A char vector should otherwise be given. Recyled.
@@ -186,12 +187,7 @@ quantile.spectra = function(x,
     }
 
     ## probs should not be duplicated
-    w = ! duplicated(probs)
-
-    if(any(!w)){
-        message("Duplicated probs being excluded: ", probs[ !w ])
-        probs = probs[ w ]
-    }
+    probs = probs[ ! duplicated(probs) ]
 
     if(nrow(x) < length(probs)){
         stop("There are less samples (", nrow(x),") than probabilities (",  length(probs), ") for `quantile` to makes sense.")

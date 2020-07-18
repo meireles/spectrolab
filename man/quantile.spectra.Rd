@@ -17,7 +17,8 @@
 length(probs) has.}
 
 \item{probs}{Probabilities to compute quantiles. Must be a vector of numerics
-between 0.0 and 1.0. Defaults to c(0.025, 0.25, 0.5, 0.75, 0.975).}
+between 0.0 and 1.0. Defaults to c(0.025, 0.25, 0.5, 0.75, 0.975).
+Duplicated probs will be removed.}
 
 \item{na.rm}{remove NAs before computing quantiles? Defaults to TRUE}
 
@@ -30,7 +31,7 @@ to probs. A char vector should otherwise be given. Recyled.}
 spectra object with one spectrum for each prob
 }
 \description{
-\code{quantile} computes quantiles by band and returns them as `spectra`
+\code{quantile} computes quantiles by band and returns them as `spectra`.
 }
 \examples{
 library(spectrolab)
