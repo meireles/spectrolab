@@ -454,11 +454,11 @@ smooth.spectra = function(x, method = "spline", ...){
 
 
     if(method == "spline") {
-        s   = i_smooth_spline_spectra(x, ...)
+        s   = smooth_spline(x, ...)
         x[] = do.call(rbind, sapply(s, `[`, "y"))
         return(x)
     } else if (method == "moving_average") {
-        i_smooth_mav_spectra(x, ...)
+        smooth_moving_avg(x, ...)
     }
 }
 
@@ -476,9 +476,9 @@ smooth.spectra = function(x, method = "spline", ...){
 #' @importFrom stats smooth.spline
 #' @importFrom parallel detectCores mclapply
 #'
-#' @keywords internal
 #' @author Jose Eduardo Meireles
-i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
+#' @export
+smooth_spline = function(x, parallel = TRUE, ...) {
 
     if( !is_spectra(x) ){
         stop("Object must be of class spectra")
@@ -525,9 +525,9 @@ i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
 #' @param save_wvls_to_meta boolean. keep lost ends of original wvls in metadata
 #' @return spectra object
 #'
-#' @keywords internal
 #' @author Jose Eduardo Meireles
-i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
+#' @export
+smooth_moving_avg = function(x, n = NULL, save_wvls_to_meta = TRUE){
     if( !is_spectra(x) ){
         stop("Object must be of class spectra")
     }
@@ -627,7 +627,7 @@ resample.spectra = function(x, new_wvls, ...) {
 
     ## Smooth and predict
     message("Using spline to predict value at new bands...")
-    s = i_smooth_spline_spectra(x, ...)
+    s = smooth_spline(x, ...)
     f = function(o, p){ stats::predict(o, p)[["y"]] }
     g = lapply(X = s, FUN = f, p = new_wvls)
     message("Beware the spectra are now partially smoothed.")
