@@ -62,7 +62,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #' @param j band labels, as numeric or character
 #'          or a logical vector of length ncol(x). Do not use indexes!
 #' @param simplify Boolean. If TRUE (default), single band selections
-#'                 are returned as a named vector of value values
+#'                 are returned as a named vector of values
 #' @return usually a spectra object, but see param `simplify`
 #'
 #' @author Jose Eduardo Meireles

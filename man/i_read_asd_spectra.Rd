@@ -20,7 +20,7 @@ Defaults to "target_refl".}
 
 \item{format}{choice of ASD format. Either "binary" or "txt"}
 
-\item{divide_refl_by}{divide value values by this}
+\item{divide_refl_by}{divide values by this}
 
 \item{...}{NOT USED YET}
 }

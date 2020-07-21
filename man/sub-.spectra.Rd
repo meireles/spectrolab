@@ -15,7 +15,7 @@
 or a logical vector of length ncol(x). Do not use indexes!}
 
 \item{simplify}{Boolean. If TRUE (default), single band selections
-are returned as a named vector of value values}
+are returned as a named vector of values}
 }
 \value{
 usually a spectra object, but see param `simplify`

@@ -34,7 +34,7 @@ not given}
 
 \item{refl_cols}{idx or name of value columns. MULTIPLE}
 
-\item{divide_refl_by}{divide value values by this. MULTIPLE}
+\item{divide_refl_by}{divide values by this. MULTIPLE}
 
 \item{...}{additional arguments passed to read table}
 }

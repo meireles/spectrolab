@@ -1,6 +1,6 @@
 #' Minimum value
 #'
-#' \code{min} Returns the minimum value value in a spectra object
+#' \code{min} Returns the minimum  value in a spectra object
 #'
 #' @param ... spectra object
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
@@ -19,7 +19,7 @@ min.spectra = function(..., na.rm = FALSE){
 
 #' Maximum value
 #'
-#' \code{max} Returns the maximum value value in a spectra object
+#' \code{max} Returns the maximum value in a spectra object
 #'
 #' @param ... spectra object
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
@@ -36,9 +36,9 @@ max.spectra = function(..., na.rm = FALSE){
   max(value(...), na.rm = na.rm)
 }
 
-#' Range of value values
+#' Range of spectral values
 #'
-#' \code{range} Returns the range of (min, max) value values in spectra
+#' \code{range} Returns the range of (min, max) values in spectra
 #'
 #' @param ... spectra object
 #' @param na.rm boolean. remove NAs? Defaults to FALSE

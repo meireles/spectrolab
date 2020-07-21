@@ -15,7 +15,7 @@
 single numeric value
 }
 \description{
-\code{min} Returns the minimum value value in a spectra object
+\code{min} Returns the minimum  value in a spectra object
 }
 \examples{
 library(spectrolab)

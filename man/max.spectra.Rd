@@ -15,7 +15,7 @@
 single numeric value
 }
 \description{
-\code{max} Returns the maximum value value in a spectra object
+\code{max} Returns the maximum value in a spectra object
 }
 \examples{
 library(spectrolab)

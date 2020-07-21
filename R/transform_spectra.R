@@ -560,7 +560,7 @@ smooth_moving_avg = function(x, n = NULL, save_wvls_to_meta = TRUE){
         message("Smoothing transformed some values into NAs and those bands were removed")
 
         if(save_wvls_to_meta){
-            message("However, the original value values for those bands were kept as metadata")
+            message("However, the original values for those bands were kept as metadata")
 
             meta(x) = matrix(r[ , w],
                              nrow = nrow(x),
