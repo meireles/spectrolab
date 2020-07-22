@@ -15,7 +15,7 @@
 or a logical vector of length ncol(x). Do not use indexes!}
 
 \item{simplify}{Boolean. If TRUE (default), single band selections
-are returned as a named vector of value values}
+are returned as a named vector of values}
 }
 \value{
 usually a spectra object, but see param `simplify`
@@ -35,7 +35,7 @@ and bands.
 }
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 head(names(spec), n = 3)
 # by name
 spec1 = spec[ "species_7" , ]

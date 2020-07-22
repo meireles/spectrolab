@@ -181,7 +181,7 @@ read_spectra = function(path,
 #' @param header boolean. keep header?
 #' @param wl_col idx or name of band column
 #' @param refl_cols idx or name of value columns. MULTIPLE
-#' @param divide_refl_by divide value values by this. MULTIPLE
+#' @param divide_refl_by divide values by this. MULTIPLE
 #' @param ... additional arguments passed to read table
 #' @return single `spectra` or list of `spectra`
 #'
@@ -309,7 +309,7 @@ i_read_ascii_spectra = function(file_paths,
 #' @param type Data type to read. "target_refl", "target_rad", "reference_rad".
 #'             Defaults to "target_refl".
 #' @param format choice of ASD format. Either "binary" or "txt"
-#' @param divide_refl_by divide value values by this
+#' @param divide_refl_by divide values by this
 #' @param ... NOT USED YET
 #' @return spectra object
 #'

@@ -15,11 +15,11 @@
 single numeric value
 }
 \description{
-\code{min} Returns the minimum value value in a spectra object
+\code{min} Returns the minimum  value in a spectra object
 }
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 min(spec)
 }
 \author{

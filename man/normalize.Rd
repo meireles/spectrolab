@@ -20,7 +20,8 @@ normalize(x, quiet = FALSE, ...)
 spectra object with normalized spectra
 }
 \description{
-\code{normalize} returns a spectra obj with vector normalized values
+\code{normalize} returns a spectra obj with vector normalized values.
+Normalization value for each spectrum computed as sqrt(sum(x^2))
 }
 \section{Methods (by class)}{
 \itemize{
@@ -29,7 +30,7 @@ spectra object with normalized spectra
 
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 spec = normalize(spec)
 }
 \author{

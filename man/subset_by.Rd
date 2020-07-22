@@ -40,7 +40,7 @@ interested in subsetting \emph{only} based on `n_min`, set `n_max` to `Inf`.
 
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 
 # remove spec of species with less than 4 samples
 spec = subset_by(spec, by = names(spec), n_min = 4, n_max = Inf)

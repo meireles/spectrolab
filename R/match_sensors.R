@@ -65,7 +65,7 @@ i_trim_sensor_overlap = function(x, splice_at){
 
 #' Match spectra at sensor transitions
 #'
-#' \code{match_sensors} scales value of sensors 1 (vis) and 3 (swir2)
+#' \code{match_sensors} scales values of sensors 1 (vis) and 3 (swir2)
 #'
 #' Splice_at has no default because sensor transition points vary between vendors
 #' and individual instruments. It is an important parameter though, so you should
@@ -76,7 +76,7 @@ i_trim_sensor_overlap = function(x, splice_at){
 #'
 #' If the factors used to match spectra are unreasonable, \code{match_sensors}
 #' will throw. Unreasonable factors (f) are defined as 0.5 > f > 3 or NaN,
-#' which  happens when the value for the right sensor is 0.
+#' which happens when the value for the right sensor is 0.
 #'
 #' @param x spectra object
 #' @param splice_at bands that serve as splice points, i.e the beginnings
@@ -111,6 +111,7 @@ match_sensors.spectra = function(x,
     w            = bands(x)
     splice_at    = unlist(splice_at)
     fixed_sensor = ifelse( length(splice_at) == 2, 2, fixed_sensor)
+
 
 
     y = i_trim_sensor_overlap(x = x, splice_at = splice_at)

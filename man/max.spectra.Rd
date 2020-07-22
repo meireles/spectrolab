@@ -15,11 +15,11 @@
 single numeric value
 }
 \description{
-\code{max} Returns the maximum value value in a spectra object
+\code{max} Returns the maximum value in a spectra object
 }
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 max(spec)
 }
 \author{

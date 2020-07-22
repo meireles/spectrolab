@@ -49,7 +49,7 @@ There are two ways to get spectra into R: 1) converting a matrix or data.frame t
 
 ### Create spectra from a matrix or data.frame
 
-If you already have your spectra in a matrix or data frame (e.g. when you read your data from a .csv file), you can use the function `as.spectra()` to convert it to a `spectra` object. The matrix **must** have samples in rows and bands in columns. The header of the bands columns must be (numeric) band labels. You also should declare which column has the sample names (which are mandatory) using the `name_idx` argument. If other columns are present (other than sample name and values), their indices must be passed to `as.spectra` as the `meta_idxs` argument.
+If you already have your spectra in a matrix or data frame (e.g. when you read your data from a .csv file), you can use the function `as_spectra()` to convert it to a `spectra` object. The matrix **must** have samples in rows and bands in columns. The header of the bands columns must be (numeric) band labels. You also should declare which column has the sample names (which are mandatory) using the `name_idx` argument. If other columns are present (other than sample name and values), their indices must be passed to `as_spectra` as the `meta_idxs` argument.
 
 Here is an example using a dataset matrix named `spec_matrix_meta.csv` provided by the package.
 
@@ -62,7 +62,7 @@ dir_path = system.file("extdata/spec_matrix_meta.csv", package = "spectrolab")
 spec_csv = read.csv(dir_path, check.names = FALSE)
 
 # The sample names are in column 3. Columns 1 and 2 are metadata
-achillea_spec = as.spectra(spec_csv, name_idx = 3, meta_idxs = c(1,2) )
+achillea_spec = as_spectra(spec_csv, name_idx = 3, meta_idxs = c(1,2) )
 
 # And now you have a spectra object with sample names and metadata...
 achillea_spec
@@ -125,13 +125,14 @@ You can subset the `spectra` using a notation *similar* to the `[i, j]` function
 
   - `x[1:3, ]` will keep the first three samples of `x`, i.e. `1:3` are indexes.
   - `x["sp_1", ]` keeps **all** entries in `x` where sample names match `"sp_1"`
-  - `x[ , 800:900]` will keep bands between `800` and `900`.
+  - `x[ , 800:900]` will keep bands labeled `800`, `801`, `802`, ..., `900`.
+  - `x[ , bands(x, 800, 900)]` will keep bands between `800` and `900`, including those with non-integer lables, e.g. `876.32`.
   - `x[ , 1:5] ` will **fail**!. *bands __cannot__ be subset by indexes!*
 
 Subsetting lets you, for instance, exclude noisy regions at the beginning and end of the spectrum or limit the data to specific entries.
 
 ```{r, eval = TRUE}
-# Subset band regions.
+# Subset band regions. Here we know that bands are integers (e.g. 400, 401, ...)
 spec_sub_vis = achillea_spec[ , 400:700 ]
 
 # Subset spectra to all entries where sample_name matches "ACHMI_7" or
@@ -140,7 +141,7 @@ spec_sub_byname = achillea_spec["ACHMI_7", ]
 spec_sub_byidx  = achillea_spec[ 1:3, ]
 ```
 
-The resolution of some spectra may be different from 1nm, as is the case with SVC. In those cases, the best way to subset spectra is using the `min` and `max` arguments for bands:
+The resolution of some spectra may be different from 1nm. In those cases, the best way to subset spectra is using the `min` and `max` arguments for `bands`:
 
 ```{r, eval=TRUE}
 acer_spectra_trim = acer_spectra[ , bands(acer_spectra, 400, 2400) ]

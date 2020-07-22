@@ -2,7 +2,7 @@
 % Please edit documentation in R/descrip_summary_overloads.R
 \name{range.spectra}
 \alias{range.spectra}
-\title{Range of value values}
+\title{Range of spectral values}
 \usage{
 \method{range}{spectra}(..., na.rm = FALSE)
 }
@@ -15,12 +15,12 @@
 tuple of numeric values (min, max)
 }
 \description{
-\code{range} Returns the range of (min, max) value values in spectra
+\code{range} Returns the range of (min, max) values in spectra
 }
 \examples{
 
 library(spectrolab)
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 range(spec)
 }
 \author{

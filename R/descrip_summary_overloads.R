@@ -1,6 +1,6 @@
 #' Minimum value
 #'
-#' \code{min} Returns the minimum value value in a spectra object
+#' \code{min} Returns the minimum  value in a spectra object
 #'
 #' @param ... spectra object
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
@@ -11,7 +11,7 @@
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' min(spec)
 min.spectra = function(..., na.rm = FALSE){
   min(value(...), na.rm = na.rm)
@@ -19,7 +19,7 @@ min.spectra = function(..., na.rm = FALSE){
 
 #' Maximum value
 #'
-#' \code{max} Returns the maximum value value in a spectra object
+#' \code{max} Returns the maximum value in a spectra object
 #'
 #' @param ... spectra object
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
@@ -30,15 +30,15 @@ min.spectra = function(..., na.rm = FALSE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' max(spec)
 max.spectra = function(..., na.rm = FALSE){
   max(value(...), na.rm = na.rm)
 }
 
-#' Range of value values
+#' Range of spectral values
 #'
-#' \code{range} Returns the range of (min, max) value values in spectra
+#' \code{range} Returns the range of (min, max) values in spectra
 #'
 #' @param ... spectra object
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
@@ -50,7 +50,7 @@ max.spectra = function(..., na.rm = FALSE){
 #' @examples
 #'
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' range(spec)
 range.spectra = function(..., na.rm = FALSE){
   range(value(...), na.rm = na.rm)
@@ -69,7 +69,7 @@ range.spectra = function(..., na.rm = FALSE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' dim(spec)
 dim.spectra = function(x){
   c("n_samples"     = length(names(x)),
@@ -91,17 +91,14 @@ dim.spectra = function(x){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' print(spec)
 #' ## or simply
 #' spec
 print.spectra = function(x, ...){
-  r_wvl   = range(bands(x))
-  o_wvl   = i_is_increasing(bands(x), stop = FALSE)
-
-  ## In case I want to report if the band spacings are unequal
-  # d_wvl   = diff(bands(x))
-  # d_wvl   = all(d_wvl[1] == d_wvl)
+  w       = bands(x)
+  r_wvl   = range(w)
+  o_wvl   = i_is_increasing(w)
 
   n_met   = names(meta(x, simplify = FALSE))
   l_met   = length(n_met)
@@ -138,7 +135,7 @@ print.spectra = function(x, ...){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' summary(spec)
 summary.spectra = function(object, ...){
   print(object, ...)
@@ -150,6 +147,7 @@ summary.spectra = function(object, ...){
 #' @param object spectra object
 #' @param ... additional args. not implemented
 #' @return prints to console
+#' @importFrom utils str
 #'
 #' @importFrom utils str
 #'
@@ -158,12 +156,8 @@ summary.spectra = function(object, ...){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' str(spec)
 str.spectra = function(object, ...){
-  message("*******************************************************************")
-  message("The structure of a spectra object should be irrelevant.")
-  message("Please, access the spectra using the provided getters and setters")
-  message("*******************************************************************")
-  utils::str(unclass(object))
+  str(unclass(object))
 }

@@ -25,7 +25,7 @@ matrix with samples in rows and bands in columns
 
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 is.matrix(value(spec))
 }
 \author{

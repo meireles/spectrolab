@@ -15,9 +15,9 @@
 #'
 #' @examples
 #' library(spectrolab)
-#' as.spectra(spec_matrix_example, name_idx = 1)
-as.spectra = function(x, name_idx = NULL, meta_idxs = NULL){
-    UseMethod("as.spectra", x)
+#' as_spectra(spec_matrix_example, name_idx = 1)
+as_spectra = function(x, name_idx = NULL, meta_idxs = NULL){
+    UseMethod("as_spectra", x)
 }
 
 
@@ -31,7 +31,7 @@ as.spectra = function(x, name_idx = NULL, meta_idxs = NULL){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
-as.spectra.matrix = function(x, name_idx = NULL, meta_idxs = NULL){
+as_spectra.matrix = function(x, name_idx = NULL, meta_idxs = NULL){
 
     if( is.null(name_idx) || name_idx == 0){
         name_idx = NULL
@@ -61,8 +61,8 @@ as.spectra.matrix = function(x, name_idx = NULL, meta_idxs = NULL){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
-as.spectra.data.frame = function(x, name_idx = NULL, meta_idxs = NULL){
-    as.spectra(as.matrix(x), name_idx = name_idx, meta_idxs = meta_idxs)
+as_spectra.data.frame = function(x, name_idx = NULL, meta_idxs = NULL){
+    as_spectra(as.matrix(x), name_idx = name_idx, meta_idxs = meta_idxs)
 }
 
 
@@ -81,7 +81,7 @@ as.spectra.data.frame = function(x, name_idx = NULL, meta_idxs = NULL){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' mat  = as.matrix(spec)
 as.matrix.spectra = function(x, fix_names = "none", ...) {
     r = value(x)
@@ -117,7 +117,7 @@ as.matrix.spectra = function(x, fix_names = "none", ...) {
 #' @param fix_names Use make.names to normalize names?
 #'                  Pick one: "none" "row" "col" "both".
 #' @param metadata boolean. Include spectral metadata? Defaults to TRUE
-#' @param ... extra parameters passed to the generic as.spectra
+#' @param ... extra parameters passed to the generic as_spectra
 #' @return data.frame with: sample_name, metadata (if any) and value.
 #'
 #' @author Jose Eduardo Meireles
@@ -125,7 +125,7 @@ as.matrix.spectra = function(x, fix_names = "none", ...) {
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' df   = as.data.frame(spec, fix_names = "none")
 as.data.frame.spectra = function(x,
                                  row.names = NULL,

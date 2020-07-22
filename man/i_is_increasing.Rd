@@ -4,26 +4,20 @@
 \alias{i_is_increasing}
 \title{Is increasing}
 \usage{
-i_is_increasing(x, stop = TRUE, call = FALSE)
+i_is_increasing(x)
 }
 \arguments{
 \item{x}{bands}
-
-\item{stop}{boolean. Throw error if test fails? Defaults to TRUE}
-
-\item{call}{boolean. If stop = TRUE, should the function call be printed?}
 }
 \value{
 boolean
 }
 \description{
-\code{i_is_increasing} tests if band values are increasing
+\code{i_is_increasing} tests if numerical values are increasing
 }
 \details{
 Many transform functions can only (or at least should only) be applied to
-spectra with monotonically varying (very likely increasing) band values.
-\code{i_is_increasing} tests that case and may throw an error
-or return the boolean result from the test.
+spectra with increasing band values. \code{i_is_increasing} tests for that.
 }
 \author{
 Jose Eduardo Meireles

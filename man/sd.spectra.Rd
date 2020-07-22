@@ -19,7 +19,7 @@ Forces keep_txt_meta = TRUE
 }
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 sd(spec)
 }
 \author{

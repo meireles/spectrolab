@@ -17,7 +17,7 @@ tuple of integers: c("n_samples", "n_bands")
 }
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 dim(spec)
 }
 \author{

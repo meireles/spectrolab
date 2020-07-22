@@ -23,7 +23,7 @@ Convert spectra to matrix
 }
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 mat  = as.matrix(spec)
 }
 \author{

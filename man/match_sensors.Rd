@@ -25,7 +25,7 @@ factors will be calculated. Defaults to 5}
 spectra object
 }
 \description{
-\code{match_sensors} scales value of sensors 1 (vis) and 3 (swir2)
+\code{match_sensors} scales values of sensors 1 (vis) and 3 (swir2)
 }
 \details{
 Splice_at has no default because sensor transition points vary between vendors
@@ -37,7 +37,7 @@ ASD ~ c(1001, 1801).
 
 If the factors used to match spectra are unreasonable, \code{match_sensors}
 will throw. Unreasonable factors (f) are defined as 0.5 > f > 3 or NaN,
-which  happens when the value for the right sensor is 0.
+which happens when the value for the right sensor is 0.
 }
 \section{Methods (by class)}{
 \itemize{

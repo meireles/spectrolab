@@ -3,7 +3,7 @@ library("spectrolab")
 
 context("Spectra transpose")
 
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 
 test_that("transposing spec throws", {
     expect_error( t(spec) )

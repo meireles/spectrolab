@@ -30,7 +30,7 @@ spectra
 \code{apply_by_band} is conceptually similar to apply(as.matrix(x), 2, fun),
 but returns a spectra object while dealing with metadata and attributes.
 Applying a function that does not act on numeric values may crash the function
-or render all value values NA.
+or render all values NA.
 }
 \section{Methods (by class)}{
 \itemize{
@@ -39,7 +39,7 @@ or render all value values NA.
 
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 spec_mean = apply_by_band(spec, mean)
 }
 \author{

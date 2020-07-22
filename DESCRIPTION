@@ -9,10 +9,10 @@ Authors@R: c(person("Jose Eduardo", "Meireles",email = "jemeireles@gmail.com", r
              )
 Description: Input/Output, processing and visualization of spectra taken with different spectrometers, including SVC (Spectra Vista), ASD and PSR (Spectral Evolution). Implements an S3 class 'spectra' that other packages can build on. Provides methods to access, plot, manipulate, splice sensor overlap, vector normalize and smooth spectra.
 License: GPL-3
-URL: https://CRAN.R-project.org/package=spectrolab
+URL: https://doi.org/10.5281/zenodo.3934575, https://CRAN.R-project.org/package=spectrolab
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Depends:
     R (>= 3.4),
     stats

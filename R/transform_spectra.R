@@ -9,7 +9,7 @@
 #' \code{apply_by_band} is conceptually similar to apply(as.matrix(x), 2, fun),
 #' but returns a spectra object while dealing with metadata and attributes.
 #' Applying a function that does not act on numeric values may crash the function
-#' or render all value values NA.
+#' or render all values NA.
 #'
 #' @param x spectra
 #' @param fun numeric function to be applied to each band.
@@ -25,7 +25,7 @@
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec_mean = apply_by_band(spec, mean)
 apply_by_band = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, name = NULL, ...){
     UseMethod("apply_by_band")
@@ -56,7 +56,7 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
     r  = apply(as.matrix(x), 2, f, ...)
     w  = bands(x)
     m0 = meta(x)
-    m = m0
+    m  = m0
 
     l = ifelse(is.vector(r), 1L, nrow(r))
     if(is.null(name)){
@@ -101,7 +101,7 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec_mean = aggregate(spec, by = names(spec), mean, try_keep_txt(mean))
 aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
 
@@ -126,7 +126,7 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
             suppressWarnings(stats::aggregate(meta(x), by, FUN_meta, ...))
         })
 
-    s = as.spectra(r, 1)
+    s = as_spectra(r, 1)
     meta(s) = m[ , -1]
 
     s
@@ -152,9 +152,9 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
 #' library(spectrolab)
 #'
 #' # Create dummy spectra datasets. Pretend that these are all different...
-#' s1 = as.spectra(spec_matrix_example, name_idx = 1)
-#' s2 = as.spectra(spec_matrix_example, name_idx = 1)
-#' s3 = as.spectra(spec_matrix_example, name_idx = 1)
+#' s1 = as_spectra(spec_matrix_example, name_idx = 1)
+#' s2 = as_spectra(spec_matrix_example, name_idx = 1)
+#' s3 = as_spectra(spec_matrix_example, name_idx = 1)
 #'
 #' # combine 2 spectra objects
 #' s_1and2 = combine(s1, s2)
@@ -218,7 +218,7 @@ combine.spectra = function(s1, s2){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec_list = split(spec, names(spec))
 split.spectra = function(x, f, drop = FALSE, ...){
 
@@ -261,7 +261,7 @@ split.spectra = function(x, f, drop = FALSE, ...){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #'
 #' # remove spec of species with less than 4 samples
 #' spec = subset_by(spec, by = names(spec), n_min = 4, n_max = Inf)
@@ -343,44 +343,6 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
     ########################################
     x
 
-    # ########################################
-    # ## Subset based on n_max
-    # ########################################
-    # excl_n_by = table(by) - n_max
-    # excl_n_by = excl_n_by[ excl_n_by > 0 ]
-    #
-    # # Compute indices to exclude
-    # excl_idx = sapply(names(excl_n_by), function(x){
-    #     w = which(by == x)
-    #     if(random){
-    #         p = sample(w, excl_n_by[[x]])
-    #     } else {
-    #         p = utils::tail(w, n = excl_n_by[[x]])
-    #     }
-    #     p
-    # })
-    # excl_idx = unlist(excl_idx)
-    #
-    #
-    # # Exclude indices from `x` and `by` if there's something to exclude
-    # if(length(excl_n_by) > 0){
-    #     x  = x[ - excl_idx ,  ]
-    #     by = by[ - excl_idx ]
-    # }
-    #
-    # ########################################
-    # ## Subset based on n_min
-    # ########################################
-    #
-    # tbl_by = table(by)
-    # keep   = names(tbl_by[ tbl_by >= n_min ])
-    #
-    # if(length(keep) == 0){
-    #     message("chosen `n_min` excluded all spectra. returning NULL.")
-    #     return(NULL)
-    # }
-    #
-    # x[ keep, ]
 }
 
 
@@ -390,7 +352,8 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
 
 #' Vector normalize spectra
 #'
-#' \code{normalize} returns a spectra obj with vector normalized values
+#' \code{normalize} returns a spectra obj with vector normalized values.
+#' Normalization value for each spectrum computed as sqrt(sum(x^2))
 #'
 #' @param x spectra object. bands must be strictly increasing
 #' @param quiet boolean. Warn about change in y value units? Defaults to FALSE
@@ -402,7 +365,7 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec = normalize(spec)
 normalize = function(x, quiet = FALSE, ...){
     UseMethod("normalize")
@@ -413,7 +376,9 @@ normalize = function(x, quiet = FALSE, ...){
 #' @export
 normalize.spectra = function(x, quiet = FALSE, ...){
 
-    i_is_increasing(bands(x), stop = TRUE)
+    if(! i_is_increasing(bands(x))){
+        stop("normalize requires strictly increasing band values.\nMatch sensor overlap before attempting to normalize the spectra.")
+    }
 
     if(!quiet){
         message("Vector nomalizing spectra...")
@@ -424,14 +389,9 @@ normalize.spectra = function(x, quiet = FALSE, ...){
         }
     }
 
-    refl            = value(x)
-    refl_squared    = refl * refl
-    vec_ones        = rep.int(1L, ncol(refl_squared))
-    spec_sq_rowsum  = refl_squared %*% vec_ones
-    magnitudes      = as.vector(sqrt(spec_sq_rowsum))
-
-    # normalize and construct a `spectra` object
-    x[] = i_value(refl / magnitudes)
+    refl        = value(x)
+    magnitudes  = sqrt(apply(refl^2, 1, sum))
+    x[]         = refl / magnitudes
 
     # add a magnitute attribute to the`spectra` object
     meta(x, "normalization_magnitude") = magnitudes
@@ -482,17 +442,21 @@ smooth.default = function(x, ...){
 #' @examples
 #' library(spectrolab)
 #'
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec = smooth(spec, parallel = FALSE)
 smooth.spectra = function(x, method = "spline", ...){
-    i_is_increasing(bands(x), stop = TRUE)
+
+    if(! i_is_increasing(bands(x))){
+        stop("smooth requires strictly increasing band values.\nMatch sensor overlap before attempting to smooth the spectra.")
+        }
+
 
     if(method == "spline") {
-        s   = i_smooth_spline_spectra(x, ...)
+        s   = smooth_spline(x, ...)
         x[] = do.call(rbind, sapply(s, `[`, "y"))
         return(x)
     } else if (method == "moving_average") {
-        i_smooth_mav_spectra(x, ...)
+        smooth_moving_avg(x, ...)
     }
 }
 
@@ -510,9 +474,9 @@ smooth.spectra = function(x, method = "spline", ...){
 #' @importFrom stats smooth.spline
 #' @importFrom parallel detectCores mclapply
 #'
-#' @keywords internal
 #' @author Jose Eduardo Meireles
-i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
+#' @export
+smooth_spline = function(x, parallel = TRUE, ...) {
 
     if( !is_spectra(x) ){
         stop("Object must be of class spectra")
@@ -559,9 +523,9 @@ i_smooth_spline_spectra = function(x, parallel = TRUE, ...) {
 #' @param save_wvls_to_meta boolean. keep lost ends of original wvls in metadata
 #' @return spectra object
 #'
-#' @keywords internal
 #' @author Jose Eduardo Meireles
-i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
+#' @export
+smooth_moving_avg = function(x, n = NULL, save_wvls_to_meta = TRUE){
     if( !is_spectra(x) ){
         stop("Object must be of class spectra")
     }
@@ -594,7 +558,7 @@ i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
         message("Smoothing transformed some values into NAs and those bands were removed")
 
         if(save_wvls_to_meta){
-            message("However, the original value values for those bands were kept as metadata")
+            message("However, the original values for those bands were kept as metadata")
 
             meta(x) = matrix(r[ , w],
                              nrow = nrow(x),
@@ -611,14 +575,10 @@ i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
 
 #' Resample spectra
 #'
-#' \code{resample} returns spectra resampled to new bands using smoothing.
+#' \code{resample} returns spectra resampled to new bands using spline smoothing.
 #' Possible to increase or decrease the spectral resolution.
 #'
-#' The function runs a couple basic checks when resampling, but they are not
-#' exhaustive, so look at the data before resampling. The implemented checks are:
-#' 1. Stop if trying to predict bands outside of the original range and,
-#' 2. Warn if a gap is found in bands. E.g. wvls are mostly at a 1nm
-#'    resolution but go from 1530 to 1820 in the infrared. Does not check for NAs
+#' \code{resample} doesn't predict values for bands outside of the original range.
 #'
 #' @param x spectra object. bands must be strictly increasing
 #' @param new_wvls numeric vector of bands to sample from spectra
@@ -632,7 +592,7 @@ i_smooth_mav_spectra = function(x, n = NULL, save_wvls_to_meta = TRUE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec = resample(spec, new_wvls = seq(400, 2400, 0.5), parallel = FALSE)
 resample = function(x, new_wvls, ...) {
     UseMethod("resample")
@@ -647,28 +607,13 @@ resample.spectra = function(x, new_wvls, ...) {
 
     ## Simply subset the current spectra if all new_wvls are a in the set of
     ## current bands
-
     if(all(new_wvls %in% w)){
         return(x[ , new_wvls ])
     }
 
     ## Enforce increasing bands in spectra object
-    i_is_increasing(w, stop = TRUE)
-
-
-    ## Warn about long gaps in bands
-    ## Made up these thresholds, need to think harder
-    d = diff(w)
-    l = d > quantile(d, 0.5) * 6 |
-        d > quantile(d, 0.9) * 3 |
-        d > 20
-
-    if(any(l)){
-        for(i in which(l)){
-            warning("Found long gap between bands ",
-                    w[i - 1], " and ", w[ i + 1], " (", d[i], ")", "\n",
-                    "values resampled in this gap should probably be converted to NAs.")
-        }
+    if(! i_is_increasing(bands(x))){
+        stop("resample requires strictly increasing band values.\nMatch sensor overlap before attempting to resample the spectra.")
     }
 
     ## Do not predict points outside the original band range
@@ -680,20 +625,15 @@ resample.spectra = function(x, new_wvls, ...) {
 
     ## Smooth and predict
     message("Using spline to predict value at new bands...")
-    s = i_smooth_spline_spectra(x, ...)
+    s = smooth_spline(x, ...)
     f = function(o, p){ stats::predict(o, p)[["y"]] }
     g = lapply(X = s, FUN = f, p = new_wvls)
-    d = i_value( do.call(rbind, g) )
     message("Beware the spectra are now partially smoothed.")
 
+    ## Construct new spectra object and return
+    spectra(value = do.call(rbind, g),
+            bands = new_wvls,
+            names = names(x),
+            meta  = meta(x))
 
-    ## band number may change, so using the "safe" setter will fail
-    ## Instead of reaching inside the spectra object, I am using the "unsafe"
-    ## version of the band setter.
-    bands(x, unsafe = TRUE) = new_wvls
-
-    ## THIS IS BAD. Figure out an "unsafe" version of the value setter
-    x[["value"]] = d
-
-    x
 }

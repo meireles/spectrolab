@@ -25,7 +25,7 @@ Pick one: "none" "row" "col" "both".}
 
 \item{metadata}{boolean. Include spectral metadata? Defaults to TRUE}
 
-\item{...}{extra parameters passed to the generic as.spectra}
+\item{...}{extra parameters passed to the generic as_spectra}
 }
 \value{
 data.frame with: sample_name, metadata (if any) and value.
@@ -37,7 +37,7 @@ returned.
 }
 \examples{
 library(spectrolab)
-spec = as.spectra(spec_matrix_example, name_idx = 1)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
 df   = as.data.frame(spec, fix_names = "none")
 }
 \author{

@@ -3,7 +3,7 @@ library("spectrolab")
 
 context("Spectra subsetting by")
 
-spec   = as.spectra(spec_matrix_example, name_idx = 1)
+spec   = as_spectra(spec_matrix_example, name_idx = 1)
 by_def = names(spec)
 by_rnd = c(rep(1, 5), rep(2, 10), rep(3, 35))
 

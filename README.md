@@ -1,8 +1,11 @@
 [![Build Status](https://travis-ci.org/meireles/spectrolab.svg?branch=master)](https://travis-ci.org/meireles/spectrolab)
 [![Coverage Status](https://coveralls.io/repos/github/meireles/spectrolab/badge.svg?branch=master)](https://coveralls.io/github/meireles/spectrolab?branch=master)
 [![CRAN Status](https://www.r-pkg.org/badges/version/spectrolab)](https://cran.r-project.org/package=spectrolab)
+[![DOI](https://zenodo.org/badge/73844175.svg)](https://zenodo.org/badge/latestdoi/73844175)
 
 # spectrolab
+
+Spectrolab is an R package that provides a class and methods for processing and visualizing high resolution spectra in R. It is licensed under GPL-3.
 
 ``spectrolab`` 0.09 **Breaks Backwards Compatibility!**
 

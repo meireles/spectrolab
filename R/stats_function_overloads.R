@@ -17,7 +17,7 @@
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' mean(spec)
 mean.spectra = function(x, na.rm = TRUE, keep_txt_meta = TRUE, ...){
     apply_by_band(x, base::mean, na.rm = na.rm, keep_txt_meta = keep_txt_meta, ...)
@@ -40,7 +40,7 @@ mean.spectra = function(x, na.rm = TRUE, keep_txt_meta = TRUE, ...){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' median(spec)
 median.spectra = function(x, na.rm = TRUE, keep_txt_meta = TRUE, ...){
     apply_by_band(x, stats::median, na.rm = na.rm, keep_txt_meta = keep_txt_meta, ...)
@@ -102,7 +102,7 @@ var.default = stats::var
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' var(spec)
 var.spectra = function(x, y = NULL, na.rm = TRUE, use){
     apply_by_band(x, stats::var, na.rm = na.rm, keep_txt_meta = TRUE)
@@ -144,7 +144,7 @@ sd.default = stats::sd
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' sd(spec)
 sd.spectra = function(x, na.rm = TRUE){
     apply_by_band(x, stats::sd, na.rm = na.rm, keep_txt_meta = TRUE)
@@ -153,12 +153,13 @@ sd.spectra = function(x, na.rm = TRUE){
 
 #' Compute spectra quantiles
 #'
-#' \code{quantile} computes quantiles by band and returns them as `spectra`
+#' \code{quantile} computes quantiles by band and returns them as `spectra`.
 #'
 #' @param x spectra object. Must have at least the same number of sample that
 #'          length(probs) has.
 #' @param probs Probabilities to compute quantiles. Must be a vector of numerics
 #'              between 0.0 and 1.0. Defaults to c(0.025, 0.25, 0.5, 0.75, 0.975).
+#'              Duplicated probs will be removed.
 #' @param na.rm remove NAs before computing quantiles? Defaults to TRUE
 #' @param names names for each quantile spectrum. If NULL (default), names are set
 #'              to probs. A char vector should otherwise be given. Recyled.
@@ -172,7 +173,7 @@ sd.spectra = function(x, na.rm = TRUE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' quantile(spec, probs = c(0.25, 0.75))
 quantile.spectra = function(x,
                             probs = c(0.025, 0.25, 0.5, 0.75, 0.975),
@@ -186,12 +187,7 @@ quantile.spectra = function(x,
     }
 
     ## probs should not be duplicated
-    w = ! duplicated(probs)
-
-    if(any(!w)){
-        message("Duplicated probs being excluded: ", probs[ !w ])
-        probs = probs[ w ]
-    }
+    probs = probs[ ! duplicated(probs) ]
 
     if(nrow(x) < length(probs)){
         stop("There are less samples (", nrow(x),") than probabilities (",  length(probs), ") for `quantile` to makes sense.")

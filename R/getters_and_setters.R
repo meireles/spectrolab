@@ -62,7 +62,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #' @param j band labels, as numeric or character
 #'          or a logical vector of length ncol(x). Do not use indexes!
 #' @param simplify Boolean. If TRUE (default), single band selections
-#'                 are returned as a named vector of value values
+#'                 are returned as a named vector of values
 #' @return usually a spectra object, but see param `simplify`
 #'
 #' @author Jose Eduardo Meireles
@@ -70,7 +70,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' head(names(spec), n = 3)
 #' # by name
 #' spec1 = spec[ "species_7" , ]
@@ -100,7 +100,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
     }
 }
 
-#' Assign value values to spectra
+#' Assign values to spectra
 #'
 #' \code{`[<-`} assigns the rhs values to spectra
 #'
@@ -117,36 +117,10 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec[ , 400:500] = spec[ , 400:500] * 1.2
 #' spec
 `[<-.spectra` = function(x, i, j, value){
-
-    ####################################################
-    ###   ORIGINAL setter
-
-    # if(missing(i)){ i = NULL }
-    # if(missing(j)){ j = NULL }
-    # m = i_match_ij_spectra(x = x, i = i, j = j, allow_negative = FALSE)
-    # l = lapply(m, length)
-    #
-    # if(is_spectra(value)){
-    #     value = value(value)
-    # }
-    #
-    # ## In case `value` is a scalar:
-    # ##   1. Do not check for dimension constraints, which leads to
-    # ##   2. assiging `value` to all elements in the value matrix
-    # if(is.vector(value) && length(value) == 1){
-    #     l = list(NULL)   ## assign the two elements in `l` to NULL
-    # }
-    #
-    # x$value[ m[["r_idx"]], m[["c_idx"]] ] = i_value(value,
-    #                                                             nbands = l[["c_idx"]],
-    #                                                             nsample = l[["r_idx"]])
-    # x
-    ####################################################
-
 
     if(missing(i)){ i = NULL }
     if(missing(j)){ j = NULL }
@@ -155,8 +129,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
     l = lapply(m, length)
 
 
-
-    ## In case "value" is a spectra object, every compoennt of spectra must be updated
+    ## In case "value" is a spectra object, every component of spectra must be updated
     if(is_spectra(value)){
         if( !identical(bands(x)[m$c_idx], bands(value))){
             stop("wavelenegths not compatible")
@@ -207,7 +180,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' is.matrix(value(spec))
 value = function(x){
     UseMethod("value")
@@ -226,7 +199,7 @@ value = function(x){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' # scale all refletance values by 2
 #' value(spec) = value(spec) * 2
 `value<-` = function(x, value){
@@ -270,7 +243,7 @@ value.spectra = function(x){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' names(spec)
 names.spectra = function(x){
     x$names
@@ -294,7 +267,7 @@ names.spectra = function(x){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' names(spec) = toupper(names(spec))
 `names<-.spectra` = function(x, value){
     x$names = i_names(value, nrow(x), prefix = NULL)
@@ -321,7 +294,7 @@ names.spectra = function(x){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' head(bands(spec))
 bands = function(x, min = NULL, max = NULL, return_num = TRUE){
     UseMethod("bands")
@@ -333,7 +306,6 @@ bands = function(x, min = NULL, max = NULL, return_num = TRUE){
 #' \code{bands} sets band labels of lhs to the rhs values
 #'
 #' @param x spectra object (lhs)
-#' @param unsafe boolean. Skip length safety check? Defaults to FALSE
 #' @param value rhs
 #' @return nothing. called for its side effect.
 #'
@@ -342,9 +314,9 @@ bands = function(x, min = NULL, max = NULL, return_num = TRUE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' bands(spec) = bands(spec) / 1000
-`bands<-` = function(x, unsafe = FALSE, value){
+`bands<-` = function(x, value){
     UseMethod("bands<-")
 }
 
@@ -372,13 +344,8 @@ bands.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
 
 #' @describeIn bands<- Set spectra band labels
 #' @export
-`bands<-.spectra` = function(x, unsafe = FALSE, value){
-
-    if(unsafe){
-        x$bands = i_bands(value, NULL)
-    } else {
-        x$bands = i_bands(value, ncol(x))
-    }
+`bands<-.spectra` = function(x, value){
+    x$bands = i_bands(value, ncol(x))
     x
 }
 
@@ -403,7 +370,7 @@ bands.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec = normalize(spec)
 #' meta(spec, "normalization_magnitude")
 meta = function(x, label, sample, simplify = FALSE, quiet = TRUE){
@@ -425,7 +392,7 @@ meta = function(x, label, sample, simplify = FALSE, quiet = TRUE){
 #'
 #' @examples
 #' library(spectrolab)
-#' spec = as.spectra(spec_matrix_example, name_idx = 1)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' meta(spec, "random") = rnorm(nrow(spec), mean(10), sd = 2)
 `meta<-` = function(x, label, sample, value){
     UseMethod("meta<-")
