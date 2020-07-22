@@ -21,6 +21,13 @@ library("devtools")
 install_github("meireles/spectrolab")
 ```
 
+Or from CRAN using:
+
+```R
+install.packages("spectrolab")
+```
+
+
 ## Using `spectrolab`
 
 This vignette [introduces spectrolab](https://github.com/meireles/spectrolab/blob/master/vignettes/introduction_to_spectrolab.pdf), and walks you through the basics of the package.
