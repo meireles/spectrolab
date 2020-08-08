@@ -9,7 +9,7 @@ Spectrolab is an R package that provides a class and methods for processing and 
 
 ``spectrolab`` 0.09 **Breaks Backwards Compatibility!**
 
-The function `wavelengths` is now `bands` and the function `reflectance` is now `value`. We suggest that you update your code to reflect that change. If you really need to use the older api, install ``spectrolab`` from the `legacy` branch.
+The function `wavelengths` is now `bands` and the function `reflectance` is now `value`. We suggest that you update your code to reflect that change. If you really need to use the older API, install ``spectrolab`` from the `legacy` branch.
 
 
 ## Installation
