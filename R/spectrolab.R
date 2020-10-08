@@ -1,5 +1,3 @@
-usethis::use_package("devtools")
-
 descrip             = readLines("DESCRIPTION")
 spectrolab_version  = tolower(descrip[ grep("Version:", descrip) ])
 spectrolab_citation = format(citation("spectrolab"), style = "text")
