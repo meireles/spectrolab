@@ -1,3 +1,15 @@
+# spectrolab 0.0.10 (2020-10-08)
+
+## major
+* Breaking backwards compatibility! 
+* as.spectra is now as_spectra
+* deprecated ratio.spectra
+* removed dependency from devtools
+
+## minor
+* refactored resampple, normalize, print, getter & setter
+* updated vignette
+
 # spectrolab 0.0.9 (2020-05-21)
 
 ## major
