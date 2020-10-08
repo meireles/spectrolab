@@ -1,5 +1,3 @@
-usethis::use_package("prospectr")
-
 #' Read files from various formats into `spectra`
 #'
 #' @param path Path to directory or input files
