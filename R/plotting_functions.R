@@ -1,7 +1,3 @@
-usethis::use_package("shiny")
-usethis::use_package("shinyjs")
-usethis::use_package("RColorBrewer")
-
 #' Plot spectra
 #'
 #' \code{plot} plots spectra.
