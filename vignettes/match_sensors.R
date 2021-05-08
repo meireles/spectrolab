@@ -19,18 +19,25 @@ radiance_raw = read_spectra(path   = path_raw,
 
 
 # Sensor overlaps marked with vertical dashed lines
+lwd = 0.5
+cex = 0.7
 par(mfrow = c(2, 1))
 
-plot(reflect_raw, main = "Reflectance", lwd = 0.5, cex.main = 0.7, cex.lab = 0.7, cex.axis = 0.7)
-abline(v = c(990, 1900), col = "red", lty = 2, lwd = 0.5)
 
-plot(radiance_raw, main = "Radiance", lwd = 0.5, cex.main = 0.7, cex.lab = 0.7, cex.axis =0.7)
-abline(v = c(990, 1900), col = "red", lty = 2, lwd = 0.5)
+plot(reflect_raw, main = "Reflectance",
+     lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
+abline(v = c(990, 1900), col = "red", lty = 2, lwd = lwd)
 
-## ---- fig.height=6, fig.width=4, fig.align='center', echo=TRUE----------------
+plot(radiance_raw, main = "Radiance",
+     lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
+abline(v = c(990, 1900), col = "red", lty = 2, lwd = lwd)
 
+## ---- fig.height=6, fig.width=4, fig.align='center', echo=TRUE, message=FALSE----
+
+# Boundaries between sensors
 splice_bands = c(990, 1900)
 
+# Match the reflectance and radiance data
 reflect_matched = match_sensors(x               = reflect_raw,
                                 splice_at       = splice_bands,
                                 interpolate_wvl = c(5, 1))
@@ -52,6 +59,36 @@ plot(reflect_matched, col = "red", add = TRUE,
 
 
 plot(radiance_raw, main = "Radiance",
+     lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
+
+plot(radiance_matched, col = "red", add = TRUE,
+     lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
+
+## ---- fig.height=6, fig.width=4, fig.align='center', echo=TRUE----------------
+path_moc = system.file("extdata/svc_raw_and_overlap_matched_serbin/SVC_Files_MOC", 
+                       package = "spectrolab") 
+reflect_moc  = read_spectra(path   = path_moc,
+                            format = "SIG",
+                            type   = "target_reflectance")
+
+radiance_moc = read_spectra(path   = path_moc,
+                            format = "SIG",
+                            type   = "target_radiance")
+
+
+lwd = 0.5
+cex = 0.7
+par(mfrow = c(2, 1))
+
+
+plot(reflect_moc, main = "Reflectance", col = "black",
+     lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
+
+plot(reflect_matched, col = "red", add = TRUE,
+     lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
+
+
+plot(radiance_moc, main = "Radiance", col = "black",
      lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
 
 plot(radiance_matched, col = "red", add = TRUE,
