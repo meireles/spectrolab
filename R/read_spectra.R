@@ -96,7 +96,7 @@ read_spectra = function(path,
 
     ## error if bad spectra fiters out all file names
     if(length(i_path) == 0){
-        stop("No paths left after removeing bad spectra. Check your `exclude_if_ends_with` param")
+        stop("No paths left after removing bad spectra. Check your `exclude_if_ends_with` param")
     }
 
 
