@@ -48,10 +48,14 @@ abline(v = c(990, 1900), col = "red", lty = 2, lwd = 0.5)
 
 # The solution
 
+Use the function `match_sensors` to splice the sensor overlap regions as shown below. You must pass the boundary between sensors using the `splice_at` argument. It is **critical** that you get those bands right and every instrument (even from the same vendor) is different. You can use `plot_interactive` zoom into a particular spectral region and decide what the `splice_at` values should be.
+
 ```{r, fig.height=6, fig.width=4, fig.align='center', echo=TRUE}
 
+# Boundaries between sensors
 splice_bands = c(990, 1900)
 
+# Match the reflectance and radiance data
 reflect_matched = match_sensors(x               = reflect_raw,
                                 splice_at       = splice_bands,
                                 interpolate_wvl = c(5, 1))
