@@ -23,7 +23,8 @@ Unspliced spectra collected with a 3-sensor instrument (e.g. an SVC) may look li
 ```{r, fig.height=6, fig.width=4, fig.align='center', echo=TRUE}
 
 # Path to raw (unmatched) spectra
-path_raw = system.file("extdata/svc_raw_and_overlap_matched_serbin/SVC_Files", 
+path_raw = system.file("extdata",
+                       "svc_raw_and_overlap_matched_serbin/SVC_Files/", 
                        package = "spectrolab") 
 
 # Read spectra as reflectance and radiance
@@ -91,7 +92,8 @@ plot(radiance_matched, col = "red", add = TRUE,
 And we can check the results from spectrolab's `match_sensors` against SVC's proprietary matching algorithm. 
 
 ```{r, fig.height=6, fig.width=4, fig.align='center', echo=TRUE}
-path_moc = system.file("extdata/svc_raw_and_overlap_matched_serbin/SVC_Files_MOC", 
+path_moc = system.file("extdata",
+                       "svc_raw_and_overlap_matched_serbin/SVC_Files_MOC/", 
                        package = "spectrolab") 
 reflect_moc  = read_spectra(path   = path_moc,
                             format = "SIG",
