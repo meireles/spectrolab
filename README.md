@@ -7,11 +7,6 @@
 
 Spectrolab is an R package that provides a class and methods for processing and visualizing high resolution spectra in R. It is licensed under GPL-3.
 
-``spectrolab`` 0.09 **Breaks Backwards Compatibility!**
-
-The function `wavelengths` is now `bands` and the function `reflectance` is now `value`. We suggest that you update your code to reflect that change. If you really need to use the older API, install ``spectrolab`` from the `legacy` branch.
-
-
 ## Installation
 
 You can install spectrolab from Github using:
@@ -27,13 +22,15 @@ Or from CRAN using:
 install.packages("spectrolab")
 ```
 
-
 ## Using `spectrolab`
 
 This vignette [introduces spectrolab](https://github.com/meireles/spectrolab/blob/master/vignettes/introduction_to_spectrolab.pdf), and walks you through the basics of the package.
+
+This vignette shows how to [match (splice) sensors](https://github.com/meireles/spectrolab/blob/master/vignettes/match_sensors.pdf).
+
 
 ## Contributing
 
 In an effort to keep things tidy and in running order, __direct commits to master are discouraged__. The master branch of the "meireles/spectrolab" fork is protected.
 
-I also use a [__pre-commit hook__](https://stackoverflow.com/questions/40462111/git-prevent-commits-in-master-branch) in my local repo that prevents me from breaking my own policy! I suggest you do the same. 
+I also use a [__pre-commit hook__](https://stackoverflow.com/questions/40462111/git-prevent-commits-in-master-branch) in my local repo that prevents me from breaking my own policy! I suggest you do the same.

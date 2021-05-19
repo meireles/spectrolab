@@ -1,3 +1,11 @@
+# spectrolab 0.0.11 (2021-05-18)
+
+## major
+* Fixed bug in the match_sensors function 
+
+## minor
+* Created a vignette for the match_sensors function
+
 # spectrolab 0.0.10 (2020-10-08)
 
 ## major
