@@ -4,13 +4,15 @@
 \alias{i_bands}
 \title{Internal band constructor for spectra}
 \usage{
-i_bands(x, nbands = NULL)
+i_bands(x, nbands = NULL, warn_dup_band = FALSE)
 }
 \arguments{
 \item{x}{vector of bands. Either numeric or character}
 
 \item{nbands}{Integer of expected number of bands.
 If NULL (default) checking is skipped.}
+
+\item{warn_dup_band}{Warn about duplicated bands?}
 }
 \value{
 vector of bands

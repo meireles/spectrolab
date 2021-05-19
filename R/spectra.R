@@ -103,11 +103,14 @@ i_names = function(x, nsample = NULL, prefix = "spec_"){
 #' @param x vector of bands. Either numeric or character
 #' @param nbands Integer of expected number of bands.
 #'                     If NULL (default) checking is skipped.
+#' @param warn_dup_band Warn about duplicated bands?
 #' @return vector of bands
+#'
+#' @importFrom stats runif
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_bands = function(x, nbands = NULL) {
+i_bands = function(x, nbands = NULL, warn_dup_band = FALSE) {
     if(! is.vector(x)) {
         stop("bands names must be in a vector")
     }
@@ -129,17 +132,25 @@ i_bands = function(x, nbands = NULL) {
         position = d
         original = y[d]
 
-        y[d] = y[d] + 0.001 * min(abs(diff(y))) # add 0.1% of smallest band diff
+        # Need to add a tiny percent (between 0.001% and 0.0012%) of smallest band diff
+        # to the duplicated bands
+        # Sort ensures that dups that show up later (order-wise) will have larger values
+        # when a band has more than one duplicate
+        scalars  = sort(runif(length(d), min = 0.00001, max = 0.00012))
+
+        y[d] = y[d] + scalars * min(abs(diff(y[-d])))
 
         updated = y[d]
 
-        cat("Duplicated band values are not allowed!\n")
-        cat("Bands updated as follows:\n")
-        print(data.frame("band_position"  = position,
-                         "original_value" = original,
-                         "updated_value"  = updated,
-                         check.names = FALSE),
-              row.names = FALSE)
+        if(warn_dup_band){
+            cat("Duplicated band values are not allowed!\n")
+            cat("Bands updated as follows:\n")
+            print(data.frame("band_position"  = position,
+                             "original_value" = original,
+                             "updated_value"  = format(updated, digits = 12),
+                             check.names = FALSE),
+                  row.names = FALSE)
+        }
     }
 
     y
