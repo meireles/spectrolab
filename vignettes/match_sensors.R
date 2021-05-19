@@ -1,26 +1,8 @@
----
-title: "Matching sensor overlap"
-author: "Jose Eduardo Meireles"
-output:
-  rmarkdown::pdf_document:
-vignette: > 
-  %\VignetteIndexEntry{How to match the sensor overlaps}
-  %\VignetteEngine{knitr::rmarkdown} 
-  %\VignetteEncoding{UTF-8}
----
-
-```{r setup, include=FALSE}
+## ----setup, include=FALSE-----------------------------------------------------
 library("spectrolab")
 knitr::opts_chunk$set(echo = TRUE)
-```
 
-# The problem
-
-Instruments may measure different spectral ranges using different sensors, resulting in abrupt "jumps" in the reflectance or radiance data. In such cases, the regions between sensors need to be matched, i.e. spliced together. 
-
-Umatched spectra collected with a 3-sensor instrument, such as the SVC HR1024, may look like this:
-
-```{r, fig.height=6, fig.width=4, fig.align='center', echo=TRUE}
+## ---- fig.height=6, fig.width=4, fig.align='center', echo=TRUE----------------
 
 # Path to raw (unmatched) spectra
 path_raw = system.file("extdata/svc_raw_and_overlap_matched_serbin/SVC_Files/",
@@ -49,13 +31,8 @@ abline(v = c(990, 1900), col = "red", lty = 2, lwd = lwd)
 plot(radiance_raw, main = "Radiance",
      lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
 abline(v = c(990, 1900), col = "red", lty = 2, lwd = lwd)
-```
 
-# The solution
-
-Use the function `match_sensors` to splice the sensor overlap regions as shown below. You must pass the boundary between sensors using the `splice_at` argument. It is **critical** that you get those bands right and every instrument (even from the same vendor) is different. You can use `plot_interactive` zoom into a particular spectral region and decide what the `splice_at` values should be.
-
-```{r, fig.height=6, fig.width=4, fig.align='center', echo=TRUE}
+## ---- fig.height=6, fig.width=4, fig.align='center', echo=TRUE----------------
 
 # Boundaries between sensors
 splice_bands = c(990, 1900)
@@ -86,11 +63,8 @@ plot(radiance_raw, main = "Radiance",
 
 plot(radiance_matched, col = "red", add = TRUE,
      lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
-```
 
-And we can check the results from spectrolab's `match_sensors` against SVC's proprietary matching algorithm. 
-
-```{r, fig.height=6, fig.width=4, fig.align='center', echo=TRUE}
+## ---- fig.height=6, fig.width=4, fig.align='center', echo=TRUE----------------
 path_moc = system.file("extdata/svc_raw_and_overlap_matched_serbin/SVC_Files_moc/",
                        package = "spectrolab")
 
@@ -118,4 +92,4 @@ plot(radiance_moc, main = "Radiance", col = "black",
 
 plot(radiance_matched, col = "red", add = TRUE,
      lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
-```
+
