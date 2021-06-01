@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Instruments may measure different spectral ranges using different sensors, resulting in abrupt "jumps" in the reflectance or radiance data. In such cases, the regions between sensors need to be matched, i.e. spliced together. 
 
-Umatched spectra collected with a 3-sensor instrument, such as the SVC HR1024, may look like this:
+Unmatched spectra collected with a 3-sensor instrument, such as the SVC HR1024, may look like this:
 
 ```{r, fig.height=6, fig.width=4, fig.align='center', echo=TRUE}
 
@@ -53,12 +53,29 @@ abline(v = c(990, 1900), col = "red", lty = 2, lwd = lwd)
 
 # The solution
 
-Use the function `match_sensors` to splice the sensor overlap regions as shown below. You must pass the boundary between sensors using the `splice_at` argument. It is **critical** that you get those bands right and every instrument (even from the same vendor) is different. You can use `plot_interactive` zoom into a particular spectral region and decide what the `splice_at` values should be.
+Use the function `match_sensors` to splice the sensor overlap regions as shown below.
+
+You must pass the boundary between sensors using the `splice_at` argument. It is **critical** that you get those bands right (or very close) and every instrument (even from the same vendor) is different. 
+
+You can use `plot_interactive` zoom into a particular spectral region and decide what the `splice_at` values should be. You can also use the function `guess_splice_at` to estimates these bands for you but keep in mind that these are **guesses**.
 
 ```{r, fig.height=6, fig.width=4, fig.align='center', echo=TRUE}
 
-# Boundaries between sensors
-splice_bands = c(990, 1900)
+# Spectrolab's guess of what the splice bands are.
+
+splice_bands_guess = guess_splice_at(reflect_raw)
+splice_bands_guess
+
+# However, you should also visually inspect the spectra to determine what the
+# boundaries between sensors are.
+
+# Finally, if you know what those sensor bounds should be (say, they're given by
+# the manufacturer), just use those numbers instead of spectrolab's guess.
+
+splice_bands_from_manufacturer = c(990, 1900)
+
+splice_bands = splice_bands_from_manufacturer
+
 
 # Match the reflectance and radiance data
 reflect_matched = match_sensors(x               = reflect_raw,

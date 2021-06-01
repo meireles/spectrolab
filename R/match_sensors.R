@@ -25,6 +25,74 @@ i_find_sensor_overlap_bounds = function(x, idx = TRUE){
     as.data.frame(bounds)
 }
 
+
+#' Guess splice bands (bounds between senors)
+#'
+#' @param x spectra object
+#' @return vector of band values
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+guess_splice_at = function(x){
+    UseMethod("guess_splice_at")
+}
+
+
+#' @describeIn guess_splice_at Guess splice bands (bounds between senors)
+#' @export
+guess_splice_at.spectra = function(x){
+
+    w         = bands(x)
+    b         = i_find_sensor_overlap_bounds(w, idx = FALSE)
+    nb        = ncol(b)
+
+    if(nb > 1){
+
+        # If there is an overlap (i.e. SVC or PSR)
+
+        splice_at = rep(NA, nb - 1)
+
+        for(i in seq(nb - 1)){
+            scalar       = 2 * i # Use most of the right sensor instead of the left one
+            splice_at[i] = (b[1, i + 1] * scalar + b[2, i]) / (scalar + 1)
+        }
+
+    } else {
+
+        message("Guessing sensor bounds is unreliable so please visually inspect your spectra.")
+
+        # If there is no overlap (e.g. ASD), you may see a "jump" between adjacent
+        # bands.
+
+        # Trim ends
+        p = 0.10             # percent to trim
+        r = range(bands(x))
+        t = diff(r) * p
+        y = x[ , bands(x, r[1] + t, r[2] - t)]
+
+        # Take the third derivative of the spectra and calculate its average
+        # by band
+        z = apply(y, 1, diff, difference = 3)
+        e = rowMeans(abs(z))
+
+        # Find the band names that exceeds x SDs from the mean
+        s = 6
+        m = mean(e) + s * sd(e)
+        e = e[ e >= m ]
+        g = sort(as.numeric(names(e)))
+
+        # Now there are "clusters" of band names that meed that the mean + x SD
+        # criterion. I will assume that sensors are not more than j units (e.g. nm)
+        # apart so I can return the smallest band name from each cluster
+
+        j         = 100
+        splice_at = g[ c(TRUE, diff(g) >= j) ]
+    }
+    return(splice_at)
+}
+
+
+
 #' Trim sensor overlap
 #'
 #' @param x spectra object
@@ -36,12 +104,33 @@ i_find_sensor_overlap_bounds = function(x, idx = TRUE){
 #' @author Jose Eduardo Meireles
 i_trim_sensor_overlap = function(x, splice_at){
 
-    w = bands(x)
-    b = i_find_sensor_overlap_bounds(w)
+    w         = bands(x)
+    b         = i_find_sensor_overlap_bounds(w)
+    bb        = b
+    no_over   = ncol(b) == 1
+    splice_at = sort(splice_at)
 
-    if(ncol(b) == 1){
-        message("No overlap regions were found. Returning spectra unmodified...")
-        return(x)
+    if(no_over){
+
+        # If no overlap is found, break by splice_at since match_spectra
+        # assumes that the data will be split
+
+        b = matrix(NA, nrow = 2, ncol = length(splice_at) + 1)
+        b[[ 1 ]]            = 1
+        b[[ prod(dim(b)) ]] = length(w)
+
+        rownames(b) = c("begin", "end")
+        colnames(b) = paste0("sensor_", seq(ncol(b)))
+
+
+        for(i in 1:length(splice_at)){
+            m = max(which(w <= splice_at[i]))
+            b[1, i + 1] = m
+            b[2 , i]    = m - 1
+        }
+
+        b = data.frame(b)
+
     }
     if(length(splice_at) != ncol(b) - 1){
         stop("number of cut_points must be equal to the number of overlaps.")
@@ -59,7 +148,8 @@ i_trim_sensor_overlap = function(x, splice_at){
     }
 
     list("spectra" = x[ , unlist(s) ],
-         "sensor"  = rep(names(s), sapply(s, length)))
+         "sensor"  = rep(names(s), sapply(s, length)),
+         "overlap" = ifelse(no_over, NA, bb))
 }
 
 
@@ -68,7 +158,9 @@ i_trim_sensor_overlap = function(x, splice_at){
 #' \code{match_sensors} scales values of sensors 1 (vis) and 3 (swir2)
 #'
 #' Splice_at has no default because sensor transition points vary between vendors
-#' and individual instruments. It is an important parameter though, so you should
+#' and individual instruments.
+#' The function \code{guess_splice_at} can help you guess what those values could
+#' be. However, \code{splice_at} is an important parameter though, so you should
 #' visually inspect your spectra before assigning it.
 #' Typical values in our own individual instruments were:
 #' SVC ~ c(990, 1900),
@@ -105,14 +197,12 @@ match_sensors = function(x,
 match_sensors.spectra = function(x,
                                  splice_at,
                                  fixed_sensor    = 2,
-                                 interpolate_wvl = c(5, 1)){
+                                 interpolate_wvl = c(5, 2)){
 
     x            = x
     w            = bands(x)
     splice_at    = unlist(splice_at)
     fixed_sensor = ifelse( length(splice_at) == 2, 2, fixed_sensor)
-
-
 
     y = i_trim_sensor_overlap(x = x, splice_at = splice_at)
     x = y$spectra              # reassign x
@@ -146,15 +236,16 @@ match_sensors.spectra = function(x,
         m = names(y[match(fixed_sensor, y)])
 
         if(m == "right"){
-            fixed  = wl_picks[[z]]$left
-            scaled = wl_picks[[z]]$right
-        } else {
             fixed  = wl_picks[[z]]$right
             scaled = wl_picks[[z]]$left
+        } else {
+            fixed  = wl_picks[[z]]$left
+            scaled = wl_picks[[z]]$right
         }
 
-        rowMeans(value(x[ , scaled, simplify = FALSE])) /
-        rowMeans(value(x[ ,  fixed, simplify = FALSE]))
+        rowMeans(value(x[ ,  fixed, simplify = FALSE])) /
+        rowMeans(value(x[ , scaled, simplify = FALSE]))
+
     })
 
     ## Compute the factor matrices
@@ -167,17 +258,32 @@ match_sensors.spectra = function(x,
         wvl = s[[z]]
         fac = splice_factors[[z]]
 
-        sapply(fac, function(q){
-            approx(x = range(wvl), y = c(1, q), xout = wvl)$y
-        })
+        y   = setNames(c(z, z + 1), c("left", "right"))
+        m   = names(y[match(fixed_sensor, y)])
 
+        if(m == "right"){
+            r =  sapply(fac, function(q){
+                approx(x = range(wvl), y = c(1, q), xout = wvl)$y
+            })
+        } else {
+            r =  sapply(fac, function(q){
+                approx(x = range(wvl), y = c(q, 1), xout = wvl)$y
+            })
+        }
+        r
     })
 
-    ## Transform data
-    # for(i in seq_along(factor_mat)){
-    #     x[ , s[[i]]] = value(x[ , s[[i]] ] ) * t( factor_mat[[i]] )
-    # }
 
-    x[ , s[[1]] ] = value(x[ , s[[1]] ] ) * t( factor_mat[[1]] )
+    if(is.na(y$overlap) | length(factor_mat) == 1){
+        iter = seq_along(factor_mat)
+    } else {
+        iter = 1
+    }
+
+    ## Transform data
+    for(i in iter){
+        x[ , s[[i]]] = value(x[ , s[[i]] ] ) * t( factor_mat[[i]] )
+    }
+
     x
 }

@@ -7,7 +7,7 @@
 \usage{
 match_sensors(x, splice_at, fixed_sensor = 2, interpolate_wvl = c(5, 1))
 
-\method{match_sensors}{spectra}(x, splice_at, fixed_sensor = 2, interpolate_wvl = c(5, 1))
+\method{match_sensors}{spectra}(x, splice_at, fixed_sensor = 2, interpolate_wvl = c(5, 2))
 }
 \arguments{
 \item{x}{spectra object}
@@ -29,7 +29,9 @@ spectra object
 }
 \details{
 Splice_at has no default because sensor transition points vary between vendors
-and individual instruments. It is an important parameter though, so you should
+and individual instruments.
+The function \code{guess_splice_at} can help you guess what those values could
+be. However, \code{splice_at} is an important parameter though, so you should
 visually inspect your spectra before assigning it.
 Typical values in our own individual instruments were:
 SVC ~ c(990, 1900),
