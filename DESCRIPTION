@@ -1,7 +1,7 @@
 Package: spectrolab
 Type: Package
 Title: Class and Methods for Hyperspectral Data
-Version: 0.0.11
+Version: 0.0.12
 Date: 2021-05-18
 Authors@R: c(person("Jose Eduardo", "Meireles",email = "jemeireles@gmail.com", role = c("aut", "cre")),
              person("Anna K.", "Schweiger", email =  "anna.k.schweiger@gmail.com", role = "aut"),
