@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/meireles/spectrolab.svg?branch=master)](https://travis-ci.org/meireles/spectrolab)
+[![Build Status](https://travis-ci.com/meireles/spectrolab.svg?branch=master)](https://travis-ci.com/meireles/spectrolab)
 [![Coverage Status](https://coveralls.io/repos/github/meireles/spectrolab/badge.svg?branch=master)](https://coveralls.io/github/meireles/spectrolab?branch=master)
 [![CRAN Status](https://www.r-pkg.org/badges/version/spectrolab)](https://cran.r-project.org/package=spectrolab)
 [![DOI](https://zenodo.org/badge/73844175.svg)](https://zenodo.org/badge/latestdoi/73844175)
