@@ -310,8 +310,6 @@ i_read_ascii_spectra = function(file_paths,
 #' @param ... NOT USED YET
 #' @return spectra object
 #'
-#' @importFrom prospectr readASD
-#'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
 i_read_asd_spectra = function(file_paths,
@@ -476,55 +474,56 @@ i_read_asd_spectra = function(file_paths,
   }
 }
 
-################################################################################
-# Deprecated in spectrolab 0.0.12
-################################################################################
-
-#' Prospectr's Parser for ASD's `.asd` file
 #'
-#' @param file_paths paths for files already parsed by `read_spectra`
-#' @param type Data type to read. "target_refl", "target_rad", "reference_rad".
-#'             Defaults to "target_refl".
-#' @param format choice of ASD format. Either "binary" or "txt"
-#' @param divide_refl_by divide values by this
-#' @param ... NOT USED YET
-#' @return spectra object
+#' ################################################################################
+#' # Deprecated in spectrolab 0.0.12
+#' ################################################################################
 #'
-#' @importFrom prospectr readASD
+#' #' Prospectr's Parser for ASD's `.asd` file
+#' #'
+#' #' @param file_paths paths for files already parsed by `read_spectra`
+#' #' @param type Data type to read. "target_refl", "target_rad", "reference_rad".
+#' #'             Defaults to "target_refl".
+#' #' @param format choice of ASD format. Either "binary" or "txt"
+#' #' @param divide_refl_by divide values by this
+#' #' @param ... NOT USED YET
+#' #' @return spectra object
+#' #'
+#' #' @importFrom prospectr readASD
+#' #'
+#' #' @keywords internal
+#' #' @author Jose Eduardo Meireles
+#' i_prospectr_read_asd_spectra = function(file_paths,
+#'                               type   = "target_refl",
+#'                               format = c("binary", "txt"),
+#'                               divide_refl_by,
+#'                               ...){
 #'
-#' @keywords internal
-#' @author Jose Eduardo Meireles
-i_prospectr_read_asd_spectra = function(file_paths,
-                              type   = "target_refl",
-                              format = c("binary", "txt"),
-                              divide_refl_by,
-                              ...){
-
-  .Deprecated("i_read_asd_spectra")
-
-    if(type == "target_reflectance"){
-        rf = prospectr::readASD(fnames = file_paths, out_format = "matrix")
-        wl = colnames(rf)
-        nm = gsub(".asd$", "",rownames(rf))
-
-        return(spectra(rf, wl, nm))
-    } else if (type == "target_radiance"){
-        l   = prospectr::readASD(fnames = file_paths, out_format = "list")
-        rf  = do.call(rbind, lapply(l, `[[`, "radiance"))
-        nm  = gsub(".asd$", "",rownames(rf))
-        wl  = l[[1]][["band"]]
-
-        return(spectra(rf, wl, nm))
-
-    } else if (type == "reference_radiance"){
-        l   = prospectr::readASD(fnames = file_paths, out_format = "list")
-        rf  = do.call(rbind, lapply(l, `[[`, "reference"))
-        nm  = gsub(".asd$", "",rownames(rf))
-        wl  = l[[1]][["band"]]
-
-        return(spectra(rf, wl, nm))
-    } else {
-        stop("type must be either target_reflectance, target_radiance or reference_radiance")
-    }
-}
+#'   .Deprecated("i_read_asd_spectra")
+#'
+#'     if(type == "target_reflectance"){
+#'         rf = prospectr::readASD(fnames = file_paths, out_format = "matrix")
+#'         wl = colnames(rf)
+#'         nm = gsub(".asd$", "",rownames(rf))
+#'
+#'         return(spectra(rf, wl, nm))
+#'     } else if (type == "target_radiance"){
+#'         l   = prospectr::readASD(fnames = file_paths, out_format = "list")
+#'         rf  = do.call(rbind, lapply(l, `[[`, "radiance"))
+#'         nm  = gsub(".asd$", "",rownames(rf))
+#'         wl  = l[[1]][["band"]]
+#'
+#'         return(spectra(rf, wl, nm))
+#'
+#'     } else if (type == "reference_radiance"){
+#'         l   = prospectr::readASD(fnames = file_paths, out_format = "list")
+#'         rf  = do.call(rbind, lapply(l, `[[`, "reference"))
+#'         nm  = gsub(".asd$", "",rownames(rf))
+#'         wl  = l[[1]][["band"]]
+#'
+#'         return(spectra(rf, wl, nm))
+#'     } else {
+#'         stop("type must be either target_reflectance, target_radiance or reference_radiance")
+#'     }
+#' }
 
