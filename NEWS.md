@@ -1,3 +1,13 @@
+# spectrolab 0.0.12 (2021-06-01)
+
+## major
+* Added custom read_spectra function for ASD
+* Removed dependency from prospectr
+* Added the function guess_splice_at
+
+## minor
+* Updated match_sensors vignette
+
 # spectrolab 0.0.11 (2021-05-18)
 
 ## major
@@ -15,7 +25,7 @@
 * removed dependency from devtools
 
 ## minor
-* refactored resampple, normalize, print, getter & setter
+* refactored resample, normalize, print, getter & setter
 * updated vignette
 
 # spectrolab 0.0.9 (2020-05-21)
