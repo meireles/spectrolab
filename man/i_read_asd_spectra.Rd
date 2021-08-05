@@ -4,12 +4,7 @@
 \alias{i_read_asd_spectra}
 \title{Parser for ASD's `.asd`}
 \usage{
-i_read_asd_spectra(
-  file_paths,
-  type = "target_reflectance",
-  divide_refl_by,
-  ...
-)
+i_read_asd_spectra(file_paths, type = "target_reflectance", divide_refl_by)
 }
 \arguments{
 \item{file_paths}{paths for files already parsed by `read_spectra`}
@@ -18,8 +13,6 @@ i_read_asd_spectra(
 Defaults to "target_refl".}
 
 \item{divide_refl_by}{divide values by this}
-
-\item{...}{NOT USED YET}
 
 \item{format}{choice of ASD format. Either "binary" or "txt"}
 }

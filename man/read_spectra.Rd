@@ -6,32 +6,32 @@
 \usage{
 read_spectra(
   path,
-  format,
+  format = NULL,
   type = "target_reflectance",
-  recursive = FALSE,
+  extract_metadata = FALSE,
   exclude_if_matches = NULL,
-  ignore_extension = FALSE,
-  ...
+  ignore_extension = FALSE
 )
 }
 \arguments{
-\item{path}{Path to directory or input files}
+\item{path}{Path to directory or input files.}
 
-\item{format}{file formats. "asd" (for ASD); "sig" or "svc" (for SVC);
-"sed" or "psr" (for SpecEvo PSR).}
+\item{format}{File format. Defaults to NULL so spectrolab tries to guess it
+from the file name. Alternatively, use "asd" for ASD; "sig"
+for SVC (Spectra Vista); or "sed" for PSR (Spectral Evolution)}
 
 \item{type}{Data type to read. "target_reflectance", "target_radiance", or
 "reference_radiance". Defaults to "target_reflectance".}
 
-\item{recursive}{read files recursively}
+\item{extract_metadata}{Boolean. Defaults to FALSE. Only implemented for the
+Spectra Vista (.sig) and Spectral Evolution (.sed)
+file types.}
 
 \item{exclude_if_matches}{excludes files that match this regular expression.
 Example: "BAD"}
 
-\item{ignore_extension}{boolean. If TRUE, the parser will try to read every
+\item{ignore_extension}{Boolean. If TRUE, the parser will try to read every
 file in path regardless of the expected extension.}
-
-\item{...}{nothing yet}
 }
 \value{
 a single `spectra` or a list of `spectra` (in case files have
@@ -44,7 +44,6 @@ Read files from various formats into `spectra`
 library(spectrolab)
 dir_path = system.file("extdata", "Acer_example", package = "spectrolab")
 
-# Relative reflectance is re
 spec     = read_spectra(path = dir_path, format = "sig")
 }
 \author{

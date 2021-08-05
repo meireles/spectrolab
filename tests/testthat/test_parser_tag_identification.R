@@ -11,11 +11,11 @@ f_psr_removed = "data_for_tests/data_psr_removed_lines.sed"
 context("Parse svc and psr files by finding a data tag")
 
 test_that("parser reads longer svc file", {
-    expect_s3_class(read_spectra(f_svc_added, "svc"), class = "spectra" )
+    expect_s3_class(read_spectra(f_svc_added, "sig"), class = "spectra" )
 })
 
 test_that("parser reads shorter svc file", {
-    expect_s3_class(read_spectra(f_svc_removed, "svc"), class = "spectra" )
+    expect_s3_class(read_spectra(f_svc_removed, "sig"), class = "spectra" )
 })
 
 

@@ -7,7 +7,6 @@
 i_read_ascii_spectra(
   file_paths,
   skip_until_tag = NULL,
-  skip_first_n = NULL,
   sep_char,
   header,
   wl_col,
@@ -22,9 +21,6 @@ i_read_ascii_spectra(
 \item{skip_until_tag}{Tag that precedes the table of value data,
 indicating that lines until that tag should be skipped.
 Tag is matched with a regexpr.}
-
-\item{skip_first_n}{skip the first n lines. Only used if `skip_until_tag` is
-not given}
 
 \item{sep_char}{separator}
 

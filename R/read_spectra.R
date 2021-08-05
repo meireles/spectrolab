@@ -1,16 +1,18 @@
 #' Read files from various formats into `spectra`
 #'
-#' @param path Path to directory or input files
-#' @param format file formats. "asd" (for ASD); "sig" or "svc" (for SVC);
-#'               "sed" or "psr" (for SpecEvo PSR).
+#' @param path Path to directory or input files.
+#' @param format File format. Defaults to NULL so spectrolab tries to guess it
+#'               from the file name. Alternatively, use "asd" for ASD; "sig"
+#'               for SVC (Spectra Vista); or "sed" for PSR (Spectral Evolution)
 #' @param type Data type to read. "target_reflectance", "target_radiance", or
 #'             "reference_radiance". Defaults to "target_reflectance".
-#' @param recursive read files recursively
+#' @param extract_metadata Boolean. Defaults to FALSE. Only implemented for the
+#'                         Spectra Vista (.sig) and Spectral Evolution (.sed)
+#'                         file types.
 #' @param exclude_if_matches excludes files that match this regular expression.
 #'                           Example: "BAD"
-#' @param ignore_extension boolean. If TRUE, the parser will try to read every
+#' @param ignore_extension Boolean. If TRUE, the parser will try to read every
 #'                         file in path regardless of the expected extension.
-#' @param ... nothing yet
 #' @return a single `spectra` or a list of `spectra` (in case files have
 #'         incompatible band number or bands values)
 #'
@@ -21,69 +23,248 @@
 #' library(spectrolab)
 #' dir_path = system.file("extdata", "Acer_example", package = "spectrolab")
 #'
-#' # Relative reflectance is re
 #' spec     = read_spectra(path = dir_path, format = "sig")
 read_spectra = function(path,
-                        format,
+                        format             = NULL,
                         type               = "target_reflectance",
-                        recursive          = FALSE,
+                        extract_metadata   = FALSE,
                         exclude_if_matches = NULL,
-                        ignore_extension   = FALSE,
-                        ...) {
+                        ignore_extension   = FALSE) {
 
-  #########################################
-  ## match formats
-  #########################################
-  format_lookup = c(sig = "sig",
-                    svc = "sig",
-                    sed = "sed",
-                    psr = "sed",
-                    asd = "asd")
+  path_and_format = i_verify_path_and_format(path               = path,
+                                             format             = format,
+                                             exclude_if_matches = exclude_if_matches,
+                                             ignore_extension   = ignore_extension)
 
-  if(missing(format)){
-    stop("please provide the the file format.")
+  path   = path_and_format$i_path
+  format = path_and_format$i_format
+
+  #############################################################
+  ## Read spectra with the appropriate function
+  #############################################################
+
+  if(format == "sig"){
+
+    if(type == "target_reflectance"){
+      refl_cols   = 4
+      sample_type = "target"
+    } else if (type == "target_radiance") {
+      refl_cols   = 3
+      sample_type = "target"
+    } else if (type == "reference_radiance") {
+      refl_cols   = 2
+      sample_type = "reference"
+    } else {
+      stop("type must be either target_reflectance, target_radiance or reference_radiance")
+    }
+
+    result = i_read_ascii_spectra(path,
+                                  skip_until_tag    = "data=",
+                                  sep_char          = "",
+                                  header            = FALSE,
+                                  wl_col            = 1,
+                                  refl_cols         = refl_cols,
+                                  divide_refl_by    = 100)
+
+    if(extract_metadata){
+
+      svc_meta_tags = c("name=", "instrument=", "integration=",
+                        "scan method=", "scan coadds=", "scan time=",
+                        "scan settings=", "optic=", "temp=",
+                        "battery=", "error=", "units=", "time=",
+                        "longitude=", "latitude=", "gpstime=",
+                        "memory slot=", "inclinometer x offset=",
+                        "inclinometer y offset=")
+
+     metadata = i_read_ascii_metadata(file_paths  = path,
+                                       sample_type = sample_type,
+                                       sep_char    = ",",
+                                       max_lines   = 40,
+                                       meta_tags   = svc_meta_tags,
+                                       tag_sep     = "=")
+      meta(result) = metadata
+    }
+
+    return(result)
   }
 
-  format_match  = pmatch(tolower(format), names(format_lookup))
+  if(format == "sed"){
 
-  ## Error if format isn't found
-  if(length(format_match) == 0){ stop("Format not supported") }
+    if(type == "target_reflectance"){
+      refl_cols      = c("Reflect. %", "Reflect. [1.0]")
+      divide_refl_by = c(100, 1)
+      sample_type    = "target"
 
-  ## create regexpr to select files
-  if(ignore_extension){
-    regexpr_ext = ""
-  } else {
-    regexpr_ext = paste0("\\.", format_lookup[format_match], "$")
+    } else if (type == "target_radiance") {
+      refl_cols      = "Rad. (Target)"
+      divide_refl_by = 1
+      sample_type    = "target"
+
+    } else if (type == "reference_radiance") {
+      refl_cols      = "Rad. (Ref.)"
+      divide_refl_by = 1
+      sample_type    = "reference"
+
+    } else {
+      stop("type must be either target_reflectance, target_radiance or reference_radiance")
+    }
+
+    result = i_read_ascii_spectra(path,
+                                  skip_until_tag    = "Data:",
+                                  sep_char          = "\t",
+                                  header            = TRUE,
+                                  wl_col            = "Wvl",
+                                  refl_cols         = refl_cols,
+                                  divide_refl_by    = divide_refl_by,
+                                  check.names       = FALSE)
+
+    if(extract_metadata){
+
+      psr_meta_tags = c("Version:", "File Name:", "Instrument:", "Detectors:",
+                        "Measurement:", "Date:","Time:", "Temperature (C):",
+                        "Battery Voltage:", "Averages:", "Integration:", "Dark Mode:",
+                        "Foreoptic:", "Radiometric Calibration:", "Units:", "band Range:",
+                        "Latitude:", "Longitude:", "Altitude:", "GPS Time:", "Satellites:",
+                        "Calibrated Reference Correction File:", "Channels:")
+
+      metadata = i_read_ascii_metadata(file_paths  = path,
+                                       sample_type = sample_type,
+                                       sep_char    = ",",
+                                       max_lines   = 40,
+                                       meta_tags   = psr_meta_tags,
+                                       tag_sep     = ":")
+      meta(result) = metadata
+    }
+
+    return(result)
   }
 
-  #########################################
-  ## validate paths
-  #########################################
+  if(format == "asd"){
+    result = i_read_asd_spectra(path,
+                                type              = type,
+                                divide_refl_by    = 1)
+    return(result)
+  }
+}
+
+
+#' Internal function to verify file paths and format
+#'
+#' @param path Path to directory or input files
+#' @param format File format. Defaults to NULL so spectrolab tries to guess it
+#'               from the file name. Alternatively, use "asd" for ASD; "sig"
+#'               for SVC (Spectra Vista); or "sed" for PSR (Spectral Evolution)
+#' @param exclude_if_matches excludes files that match this regular expression.
+#'                           Example: "BAD"
+#' @param ignore_extension Boolean. If TRUE, the parser will try to read every
+#'                         file in path regardless of the expected extension.
+#'
+#' @return a list containing a vector of paths called `i_path` and a char
+#'         with the file format called `i_format`
+#'
+#' @importFrom tools file_ext
+#'
+#' @keywords internal
+#' @author Jose Eduardo Meireles
+i_verify_path_and_format = function(path,
+                                    format             = NULL,
+                                    exclude_if_matches = NULL,
+                                    ignore_extension   = FALSE) {
+
+  ##############################
+  # Test if path exists
+  ##############################
   i_path   = path
   f_exists = file.exists(i_path)
-  is_dir   = dir.exists(i_path)
 
-  ## Error if paths don't exist
-  if(!all(f_exists)){ stop("Path not found:", i_path[!f_exists]) }
-
-  ## Error if user mixed file names and dir names
-  if(any(is_dir) && any(!is_dir)){ stop("Cannot mix directory and file paths!") }
-
-  #########################################
-  ## Read file names
-  #########################################
-  if( all(is_dir) ){                            ## if dir
-    i_path = dir(path        = i_path,
-                 pattern     = regexpr_ext,
-                 full.names  = TRUE,
-                 ignore.case = TRUE)
-  } else {                                      ## if files
-    m      = grep(regexpr_ext, i_path)
-    i_path = i_path[m]
+  ## Error out if at least one path don't exist
+  if(!all(f_exists)){
+    stop("Path(s) not found ", i_path[!f_exists])
   }
 
-  ## error if no files of the right extension are found
-  if(length(i_path) == 0){stop("No file path matched", format_lookup[format_match])}
+  ##############################
+  # Test if path is a folder
+  ##############################
+  is_dir = dir.exists(i_path)
+
+
+  if(any(is_dir)){
+
+    ## Error out if:
+    # user mixed file names and dir names
+    if(any(!is_dir)){
+      stop("Cannot mix directory and file paths.")
+    }
+
+    # user provided more than one directory
+    if(length(is_dir) > 1 ){
+      stop("Cannot read multiple directories at once. Please use a single directory as your path.")
+    }
+
+    ## Read the filenames
+    i_path = dir(path        = i_path,
+                 full.names  = TRUE)
+
+    # Check if dir is empty
+    if(length(i_path) == 0){
+      stop("The directory is empty.")
+    }
+
+    # And make sure that folders are not included
+    i_path = i_path[ ! dir.exists(i_path) ]
+
+    # Check if dir is empty again
+    if(length(i_path) == 0){
+      stop("The directory only includes other directories. `path` should be the directory that includes the spectral files themselves.")
+    }
+
+  }
+
+  #########################################
+  ## Match formats
+  #########################################
+
+  file_extensions = tolower(tools::file_ext(i_path))
+
+  format_lookup   = c("sig", "sed", "asd")
+
+
+  if( ! is.null(format) ){
+
+    format_match = pmatch(tolower(format), format_lookup)
+
+    ## Error if format isn't found
+    if(length(format_match) == 0){
+      stop("Files did not match any known format")
+    }
+
+    format = format_lookup[format_match]
+
+  } else {
+    extensions = file_extensions[file_extensions %in% format_lookup]
+    extensions = names(sort(table(extensions), decreasing = TRUE))
+
+    if(length(extensions) > 1){
+      stop("Multiple file formats found. Spectrolab can only read one file format at a time.")
+    }
+
+    if(length(extensions) == 0){
+      stop("Files did not match any known format")
+    }
+
+    format = extensions[1]
+  }
+
+
+  if(! ignore_extension ){
+    i_path = i_path[ grepl(format, file_extensions) ]
+
+    ## error if no files of the right extension are found
+    if(length(i_path) == 0){
+      stop("No files have the extension ", format)
+    }
+  }
+
 
   #########################################
   ## filter files that match bad spectra
@@ -96,72 +277,14 @@ read_spectra = function(path,
 
   ## error if bad spectra fiters out all file names
   if(length(i_path) == 0){
-    stop("No paths left after removing bad spectra. Check your `exclude_if_ends_with` param")
+    stop("No paths left after removing bad spectra. Check your `exclude_if_matches` parameter")
   }
 
 
-  #############################################################
-  ## Read spectra with the appropriate function
-  #############################################################
+  ## Return
+  list(i_path   = i_path,
+       i_format = format)
 
-  if(format_lookup[format_match] == "sig"){
-
-    if(type == "target_reflectance"){
-      refl_cols = 4
-    } else if (type == "target_radiance") {
-      refl_cols = 3
-    } else if (type == "reference_radiance") {
-      refl_cols = 2
-    } else {
-      stop("type must be either target_reflectance, target_radiance or reference_radiance")
-    }
-
-    result = i_read_ascii_spectra(i_path,
-                                  skip_until_tag    = "data=",
-                                  skip_first_n      = NULL,         # 25
-                                  sep_char          = "",
-                                  header            = FALSE,
-                                  wl_col            = 1,
-                                  refl_cols         = refl_cols,
-                                  divide_refl_by    = 100)
-    return(result)
-  }
-
-  if(format_lookup[format_match] == "sed"){
-
-    if(type == "target_reflectance"){
-      refl_cols      = c("Reflect. %", "Reflect. [1.0]")
-      divide_refl_by = c(100, 1)
-    } else if (type == "target_radiance") {
-      refl_cols      = "Rad. (Target)"
-      divide_refl_by = 1
-    } else if (type == "reference_radiance") {
-      refl_cols      = "Rad. (Ref.)"
-      divide_refl_by = 1
-    } else {
-      stop("type must be either target_reflectance, target_radiance or reference_radiance")
-    }
-
-    result = i_read_ascii_spectra(i_path,
-                                  skip_until_tag    = "Data:",
-                                  skip_first_n      = NULL,        # 26
-                                  sep_char          = "\t",
-                                  header            = TRUE,
-                                  wl_col            = "Wvl",
-                                  refl_cols         = refl_cols,
-                                  divide_refl_by    = divide_refl_by,
-                                  check.names       = FALSE)
-    return(result)
-  }
-
-  if(format_lookup[format_match] == "asd"){
-    result = i_read_asd_spectra(i_path,
-                                type              = type,
-                                format            = "binary",
-                                divide_refl_by    = 1,
-                                ...)
-    return(result)
-  }
 }
 
 
@@ -173,8 +296,6 @@ read_spectra = function(path,
 #' @param skip_until_tag Tag that precedes the table of value data,
 #'                       indicating that lines until that tag should be skipped.
 #'                       Tag is matched with a regexpr.
-#' @param skip_first_n skip the first n lines. Only used if `skip_until_tag` is
-#'                     not given
 #' @param sep_char separator
 #' @param header boolean. keep header?
 #' @param wl_col idx or name of band column
@@ -189,7 +310,6 @@ read_spectra = function(path,
 #' @author Jose Eduardo Meireles and Anna Schweiger
 i_read_ascii_spectra = function(file_paths,
                                 skip_until_tag = NULL,
-                                skip_first_n   = NULL,
                                 sep_char,
                                 header,
                                 wl_col,
@@ -201,13 +321,9 @@ i_read_ascii_spectra = function(file_paths,
   ## Internal function to read table
   ############################################################
 
-  parse_skip_n   = function(x, skip = skip_first_n) {
-    utils::read.delim(x, skip = skip, sep = sep_char, header = header, check.names = FALSE)
-  }
-
-  parse_skip_tag = function(x, tag = skip_until_tag) {
-    max_l = 100
-    skip  = grep(tag, trimws(readLines(x, n = max_l)))
+  parse = function(x, tag = skip_until_tag) {
+    max_l = 40
+    skip  = grep(tag, trimws(readLines(x, n = max_l)), fixed = TRUE)
 
     if(length(skip) == 1){
       return(utils::read.delim(x, skip = skip, sep = sep_char, header = header, check.names = FALSE))
@@ -216,14 +332,6 @@ i_read_ascii_spectra = function(file_paths,
     } else {
       stop(paste0("More than one match found for skip_until_tag in the first ", max_l, " lines"))
     }
-  }
-
-  if( ! is.null(parse_skip_tag) ){
-    parse = parse_skip_tag
-  } else if ( ! is.null(skip_first_n) ){
-    parse = parse_skip_n
-  } else {
-    stop("Must give a skip_until_tag or skip_first_n args")
   }
 
   ############################################################
@@ -299,6 +407,62 @@ i_read_ascii_spectra = function(file_paths,
   }
 }
 
+#' Read metadata
+#'
+#' @param file_paths paths
+#' @param sample_type target or reference
+#' @param max_lines max number of lines to read
+#' @param sep_char separator of data within a field
+#' @param meta_tags tags that match the metadata fields in the file
+#' @param tag_sep char that separates the tags from the data in the file
+#'
+#' @importFrom utils type.convert
+#'
+#' @keywords internal
+#' @author Jose Eduardo Meireles
+i_read_ascii_metadata = function(file_paths,
+                                 sample_type,
+                                 max_lines,
+                                 sep_char,
+                                 meta_tags,
+                                 tag_sep){
+
+  message("reading metadata may take a while...")
+
+  mat = sapply(file_paths, function(x){
+
+    f_lines   = trimws(readLines(x, n = max_lines))
+    pick      = ifelse(test = sample_type == "target", yes = 1, no = 2)
+    meta_tags = setNames(meta_tags, meta_tags)
+
+    data = lapply(meta_tags, function(x){
+      y = f_lines[grep(x, f_lines)]
+
+      if(length(y) == 0){
+        return(NULL)
+      }
+
+      y = strsplit(gsub(x, "", y), sep_char)[[1]]
+      s = sort(rep( c(1,2) , length.out = length(y)))
+
+      trimws(split(y, s)[[pick]])
+    })
+
+    names(data) = gsub(tag_sep, "", names(data))
+
+    unlist(data)
+
+  }, USE.NAMES = FALSE)
+
+  mat = as.data.frame( t(mat),
+                       stringsAsFactors = FALSE,
+                       row.names        = FALSE,
+                       check.names      = FALSE)
+  mat = lapply(mat, type.convert, as.is = TRUE)
+  as.data.frame(mat, stringsAsFactors = FALSE, check.names = FALSE)
+}
+
+
 
 #' Parser for ASD's `.asd`
 #'
@@ -307,15 +471,13 @@ i_read_ascii_spectra = function(file_paths,
 #'             Defaults to "target_refl".
 #' @param format choice of ASD format. Either "binary" or "txt"
 #' @param divide_refl_by divide values by this
-#' @param ... NOT USED YET
 #' @return spectra object
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
 i_read_asd_spectra = function(file_paths,
                               type   = "target_reflectance",
-                              divide_refl_by,
-                              ...){
+                              divide_refl_by){
 
   ENDIAN      = "little"
   TYPES       = c("raw", "reflectance", "radiance", "no_units", "irradiance",
@@ -473,57 +635,3 @@ i_read_asd_spectra = function(file_paths,
     return(spec[[1]])
   }
 }
-
-#'
-#' ################################################################################
-#' # Deprecated in spectrolab 0.0.12
-#' ################################################################################
-#'
-#' #' Prospectr's Parser for ASD's `.asd` file
-#' #'
-#' #' @param file_paths paths for files already parsed by `read_spectra`
-#' #' @param type Data type to read. "target_refl", "target_rad", "reference_rad".
-#' #'             Defaults to "target_refl".
-#' #' @param format choice of ASD format. Either "binary" or "txt"
-#' #' @param divide_refl_by divide values by this
-#' #' @param ... NOT USED YET
-#' #' @return spectra object
-#' #'
-#' #' @importFrom prospectr readASD
-#' #'
-#' #' @keywords internal
-#' #' @author Jose Eduardo Meireles
-#' i_prospectr_read_asd_spectra = function(file_paths,
-#'                               type   = "target_refl",
-#'                               format = c("binary", "txt"),
-#'                               divide_refl_by,
-#'                               ...){
-#'
-#'   .Deprecated("i_read_asd_spectra")
-#'
-#'     if(type == "target_reflectance"){
-#'         rf = prospectr::readASD(fnames = file_paths, out_format = "matrix")
-#'         wl = colnames(rf)
-#'         nm = gsub(".asd$", "",rownames(rf))
-#'
-#'         return(spectra(rf, wl, nm))
-#'     } else if (type == "target_radiance"){
-#'         l   = prospectr::readASD(fnames = file_paths, out_format = "list")
-#'         rf  = do.call(rbind, lapply(l, `[[`, "radiance"))
-#'         nm  = gsub(".asd$", "",rownames(rf))
-#'         wl  = l[[1]][["band"]]
-#'
-#'         return(spectra(rf, wl, nm))
-#'
-#'     } else if (type == "reference_radiance"){
-#'         l   = prospectr::readASD(fnames = file_paths, out_format = "list")
-#'         rf  = do.call(rbind, lapply(l, `[[`, "reference"))
-#'         nm  = gsub(".asd$", "",rownames(rf))
-#'         wl  = l[[1]][["band"]]
-#'
-#'         return(spectra(rf, wl, nm))
-#'     } else {
-#'         stop("type must be either target_reflectance, target_radiance or reference_radiance")
-#'     }
-#' }
-
