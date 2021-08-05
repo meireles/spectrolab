@@ -432,7 +432,7 @@ i_read_ascii_metadata = function(file_paths,
   mat = sapply(file_paths, function(x){
 
     f_lines   = trimws(readLines(x, n = max_lines))
-    pick      = ifelse(test = sample_type == "target", yes = 1, no = 2)
+    pick      = ifelse(test = sample_type == "target", yes = 2, no = 1)
     meta_tags = setNames(meta_tags, meta_tags)
 
     data = lapply(meta_tags, function(x){
@@ -445,7 +445,11 @@ i_read_ascii_metadata = function(file_paths,
       y = strsplit(gsub(x, "", y), sep_char)[[1]]
       s = sort(rep( c(1,2) , length.out = length(y)))
 
-      trimws(split(y, s)[[pick]])
+      if(length(s) == 1){
+        return(trimws(y))
+      } else {
+        return(trimws(split(y, s)[[pick]]))
+      }
     })
 
     names(data) = gsub(tag_sep, "", names(data))
