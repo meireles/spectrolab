@@ -1,3 +1,9 @@
+# spectrolab 0.0.13 (2021-08-05)
+
+## major
+* read_spectra now reads metadata from .sig and .sed files
+* read_spectra guesses the file format automatically
+
 # spectrolab 0.0.12 (2021-06-01)
 
 ## major
