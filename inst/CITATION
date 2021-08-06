@@ -1,7 +1,7 @@
 year  = 2017
 note  = sprintf("R package version %s", meta$Version)
 url   = meta$URL
-title = "spectrolab: Class and Methods for Hyperspectral Data in R"
+title = "spectrolab: Class and Methods for Spectral Data in R"
 doi   = "10.5281/zenodo.3934575"
 
 bibentry(bibtype = "Manual",
