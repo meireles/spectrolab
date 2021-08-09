@@ -119,8 +119,18 @@ print.spectra = function(x, ...){
     cat("metadata: none", "\n")
   } else {
     cat("metadata (", l_met, "): ", sep = "")
-    cat(paste(n_met, collapse = ", "), sep = "")
+    cat(paste(n_met, collapse = ", "), "\n", sep = "")
   }
+
+  l = ncol(x)
+  m = 6
+  n = min(l, m)
+  s = head(as.data.frame(as.matrix(x)), 3)[ , seq.int(from = 1, to = n) ]
+  if(l > m){
+    s = cbind(s, "..." = "")
+  }
+  cat("\n")
+  print(s)
 }
 
 
