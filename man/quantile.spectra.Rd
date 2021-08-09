@@ -23,7 +23,7 @@ Duplicated probs will be removed.}
 \item{na.rm}{remove NAs before computing quantiles? Defaults to TRUE}
 
 \item{names}{names for each quantile spectrum. If NULL (default), names are set
-to probs. A char vector should otherwise be given. Recyled.}
+to `probs`. A char vector should otherwise be given. Recycled.}
 
 \item{...}{other arguments passed to quantile.}
 }

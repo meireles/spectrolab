@@ -11,7 +11,7 @@
 
 \item{by}{vector of factors to guide the aggregation}
 
-\item{FUN}{function to be applied to refl (and meta if FUN_meta is NULL)}
+\item{FUN}{function to be applied to value (and meta if FUN_meta is NULL)}
 
 \item{FUN_meta}{function to be applied to metadata. If NULL (default), same
 FUN applied to value is used.}

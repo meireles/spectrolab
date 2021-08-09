@@ -86,7 +86,7 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
 #'
 #' @param x spectra object
 #' @param by vector of factors to guide the aggregation
-#' @param FUN function to be applied to refl (and meta if FUN_meta is NULL)
+#' @param FUN function to be applied to value (and meta if FUN_meta is NULL)
 #' @param FUN_meta function to be applied to metadata. If NULL (default), same
 #'        FUN applied to value is used.
 #' @param ... extra args to FUN

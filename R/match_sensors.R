@@ -155,7 +155,7 @@ i_trim_sensor_overlap = function(x, splice_at){
 
 #' Match spectra at sensor transitions
 #'
-#' \code{match_sensors} scales values of sensors 1 (vis) and 3 (swir2)
+#' \code{match_sensors} scales values of sensors 1 (VIS) and 3 (SWIR 2)
 #'
 #' Splice_at has no default because sensor transition points vary between vendors
 #' and individual instruments.

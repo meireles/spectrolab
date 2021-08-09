@@ -1,5 +1,5 @@
 ## Test environments
-* local OS X install, 4.0.5
+* local OS X install, 4.1.0
 * ubuntu 14.04.5 (on travis-ci), R 3.5.0
 * win-builder (devel and release)
 
@@ -7,7 +7,7 @@
 
 0 errors | 0 warnings | 0 note
 
-* Update from release 0.0.11.
+* Update from release 0.0.13.
 
 ## Reverse dependencies
 

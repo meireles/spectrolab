@@ -162,7 +162,7 @@ sd.spectra = function(x, na.rm = TRUE){
 #'              Duplicated probs will be removed.
 #' @param na.rm remove NAs before computing quantiles? Defaults to TRUE
 #' @param names names for each quantile spectrum. If NULL (default), names are set
-#'              to probs. A char vector should otherwise be given. Recyled.
+#'              to `probs`. A char vector should otherwise be given. Recycled.
 #' @param ... other arguments passed to quantile.
 #' @return spectra object with one spectrum for each prob
 #'

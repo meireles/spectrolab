@@ -5,8 +5,37 @@
 #  library("devtools")
 #  install_github("meireles/spectrolab")
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ---- echo=TRUE, message=FALSE------------------------------------------------
 library("spectrolab")
+
+## ---- eval=TRUE---------------------------------------------------------------
+# `dir_path` is the directory where our example datasets live
+dir_path = system.file("extdata/Acer_example", package = "spectrolab")
+
+# Read spectra from .sig files inside the "extdata/Acer_example" folder
+acer_spectra = read_spectra(path = dir_path)
+
+## ---- eval=TRUE---------------------------------------------------------------
+# Reading the target's radiance
+acer_spectra_rad = read_spectra(path = dir_path, format = "sig", type = "target_radiance")
+
+# And the white reference's radiance
+acer_white_ref = read_spectra(path = dir_path, type = "reference_radiance")
+
+## ---- eval=TRUE---------------------------------------------------------------
+# Use the `exclude_if_matches` argument to excluded flagged files
+acer_spectra = read_spectra(path = dir_path, exclude_if_matches = c("BAD","WR"))
+
+## ---- eval=TRUE, message=FALSE------------------------------------------------
+# Use the `exclude_if_matches` argument to excluded flagged files
+acer_spectra_with_meta = read_spectra(path = dir_path,
+                                      exclude_if_matches = c("BAD","WR"),
+                                      extract_metadata = TRUE)
+
+# Here are fields 2 to 6 of the metadata for the first 3 scans.
+# More on the `meta` function later.
+
+meta(acer_spectra_with_meta)[1:3, 2:6]
 
 ## ---- eval=TRUE---------------------------------------------------------------
 dir_path = system.file("extdata/spec_matrix_meta.csv", package = "spectrolab")
@@ -21,17 +50,6 @@ achillea_spec = as_spectra(spec_csv, name_idx = 3, meta_idxs = c(1,2) )
 
 # And now you have a spectra object with sample names and metadata...
 achillea_spec
-
-## ---- eval=TRUE---------------------------------------------------------------
-# `dir_path` is the directory where our example datasets live
-dir_path = system.file("extdata", "Acer_example", package = "spectrolab")
-
-# Read .sig files
-acer_spectra = read_spectra(path = dir_path, format = "sig")
-
-## ---- eval=TRUE---------------------------------------------------------------
-# use the `exclude_if_matches` argument to excluded flagged files
-acer_spectra = read_spectra(path = dir_path, format = "sig", exclude_if_matches = c("BAD","WR"))
 
 ## ---- eval=TRUE---------------------------------------------------------------
 # Simply print the object

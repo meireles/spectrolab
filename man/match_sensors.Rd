@@ -25,7 +25,7 @@ factors will be calculated. Defaults to 5}
 spectra object
 }
 \description{
-\code{match_sensors} scales values of sensors 1 (vis) and 3 (swir2)
+\code{match_sensors} scales values of sensors 1 (VIS) and 3 (SWIR 2)
 }
 \details{
 Splice_at has no default because sensor transition points vary between vendors
