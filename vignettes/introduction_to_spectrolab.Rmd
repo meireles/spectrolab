@@ -1,6 +1,7 @@
 ---
 title: "Introduction to spectrolab"
-author: "Jose Eduardo Meireles, Anna K. Schweiger and Jeannine Cavender-Bares"
+author: "Jose Eduardo Meireles, Anna K. Schweiger, and Jeannine Cavender-Bares"
+date: "`r format(Sys.time(), '%B %Y')`"
 output:
   rmarkdown::pdf_document:
     number_sections: yes
@@ -10,14 +11,16 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-`spectrolab` provides methods to read, process and visualize data from portable spectrometers and establishes a common interface to spectra that other packages can build on. The package introduces a `spectra` S3 class and packs a ton of functionality:
+`spectrolab` provides methods to read, process, and visualize data from portable spectroradiometers. The package also establishes a common interface for spectra by introducing a `spectra` S3 class.
+
+`spectrolab` packs a ton of functionality:
 
 * Read spectra from raw spectral files or matrices
 * Access, aggregate, subset, split or combine spectra
-* Seamlessly link and manipulate metadata (such as chemistry)
-* Plot spectra or spectral quantiles, shade spectral regions (e.g. vis)
-* Scroll through and zoom in spectra interactively. 
-* Perform tasks such as vector normalization, smoothing, resampling, and sensor overlap matching
+* Seamlessly link and manipulate metadata (such as chemistry or insrument metadata)
+* Plot spectra or spectral quantiles, shade spectral regions (e.g. SWIR)
+* Interactively scroll through and zoom in spectra. 
+* Perform tasks such as vector normalization, smoothing, resampling, and sensor overlap matching.
 
 The source code can be found on our [GitHub repository](https://github.com/meireles/spectrolab). Please report any bugs and ask us your questions through the [issue tracker](https://github.com/meireles/spectrolab/issues).
 
@@ -39,13 +42,59 @@ install_github("meireles/spectrolab")
 
 Assuming that everything went smoothly, you should be able to load `spectrolab` like any other package.
 
-```{r, echo=FALSE}
+```{r, echo=TRUE, message=FALSE}
 library("spectrolab")
 ```
 
 ## Reading spectra
 
-There are two ways to get spectra into R: 1) converting a matrix or data.frame to `spectra` or 2) reading spectra from raw data files (formats: SVC's `sig`, Spectral Evolution's `sed` and ASD's `asd`). Here are a couple examples:
+There are two ways to get spectra into R using `spectrolab`:
+
+  1. Reading spectra from raw data files (formats: SVC's `sig`, Spectral Evolution's `sed` and ASD's `asd`).
+  2. Converting a matrix or data.frame to `spectra`.
+
+### Reading spectra from raw data files: Example with SVC's `.sig`
+
+Use the function `read_spectra()` to read your spectroradiometer's files. You can pass a vector of file names to `read_spectra()` but it is usually easier to pass the path to the folder where your data are. Note that `spectrolab` cannot read nested folders or read a mix of file types at once (i.e. having `.sig` and `.sed` files in the same folder will produce an error).
+
+```{r, eval=TRUE}
+# `dir_path` is the directory where our example datasets live
+dir_path = system.file("extdata/Acer_example", package = "spectrolab")
+
+# Read spectra from .sig files inside the "extdata/Acer_example" folder
+acer_spectra = read_spectra(path = dir_path)
+```
+
+`spectrolab` guesses the file format automatically (but you can provide the format using the `format` argument if needed). The package reads the target's relative reflectance -- the ratio between the target's radiance and the reference's radiance -- by default. However, you can read the target's or reference's radiances using the argument `type`.
+
+```{r, eval=TRUE}
+# Reading the target's radiance
+acer_spectra_rad = read_spectra(path = dir_path, format = "sig", type = "target_radiance")
+
+# And the white reference's radiance
+acer_white_ref = read_spectra(path = dir_path, type = "reference_radiance")
+```
+
+You can avoid importing undesirable spectra if those were flagged in the field. For example, we usually add the suffixes "_WR" to denote white reference and "_BAD" to denote bad measurements, so we can pass those flags to the argument `exclude_if_matches` in `read_spectra()`.
+
+```{r, eval=TRUE}
+# Use the `exclude_if_matches` argument to excluded flagged files
+acer_spectra = read_spectra(path = dir_path, exclude_if_matches = c("BAD","WR"))
+```
+
+Finally, `spectrolab` lets you read the metadata from `sig` and `sed` files if you need to. Simply set `extract_metadata` to `TRUE`.
+
+```{r, eval=TRUE, message=FALSE}
+# Use the `exclude_if_matches` argument to excluded flagged files
+acer_spectra_with_meta = read_spectra(path = dir_path,
+                                      exclude_if_matches = c("BAD","WR"),
+                                      extract_metadata = TRUE)
+
+# Here are fields 2 to 6 of the metadata for the first 3 scans.
+# More on the `meta` function later.
+
+meta(acer_spectra_with_meta)[1:3, 2:6]
+```
 
 ### Create spectra from a matrix or data.frame
 
@@ -68,27 +117,6 @@ achillea_spec = as_spectra(spec_csv, name_idx = 3, meta_idxs = c(1,2) )
 achillea_spec
 ```
 
-
-### Reading spectra: example with SVC's `.sig` files
-
-You should use the function `read_spectra()` to read raw spectra files. You can pass a vector of file names to `read_spectra()`, but it is usually easier to pass the path to the folder where your data are.
-
-```{r, eval=TRUE}
-# `dir_path` is the directory where our example datasets live
-dir_path = system.file("extdata", "Acer_example", package = "spectrolab")
-
-# Read .sig files
-acer_spectra = read_spectra(path = dir_path, format = "sig")
-```
-
-It may be the case that file names of undesirable spectra where flagged in the field. For example, we usually add the suffixes "_WR" to denote white reference and "_BAD" to denote bad measurements (you can pick whatever you want through). You can avoid importing such files by passing those flags to the argument `exclude_if_matches` in `read_spectra()`.
-
-```{r, eval=TRUE}
-# use the `exclude_if_matches` argument to excluded flagged files
-acer_spectra = read_spectra(path = dir_path, format = "sig", exclude_if_matches = c("BAD","WR"))
-```
-
-Flagging "unusual" measurements during data collection speeds up the dataset cleanup process. However, you can also exclude bad spectra and outliers by subsetting your spectra object, as shown in the section **Subsetting spectra** below.
 
 ## Inspecting and querying spectra
 
@@ -163,7 +191,6 @@ spec_sub_byidx[ , 2]
 
 `Error in i_match_ij_spectra(this = this, i = i, j = j) : band subscript out of bounds. Use band labels instead of raw indices.`
 ```
-
 
 ## Plotting
 
