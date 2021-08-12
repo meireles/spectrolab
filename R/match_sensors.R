@@ -255,7 +255,7 @@ match_sensors.spectra = function(x,
     s[fixed_sensor] = NULL
 
     factor_mat = lapply(seq_along(splice_factors), function(z){
-        wvl = s[[z]]
+        bds = s[[z]]
         fac = splice_factors[[z]]
 
         y   = setNames(c(z, z + 1), c("left", "right"))
@@ -263,11 +263,11 @@ match_sensors.spectra = function(x,
 
         if(m == "right"){
             r =  sapply(fac, function(q){
-                approx(x = range(wvl), y = c(1, q), xout = wvl)$y
+                approx(x = range(bds), y = c(1, q), xout = bds)$y
             })
         } else {
             r =  sapply(fac, function(q){
-                approx(x = range(wvl), y = c(q, 1), xout = wvl)$y
+                approx(x = range(bds), y = c(q, 1), xout = bds)$y
             })
         }
         r

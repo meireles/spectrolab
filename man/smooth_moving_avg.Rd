@@ -4,14 +4,14 @@
 \alias{smooth_moving_avg}
 \title{Smooth moving average for spectra}
 \usage{
-smooth_moving_avg(x, n = NULL, save_wvls_to_meta = TRUE)
+smooth_moving_avg(x, n = NULL, save_bands_to_meta = TRUE)
 }
 \arguments{
 \item{x}{spectra object}
 
 \item{n}{= NULL}
 
-\item{save_wvls_to_meta}{boolean. keep lost ends of original wvls in metadata}
+\item{save_bands_to_meta}{boolean. keep lost ends of original wvls in metadata}
 }
 \value{
 spectra object
