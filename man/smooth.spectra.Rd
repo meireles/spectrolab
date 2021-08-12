@@ -12,7 +12,7 @@
 \item{method}{Choose smoothing method: "spline" (default) or "moving_average"}
 
 \item{...}{additional parameters passed to \code{smooth.spline} or parameters
-`n` and `save_wvls_to_meta` for the moving average smoothing.}
+`n` and `save_bands_to_meta` for the moving average smoothing.}
 }
 \value{
 a spectra object of with smoothed spectra

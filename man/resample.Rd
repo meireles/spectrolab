@@ -5,14 +5,14 @@
 \alias{resample.spectra}
 \title{Resample spectra}
 \usage{
-resample(x, new_wvls, ...)
+resample(x, new_bands, ...)
 
-\method{resample}{spectra}(x, new_wvls, ...)
+\method{resample}{spectra}(x, new_bands, ...)
 }
 \arguments{
 \item{x}{spectra object. bands must be strictly increasing}
 
-\item{new_wvls}{numeric vector of bands to sample from spectra}
+\item{new_bands}{numeric vector of bands to sample from spectra}
 
 \item{...}{additional parameters passed to the \code{smooth.spline} function.}
 }
@@ -34,7 +34,7 @@ Possible to increase or decrease the spectral resolution.
 \examples{
 library(spectrolab)
 spec = as_spectra(spec_matrix_example, name_idx = 1)
-spec = resample(spec, new_wvls = seq(400, 2400, 0.5), parallel = FALSE)
+spec = resample(spec, new_bands = seq(400, 2400, 0.5), parallel = FALSE)
 }
 \author{
 Jose Eduardo Meireles

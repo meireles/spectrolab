@@ -207,12 +207,16 @@ value = function(x){
 }
 
 
+#' Get values
+#'
 #' @describeIn value Get spectra value
 #' @export
 value.spectra = function(x){
     x$value
 }
 
+#' Set values
+#'
 #' @describeIn value<- Set spectra value
 #' @export
 `value<-.spectra` = function(x, value){
@@ -321,6 +325,8 @@ bands = function(x, min = NULL, max = NULL, return_num = TRUE){
 }
 
 
+#' Get band labels
+#'
 #' @describeIn bands Get spectra band labels
 #' @export
 bands.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
@@ -341,7 +347,8 @@ bands.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
     wl[pick]
 }
 
-
+#' Set band labels
+#'
 #' @describeIn bands<- Set spectra band labels
 #' @export
 `bands<-.spectra` = function(x, value){
@@ -398,6 +405,8 @@ meta = function(x, label, sample, simplify = FALSE, quiet = TRUE){
     UseMethod("meta<-")
 }
 
+#' Get metadata
+#'
 #' @describeIn meta get metadata
 #' @export
 meta.spectra = function(x, label = NULL, sample = NULL, simplify = FALSE, quiet = TRUE){
@@ -419,6 +428,8 @@ meta.spectra = function(x, label = NULL, sample = NULL, simplify = FALSE, quiet 
     x$meta[ m, l[["matched"]], drop = simplify]
 }
 
+#' Set metadata
+#'
 #' @describeIn meta<- set metadata
 #' @export
 `meta<-.spectra` = function(x, label = NULL, sample = NULL, value) {

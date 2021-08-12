@@ -47,18 +47,18 @@ i_index_pairwise_combn = function(n){
 pairwise_ratio = function(x, simplify = FALSE){
     message("ratio may take a while...")
     spm  = as.matrix(x)
-    wvl  = bands(x)
+    bds  = bands(x)
     pwc  = i_index_pairwise_combn(ncol(x))
 
     res  = lapply(names(pwc), function(y){
         i   = as.numeric(y)
         j   = pwc[[y]][ , "iter"]
         mat = spm[ , i]  / spm[ , j, drop = FALSE]
-        colnames(mat) = paste(wvl[i], wvl[j], sep = "/")
+        colnames(mat) = paste(bds[i], bds[j], sep = "/")
         mat
     })
 
-    names(res) = wvl[ as.numeric(names(pwc)) ]
+    names(res) = bds[ as.numeric(names(pwc)) ]
 
     if(simplify){
         res = do.call(cbind, res)
