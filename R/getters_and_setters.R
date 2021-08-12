@@ -207,11 +207,14 @@ value = function(x){
 }
 
 
+#' Get values
+#'
 #' @describeIn value Get spectra value
 #' @export
 value.spectra = function(x){
     x$value
 }
+
 
 #' @title Set spectra value
 #' @describeIn value<- Set spectra value
@@ -322,6 +325,8 @@ bands = function(x, min = NULL, max = NULL, return_num = TRUE){
 }
 
 
+#' Get band labels
+#'
 #' @describeIn bands Get spectra band labels
 #' @export
 bands.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
@@ -399,6 +404,8 @@ meta = function(x, label, sample, simplify = FALSE, quiet = TRUE){
     UseMethod("meta<-")
 }
 
+#' Get metadata
+#'
 #' @describeIn meta get metadata
 #' @export
 meta.spectra = function(x, label = NULL, sample = NULL, simplify = FALSE, quiet = TRUE){
