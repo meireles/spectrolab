@@ -4,7 +4,7 @@
 \alias{smooth_spline}
 \title{Smooth spline functions for spectra}
 \usage{
-smooth_spline(x, parallel = TRUE, ...)
+smooth_spline(x, parallel = TRUE, return_fn = FALSE, ...)
 }
 \arguments{
 \item{x}{spectra object. bands must be strictly increasing}
@@ -12,11 +12,14 @@ smooth_spline(x, parallel = TRUE, ...)
 \item{parallel}{boolean. Do computation in parallel? Defaults to TRUE.
 Unfortunately, the parallelization does not work on Windows.}
 
+\item{return_fn}{Boolean. If TRUE, \code{smooth_spline} returns the spline
+functions instead of the smoothed spectra. Defaults to FALSE}
+
 \item{...}{additional parameters passed to smooth.spline except nknots, which
 is computed internally}
 }
 \value{
-a list of spline functions
+Smoothed spectra or, if return_fn = TRUE, a list of spline functions.
 }
 \description{
 Gets spline functions for each spectrum in a spectra object.

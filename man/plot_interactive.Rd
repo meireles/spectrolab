@@ -40,5 +40,5 @@ plot_interactive(spec)
 }
 }
 \author{
-Anna K. Schweiger and Jose Eduardo Meireles
+Jose Eduardo Meireles and Anna K. Schweiger
 }

@@ -250,7 +250,7 @@ plot_regions = function(spec,
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom stats dist
 #' @importFrom graphics points
-#' @author Anna K. Schweiger and Jose Eduardo Meireles
+#' @author Jose Eduardo Meireles and Anna K. Schweiger
 #' @export
 #'
 #' @examples

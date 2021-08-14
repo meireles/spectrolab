@@ -317,3 +317,25 @@ i_mav = function(x, n = 3, sides = 2){
     stats::filter(x, rep( (1/n), n), sides = sides)
 }
 
+
+
+#' Warn if gap between bands is too wide
+#'
+#' @param x spectra
+#'
+#' @return nothing. warn if gap is too wide
+#'
+#' @importFrom stats median
+#'
+#' @author Jose Eduardo Meireles
+#' @keywords internal
+i_mind_the_gap_smoothing = function(x){
+    b        = bands(x)
+    b_diff   = diff(sort(abs(b)))
+    diff_med = median(b_diff)
+    d_thresh = 10
+    big_jump = b_diff > diff_med * d_thresh
+    if(any(big_jump)){
+        warning("Gap(s) between bands is too wide around band(s):", paste(b[big_jump], sep = ","), "\nSmoothing results may be wonky.")
+    }
+}

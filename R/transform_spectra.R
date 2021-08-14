@@ -448,10 +448,8 @@ smooth.spectra = function(x, method = "spline", ...){
         stop("smooth requires strictly increasing band values.\nMatch sensor overlap before attempting to smooth the spectra.")
         }
 
-
     if(method == "spline") {
-        s   = smooth_spline(x, ...)
-        x[] = do.call(rbind, sapply(s, `[`, "y"))
+        smooth_spline(x, ...)
         return(x)
     } else if (method == "moving_average") {
         smooth_moving_avg(x, ...)
@@ -467,18 +465,22 @@ smooth.spectra = function(x, method = "spline", ...){
 #'                 Unfortunately, the parallelization does not work on Windows.
 #' @param ... additional parameters passed to smooth.spline except nknots, which
 #'            is computed internally
-#' @return a list of spline functions
+#' @param return_fn Boolean. If TRUE, \code{smooth_spline} returns the spline
+#'                  functions instead of the smoothed spectra. Defaults to FALSE
+#' @return Smoothed spectra or, if return_fn = TRUE, a list of spline functions.
 #'
 #' @importFrom stats smooth.spline
 #' @importFrom parallel detectCores mclapply
 #'
 #' @author Jose Eduardo Meireles
 #' @export
-smooth_spline = function(x, parallel = TRUE, ...) {
+smooth_spline = function(x, parallel = TRUE, return_fn = FALSE, ...) {
 
     if( !is_spectra(x) ){
         stop("Object must be of class spectra")
     }
+
+    i_mind_the_gap_smoothing(x)
 
     scale   = c(0.1, 0.25, 0.5)
     cutres  = 100
@@ -506,10 +508,16 @@ smooth_spline = function(x, parallel = TRUE, ...) {
         s = parallel::mclapply(s, function(z){
             lapply(z, stats::smooth.spline, x = w, nknots = nknots, ...)},
             mc.cores = n)
-
-        return(unlist(s, recursive = FALSE, use.names = FALSE))
+        f = unlist(s, recursive = FALSE, use.names = FALSE)
     } else {
-        return(lapply(r, stats::smooth.spline, x = w, nknots = nknots, ...))
+        f = lapply(r, stats::smooth.spline, x = w, nknots = nknots, ...)
+    }
+
+    if(return_fn){
+        return(f)
+    } else {
+        x[] = do.call(rbind, sapply(f, `[`, "y"))
+        return(x)
     }
 }
 
@@ -527,6 +535,8 @@ smooth_moving_avg = function(x, n = NULL, save_bands_to_meta = TRUE){
     if( !is_spectra(x) ){
         stop("Object must be of class spectra")
     }
+
+    i_mind_the_gap_smoothing(x)
 
     if(is.null(n)){
         scale   = c(2, 3, 4, 5, 7, 10, 15, 20)
@@ -623,7 +633,7 @@ resample.spectra = function(x, new_bands, ...) {
 
     ## Smooth and predict
     message("Using spline to predict value at new bands...")
-    s = smooth_spline(x, ...)
+    s = smooth_spline(x, return_fn = TRUE, ...)
     f = function(o, p){ stats::predict(o, p)[["y"]] }
     g = lapply(X = s, FUN = f, p = new_bands)
     message("Beware the spectra are now partially smoothed.")
@@ -633,5 +643,4 @@ resample.spectra = function(x, new_bands, ...) {
             bands = new_bands,
             names = names(x),
             meta  = meta(x))
-
 }
