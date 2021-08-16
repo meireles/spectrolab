@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/meireles/spectrolab.svg?branch=master)](https://travis-ci.com/meireles/spectrolab)
+[![R-CMD-check](https://github.com/meireles/spectrolab/workflows/R-CMD-check/badge.svg)](https://github.com/meireles/spectrolab/actions)
 [![Codecov test coverage](https://codecov.io/gh/meireles/spectrolab/branch/master/graph/badge.svg)](https://codecov.io/gh/meireles/spectrolab?branch=master)
 [![CRAN Status](https://www.r-pkg.org/badges/version/spectrolab)](https://cran.r-project.org/package=spectrolab)
 [![DOI](https://zenodo.org/badge/73844175.svg)](https://zenodo.org/badge/latestdoi/73844175)

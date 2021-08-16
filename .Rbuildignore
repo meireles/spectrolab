@@ -1,7 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
-^\.travis\.yml$
 ^cran-comments\.md$
 ^CRAN-RELEASE$
 ^codecov\.yml$
+^\.github$
