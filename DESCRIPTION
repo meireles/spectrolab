@@ -16,7 +16,9 @@ RoxygenNote: 7.1.1
 Depends:
     R (>= 4.0),
     stats
-Suggests: knitr (>= 1.30),
+Suggests: 
+    covr,
+    knitr (>= 1.30),
     rmarkdown (>= 2.5),
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
