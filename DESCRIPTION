@@ -18,6 +18,7 @@ Depends:
     stats
 Suggests: 
     covr,
+    tinytex,
     knitr (>= 1.30),
     rmarkdown (>= 2.5),
     testthat (>= 3.0.0)
