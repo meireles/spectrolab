@@ -388,7 +388,7 @@ normalize.spectra = function(x, quiet = FALSE, ...){
     }
 
     refl        = value(x)
-    magnitudes  = sqrt(apply(refl^2, 1, sum))
+    magnitudes  = sqrt(apply(refl^2, 1, sum, na.rm = TRUE))
     x[]         = refl / magnitudes
 
     # add a magnitute attribute to the`spectra` object
@@ -482,10 +482,13 @@ smooth_spline = function(x, parallel = TRUE, return_fn = FALSE, ...) {
 
     i_mind_the_gap_smoothing(x)
 
+    w       = bands(x)
+    l       = nrow(x)
+
     scale   = c(0.1, 0.25, 0.5)
     cutres  = 100
 
-    range   = diff(range( bands(x) ))
+    range   = diff(range(w))
     resol   = ceiling(range / ncol(x))
     fullres = floor(range / resol)
     propres = floor(range / resol * scale)
@@ -493,8 +496,6 @@ smooth_spline = function(x, parallel = TRUE, return_fn = FALSE, ...) {
 
     d = value(x)
     r = lapply( seq.int(nrow(x)), function(y){ d[y, ]})
-    l = length(r)
-    w = bands(x)
 
     # parallel?
     p = requireNamespace("parallel", quietly = TRUE)
