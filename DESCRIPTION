@@ -1,8 +1,8 @@
 Package: spectrolab
 Type: Package
 Title: Class and Methods for Spectral Data
-Version: 0.0.14
-Date: 2021-08-09
+Version: 0.0.15
+Date: 2021-09-14
 Authors@R: c(person("Jose Eduardo", "Meireles",email = "jemeireles@gmail.com", role = c("aut", "cre")),
              person("Anna K.", "Schweiger", email =  "anna.k.schweiger@gmail.com", role = "aut"),
              person("Jeannine", "Cavender-Bares", email = "cavender@umn.edu", role = "aut")
@@ -12,7 +12,6 @@ License: GPL-3
 URL: https://CRAN.R-project.org/package=spectrolab
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
 Depends:
     R (>= 4.0),
     stats

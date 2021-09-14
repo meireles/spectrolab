@@ -1,10 +1,15 @@
+# spectrolab 0.0.15 (2021-09-14)
+
+## major
+* Fixed bug in read_spectra, where the date meatadata was being read from the wrong field.
+
 # spectrolab 0.0.14 (2021-08-09)
 
 ## major
 * Fixed major bug in read_spectra. The metadata from target and reference where swapped.
 * Now requires R >= 4.0
 
-# Minor
+# minor
 * Updated citation
 * Updated intro vignette
 
