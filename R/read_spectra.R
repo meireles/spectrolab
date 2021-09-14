@@ -436,7 +436,7 @@ i_read_ascii_metadata = function(file_paths,
     meta_tags = setNames(meta_tags, meta_tags)
 
     data = lapply(meta_tags, function(x){
-      y = f_lines[grep(x, f_lines)]
+      y = f_lines[grep(paste0("^", x), f_lines)]
 
       if(length(y) == 0){
         return(NULL)
