@@ -66,6 +66,17 @@ read_spectra = function(path,
                                   refl_cols         = refl_cols,
                                   divide_refl_by    = 100)
 
+    ## Construct spectra
+    spec = lapply(result, function(x) {
+      rf = sapply(x, `[`, "value")
+      rf = do.call(rbind, rf)
+      wl = x[[1]][ , "band" ]
+      nm = basename(names(x))
+
+      spectra(rf, wl, nm)
+    })
+
+
     if(extract_metadata){
 
       svc_meta_tags = c("name=", "instrument=", "integration=",
@@ -76,16 +87,20 @@ read_spectra = function(path,
                         "memory slot=", "inclinometer x offset=",
                         "inclinometer y offset=")
 
-     metadata = i_read_ascii_metadata(file_paths  = path,
-                                       sample_type = sample_type,
-                                       sep_char    = ",",
-                                       max_lines   = 40,
-                                       meta_tags   = svc_meta_tags,
-                                       tag_sep     = "=")
-      meta(result) = metadata
-    }
+     metadata = lapply(result, function(x){
+       i_read_ascii_metadata(file_paths  = names(x),
+                             sample_type = sample_type,
+                             sep_char    = ",",
+                             max_lines   = 40,
+                             meta_tags   = svc_meta_tags,
+                             tag_sep     = "=")
+     })
 
-    return(result)
+     for(i in seq_along(spec)){
+       meta(spec[[i]]) = metadata[[i]]
+     }
+
+    }
   }
 
   if(format == "sed"){
@@ -118,6 +133,16 @@ read_spectra = function(path,
                                   divide_refl_by    = divide_refl_by,
                                   check.names       = FALSE)
 
+    ## Construct spectra
+    spec = lapply(result, function(x) {
+      rf = sapply(x, `[`, "value")
+      rf = do.call(rbind, rf)
+      wl = x[[1]][ , "band" ]
+      nm = basename(names(x))
+
+      spectra(rf, wl, nm)
+    })
+
     if(extract_metadata){
 
       psr_meta_tags = c("Version:", "File Name:", "Instrument:", "Detectors:",
@@ -127,24 +152,35 @@ read_spectra = function(path,
                         "Latitude:", "Longitude:", "Altitude:", "GPS Time:", "Satellites:",
                         "Calibrated Reference Correction File:", "Channels:")
 
-      metadata = i_read_ascii_metadata(file_paths  = path,
-                                       sample_type = sample_type,
-                                       sep_char    = ",",
-                                       max_lines   = 40,
-                                       meta_tags   = psr_meta_tags,
-                                       tag_sep     = ":")
-      meta(result) = metadata
-    }
+      metadata = lapply(result, function(x){
+        i_read_ascii_metadata(file_paths  = names(x),
+                              sample_type = sample_type,
+                              sep_char    = ",",
+                              max_lines   = 40,
+                              meta_tags   = psr_meta_tags,
+                              tag_sep     = ":")
+      })
 
-    return(result)
+      for(i in seq_along(spec)){
+        meta(spec[[i]]) = metadata[[i]]
+      }
+
+    }
   }
 
   if(format == "asd"){
-    result = i_read_asd_spectra(path,
-                                type              = type,
-                                divide_refl_by    = 1)
-    return(result)
+    spec = i_read_asd_spectra(path,
+                              type              = type,
+                              divide_refl_by    = 1)
   }
+
+  if(length(spec) > 1){
+    message("Returning a list of `spectra` because some files had different number of bands or band values. If you want to make those data compatible, consider resampling (with resample) and then combining them (with combine)")
+    return(spec)
+  } else {
+    return(spec[[1]])
+  }
+
 }
 
 
@@ -377,34 +413,22 @@ i_read_ascii_spectra = function(file_paths,
     divide_refl_by = divide_refl_by[n]
   }
 
+  data = lapply(data, function(x){
+    data.frame("band"  = x[ , wl_col],
+               "value" = x[ , refl_cols] / divide_refl_by )
+  })
 
-  ## there mabye files with different number of bands or band values
+  ## There mabye files with different number of bands or band values
   ## check for them and split the data if needed
   wl_factor = unlist(
     lapply(data, function(x){
-      paste0(x[ , wl_col], collapse = "")
+      paste0(x[ , "band"], collapse = "")
     })
   )
 
   data = unname(split(data, wl_factor))
 
-  ## Construct spectra
-  spec = lapply(data, function(x) {
-    rf = lapply(x, function(y){ y[ , refl_cols ] })
-    rf = do.call(rbind, rf)
-    rf = rf / divide_refl_by
-    wl = x[[1]][ , wl_col ]
-    nm = basename(names(x))
-
-    spectra(rf, wl, nm)
-  })
-
-  if(length(spec) > 1){
-    warning("Returning a list of `spectra` because some files had different number of bands or band values. If you want to make those data compatible, consider resampling (with resample) and then combining them (with combine)")
-    return(spec)
-  } else {
-    return(spec[[1]])
-  }
+  return(data)
 }
 
 #' Read metadata
