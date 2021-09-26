@@ -1,3 +1,8 @@
+# spectrolab 0.0.16 (2021-09-26)
+
+## major
+* Fixed bug in read_spectra, where the meatadata was not being read if the spectra had different bands.
+
 # spectrolab 0.0.15 (2021-09-14)
 
 ## major
