@@ -111,13 +111,13 @@ read_spectra = function(path,
       sample_type    = "target"
 
     } else if (type == "target_radiance") {
-      refl_cols      = "Rad. (Target)"
-      divide_refl_by = 1
+      refl_cols      = c("Rad. (Target)", "Norm. DN (Target)")
+      divide_refl_by = c(1, 1)
       sample_type    = "target"
 
     } else if (type == "reference_radiance") {
-      refl_cols      = "Rad. (Ref.)"
-      divide_refl_by = 1
+      refl_cols      = c("Rad. (Ref.)", "Norm. DN (Ref.)")
+      divide_refl_by = c(1, 1)
       sample_type    = "reference"
 
     } else {
@@ -291,7 +291,6 @@ i_verify_path_and_format = function(path,
     format = extensions[1]
   }
 
-
   if(! ignore_extension ){
     i_path = i_path[ grepl(format, file_extensions) ]
 
@@ -380,7 +379,7 @@ i_read_ascii_spectra = function(file_paths,
   ## Deal with cases where multiple value columns or multiple value
   ## scalars (divide_refl_by) are given
   if(length(refl_cols) < length(divide_refl_by)) {
-    warning("Length of divide_refl_by should be either 1 or equals to the length of refl_cols. divide_refl_by has been prunned to length", length(refl_cols), ".")
+    warning("Length of divide_refl_by should be either 1 or equals to the length of refl_cols. divide_refl_by has been prunned to length ", length(refl_cols), ".")
     divide_refl_by = rep(divide_refl_by, length.out = length(refl_cols))
   }
 
@@ -400,7 +399,11 @@ i_read_ascii_spectra = function(file_paths,
     n = which(refl_cols %in% colnames(d))
 
     if(all( !m )){
-      stop("refl_cols did not match any columns.")
+      stop("\n",
+           "read_spectra could not find the expected column names in the data.\n",
+           "Column names expected: ", paste0("'", refl_cols, "'", collapse = ", "), "\n",
+           "Column names found: ", paste0("'", colnames(d), "'", collapse = ", "),
+           "\n\n", "You may have to read the file as another type (radiance or reflectance). See `?read_spectra`")
     }
 
     if( sum(m) > 1 ){

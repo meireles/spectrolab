@@ -28,4 +28,4 @@ Imports:
     RColorBrewer (>= 1.0),
     shiny (>= 1.5.0),
     shinyjs (>= 1.1)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0

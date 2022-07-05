@@ -132,11 +132,17 @@ i_bands = function(x, nbands = NULL, warn_dup_band = FALSE) {
         position = d
         original = y[d]
 
-        # Need to add a tiny percent (between 0.001% and 0.0012%) of smallest band diff
-        # to the duplicated bands
+        # Need to add a tiny percent (0.0012357%) of the smallest band diff
+        # to the duplicated bands.
+        # This technique should work if a certain band value is duplicated once.
+        # If the data has three bands of value 680nm, for example, then the code
+        # will not perform as intended because a duplication will remain.
+        #
         # Sort ensures that dups that show up later (order-wise) will have larger values
         # when a band has more than one duplicate
-        scalars  = sort(runif(length(d), min = 0.00001, max = 0.00012))
+
+        # scalars  = sort(runif(length(d), min = 0.00001, max = 0.00012))
+        scalars  = sort(rep(0.000012357, length(d)))
 
         y[d] = y[d] + scalars * min(abs(diff(y[-d])))
 

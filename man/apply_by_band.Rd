@@ -44,6 +44,4 @@ spec_mean = apply_by_band(spec, mean)
 }
 \author{
 Jose Eduardo Meireles
-
-Jose Eduardo Meireles
 }
