@@ -112,20 +112,12 @@ read_spectra = function(path,
 
     } else if (type == "target_radiance") {
       refl_cols      = c("Rad. (Target)", "Norm. DN (Target)")
-<<<<<<< HEAD
       divide_refl_by = c(1, 1)
-=======
-      divide_refl_by = 1
->>>>>>> 2faade9653030c5a3d0f4cc8d6761ba6aeaec828
       sample_type    = "target"
 
     } else if (type == "reference_radiance") {
       refl_cols      = c("Rad. (Ref.)", "Norm. DN (Ref.)")
-<<<<<<< HEAD
       divide_refl_by = c(1, 1)
-=======
-      divide_refl_by = 1
->>>>>>> 2faade9653030c5a3d0f4cc8d6761ba6aeaec828
       sample_type    = "reference"
 
     } else {
