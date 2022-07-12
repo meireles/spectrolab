@@ -7,7 +7,7 @@
 
 0 errors | 0 warnings | 0 note
 
-* Update from release 0.0.15
+* Update from release 0.0.16
 
 ## Reverse dependencies
 

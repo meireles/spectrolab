@@ -1,3 +1,8 @@
+# spectrolab 0.0.17 (2022-07-12)
+
+## major
+* read spectra can now read the new .sed format.
+
 # spectrolab 0.0.16 (2021-09-26)
 
 ## major
