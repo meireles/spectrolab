@@ -2,7 +2,7 @@ Package: spectrolab
 Type: Package
 Title: Class and Methods for Spectral Data
 Version: 0.0.17
-Date: 2021-09-26
+Date: 2022-07-12
 Authors@R: c(person("Jose Eduardo", "Meireles",email = "jemeireles@gmail.com", role = c("aut", "cre")),
              person("Anna K.", "Schweiger", email =  "anna.k.schweiger@gmail.com", role = "aut"),
              person("Jeannine", "Cavender-Bares", email = "cavender@umn.edu", role = "aut")

@@ -19,7 +19,7 @@
 * Fixed major bug in read_spectra. The metadata from target and reference where swapped.
 * Now requires R >= 4.0
 
-# minor
+## minor
 * Updated citation
 * Updated intro vignette
 
