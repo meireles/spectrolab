@@ -123,8 +123,10 @@ print.spectra = function(x, ...){
   }
 
   rw = min(nrow(x), 5L)
-  cl = min(ncol(x), 7L)
-  s  = as.matrix(x)[seq.int(rw), seq.int(cl)]
+  l  = ncol(x)
+  m  = 7L
+  cl = min(l, m)
+  s  = as.matrix(x)[seq.int(rw), seq.int(cl), drop = FALSE]
 
   if(l > m){
     s = cbind(s, "..." = "")
