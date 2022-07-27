@@ -122,15 +122,15 @@ print.spectra = function(x, ...){
     cat(paste(n_met, collapse = ", "), "\n", sep = "")
   }
 
-  l = ncol(x)
-  m = 6
-  n = min(l, m)
-  s = head(as.data.frame(as.matrix(x)), 3)[ , seq.int(from = 1, to = n) ]
+  rw = min(nrow(x), 5L)
+  cl = min(ncol(x), 7L)
+  s  = as.matrix(x)[seq.int(rw), seq.int(cl)]
+
   if(l > m){
     s = cbind(s, "..." = "")
   }
   cat("\n")
-  print(s)
+  print(s, quote = FALSE)
 }
 
 
