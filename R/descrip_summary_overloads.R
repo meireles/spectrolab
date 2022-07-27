@@ -123,7 +123,9 @@ print.spectra = function(x, ...){
   }
 
   rw = min(nrow(x), 5L)
-  cl = min(ncol(x), 7L)
+  l  = ncol(x)
+  m  = 7L
+  cl = min(l, m)
   s  = as.matrix(x)[seq.int(rw), seq.int(cl)]
 
   if(l > m){
