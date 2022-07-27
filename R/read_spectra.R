@@ -413,7 +413,7 @@ i_read_ascii_spectra = function(file_paths,
     # Update refl cols and divide by
     # subset 1st as a safeguard in case m matches more than one column
     refl_cols      = which(m)
-    #divide_refl_by = divide_refl_by[n]
+    divide_refl_by = divide_refl_by[n]
   }
 
   data = lapply(data, function(x){
