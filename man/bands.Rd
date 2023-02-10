@@ -27,9 +27,9 @@ vector of bands. numeric if `return_num` = TRUE (default).
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{spectra}: Get spectra band labels
-}}
+\item \code{bands(spectra)}: Get spectra band labels
 
+}}
 \examples{
 library(spectrolab)
 spec = as_spectra(spec_matrix_example, name_idx = 1)

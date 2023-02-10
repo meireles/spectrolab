@@ -34,9 +34,9 @@ or render all values NA.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{spectra}: Apply a numeric function by band
-}}
+\item \code{apply_by_band(spectra)}: Apply a numeric function by band
 
+}}
 \examples{
 library(spectrolab)
 spec = as_spectra(spec_matrix_example, name_idx = 1)

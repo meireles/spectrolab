@@ -20,9 +20,9 @@ Guess splice bands (bounds between senors)
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{spectra}: Guess splice bands (bounds between senors)
-}}
+\item \code{guess_splice_at(spectra)}: Guess splice bands (bounds between senors)
 
+}}
 \author{
 Jose Eduardo Meireles
 }

@@ -23,9 +23,9 @@ very same band labels, but different metadata are acceptable
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{spectra}: Combines two spectral datasets
-}}
+\item \code{combine(spectra)}: Combines two spectral datasets
 
+}}
 \examples{
 library(spectrolab)
 

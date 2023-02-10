@@ -20,9 +20,9 @@ matrix with samples in rows and bands in columns
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{spectra}: Get spectra value
-}}
+\item \code{value(spectra)}: Get spectra value
 
+}}
 \examples{
 library(spectrolab)
 spec = as_spectra(spec_matrix_example, name_idx = 1)

@@ -35,9 +35,9 @@ interested in subsetting \emph{only} based on `n_min`, set `n_max` to `Inf`.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{spectra}: Subset spectra by factor
-}}
+\item \code{subset_by(spectra)}: Subset spectra by factor
 
+}}
 \examples{
 library(spectrolab)
 spec = as_spectra(spec_matrix_example, name_idx = 1)

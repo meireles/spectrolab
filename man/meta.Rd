@@ -28,9 +28,9 @@ data frame or vector
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{spectra}: get metadata
-}}
+\item \code{meta(spectra)}: get metadata
 
+}}
 \examples{
 library(spectrolab)
 spec = as_spectra(spec_matrix_example, name_idx = 1)

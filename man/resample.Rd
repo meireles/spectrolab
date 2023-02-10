@@ -28,9 +28,9 @@ Possible to increase or decrease the spectral resolution.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{spectra}: Resample spectra
-}}
+\item \code{resample(spectra)}: Resample spectra
 
+}}
 \examples{
 library(spectrolab)
 spec = as_spectra(spec_matrix_example, name_idx = 1)

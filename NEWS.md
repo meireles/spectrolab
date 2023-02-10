@@ -1,3 +1,8 @@
+# spectrolab 0.0.18 (2023-02-10)
+
+## major
+* fixed bug that rescaled spectra when reading .sed files.
+
 # spectrolab 0.0.17 (2022-07-12)
 
 ## major

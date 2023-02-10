@@ -43,9 +43,9 @@ which happens when the value for the right sensor is 0.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{spectra}: Match sensor overlap regions
-}}
+\item \code{match_sensors(spectra)}: Match sensor overlap regions
 
+}}
 \author{
 Jose Eduardo Meireles and Anna Schweiger
 }

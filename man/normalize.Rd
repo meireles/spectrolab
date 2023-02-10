@@ -25,9 +25,9 @@ Normalization value for each spectrum computed as sqrt(sum(x^2))
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{spectra}: Vector normalize spectra
-}}
+\item \code{normalize(spectra)}: Vector normalize spectra
 
+}}
 \examples{
 library(spectrolab)
 spec = as_spectra(spec_matrix_example, name_idx = 1)
