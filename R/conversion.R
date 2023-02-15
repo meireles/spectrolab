@@ -146,3 +146,61 @@ as.data.frame.spectra = function(x,
     }
 
 }
+
+
+#' Pairwise indices
+#'
+#' \code{pairwise_indices} computes pairwise spectral indices.
+#' Indices are computed as (a - b) / (a + b) where a is the lower band.
+#' The column names of the resulting matrix are given as "a|b".
+#'
+#' @param x spectra
+#' @param max_out_elements maximum number of elements in the output object
+#' @return list that includes the *indices* between bands a and b (column names a|b)
+#'         and the pairwise *band_combinations*
+#'
+#' @importFrom utils combn
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec  = as_spectra(spec_matrix_example, name_idx = 1)
+#'
+#' # Resampling spectra since a spectral dataset with 2,001 bands
+#' # results in 2,001,000 unique spectral indices per sample
+#' spec  = resample(spec, seq(400, 2400, 2))
+#' p_idx = pairwise_indices(spec)
+#'
+pairwise_indices = function(x, max_out_elements = 5e8){
+
+    if(!is_spectra(x)){
+        stop("x must be a spectra object")
+    }
+    b = bands(x)
+
+    if(!i_is_increasing(b)){
+        stop("match the sensor overlaps first")
+    }
+
+    combinations  = utils::combn( as.character(b), 2L)
+    rownames(combinations) = c("a", "b")
+
+    nsamples      = nrow(x)
+    n_element_out = nsamples * ncol(combinations)
+
+    if(n_element_out > max_out_elements){
+        message("There are ", ncol(combinations), " band combinations and ", nsamples,
+                " samples. Resulting matrix would have ", n_element_out, " elements!")
+        stop("Resulting matrix would be too large. Aborting")
+    }
+
+    y = as.matrix(x)
+    z = ( y[ , combinations[1, ] ] - y[ , combinations[2, ] ] ) / ( y[ , combinations[1, ] ] + y[ , combinations[2, ] ] )
+
+    colnames(z) = apply(combinations, 2, paste, collapse = "|")
+
+    list("indices" = z,
+         "band_combinations" = combinations)
+}
