@@ -391,7 +391,7 @@ normalize.spectra = function(x, quiet = FALSE, ...){
     magnitudes  = sqrt(apply(refl^2, 1, sum, na.rm = TRUE))
     x[]         = refl / magnitudes
 
-    # add a magnitute attribute to the`spectra` object
+    # add a magnitude attribute to the`spectra` object
     meta(x, "normalization_magnitude") = magnitudes
 
     x
