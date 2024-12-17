@@ -5,7 +5,7 @@ date: "`r format(Sys.time(), '%B %Y')`"
 output:
   rmarkdown::pdf_document:
     number_sections: yes
-vignette: > 
+vignette: >
   %\VignetteIndexEntry{Introduction to spectrolab}
   %\VignetteEngine{knitr::rmarkdown} 
   %\VignetteEncoding{UTF-8}

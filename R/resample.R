@@ -1,3 +1,7 @@
+################################################################################
+# Internal Functions
+################################################################################
+
 #' Get the FWHM from the difference between band values
 #'
 #' @param bands band values. numeric
@@ -66,6 +70,9 @@ i_make_fwhm = function(old_bands,
     return(fwhm)
 }
 
+################################################################################
+# Exported Functions
+################################################################################
 
 #' Resample the FWHM to a new set of bands using a gaussian model
 #'
@@ -108,9 +115,9 @@ make_fwhm = function(spec,
 #' @return resampled spectra
 #'
 #' @export
-resample_spec_fwhm = function(spec,
-                              new_bands,
-                              fwhm) {
+resample = function(spec,
+                    new_bands,
+                    fwhm) {
 
     bands        = bands(spec)
     reflectance  = value(spec)
@@ -121,6 +128,11 @@ resample_spec_fwhm = function(spec,
         NULL
     } else {
         stop("provide a single fwhm value or one for each new_band")
+    }
+
+    ## Enforce increasing bands in spectra object
+    if(! i_is_increasing(bands)){
+        stop("resample requires strictly increasing band values.\nMatch sensor overlap before attempting to resample the spectra.")
     }
 
     margin       = fwhm/4

@@ -4,15 +4,14 @@
 \alias{smooth.spectra}
 \title{Smooth spectra}
 \usage{
-\method{smooth}{spectra}(x, method = "spline", ...)
+\method{smooth}{spectra}(x, method = "gaussian", ...)
 }
 \arguments{
 \item{x}{spectra object. bands must be strictly increasing}
 
-\item{method}{Choose smoothing method: "spline" (default) or "moving_average"}
+\item{method}{Choose smoothing method: "gaussian" (default), "spline", or "moving_average"}
 
-\item{...}{additional parameters passed to \code{smooth.spline} or parameters
-`n` and `save_bands_to_meta` for the moving average smoothing.}
+\item{...}{additional parameters passed to methods \code{smooth_fwhm}, \code{smooth_spline}, \code{smooth_moving_avg}}
 }
 \value{
 a spectra object of with smoothed spectra
@@ -24,7 +23,7 @@ a spectra object of with smoothed spectra
 library(spectrolab)
 
 spec = as_spectra(spec_matrix_example, name_idx = 1)
-spec = smooth(spec, parallel = FALSE)
+spec = smooth(spec)
 }
 \author{
 Jose Eduardo Meireles

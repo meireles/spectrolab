@@ -1,7 +1,7 @@
 ## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
+collapse = TRUE,
+comment = "#>"
 )
 library(spectrolab)
 
@@ -16,15 +16,15 @@ fwhm_A = make_fwhm(s_raw, new_bands)
 fwhm_B = make_fwhm(s_raw, new_bands, return_type = "old")
 fwhm_C = 1
 
-AAA = resample_spec_fwhm(s_raw,
-                         new_bands = new_bands,
-                         fwhm = fwhm_A)
-BBB = resample_spec_fwhm(s_raw,
-                         new_bands = new_bands,
-                         fwhm = fwhm_B)
-CCC = resample_spec_fwhm(s_raw,
-                         new_bands = new_bands,
-                         fwhm = fwhm_C)
+AAA = resample(s_raw,
+               new_bands = new_bands,
+               fwhm = fwhm_A)
+BBB = resample(s_raw,
+               new_bands = new_bands,
+               fwhm = fwhm_B)
+CCC = resample(s_raw,
+               new_bands = new_bands,
+               fwhm = fwhm_C)
 
 plot(s_raw, lwd = 0.2)
 plot(AAA, add = TRUE, lwd = 0.1, col = "red")

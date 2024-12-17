@@ -30,9 +30,8 @@ smooth.default = function(x, ...){
 #' \code{smooth} runs each spectrum by a smoothing and returns the spectra
 #'
 #' @param x spectra object. bands must be strictly increasing
-#' @param method Choose smoothing method: "spline" (default) or "moving_average"
-#' @param ... additional parameters passed to \code{smooth.spline} or parameters
-#'            `n` and `save_bands_to_meta` for the moving average smoothing.
+#' @param method Choose smoothing method: "gaussian" (default), "spline", or "moving_average"
+#' @param ... additional parameters passed to methods \code{smooth_fwhm}, \code{smooth_spline}, \code{smooth_moving_avg}
 #' @return a spectra object of with smoothed spectra
 #'
 #' @author Jose Eduardo Meireles
@@ -42,14 +41,17 @@ smooth.default = function(x, ...){
 #' library(spectrolab)
 #'
 #' spec = as_spectra(spec_matrix_example, name_idx = 1)
-#' spec = smooth(spec, parallel = FALSE)
-smooth.spectra = function(x, method = "spline", ...){
+#' spec = smooth(spec)
+smooth.spectra = function(x, method = "gaussian", ...){
 
     if(! i_is_increasing(bands(x))){
         stop("smooth requires strictly increasing band values.\nMatch sensor overlap before attempting to smooth the spectra.")
     }
 
-    if(method == "spline") {
+    if(method == "gaussian"){
+        smooth_fwhm(x, ...)
+    }
+    else if(method == "spline") {
         smooth_spline(x, ...)
         return(x)
     } else if (method == "moving_average") {
@@ -180,15 +182,18 @@ smooth_moving_avg = function(x, n = NULL, save_bands_to_meta = TRUE){
 }
 
 
-# smooth_fwhm = function(x, fwhm = NULL){
-#     b = bands(x)
-#     s = value(x)
-#
-#     if(missing(fwhm)){
-#         fwhm = 2*(mean(diff(b)))
-#     }
-#
-#     resample_fwhm(wavelengths = b, reflectance = s, new_wavelengths = b, fwhm = fwhm)
-# }
+#' Smooth spectra with a gaussian model
+#'
+#' @param x spectra
+#' @param fwhm Full Width at Half Maximum.
+#'
+#' @return smoothed spectra
+#' @export
+smooth_fwhm = function(x, fwhm = NULL){
+    b = bands(x)
+    if(missing(fwhm)){
+        fwhm = 2 * make_fwhm(x, new_bands = b, new_fwhm = NULL, return_type = "old")
+    }
 
-
+    resample(x, new_bands = b, fwhm = fwhm)
+}
