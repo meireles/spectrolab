@@ -39,7 +39,7 @@ i_is_whole = function(x){
 #' zero is never used as an index in R and is not recognized as such here.
 #'
 #' @param x numeric values
-#' @param max_length Max acceptable values for x (inclusive). Must be greater than 1
+#' @param max_value Max acceptable values for x (inclusive). Must be greater than 1
 #' @param allow_negative boolean. Count negative integers as indices? defaults to FALSE
 #'
 #' @return boolean

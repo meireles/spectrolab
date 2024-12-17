@@ -13,8 +13,6 @@ i_read_asd_spectra(file_paths, type = "target_reflectance", divide_refl_by)
 Defaults to "target_refl".}
 
 \item{divide_refl_by}{divide values by this}
-
-\item{format}{choice of ASD format. Either "binary" or "txt"}
 }
 \value{
 spectra object

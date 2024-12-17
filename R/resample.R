@@ -161,3 +161,71 @@ resample = function(spec,
                 meta  = meta(spec))
     s
 }
+
+
+
+#' #' Resample spectra
+#' #'
+#' #' \code{resample} returns spectra resampled to new bands using gaussian smoothing.
+#' #' \code{resample} is meant to match spectra from one set of bands to a similar set
+#' #' of values. \code{resample} doesn't predict values for bands outside of the original
+#' #' range.
+#' #'
+#' #' @param x spectra object. bands must be strictly increasing
+#' #' @param new_bands numeric vector of bands to sample from spectra
+#' #' @param ... additional parameters passed to the \code{smooth.spline} function.
+#' #' @return spectra object with resampled spectra
+#' #'
+#' #' @importFrom stats predict
+#' #'
+#' #' @author Jose Eduardo Meireles
+#' #' @export
+#' #'
+#' #' @examples
+#' #' library(spectrolab)
+#' #' spec = as_spectra(spec_matrix_example, name_idx = 1)
+#' #' spec = resample(spec, new_bands = seq(400, 2400, 0.5), parallel = FALSE)
+#' resample = function(x, new_bands, ...) {
+#'     UseMethod("resample")
+#' }
+#'
+#'
+#' #' @describeIn resample Resample spectra
+#' #' @export
+#' resample_spline.spectra = function(x, new_bands, ...) {
+#'
+#'     w = bands(x)
+#'
+#'     ## Simply subset the current spectra if all new_bands are a in the set of
+#'     ## current bands
+#'     if(all(new_bands %in% w)){
+#'         return(x[ , new_bands ])
+#'     }
+#'
+#'     ## Enforce increasing bands in spectra object
+#'     if(! i_is_increasing(bands(x))){
+#'         stop("resample requires strictly increasing band values.\nMatch sensor overlap before attempting to resample the spectra.")
+#'     }
+#'
+#'     ## Do not predict points outside the original band range
+#'     r = range(bands(x))
+#'
+#'     if(min(new_bands) < r[1] || max(new_bands) > r[2]){
+#'         stop("New band values must be within the data's range: ", r[1], " to ", r[2])
+#'     }
+#'
+#'     ## Smooth and predict
+#'     message("Using spline to predict value at new bands...")
+#'     s = smooth_spline(x, return_fn = TRUE, ...)
+#'     f = function(o, p){ stats::predict(o, p)[["y"]] }
+#'     g = lapply(X = s, FUN = f, p = new_bands)
+#'     message("Beware the spectra are now partially smoothed.")
+#'
+#'     ## Construct new spectra object and return
+#'     spectra(value = do.call(rbind, g),
+#'             bands = new_bands,
+#'             names = names(x),
+#'             meta  = meta(x))
+#' }
+#'
+#'

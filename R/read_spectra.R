@@ -500,7 +500,6 @@ i_read_ascii_metadata = function(file_paths,
 #' @param file_paths paths for files already parsed by `read_spectra`
 #' @param type Data type to read. "target_refl", "target_rad", "reference_rad".
 #'             Defaults to "target_refl".
-#' @param format choice of ASD format. Either "binary" or "txt"
 #' @param divide_refl_by divide values by this
 #' @return spectra object
 #'

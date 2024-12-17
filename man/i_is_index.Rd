@@ -9,9 +9,9 @@ i_is_index(x, max_value, allow_negative = FALSE)
 \arguments{
 \item{x}{numeric values}
 
-\item{allow_negative}{boolean. Count negative integers as indices? defaults to FALSE}
+\item{max_value}{Max acceptable values for x (inclusive). Must be greater than 1}
 
-\item{max_length}{Max acceptable values for x (inclusive). Must be greater than 1}
+\item{allow_negative}{boolean. Count negative integers as indices? defaults to FALSE}
 }
 \value{
 boolean
