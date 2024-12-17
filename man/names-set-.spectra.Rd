@@ -17,11 +17,6 @@ nothing. called for its side effect.
 \description{
 \code{names} assigns sample names to lhs
 }
-\details{
-Sample names must not be coercible to numeric. That is, names such as "1" and
-"153.44" are invalid even if they are encoded as character. names will add the
-prefix "spec_" to any element of value that is coercible to numeric.
-}
 \examples{
 library(spectrolab)
 spec = as_spectra(spec_matrix_example, name_idx = 1)

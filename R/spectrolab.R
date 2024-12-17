@@ -8,8 +8,8 @@ spectrolab_citation = paste0(spectrolab_citation, "DOI: https://doi.org/10.5281/
 #'
 #' Class and methods for hyperspectral data.
 #'
-#' @docType package
-#' @name spectrolab
+#' @keywords internal
+"_PACKAGE"
 NULL
 
 .onAttach = function(libname, pkgname) {

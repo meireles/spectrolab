@@ -1,3 +1,9 @@
+# spectrolab 0.0.19 (2024-12-12)
+
+## major
+* resampling using a gaussian model and the fwhm of each band is now the default
+
+
 # spectrolab 0.0.18 (2023-02-10)
 
 ## major

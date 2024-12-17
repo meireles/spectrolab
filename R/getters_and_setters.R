@@ -186,9 +186,9 @@ value = function(x){
     UseMethod("value")
 }
 
-#' Set spectra value
-#'
-#' \code{value} Assigns the rhs to the value of the lhs spectra obj
+#' @title Set spectra value
+#' @name value<-
+#' @description \code{value<-} Assigns the rhs to the value of the lhs spectra obj
 #'
 #' @param x spectra object
 #' @param value value to be assigned to the lhs
@@ -219,16 +219,9 @@ value.spectra = function(x){
 #' @describeIn value<- Set spectra value
 #' @export
 `value<-.spectra` = function(x, value){
-
-    ### ORIGINAL code was calling the spectra setter ###
-    # x[] = value
-    # x
-    ####################################################
-
     x$value = i_value(value, nbands = ncol(x), nsample = nrow(x))
     x
 }
-
 
 ########################################
 # sample names
@@ -257,10 +250,6 @@ names.spectra = function(x){
 #'
 #' \code{names} assigns sample names to lhs
 #'
-#' Sample names must not be coercible to numeric. That is, names such as "1" and
-#' "153.44" are invalid even if they are encoded as character. names will add the
-#' prefix "spec_" to any element of value that is coercible to numeric.
-#'
 #' @param x spectra object (lhs)
 #' @param value values to be assigned (rhs)
 #' @return nothing. called for its side effect.
@@ -273,7 +262,7 @@ names.spectra = function(x){
 #' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' names(spec) = toupper(names(spec))
 `names<-.spectra` = function(x, value){
-    x$names = i_names(value, nrow(x), prefix = NULL)
+    x$names = i_names(value, nrow(x))
     x
 }
 
@@ -377,7 +366,7 @@ bands.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
 #' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' spec = normalize(spec)
 #' meta(spec, "normalization_magnitude")
-meta = function(x, label, sample, simplify = FALSE, quiet = TRUE){
+meta = function(x, label = NULL, sample = NULL, simplify = FALSE, quiet = TRUE){
     UseMethod("meta")
 }
 
@@ -398,7 +387,7 @@ meta = function(x, label, sample, simplify = FALSE, quiet = TRUE){
 #' library(spectrolab)
 #' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' meta(spec, "random") = rnorm(nrow(spec), mean(10), sd = 2)
-`meta<-` = function(x, label, sample, value){
+`meta<-` = function(x, label = NULL, sample = NULL, value){
     UseMethod("meta<-")
 }
 

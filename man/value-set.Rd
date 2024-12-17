@@ -15,7 +15,7 @@ value(x) <- value
 nothing. called for its side effect
 }
 \description{
-\code{value} Assigns the rhs to the value of the lhs spectra obj
+\code{value<-} Assigns the rhs to the value of the lhs spectra obj
 }
 \examples{
 library(spectrolab)

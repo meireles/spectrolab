@@ -11,7 +11,7 @@ i_is_index(x, max_value, allow_negative = FALSE)
 
 \item{allow_negative}{boolean. Count negative integers as indices? defaults to FALSE}
 
-\item{max_length}{Max acceptable values for x (inclusive). Must be >= 1}
+\item{max_length}{Max acceptable values for x (inclusive). Must be greater than 1}
 }
 \value{
 boolean

@@ -5,7 +5,7 @@
 \alias{meta.spectra}
 \title{Get metadata}
 \usage{
-meta(x, label, sample, simplify = FALSE, quiet = TRUE)
+meta(x, label = NULL, sample = NULL, simplify = FALSE, quiet = TRUE)
 
 \method{meta}{spectra}(x, label = NULL, sample = NULL, simplify = FALSE, quiet = TRUE)
 }

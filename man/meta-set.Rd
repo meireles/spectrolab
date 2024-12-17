@@ -4,7 +4,7 @@
 \alias{meta<-}
 \title{Set metadata}
 \usage{
-meta(x, label, sample) <- value
+meta(x, label = NULL, sample = NULL) <- value
 }
 \arguments{
 \item{x}{spectra object (lhs)}

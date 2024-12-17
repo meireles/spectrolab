@@ -55,16 +55,14 @@ i_value = function(x, nbands = NULL, nsample = NULL) {
 #'
 #' \code{i_names} constructs a sample name vector in the appropriate format
 #'
-#' @param x vector of labels. Should be character. If numeric, a prefix will be added
+#' @param x vector of labels. Should be character.
 #' @param nsample Integer of expected number of samples.
 #'                If NULL (default) checking is skipped.
-#' @param prefix String to use as prefix in case an element of x is numeric.
-#'               Defaults to "spec_"
 #' @return vector of sample names coerced to character
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_names = function(x, nsample = NULL, prefix = "spec_"){
+i_names = function(x, nsample = NULL){
 
     if( ! is.null(dim(x)) ){
         stop("Sample names must be one dimensional")
@@ -74,22 +72,6 @@ i_names = function(x, nsample = NULL, prefix = "spec_"){
 
     if( !is.null(nsample) && nsample != length(x) ){
         stop("The length of x must be the same as nsample")
-    }
-
-    ## In case x has numeric elements...
-    n = which(suppressWarnings(!is.na(as.numeric(x))))
-
-    ## ...prepend them with `prefix`...
-    if(length(n) > 0){
-
-        ## while ensuring that `prefix` is a valid char
-        if( suppressWarnings(!is.na(as.numeric(prefix))) ||
-            is.null(prefix) ||
-            is.na(prefix) ){
-            prefix = "spec_"
-        }
-
-        x[n] = paste(prefix, x[n], sep = "")
     }
 
     as.character(x)
@@ -263,7 +245,7 @@ spectra = function(value,
                                nbands = wl_l,
                                nsample = spl_l),
               bands  = i_bands(bands),
-              names  = i_names(names, prefix = NULL),     ## relies of the default prefix inside i_names
+              names  = i_names(names),
               meta   = i_meta(NULL, nsample = spl_l, ...) ## *** Ideally i_meta(meta, nsample = spl_l, ...)
     )
 
