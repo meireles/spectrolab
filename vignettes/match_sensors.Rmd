@@ -1,8 +1,7 @@
 ---
 title: "Matching sensor overlap"
 author: "Jose Eduardo Meireles"
-output:
-  rmarkdown::pdf_document:
+output: rmarkdown::html_vignette
 vignette: > 
   %\VignetteIndexEntry{How to match the sensor overlaps}
   %\VignetteEngine{knitr::rmarkdown} 

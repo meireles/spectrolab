@@ -2,9 +2,7 @@
 title: "Resampling Spectra"
 author: "Jose Eduardo Meireles"
 date: "`r format(Sys.time(), '%B %Y')`"
-output:
-  rmarkdown::pdf_document:
-    number_sections: yes
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Resampling Spectra}
   %\VignetteEngine{knitr::rmarkdown} 

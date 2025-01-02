@@ -2,9 +2,7 @@
 title: "Introduction to spectrolab"
 author: "Jose Eduardo Meireles, Anna K. Schweiger, and Jeannine Cavender-Bares"
 date: "`r format(Sys.time(), '%B %Y')`"
-output:
-  rmarkdown::pdf_document:
-    number_sections: yes
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction to spectrolab}
   %\VignetteEngine{knitr::rmarkdown} 
