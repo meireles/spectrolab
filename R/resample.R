@@ -149,10 +149,12 @@ resample = function(spec,
     # Standard deviation from FWHM
     sigma = fwhm / (2 * sqrt(2 * log(2)))
 
-    # Resample reflectance to new bands
+    #Resample reflectance to new bands
+    t_refl = t(reflectance)
+
     resampled_reflectance = mapply(function(l, s){
         k = stats::dnorm(bands, mean = l, sd = s)
-        colSums(t(reflectance) * k) / sum(k)
+        colSums(t_refl * k) / sum(k)
     }, l = new_bands, s = sigma)
 
     s = spectra(value = resampled_reflectance,
@@ -161,7 +163,6 @@ resample = function(spec,
                 meta  = meta(spec))
     s
 }
-
 
 
 #' #' Resample spectra
