@@ -149,14 +149,19 @@ resample = function(spec,
     # Standard deviation from FWHM
     sigma = fwhm / (2 * sqrt(2 * log(2)))
 
-    #Resample reflectance to new bands
-    t_refl = t(reflectance)
+    # Gaussian kernel mapping bands to new bands
+    gauss_kernel = outer(bands,
+                         seq_along(new_bands) ,  # Indices to iterate over means and sds
+                         function(x, i){
+                             stats::dnorm(x, mean = new_bands[i], sd = sigma[i])
+                        })
+    # Normalize gaussian kernel weights
+    gauss_kernel = sweep(gauss_kernel, 2, colSums(gauss_kernel), "/")
 
-    resampled_reflectance = mapply(function(l, s){
-        k = stats::dnorm(bands, mean = l, sd = s)
-        colSums(t_refl * k) / sum(k)
-    }, l = new_bands, s = sigma)
+    # Compute the resampled reflectance
+    resampled_reflectance = reflectance %*% gauss_kernel
 
+    # Create the resulting spectra object
     s = spectra(value = resampled_reflectance,
                 bands = new_bands,
                 names = names(spec),
