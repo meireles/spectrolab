@@ -31,7 +31,7 @@ not have side effects. This means that spectra can be selected and highlighted
 but not yet deleted or subset from the shiny app.
 }
 \examples{
-\dontrun{
+if(interactive()){
 # Create a spectra object
 spec = as_spectra(spec_matrix_example, name_idx = 1)
 

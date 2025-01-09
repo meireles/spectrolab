@@ -168,13 +168,12 @@ default_spec_regions = function(){
 #' plot(spec, add = TRUE)
 #'
 #' # Alternatively, if you want to get fancy...
-#' \dontrun{
 #' col_fun = colorRampPalette(c(rgb(1, 1, 0, 0.7),rgb(1, 0, 0, 0.7)), alpha = TRUE)
 #' colors = col_fun(4)
 #'
 #' plot_regions(spec,default_spec_regions(), col = colors)
 #' plot(spec, add = TRUE)
-#' }
+#'
 plot_regions = function(spec,
                         regions   = default_spec_regions(),
                         col       = grDevices::rgb(0.7, 0.7, 0.7, 0.3),
@@ -254,7 +253,7 @@ plot_regions = function(spec,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' if(interactive()){
 #' # Create a spectra object
 #' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #'

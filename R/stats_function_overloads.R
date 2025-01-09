@@ -122,11 +122,21 @@ sd = function(x, na.rm = FALSE){
     UseMethod("sd")
 }
 
-#' Default variance
+#' Default standard deviation
 #'
-#' @inherit stats::sd
+#' \code{sd} computes the standard deviation of the values in x. If na.rm is TRUE then missing values are removed before computation proceeds.
+#'
+#' @param x a numeric vector or an R object which is coercible to one by as.double(x)
+#' @param na.rm logical. Should missing values be removed?
+#' @return standard deviation of x
+#'
 #' @importFrom stats sd
 #' @export
+#'
+#' @examples
+#' x = rnorm(n = 200, mean = 0, sd = 1)
+#' sd(x)
+#'
 sd.default = stats::sd
 
 #' Standard deviation spectrum

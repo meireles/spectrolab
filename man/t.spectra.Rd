@@ -10,7 +10,7 @@
 \item{x}{spectra}
 }
 \value{
-nothing. operation not allowed
+No return value. Operation not allowed
 }
 \description{
 spectra are not transposable. Transpose the value instead
@@ -19,11 +19,6 @@ spectra are not transposable. Transpose the value instead
 library(spectrolab)
 s = as_spectra(spec_matrix_example, name_idx = 1)
 
-# This will throw an error
-\dontrun{
-t(s)
-}
-# But these options should work
 t(value(s))
 t(as.matrix(s))
 }

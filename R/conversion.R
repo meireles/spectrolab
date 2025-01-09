@@ -170,8 +170,8 @@ as.data.frame.spectra = function(x,
 #'
 #' # Resampling spectra since a spectral dataset with 2,001 bands
 #' # results in 2,001,000 unique spectral indices per sample
-#' new_bands = seq(400, 2400, 2)
-#' spec  = resample(spec, new_bands, make_fwhm(spec, new_bands) )
+#' new_bands = seq(400, 2400, 10)
+#' spec = resample(spec, new_bands, make_fwhm(spec, new_bands) )
 #' p_idx = pairwise_indices(spec)
 #'
 pairwise_indices = function(x, max_out_elements = 5e8){

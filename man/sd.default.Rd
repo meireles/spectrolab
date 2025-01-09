@@ -2,31 +2,23 @@
 % Please edit documentation in R/stats_function_overloads.R
 \name{sd.default}
 \alias{sd.default}
-\title{Default variance}
+\title{Default standard deviation}
 \usage{
 \method{sd}{default}(x, na.rm = FALSE)
 }
 \arguments{
-\item{x}{a numeric vector or an \R object but not a
-    \code{\link{factor}} coercible to numeric by \code{as.double(x)}.}
+\item{x}{a numeric vector or an R object which is coercible to one by as.double(x)}
 
-\item{na.rm}{logical.  Should missing values be removed?}
+\item{na.rm}{logical. Should missing values be removed?}
+}
+\value{
+standard deviation of x
 }
 \description{
-This function computes the standard deviation of the values in
-  \code{x}.
-  If \code{na.rm} is \code{TRUE} then missing values are removed before
-  computation proceeds.
-}
-\details{
-Like \code{\link[stats]{var}} this uses denominator \eqn{n - 1}.
-
-  The standard deviation of a length-one or zero-length vector is \code{NA}.
+\code{sd} computes the standard deviation of the values in x. If na.rm is TRUE then missing values are removed before computation proceeds.
 }
 \examples{
-sd(1:2) ^ 2
-}
-\seealso{
-\code{\link[stats]{var}} for its square, and \code{\link[stats]{mad}}, the most
-  robust alternative.
+x = rnorm(n = 200, mean = 0, sd = 1)
+sd(x)
+
 }

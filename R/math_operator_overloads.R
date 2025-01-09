@@ -3,7 +3,7 @@
 #' spectra are not transposable. Transpose the value instead
 #'
 #' @param x spectra
-#' @return nothing. operation not allowed
+#' @return No return value. Operation not allowed
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -12,11 +12,6 @@
 #' library(spectrolab)
 #' s = as_spectra(spec_matrix_example, name_idx = 1)
 #'
-#' # This will throw an error
-#' \dontrun{
-#' t(s)
-#' }
-#' # But these options should work
 #' t(value(s))
 #' t(as.matrix(s))
 t.spectra = function(x){
