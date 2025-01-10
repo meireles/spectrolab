@@ -3,7 +3,7 @@ title: "Matching sensor overlap"
 author: "Jose Eduardo Meireles"
 output: rmarkdown::html_vignette
 vignette: > 
-  %\VignetteIndexEntry{How to match the sensor overlaps}
+  %\VignetteIndexEntry{Matching sensor overlap}
   %\VignetteEngine{knitr::rmarkdown} 
   %\VignetteEncoding{UTF-8}
 ---
@@ -30,7 +30,8 @@ radiance_raw = read_spectra(path = path_raw, type = "target_radiance")
 # Sensor overlaps marked with vertical dashed lines
 lwd = 0.5
 cex = 0.7
-oldpar = par()
+
+oldpar = par(no.readonly = TRUE)
 par(mfrow = c(2, 1))
 
 plot(reflect_raw, main = "Reflectance",
@@ -72,7 +73,7 @@ radiance_matched = match_sensors(x = radiance_raw, splice_at = splice_bands,
 lwd = 0.5
 cex = 0.7
 
-oldpar = par()
+oldpar = par(no.readonly = TRUE)
 
 par(mfrow = c(2, 1))
 
@@ -104,7 +105,7 @@ radiance_moc = read_spectra(path = path_moc, type = "target_radiance")
 lwd = 0.5
 cex = 0.7
 
-oldpar = par()
+oldpar = par(no.readonly = TRUE)
 
 par(mfrow = c(2, 1))
 

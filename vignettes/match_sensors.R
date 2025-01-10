@@ -15,6 +15,8 @@ radiance_raw = read_spectra(path = path_raw, type = "target_radiance")
 # Sensor overlaps marked with vertical dashed lines
 lwd = 0.5
 cex = 0.7
+
+oldpar = par(no.readonly = TRUE)
 par(mfrow = c(2, 1))
 
 plot(reflect_raw, main = "Reflectance",
@@ -24,6 +26,8 @@ abline(v = c(990, 1900), col = "red", lty = 2, lwd = lwd)
 plot(radiance_raw, main = "Radiance",
      lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
 abline(v = c(990, 1900), col = "red", lty = 2, lwd = lwd)
+
+par(oldpar)
 
 ## ----fig.height=8, fig.width=5, fig.align='center', echo=TRUE-----------------
 
@@ -46,6 +50,9 @@ radiance_matched = match_sensors(x = radiance_raw, splice_at = splice_bands,
 
 lwd = 0.5
 cex = 0.7
+
+oldpar = par(no.readonly = TRUE)
+
 par(mfrow = c(2, 1))
 
 plot(reflect_raw, main = "Reflectance",
@@ -60,6 +67,8 @@ plot(radiance_raw, main = "Radiance",
 plot(radiance_matched, col = "red", add = TRUE,
      lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
 
+par(oldpar)
+
 ## ----fig.height=8, fig.width=5, fig.align='center', echo=TRUE-----------------
 path_moc = system.file("extdata/svc_raw_and_overlap_matched_serbin/SVC_Files_moc/",
                        package = "spectrolab")
@@ -70,6 +79,9 @@ radiance_moc = read_spectra(path = path_moc, type = "target_radiance")
 
 lwd = 0.5
 cex = 0.7
+
+oldpar = par(no.readonly = TRUE)
+
 par(mfrow = c(2, 1))
 
 plot(reflect_moc, main = "Reflectance", col = "black",
@@ -83,4 +95,6 @@ plot(radiance_moc, main = "Radiance", col = "black",
 
 plot(radiance_matched, col = "red", add = TRUE,
      lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
+
+par(oldpar)
 

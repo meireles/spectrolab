@@ -96,6 +96,8 @@ spec_sub_byidx[ , 2]
 
 ## ----fig.height=2.5, fig.width=7, eval=TRUE-----------------------------------
 # Simple spectra plot
+oldpar = par(no.readonly = TRUE)
+
 par(mfrow = c(1, 3))
 plot(achillea_spec, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
 
@@ -107,6 +109,8 @@ title("80% spectral quantile")
 plot(achillea_spec, lwd = 0.25, lty = 1, col = "grey50", main="Spectra, quantile and regions")
 plot_quantile(achillea_spec, total_prob = 0.8, col = rgb(1, 0, 0, 0.25), border = FALSE, add = TRUE)
 plot_regions(achillea_spec, regions = default_spec_regions(), add = TRUE)
+
+par(oldpar)
 
 ## ----eval=T-------------------------------------------------------------------
 spec_new = achillea_spec

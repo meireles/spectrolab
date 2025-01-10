@@ -200,7 +200,7 @@ The function `plot_regions()` helps shading different spectral regions. `spectro
 
 ```{r, fig.height=2.5, fig.width=7, eval=TRUE}
 # Simple spectra plot
-oldpar = par()
+oldpar = par(no.readonly = TRUE)
 
 par(mfrow = c(1, 3))
 plot(achillea_spec, lwd = 0.75, lty = 1, col = "grey25", main = "All Spectra")
@@ -218,8 +218,6 @@ par(oldpar)
 ```
 
 Last but not least, spectrolab also allows you to interactively explore spectra through a `shiny` app with the `plot_interactive()` function.
-
-<img src="plot_interactive_screenshot.png" alt="Drawing" style="width: 300px;"/>
 
 ## Manipulating samples names, band labels, metadata and value
 
