@@ -25,14 +25,9 @@ i_value = function(x, nbands = NULL, nsample = NULL) {
         x = t(matrix(as.numeric(as.character(x))))
     }
 
-    if(is.matrix(x)){
-        mode(x) = "numeric"
-    }
-
     if(is.data.frame(x)) {
         ## Assumes that `as.matrix` converts factors to character
         x = as.matrix(x)
-        mode(x) = "numeric"
     }
 
     ## test if x dimensions conform to nbands and nsample
@@ -44,8 +39,11 @@ i_value = function(x, nbands = NULL, nsample = NULL) {
         stop("Number of rows in x must be equal nsample")
     }
 
-    ## Clean up matrix dimensio names
+    ## Clean up matrix dimension names
     dimnames(x) = NULL
+
+    ## Ensure that x is numeric
+    mode(x) = "numeric"
 
     x
 }
@@ -74,7 +72,7 @@ i_names = function(x, nsample = NULL){
         stop("The length of x must be the same as nsample")
     }
 
-    as.character(x)
+    x
 }
 
 
