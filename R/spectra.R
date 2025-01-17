@@ -116,12 +116,11 @@ i_bands = function(x, nbands = NULL, warn_dup_band = FALSE) {
 #' @param nsample number of samples in spectra
 #' @param allow_null boolean. If TRUE (default) and x is NULL, the function will
 #'                   return NULL regardless of nsample
-#' @param ... additional arguments passed to as.data.frame
 #' @return data.frame
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_meta = function(x, nsample, allow_null = TRUE, ...){
+i_meta = function(x, nsample, allow_null = TRUE){
 
     if(is.null(x) && allow_null){
         m = matrix(NA, nrow = nsample, ncol = 0)

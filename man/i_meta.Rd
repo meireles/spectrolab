@@ -4,7 +4,7 @@
 \alias{i_meta}
 \title{Internal metadata constructor for spectra}
 \usage{
-i_meta(x, nsample, allow_null = TRUE, ...)
+i_meta(x, nsample, allow_null = TRUE)
 }
 \arguments{
 \item{x}{data.frame}
@@ -13,8 +13,6 @@ i_meta(x, nsample, allow_null = TRUE, ...)
 
 \item{allow_null}{boolean. If TRUE (default) and x is NULL, the function will
 return NULL regardless of nsample}
-
-\item{...}{additional arguments passed to as.data.frame}
 }
 \value{
 data.frame
