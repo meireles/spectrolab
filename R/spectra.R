@@ -105,40 +105,6 @@ i_bands = function(x, nbands = NULL, warn_dup_band = FALSE) {
         stop("band cannot be converted to numeric: ", x[n])
     }
 
-    d = which(duplicated(y))
-
-    if(length(d) > 0){
-
-        position = d
-        original = y[d]
-
-        # Need to add a tiny percent (0.0012357%) of the smallest band diff
-        # to the duplicated bands.
-        # This technique should work if a certain band value is duplicated once.
-        # If the data has three bands of value 680nm, for example, then the code
-        # will not perform as intended because a duplication will remain.
-        #
-        # Sort ensures that dups that show up later (order-wise) will have larger values
-        # when a band has more than one duplicate
-
-        # scalars  = sort(runif(length(d), min = 0.00001, max = 0.00012))
-        scalars  = sort(rep(0.000012357, length(d)))
-
-        y[d] = y[d] + scalars * min(abs(diff(y[-d])))
-
-        updated = y[d]
-
-        if(warn_dup_band){
-            cat("Duplicated band values are not allowed!\n")
-            cat("Bands updated as follows:\n")
-            print(data.frame("band_position"  = position,
-                             "original_value" = original,
-                             "updated_value"  = format(updated, digits = 12),
-                             check.names = FALSE),
-                  row.names = FALSE)
-        }
-    }
-
     y
 }
 
