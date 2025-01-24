@@ -18,8 +18,8 @@ in columns}
 nrow equals to the number of samples (nrow(value) or length(names))}
 
 \item{extend_meta}{defaults to FALSE. If TRUE, then the nrow of meta can be
-differnt from the number of samples and the constructor repeats
-the first line of the metadata n times to match the sample length}
+different from the number of samples and the constructor repeats
+the metadata times to match the sample length}
 }
 \value{
 spectra object
