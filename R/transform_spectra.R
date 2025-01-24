@@ -51,7 +51,8 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
     f  = f_na_wrap(fun, na.rm)
     fm = ifelse(keep_txt_meta, try_keep_txt(f), f)
 
-    r  = apply(as.matrix(x), 2, f, ...)
+    X  = value(x)
+    r  = apply(X, 2, f, ...)
     w  = bands(x)
     m0 = meta(x)
     m  = m0
@@ -66,8 +67,19 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
     if(ncol(m) != 0){
         m = lapply(m, fm, ...)  # Calling lapply because meta is always a data.frame
         m = do.call(cbind, m)
+
+        # # If the metadata resulting from the function fm does not produce the same
+        # # number of rows as the reflectance data does, then repeat the metadata to
+        # # match. One way this can happen if the metadata info is the same for all
+        # # samples but the result from the reflectance transformation by function f
+        # # isn't.
+        # if(nrow(m) == 1){
+        #     m = m[rep(1, nrow(r)), ]
+        # }
+    } else {
+        m = NULL
     }
-    spectra(value = r, bands = w, names = n, meta = m)
+    spectra(value = r, bands = w, names = n, meta = m, extend_meta = TRUE)
 }
 
 

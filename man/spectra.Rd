@@ -4,7 +4,7 @@
 \alias{spectra}
 \title{Spectra object constructor}
 \usage{
-spectra(value, bands, names, meta = NULL, ...)
+spectra(value, bands, names, meta = NULL, extend_meta = FALSE)
 }
 \arguments{
 \item{value}{N by M numeric matrix. N samples in rows and M bands
@@ -14,10 +14,12 @@ in columns}
 
 \item{names}{sample names in vector of length N}
 
-\item{meta}{spectra metadata. defaults to NULL. Must be either of length or nrow
-equals to the number of samples (nrow(value) or length(names))}
+\item{meta}{spectra metadata. defaults to NULL. Should be either of length or
+nrow equals to the number of samples (nrow(value) or length(names))}
 
-\item{...}{additional arguments to metadata creation. not implemented yet}
+\item{extend_meta}{defaults to FALSE. If TRUE, then the nrow of meta can be
+differnt from the number of samples and the constructor repeats
+the first line of the metadata n times to match the sample length}
 }
 \value{
 spectra object

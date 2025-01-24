@@ -116,23 +116,32 @@ i_bands = function(x, nbands = NULL, warn_dup_band = FALSE) {
 #' @param nsample number of samples in spectra
 #' @param allow_null boolean. If TRUE (default) and x is NULL, the function will
 #'                   return NULL regardless of nsample
+#' @param match_nsample extend or trim the metadata to match the number of samples?
 #' @return data.frame
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_meta = function(x, nsample, allow_null = TRUE){
+i_meta = function(x, nsample, allow_null = TRUE, match_nsample = FALSE){
 
     if(is.null(x) && allow_null){
         m = matrix(NA, nrow = nsample, ncol = 0)
         return(as.data.frame(m))
     }
 
+    if( is.matrix(x) ){
+        x = data.frame(x)
+    }
+
     if( ! is.data.frame(x) ){
         stop("x must be a data.frame")
     }
 
-    if( nsample != nrow(x) ){
-        stop("The number of columns of meta must be the same as nsample")
+    if(nsample == nrow(x)){
+        NULL
+    } else if (match_nsample){
+        x = x[ rep(seq.int(nrow(x)), length.out = nsample), ]
+    } else {
+        stop("The number of rows of meta must be the same as nsample")
     }
 
     if(ncol(x) > 0 && is.null(colnames(x))){
@@ -157,8 +166,11 @@ i_meta = function(x, nsample, allow_null = TRUE){
 #'                    in columns
 #' @param bands band names in vector of length M
 #' @param names sample names in vector of length N
-#' @param meta spectra metadata. defaults to NULL. Must be either of length or nrow
-#'             equals to the number of samples (nrow(value) or length(names))
+#' @param meta spectra metadata. defaults to NULL. Should be either of length or
+#'             nrow equals to the number of samples (nrow(value) or length(names))
+#' @param extend_meta defaults to FALSE. If TRUE, then the nrow of meta can be
+#'             different from the number of samples and the constructor repeats
+#'             the metadata times to match the sample length
 #' @return spectra object
 #'
 #' @note This function resorts to an ugly hack to deal with metadata assignment.
@@ -186,18 +198,8 @@ i_meta = function(x, nsample, allow_null = TRUE){
 spectra = function(value,
                    bands,
                    names,
-                   meta      = NULL){
-
-    ## HACK!!! affected blocks marked with ***
-    ## The coersion logic for metadata (meta) is in the setter meta() instead of
-    ## being in the ctor i_meta.
-    ## This means that assigning metadata with `meta()` works in more situations
-    ## than using the ctor, e.g.
-    ##    meta(s) = list("clade" = c("A", "B", "C", ...))             ## OK
-    ##    spectra(..., meta = list("clade" = c("A", "B", "C", ...)))  ## NO GO
-    ##
-    ## I will resort to an ugly hack to tackle that issue, but this should be
-    ## fixed soon.
+                   meta        = NULL,
+                   extend_meta = FALSE){
 
     wl_l  = length(bands)
     spl_l = length(names)
@@ -207,10 +209,9 @@ spectra = function(value,
                                nsample = spl_l),
               bands  = i_bands(bands),
               names  = i_names(names),
-              meta   = i_meta(NULL, nsample = spl_l) ## *** Ideally i_meta(meta, nsample = spl_l, ...)
+              meta   = i_meta(meta, nsample = spl_l, match_nsample = extend_meta)
     )
 
-    s = structure(s, class = c("spectra")) ## *** This should be the returned obj
-    meta(s) = meta                         ## *** so I shouldn't have to do this
+    s = structure(s, class = c("spectra"))
     s
 }
