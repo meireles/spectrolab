@@ -83,14 +83,13 @@ i_names = function(x, nsample = NULL){
 #' @param x vector of bands. Either numeric or character
 #' @param nbands Integer of expected number of bands.
 #'                     If NULL (default) checking is skipped.
-#' @param warn_dup_band Warn about duplicated bands?
 #' @return vector of bands
 #'
 #' @importFrom stats runif
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_bands = function(x, nbands = NULL, warn_dup_band = FALSE) {
+i_bands = function(x, nbands = NULL) {
     if(! is.vector(x)) {
         stop("bands names must be in a vector")
     }
