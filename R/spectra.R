@@ -127,15 +127,6 @@ i_bands = function(x, nbands = NULL) {
 
         updated = y[d]
 
-        if(warn_dup_band){
-            cat("Duplicated band values are not allowed!\n")
-            cat("Bands updated as follows:\n")
-            print(data.frame("band_position"  = position,
-                             "original_value" = original,
-                             "updated_value"  = format(updated, digits = 12),
-                             check.names = FALSE),
-                  row.names = FALSE)
-        }
     }
 
     y
