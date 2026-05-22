@@ -1,8 +1,16 @@
 ## ----setup, include=FALSE-----------------------------------------------------
 library("spectrolab")
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+echo = TRUE,
+collapse = TRUE,
+comment = "#>",
+fig.retina = 2,
+dpi = 300
+)
 
-## ----fig.height=8, fig.width=5, fig.align='center', echo=TRUE-----------------
+
+
+## ----fig.height=8, fig.width=5, fig.align='center', echo=TRUE, out.width="100%"----
 # Path to raw (unmatched) spectra
 path_raw = system.file("extdata/svc_raw_and_overlap_matched_serbin/SVC_Files/",
                        package = "spectrolab")
@@ -29,7 +37,7 @@ abline(v = c(990, 1900), col = "red", lty = 2, lwd = lwd)
 
 par(oldpar)
 
-## ----fig.height=8, fig.width=5, fig.align='center', echo=TRUE-----------------
+## ----fig.height=8, fig.width=5, fig.align='center', echo=TRUE, out.width="100%"----
 
 # Spectrolab's guess of what the splice bands are.
 # However, you should also visually inspect the spectra to determine what the
@@ -69,7 +77,7 @@ plot(radiance_matched, col = "red", add = TRUE,
 
 par(oldpar)
 
-## ----fig.height=8, fig.width=5, fig.align='center', echo=TRUE-----------------
+## ----fig.height=8, fig.width=5, fig.align='center', echo=TRUE, out.width="100%"----
 path_moc = system.file("extdata/svc_raw_and_overlap_matched_serbin/SVC_Files_moc/",
                        package = "spectrolab")
 

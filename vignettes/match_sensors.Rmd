@@ -10,14 +10,22 @@ vignette: >
 
 ```{r setup, include=FALSE}
 library("spectrolab")
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+echo = TRUE,
+collapse = TRUE,
+comment = "#>",
+fig.retina = 2,
+dpi = 150
+)
+
+
 ```
 
 # The problem
 
 Instruments may measure different spectral ranges using different sensors, resulting in abrupt "jumps" in the reflectance or radiance data. In such cases, the regions between sensors need to be matched, i.e. spliced together. Unmatched spectra collected with a 3-sensor instrument, such as the SVC HR1024, may look like this:
 
-```{r, fig.height=8, fig.width=5, fig.align='center', echo=TRUE}
+```{r, fig.height=8, fig.width=5, fig.align='center', echo=TRUE, out.width="100%"}
 # Path to raw (unmatched) spectra
 path_raw = system.file("extdata/svc_raw_and_overlap_matched_serbin/SVC_Files/",
                        package = "spectrolab")
@@ -51,7 +59,7 @@ Use the function `match_sensors` to splice the sensor overlap regions. You must 
 
 You can use `plot_interactive` zoom into a particular spectral region and decide what the `splice_at` values should be. You can also use the function `guess_splice_at` to estimates these bands for you but keep in mind that these are **guesses**.
 
-```{r, fig.height=8, fig.width=5, fig.align='center', echo=TRUE}
+```{r, fig.height=8, fig.width=5, fig.align='center', echo=TRUE, out.width="100%"}
 
 # Spectrolab's guess of what the splice bands are.
 # However, you should also visually inspect the spectra to determine what the
@@ -94,7 +102,7 @@ par(oldpar)
 
 And we can check the results from spectrolab's `match_sensors` against SVC's proprietary matching algorithm. 
 
-```{r, fig.height=8, fig.width=5, fig.align='center', echo=TRUE}
+```{r, fig.height=8, fig.width=5, fig.align='center', echo=TRUE, out.width="100%"}
 path_moc = system.file("extdata/svc_raw_and_overlap_matched_serbin/SVC_Files_moc/",
                        package = "spectrolab")
 

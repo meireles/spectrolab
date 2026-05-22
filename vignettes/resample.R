@@ -1,11 +1,15 @@
 ## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
 collapse = TRUE,
-comment = "#>"
+comment = "#>",
+fig.retina = 2,
+dpi = 300
 )
+
+
 library(spectrolab)
 
-## ----eval=TRUE----------------------------------------------------------------
+## ----eval=TRUE, out.width="100%"----------------------------------------------
 dir_path = system.file("extdata/svc_raw_and_overlap_matched_serbin/SVC_Files_moc", package = "spectrolab")
 
 s_raw     = read_spectra(dir_path)
