@@ -145,12 +145,12 @@ i_meta = function(x, nsample, allow_null = TRUE, match_nsample = FALSE){
         stop("x must be a data.frame")
     }
 
-    if(nsample == nrow(x)){
-        NULL
-    } else if (match_nsample){
-        x = x[ rep(seq_len(nrow(x)), length.out = nsample), , drop = FALSE ]
-    } else {
-        stop("The number of rows of meta must be the same as nsample")
+    if(nsample != nrow(x)){
+        if(match_nsample){
+            x = x[ rep(seq_len(nrow(x)), length.out = nsample), , drop = FALSE ]
+        } else {
+            stop("The number of rows of meta must be the same as nsample")
+        }
     }
 
     if(ncol(x) > 0 && is.null(colnames(x))){

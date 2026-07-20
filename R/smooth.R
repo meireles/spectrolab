@@ -94,28 +94,24 @@ smooth_spline = function(x, parallel = TRUE, return_fn = FALSE, ...) {
     scale   = c(0.1, 0.25, 0.5)
     cutres  = 100
 
-    range   = diff(range(w))
-    resol   = ceiling(range / ncol(x))
-    fullres = floor(range / resol)
-    propres = floor(range / resol * scale)
+    wl_span = diff(range(w))
+    resol   = ceiling(wl_span / ncol(x))
+    fullres = floor(wl_span / resol)
+    propres = floor(wl_span / resol * scale)
     nknots  = min( propres[propres >= cutres], fullres)
 
     d = value(x)
     r = lapply( seq.int(nrow(x)), function(y){ d[y, ]})
 
-    # parallel?
+    # parallel? mclapply schedules elements across cores itself, so no manual
+    # chunking is needed.
     p = requireNamespace("parallel", quietly = TRUE)
     p = p && parallel && l > 1 && .Platform$OS.type != "windows"
 
     if(p){
-        n = parallel::detectCores() - 1L
-        b = floor(seq.int(0, length(r), length.out = min(n, l) + 1L))
-        c = cut(seq.int(length(r)), b, include.lowest = TRUE)
-        s = split(r, c)
-        s = parallel::mclapply(s, function(z){
-            lapply(z, stats::smooth.spline, x = w, nknots = nknots, ...)},
-            mc.cores = n)
-        f = unlist(s, recursive = FALSE, use.names = FALSE)
+        n = max(1L, parallel::detectCores() - 1L)
+        f = parallel::mclapply(r, stats::smooth.spline, x = w, nknots = nknots, ...,
+                               mc.cores = n)
     } else {
         f = lapply(r, stats::smooth.spline, x = w, nknots = nknots, ...)
     }
@@ -149,9 +145,9 @@ smooth_moving_avg = function(x, n = NULL, save_bands_to_meta = TRUE){
         scale   = c(2, 3, 4, 5, 7, 10, 15, 20)
         cutres  = 150
 
-        range   = diff(range( bands(x) ))
-        resol   = ceiling(range / ncol(x))
-        propres = floor(range / resol / scale)
+        wl_span = diff(range( bands(x) ))
+        resol   = ceiling(wl_span / ncol(x))
+        propres = floor(wl_span / resol / scale)
         n       = max(c(scale[propres >= cutres]), 1)
     }
 
