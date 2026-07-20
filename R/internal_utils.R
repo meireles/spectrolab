@@ -151,6 +151,35 @@ i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE, allow_n
 }
 
 
+#' Match integer indices against a label vector length
+#'
+#' \code{i_match_index} resolves integer (possibly negative) indices against a
+#' vector of length \code{ll}. Hoisted from inside \code{i_match_label_or_idx}
+#' so it is a proper top-level internal function and can be tested in isolation.
+#'
+#' @param ii integer indices
+#' @param dd boolean vector flagging which entries of \code{ii} are valid indices
+#' @param ll length of the label vector being indexed
+#' @return list with `matched`, `unmatched` and `not_element` components
+#'
+#' @keywords internal
+#' @author Jose Eduardo Meireles
+i_match_index = function(ii, dd, ll){
+    ii = as.integer(ii)
+    ## In case the indices are positive
+    if(all(ii > 0)){
+        r = list(matched     = ii[dd],
+                 unmatched   = setdiff(seq(ll), ii[dd]),
+                 not_element = ii[!dd])
+    } else {                            ## In case the indices are negative
+        ip = abs(ii)
+        r = list(matched     = setdiff(seq(ll), ip[dd]),
+                 unmatched   = ip[dd],
+                 not_element = ii[!dd])
+    }
+    r
+}
+
 #' Match label or index
 #'
 #' @param x label vector
@@ -159,37 +188,13 @@ i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE, allow_n
 #' @param allow_empty_lookup boolean. If TRUE, x is allowed to be NULL. Defaults
 #'        to false
 #' @param allow_negative boolean. Allow indices to be negative? Defaults to FALSE
+#' @param verbose boolean. Emit diagnostic messages while resolving the fallback
+#'        label-vs-index match? Defaults to FALSE (quiet in normal pipelines).
 #' @return matched indices
 #'
 #' @author Jose Eduardo Meireles
 #' @keywords internal
-i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE, allow_negative = FALSE){
-
-
-    ################################################################################
-    # match index function
-    # HACK. this function should've been declared outside
-    ################################################################################
-
-    i_match_index = function(ii, dd, ll){
-        ii = as.integer(ii)
-        ## In case the indices are positive
-        if(all(ii > 0)){
-            r = list(matched     = ii[dd],
-                     unmatched   = setdiff(seq(ll), ii[dd]),
-                     not_element = ii[!dd])
-        } else {                            ## In case the indices are negative
-            ip = abs(ii)
-            r = list(matched     = setdiff(seq(ll), ip[dd]),
-                     unmatched   = ip[dd],
-                     not_element = ii[!dd])
-        }
-        r
-    }
-
-    ################################################################################
-    # Begin i_match_label_or_idx
-    ################################################################################
+i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE, allow_negative = FALSE, verbose = FALSE){
 
     l = length(x)
 
@@ -237,7 +242,7 @@ i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE, 
     # Try both
     ########################################
 
-    message("Trying to match by label...")
+    if(verbose) message("Trying to match by label...")
     if(length(m$matched) > 0 && length(m$not_element) != length(i)){
         if(full){
             return(m)
@@ -247,7 +252,7 @@ i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE, 
         }
     }
 
-    message("Trying to match by index...")
+    if(verbose) message("Trying to match by index...")
     if (any(d)) {
         if(full){
             return(r)
@@ -336,6 +341,6 @@ i_mind_the_gap_smoothing = function(x){
     d_thresh = 10
     big_jump = b_diff > diff_med * d_thresh
     if(any(big_jump)){
-        warning("Gap(s) between bands is too wide around band(s):", paste(b[big_jump], sep = ","), "\nSmoothing results may be wonky.")
+        warning("Gap(s) between bands is too wide around band(s):", paste(b[big_jump], sep = ","), "\nSmoothing results may be unreliable.")
     }
 }

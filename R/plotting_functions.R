@@ -244,8 +244,6 @@ plot_regions = function(spec,
 #' @param ... Other arguments passed to plot
 #' @return interactive plot
 #'
-#' @import shiny
-#' @importFrom shinyjs useShinyjs
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom stats dist
 #' @importFrom graphics points
@@ -263,8 +261,10 @@ plot_regions = function(spec,
 plot_interactive = function(spec,
                             colpalette = function(n) RColorBrewer::brewer.pal(n, "Dark2"),
                             ...){
-    if (! requireNamespace("shiny", quietly = TRUE)) {
-        stop("Package 'shiny' needed for this function to work. Please install it.",
+    if (! requireNamespace("shiny", quietly = TRUE) ||
+        ! requireNamespace("shinyjs", quietly = TRUE)) {
+        stop("Packages 'shiny' and 'shinyjs' are needed for this function to work.\n",
+             "Install them with: install.packages(c('shiny', 'shinyjs'))",
              call. = FALSE)
     }
 
@@ -367,11 +367,11 @@ plot_interactive = function(spec,
             shiny::observeEvent(input$n_display ,{
 
                 if( is.na(input$n_display)) {
-                    updateNumericInput(session, "n_display", value = 1)
+                    shiny::updateNumericInput(session, "n_display", value = 1)
                 } else {
 
                     if(input$n_display > m_display){
-                        updateNumericInput(session, "n_display", value = m_display)
+                        shiny::updateNumericInput(session, "n_display", value = m_display)
                     }
 
                     new_to   = min(from() + input$n_display - 1L, n_max)

@@ -12,6 +12,7 @@ i_read_ascii_spectra(
   wl_col,
   refl_cols,
   divide_refl_by,
+  max_header_lines = 40,
   ...
 )
 }
@@ -31,6 +32,8 @@ Tag is matched with a regexpr.}
 \item{refl_cols}{idx or name of value columns. MULTIPLE}
 
 \item{divide_refl_by}{divide values by this. MULTIPLE}
+
+\item{max_header_lines}{number of lines to scan for the data tag. Defaults to 40.}
 
 \item{...}{additional arguments passed to read table}
 }
