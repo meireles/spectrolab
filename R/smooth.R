@@ -50,12 +50,13 @@ smooth.spectra = function(x, method = "gaussian", ...){
 
     if(method == "gaussian"){
         smooth_fwhm(x, ...)
-    }
-    else if(method == "spline") {
+    } else if(method == "spline") {
         smooth_spline(x, ...)
-        return(x)
     } else if (method == "moving_average") {
         smooth_moving_avg(x, ...)
+    } else {
+        stop("unknown smoothing method: '", method,
+             "'. Choose 'gaussian', 'spline', or 'moving_average'.")
     }
 }
 
