@@ -12,15 +12,18 @@ bands(x, min = NULL, max = NULL, return_num = TRUE)
 \arguments{
 \item{x}{spectra object}
 
-\item{min}{= NULL}
+\item{min}{numeric or NULL (default). Keep only bands >= `min`. NULL means no
+lower bound.}
 
-\item{max}{= NULL}
+\item{max}{numeric or NULL (default). Keep only bands <= `max`. NULL means no
+upper bound.}
 
 \item{return_num}{boolean. return vector of numeric values (default).
 otherwise, a vector of strings is returned}
 }
 \value{
-vector of bands. numeric if `return_num` = TRUE (default).
+vector of bands (possibly empty). numeric if `return_num` = TRUE
+        (default), character otherwise.
 }
 \description{
 \code{bands} returns a vector of band labels from spectra

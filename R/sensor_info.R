@@ -193,6 +193,11 @@ i_svc_sensor_info = function(file_paths, max_header_lines = 40){
 #' \code{\link{match_sensors}} to avoid re-splicing already-processed data and to
 #' find splice points without guessing.
 #'
+#' This provenance is \strong{read-only}: it is captured at read time and there
+#' is deliberately no \code{sensor_info<-} setter (unlike \code{\link{bands}},
+#' \code{\link{meta}}, or \code{\link{quantity}}). It is carried automatically
+#' through subsetting and \code{\link{combine}}.
+#'
 #' @param x a spectra object
 #' @return a data.frame with one row per sample (see the package's sensor_info
 #'         columns), or \code{NULL} if no provenance was captured (e.g. objects

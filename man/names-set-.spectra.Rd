@@ -12,7 +12,7 @@
 \item{value}{values to be assigned (rhs)}
 }
 \value{
-nothing. called for its side effect.
+the modified `spectra` object
 }
 \description{
 \code{names} assigns sample names to lhs

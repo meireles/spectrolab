@@ -29,7 +29,8 @@ between 0.0 and 1.0. Defaults to 0.95.}
 
 \item{na.rm}{boolean. remove NAs to compute quantiles? Defaults to TRUE}
 
-\item{...}{other parameters passed to polygon() or to plot.}
+\item{...}{other parameters passed to \code{\link[graphics]{polygon}} (they
+style the quantile polygon, not the underlying plot).}
 }
 \value{
 nothing. Called for its side effect.

@@ -149,7 +149,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #'          or a logical vector of length ncol(x). Do not use indexes!
 #' @param value value to be assigned (rhs). Must either data coercible to numeric
 #'              or another `spectra` obj
-#' @return nothing. modifies spectra as side effect
+#' @return the modified `spectra` object
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -231,7 +231,7 @@ value = function(x){
 #'
 #' @param x spectra object
 #' @param value value to be assigned to the lhs
-#' @return nothing. called for its side effect
+#' @return the modified `spectra` object
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -291,7 +291,7 @@ names.spectra = function(x){
 #'
 #' @param x spectra object (lhs)
 #' @param value values to be assigned (rhs)
-#' @return nothing. called for its side effect.
+#' @return the modified `spectra` object
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -314,11 +314,14 @@ names.spectra = function(x){
 #' \code{bands} returns a vector of band labels from spectra
 #'
 #' @param x spectra object
-#' @param min = NULL
-#' @param max = NULL
+#' @param min numeric or NULL (default). Keep only bands >= `min`. NULL means no
+#'            lower bound.
+#' @param max numeric or NULL (default). Keep only bands <= `max`. NULL means no
+#'            upper bound.
 #' @param return_num boolean. return vector of numeric values (default).
 #'                   otherwise, a vector of strings is returned
-#' @return vector of bands. numeric if `return_num` = TRUE (default).
+#' @return vector of bands (possibly empty). numeric if `return_num` = TRUE
+#'         (default), character otherwise.
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -338,7 +341,7 @@ bands = function(x, min = NULL, max = NULL, return_num = TRUE){
 #'
 #' @param x spectra object (lhs)
 #' @param value rhs
-#' @return nothing. called for its side effect.
+#' @return the modified `spectra` object
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -358,19 +361,24 @@ bands = function(x, min = NULL, max = NULL, return_num = TRUE){
 #' @export
 bands.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
 
-    wl   = as.numeric(x$bands)
-    min  = ifelse(is.null(min), min(wl), as.numeric(min) )
-    max  = ifelse(is.null(max), max(wl), as.numeric(max) )
-    pick = wl >= min & wl <= max
+    wl = x$bands   # numeric by construction (i_bands / validate_spectra)
 
-    if(all(!pick)){
-        stop("No band matches the given conditions")
+    ## Empty band set (e.g. a 0-band selection): return empty rather than choking
+    ## on min(numeric(0)); keeps dim()/ncol() usable on such objects.
+    if(length(wl) == 0){
+        return(if(return_num){ wl } else { character(0) })
     }
 
-    if(!return_num) {
+    lo   = if(is.null(min)){ min(wl) } else { as.numeric(min) }
+    hi   = if(is.null(max)){ max(wl) } else { as.numeric(max) }
+    pick = wl >= lo & wl <= hi
+
+    if(!return_num){
         wl = as.character(wl)
     }
 
+    ## A range that matches nothing yields an empty vector (a normal getter
+    ## result), not an error.
     wl[pick]
 }
 
@@ -419,7 +427,7 @@ meta = function(x, label = NULL, sample = NULL, simplify = FALSE, quiet = TRUE){
 #' @param label metadata column label
 #' @param sample sample name
 #' @param value rhs. TODO
-#' @return nothing. called for its side effect
+#' @return the modified `spectra` object
 #'
 #' @author Jose Eduardo Meireles
 #' @export

@@ -22,6 +22,12 @@ factors. It is captured at read time by \code{\link{read_spectra}} and used by
 \code{\link{match_sensors}} to avoid re-splicing already-processed data and to
 find splice points without guessing.
 }
+\details{
+This provenance is \strong{read-only}: it is captured at read time and there
+is deliberately no \code{sensor_info<-} setter (unlike \code{\link{bands}},
+\code{\link{meta}}, or \code{\link{quantity}}). It is carried automatically
+through subsetting and \code{\link{combine}}.
+}
 \examples{
 library(spectrolab)
 dir_path = system.file("extdata", "Acer_example", package = "spectrolab")

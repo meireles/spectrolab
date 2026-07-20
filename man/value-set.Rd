@@ -12,7 +12,7 @@ value(x) <- value
 \item{value}{value to be assigned to the lhs}
 }
 \value{
-nothing. called for its side effect
+the modified `spectra` object
 }
 \description{
 \code{value<-} Assigns the rhs to the value of the lhs spectra obj

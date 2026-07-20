@@ -89,6 +89,9 @@ make_fwhm = function(spec,
                      new_fwhm = NULL,
                      return_type     = "max",
                      k               = 3){
+    if( !is_spectra(spec) ){
+        stop("Object must be of class spectra")
+    }
     if(is.null(new_fwhm)){
         new_fwhm = fwhm_from_band_diff(new_bands)
     }
@@ -118,6 +121,10 @@ make_fwhm = function(spec,
 resample = function(spec,
                     new_bands,
                     fwhm) {
+
+    if( !is_spectra(spec) ){
+        stop("Object must be of class spectra")
+    }
 
     bands        = bands(spec)
     reflectance  = value(spec)

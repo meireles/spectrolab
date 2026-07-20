@@ -204,8 +204,13 @@ smooth_moving_avg = function(x, n = NULL, save_bands_to_meta = TRUE){
 #' @return smoothed spectra
 #' @export
 smooth_fwhm = function(x, fwhm = NULL){
+    if( !is_spectra(x) ){
+        stop("Object must be of class spectra")
+    }
     b = bands(x)
-    if(missing(fwhm)){
+    ## Test the value, not missing(): the documented default is fwhm = NULL, and
+    ## an explicit `smooth_fwhm(x, fwhm = NULL)` must auto-compute too.
+    if(is.null(fwhm)){
         fwhm = 2 * make_fwhm(x, new_bands = b, new_fwhm = NULL, return_type = "old")
     }
 

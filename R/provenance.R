@@ -57,6 +57,8 @@ quantity.spectra = function(x){
 #' @describeIn quantity<- Set the physical quantity a spectra object measures
 #' @export
 `quantity<-.spectra` = function(x, value){
+    ## A bare NA is logical; accept it as the documented "unknown" marker.
+    if(length(value) == 1 && is.na(value)){ value = NA_character_ }
     if(!is.null(value) && (!is.character(value) || length(value) != 1)){
         stop("quantity must be a single character string, NA, or NULL")
     }
@@ -116,6 +118,8 @@ wavelength_unit.spectra = function(x){
 #' @describeIn wavelength_unit<- Set the wavelength unit of a spectra object's bands
 #' @export
 `wavelength_unit<-.spectra` = function(x, value){
+    ## A bare NA is logical; accept it as the documented "unknown" marker.
+    if(length(value) == 1 && is.na(value)){ value = NA_character_ }
     if(!is.null(value) && (!is.character(value) || length(value) != 1)){
         stop("wavelength_unit must be a single character string, NA, or NULL")
     }

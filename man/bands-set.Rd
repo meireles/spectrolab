@@ -12,7 +12,7 @@ bands(x) <- value
 \item{value}{rhs}
 }
 \value{
-nothing. called for its side effect.
+the modified `spectra` object
 }
 \description{
 \code{bands} sets band labels of lhs to the rhs values

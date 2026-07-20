@@ -348,6 +348,11 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
 
     by = unlist(by)
 
+    ## `by` is documented as "coercible to factor"; a factor itself is not a
+    ## vector, so coerce it (split.spectra already accepts factors -- keep the
+    ## two grouped-subsetting functions consistent).
+    if( is.factor(by) ){ by = as.character(by) }
+
     if( ! is.vector(by) || length(by) != nrow(x) ){
         stop("`by` must be a vector length equals the number of rows in x")
     }
@@ -365,7 +370,7 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
     }
 
     if(n_max < n_min){
-        stop("`n_max` must be larger than `n_min`")
+        stop("`n_max` must be at least `n_min`")
     }
 
 

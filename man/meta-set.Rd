@@ -16,7 +16,7 @@ meta(x, label = NULL, sample = NULL) <- value
 \item{value}{rhs. TODO}
 }
 \value{
-nothing. called for its side effect
+the modified `spectra` object
 }
 \description{
 \code{meta} sets metadata

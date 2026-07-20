@@ -19,7 +19,9 @@
 
 \item{type}{type of plot. Meant to take either line "l" or no plotting "n".}
 
-\item{...}{other arguments passed to matplot.}
+\item{...}{other arguments passed to matplot. Notably \code{add = TRUE}
+overlays the spectra on the current plot instead of starting a new
+one (used by \code{\link{plot_regions}} and \code{plot_interactive}).}
 }
 \value{
 nothing. Called for side effect.

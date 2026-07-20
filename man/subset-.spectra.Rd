@@ -18,7 +18,7 @@ or a logical vector of length ncol(x). Do not use indexes!}
 or another `spectra` obj}
 }
 \value{
-nothing. modifies spectra as side effect
+the modified `spectra` object
 }
 \description{
 \code{`[<-`} assigns the rhs values to spectra

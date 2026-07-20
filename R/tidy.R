@@ -112,7 +112,7 @@ autoplot.spectra = function(object, ...){
 
     ggplot2::ggplot(long, ggplot2::aes(x = band, y = value, group = sample_name)) +
         ggplot2::geom_line() +
-        ggplot2::labs(x = "wavelength", y = "value")
+        ggplot2::labs(x = "band", y = "value")
 }
 
 ## `band`/`value`/`sample_name` above are data-frame columns captured lazily by

@@ -8,7 +8,9 @@
 #' @param col line color. Defaults to "black".
 #' @param lty line type. Defaults to 1.
 #' @param type type of plot. Meant to take either line "l" or no plotting "n".
-#' @param ... other arguments passed to matplot.
+#' @param ... other arguments passed to matplot. Notably \code{add = TRUE}
+#'            overlays the spectra on the current plot instead of starting a new
+#'            one (used by \code{\link{plot_regions}} and \code{plot_interactive}).
 #' @return nothing. Called for side effect.
 #'
 #' @importFrom graphics matplot plot
@@ -58,7 +60,8 @@ plot.spectra = function(x,
 #' @param add if add = FALSE (default), a new plot is created. Otherwise
 #'            (add = TRUE), the quantile is added to the current plot.
 #' @param na.rm boolean. remove NAs to compute quantiles? Defaults to TRUE
-#' @param ... other parameters passed to polygon() or to plot.
+#' @param ... other parameters passed to \code{\link[graphics]{polygon}} (they
+#'            style the quantile polygon, not the underlying plot).
 #' @return nothing. Called for its side effect.
 #'
 #' @importFrom graphics polygon
@@ -82,10 +85,9 @@ plot_quantile = function(spec,
         stop("Object must be of class spectra")
     }
 
-    if( ! is.vector(total_prob) || length(total_prob) != 1 ){
+    if( ! is.numeric(total_prob) || length(total_prob) != 1 ){
         stop("total_prob must be a single number")
     }
-
 
     if(total_prob < 0.0 || total_prob > 1.0){
         stop("total_prob must be between 0.0 and 1.0")
@@ -103,9 +105,12 @@ plot_quantile = function(spec,
            rev( value(qt)[2, ]))
 
     if(!add){
-        plot(spec, type = "n", ...)
+        plot(spec, type = "n")
     }
 
+    ## `...` styles the quantile polygon only (consistent with plot_regions);
+    ## forwarding it to the underlying plot too made polygon-specific args like
+    ## `density`/`angle` trip "not a graphical parameter" warnings.
     graphics::polygon(x = xx, y = yy, col = col, border = border, ...)
 }
 
