@@ -25,14 +25,9 @@ i_value = function(x, nbands = NULL, nsample = NULL) {
         x = t(matrix(as.numeric(as.character(x))))
     }
 
-    if(is.matrix(x)){
-        mode(x) = "numeric"
-    }
-
     if(is.data.frame(x)) {
         ## Assumes that `as.matrix` converts factors to character
         x = as.matrix(x)
-        mode(x) = "numeric"
     }
 
     ## test if x dimensions conform to nbands and nsample
@@ -44,8 +39,11 @@ i_value = function(x, nbands = NULL, nsample = NULL) {
         stop("Number of rows in x must be equal nsample")
     }
 
-    ## Clean up matrix dimensio names
+    ## Clean up matrix dimension names
     dimnames(x) = NULL
+
+    ## Ensure that x is numeric
+    mode(x) = "numeric"
 
     x
 }
@@ -74,25 +72,34 @@ i_names = function(x, nsample = NULL){
         stop("The length of x must be the same as nsample")
     }
 
-    as.character(x)
+    x
 }
 
 
 #' Internal band constructor for spectra
 #'
-#' \code{i_bands} constructs band labels in the appropriate format
+#' \code{i_bands} coerces band labels to a numeric vector.
+#'
+#' Band labels are \strong{not} required to be unique. Duplicate wavelengths ---
+#' for example where two detectors of a full-range spectrometer overlap in a raw,
+#' un-spliced spectrum --- are preserved exactly as given, just like duplicate
+#' sample names. Label-based band selection (\code{x[, 600]}) returns every
+#' matching band, and the internal splice functions select columns positionally
+#' so duplicates never corrupt them.
+#'
+#' (Earlier versions nudged duplicate wavelengths by a tiny amount to force
+#' uniqueness. That silently altered the data --- a physical wavelength like 600
+#' became 600.0012 --- was buggy for three or more identical values, and is no
+#' longer done. See ai_reviews/DUPLICATE_BANDS_ANALYSIS.md.)
 #'
 #' @param x vector of bands. Either numeric or character
 #' @param nbands Integer of expected number of bands.
 #'                     If NULL (default) checking is skipped.
-#' @param warn_dup_band Warn about duplicated bands?
-#' @return vector of bands
-#'
-#' @importFrom stats runif
+#' @return numeric vector of bands, with any duplicates preserved
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_bands = function(x, nbands = NULL, warn_dup_band = FALSE) {
+i_bands = function(x, nbands = NULL) {
     if(! is.vector(x)) {
         stop("bands names must be in a vector")
     }
@@ -107,40 +114,6 @@ i_bands = function(x, nbands = NULL, warn_dup_band = FALSE) {
         stop("band cannot be converted to numeric: ", x[n])
     }
 
-    d = which(duplicated(y))
-
-    if(length(d) > 0){
-
-        position = d
-        original = y[d]
-
-        # Need to add a tiny percent (0.0012357%) of the smallest band diff
-        # to the duplicated bands.
-        # This technique should work if a certain band value is duplicated once.
-        # If the data has three bands of value 680nm, for example, then the code
-        # will not perform as intended because a duplication will remain.
-        #
-        # Sort ensures that dups that show up later (order-wise) will have larger values
-        # when a band has more than one duplicate
-
-        # scalars  = sort(runif(length(d), min = 0.00001, max = 0.00012))
-        scalars  = sort(rep(0.000012357, length(d)))
-
-        y[d] = y[d] + scalars * min(abs(diff(y[-d])))
-
-        updated = y[d]
-
-        if(warn_dup_band){
-            cat("Duplicated band values are not allowed!\n")
-            cat("Bands updated as follows:\n")
-            print(data.frame("band_position"  = position,
-                             "original_value" = original,
-                             "updated_value"  = format(updated, digits = 12),
-                             check.names = FALSE),
-                  row.names = FALSE)
-        }
-    }
-
     y
 }
 
@@ -152,24 +125,32 @@ i_bands = function(x, nbands = NULL, warn_dup_band = FALSE) {
 #' @param nsample number of samples in spectra
 #' @param allow_null boolean. If TRUE (default) and x is NULL, the function will
 #'                   return NULL regardless of nsample
-#' @param ... additional arguments passed to as.data.frame
+#' @param match_nsample extend or trim the metadata to match the number of samples?
 #' @return data.frame
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
-i_meta = function(x, nsample, allow_null = TRUE, ...){
+i_meta = function(x, nsample, allow_null = TRUE, match_nsample = FALSE){
 
     if(is.null(x) && allow_null){
         m = matrix(NA, nrow = nsample, ncol = 0)
         return(as.data.frame(m))
     }
 
+    if( is.matrix(x) ){
+        x = data.frame(x)
+    }
+
     if( ! is.data.frame(x) ){
         stop("x must be a data.frame")
     }
 
-    if( nsample != nrow(x) ){
-        stop("The number of columns of meta must be the same as nsample")
+    if(nsample == nrow(x)){
+        NULL
+    } else if (match_nsample){
+        x = x[ rep(seq.int(nrow(x)), length.out = nsample), ]
+    } else {
+        stop("The number of rows of meta must be the same as nsample")
     }
 
     if(ncol(x) > 0 && is.null(colnames(x))){
@@ -183,8 +164,41 @@ i_meta = function(x, nsample, allow_null = TRUE, ...){
 
 
 ########################################
-# Public constructor interface
+# Constructor interface
 ########################################
+
+#' Assemble a spectra object from already-validated components
+#'
+#' \code{new_spectra} is the low-level constructor: it assembles the four
+#' components into a \code{spectra} object WITHOUT coercion or validation.
+#' Callers are responsible for passing correctly-typed components: a numeric
+#' matrix \code{value} (N samples x M bands, no dimnames), a numeric
+#' \code{bands} vector of length M, a character \code{names} vector of length N,
+#' and a \code{data.frame} \code{meta} with N rows. The public, validating,
+#' user-facing constructor is \code{\link{spectra}}, which coerces its inputs
+#' via the \code{i_*} helpers and then delegates here.
+#'
+#' Splitting a fast internal assembler from the validating public constructor is
+#' a common pattern in modern R packages (e.g. vctrs) and gives internal code a
+#' cheap, allocation-light way to rebuild spectra while keeping user-facing
+#' construction safe.
+#'
+#' @param value numeric matrix, N samples by M bands, no dimnames
+#' @param bands numeric vector of length M
+#' @param names character vector of length N
+#' @param meta data.frame with N rows (0 or more columns)
+#' @return spectra object
+#'
+#' @keywords internal
+#' @author Jose Eduardo Meireles
+new_spectra = function(value, bands, names, meta){
+    structure(list(value = value,
+                   bands = bands,
+                   names = names,
+                   meta  = meta),
+              class = "spectra")
+}
+
 
 #' Spectra object constructor
 #'
@@ -194,9 +208,11 @@ i_meta = function(x, nsample, allow_null = TRUE, ...){
 #'                    in columns
 #' @param bands band names in vector of length M
 #' @param names sample names in vector of length N
-#' @param meta spectra metadata. defaults to NULL. Must be either of length or nrow
-#'             equals to the number of samples (nrow(value) or length(names))
-#' @param ... additional arguments to metadata creation. not implemented yet
+#' @param meta spectra metadata. defaults to NULL. Should be either of length or
+#'             nrow equals to the number of samples (nrow(value) or length(names))
+#' @param extend_meta defaults to FALSE. If TRUE, then the nrow of meta can be
+#'             different from the number of samples and the constructor repeats
+#'             the metadata times to match the sample length
 #' @return spectra object
 #'
 #' @note This function resorts to an ugly hack to deal with metadata assignment.
@@ -224,32 +240,22 @@ i_meta = function(x, nsample, allow_null = TRUE, ...){
 spectra = function(value,
                    bands,
                    names,
-                   meta      = NULL,
-                   ...){
-
-    ## HACK!!! affected blocks marked with ***
-    ## The coersion logic for metadata (meta) is in the setter meta() instead of
-    ## being in the ctor i_meta.
-    ## This means that assigning metadata with `meta()` works in more situations
-    ## than using the ctor, e.g.
-    ##    meta(s) = list("clade" = c("A", "B", "C", ...))             ## OK
-    ##    spectra(..., meta = list("clade" = c("A", "B", "C", ...)))  ## NO GO
-    ##
-    ## I will resort to an ugly hack to tackle that issue, but this should be
-    ## fixed soon.
+                   meta        = NULL,
+                   extend_meta = FALSE){
 
     wl_l  = length(bands)
     spl_l = length(names)
 
-    s = list( value  = i_value(value,
-                               nbands = wl_l,
-                               nsample = spl_l),
-              bands  = i_bands(bands),
-              names  = i_names(names),
-              meta   = i_meta(NULL, nsample = spl_l, ...) ## *** Ideally i_meta(meta, nsample = spl_l, ...)
-    )
+    s = new_spectra(value = i_value(value, nbands = wl_l, nsample = spl_l),
+                    bands = i_bands(bands),
+                    names = i_names(names),
+                    meta  = i_meta(meta, nsample = spl_l, match_nsample = extend_meta))
 
-    s = structure(s, class = c("spectra")) ## *** This should be the returned obj
-    meta(s) = meta                         ## *** so I shouldn't have to do this
+    ## Opt-in invariant check. Off by default (performance); enable with
+    ## options(spectrolab.debug = TRUE).
+    if(isTRUE(getOption("spectrolab.debug", FALSE))){
+        validate_spectra(s, stop = TRUE)
+    }
+
     s
 }

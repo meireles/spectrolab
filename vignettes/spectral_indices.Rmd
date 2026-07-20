@@ -1,0 +1,117 @@
+---
+title: "Two-band spectral indices"
+author: "Jose Eduardo Meireles"
+date: "`r format(Sys.time(), '%B %Y')`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Two-band spectral indices}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+    collapse   = TRUE,
+    comment    = "#>",
+    fig.align  = "center",
+    fig.retina = 2,
+    dpi        = 150
+)
+```
+
+A large family of vegetation and mineral indices are just a **normalized
+difference between two bands**: `(R[band1] - R[band2]) / (R[band1] +
+R[band2])`. NDVI and PRI are two well-known examples, but the formula itself
+doesn't care which bands you plug in. Rather than exporting a growing list of
+one-off named functions, `spectrolab` exports a single *factory*,
+`make_spectral_index()`, and ships two ready-made indices built with it,
+reachable through the `spectral_index` list.
+
+```{r, message = FALSE}
+library(spectrolab)
+spec = as_spectra(spec_matrix_example, name_idx = 1)
+```
+
+## The built-in indices
+
+```{r}
+names(spectral_index)
+
+# Call an entry directly on a spectra object
+head(spectral_index$ndvi(spec))
+head(spectral_index$pri(spec))
+```
+
+* `spectral_index$ndvi` -- Normalized Difference Vegetation Index, `(R800 - R680) / (R800 + R680)`
+* `spectral_index$pri`  -- Photochemical Reflectance Index, `(R570 - R531) / (R570 + R531)`
+
+Both return a named numeric vector, one value per sample (names come from
+`names(x)`), not a `spectra` object -- an index is a per-sample summary
+statistic, not a spectrum.
+
+To compute several at once and get a tidy data.frame back, use
+`spectral_indices()`:
+
+```{r}
+idx = spectral_indices(spec)   # defaults to all of names(spectral_index)
+head(idx)
+```
+
+```{r, fig.height=4, fig.width=4.5}
+plot(idx$ndvi, idx$pri, xlab = "NDVI", ylab = "PRI", pch = 16,
+     col = as.factor(names(spec)))
+```
+
+## Building your own index
+
+`make_spectral_index(band1, band2, tolerance = 1)` returns a function of
+`(x, tolerance)` -- exactly how `spectral_index$ndvi` and `spectral_index$pri`
+themselves are defined. Use it directly for a custom two-band index, without
+adding a new name to the package's namespace:
+
+```{r}
+# A water-band index, e.g. R970 vs a reference band at R900
+wbi = make_spectral_index(970, 900)
+head(wbi(spec))
+```
+
+If you use a custom index often, keep the function around (or add it to your
+own named list, mirroring `spectral_index`) rather than recomputing
+`make_spectral_index()` on every call -- it's cheap either way, but a
+descriptive variable name documents intent.
+
+## Gotchas
+
+* **Bands must be strictly increasing.** Like the other transform functions,
+  indices error on raw, unspliced data -- run `match_sensors()` first (see
+  the [Matching sensor overlap](match_sensors.html) vignette).
+* **"Nearest band within tolerance", not "exact band".** Your data's bands
+  rarely land exactly on 800.000 or 680.000; `spectral_index` functions find
+  the *nearest available band* to the requested wavelength and use it,
+  erroring only if nothing is within `tolerance` (default 1, in the same
+  units as your bands -- usually nm). On coarse-resolution data this means
+  the band actually used could be a few tenths of a nm away from what you
+  asked for; widen `tolerance` deliberately if your data's resolution
+  requires it, rather than being surprised by an error.
+
+```{r, error = TRUE}
+# spec is at 1nm resolution. Asking for an off-grid band (970.5) with
+# tolerance = 0 fails rather than silently snapping to the nearest one...
+off_grid = make_spectral_index(970.5, 900)
+off_grid(spec, tolerance = 0)
+
+# ...while the default tolerance (1) is enough to snap to band 970 and succeed
+head(off_grid(spec))
+```
+
+* **The band wavelengths are captured when you call `make_spectral_index()`,
+  not re-evaluated later.** `wbi = make_spectral_index(970, 900)` always
+  compares bands 970 and 900, even if you later change what `970` or `900`
+  mean in your analysis -- there's no lazy/symbolic re-binding. Call
+  `make_spectral_index()` again if you need different bands.
+* **An index is a summary, not a spectrum.** The output has one value per
+  *sample*, not one value per *band* -- don't expect `plot()` (which expects
+  a `spectra` object) to work on it.

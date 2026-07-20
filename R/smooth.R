@@ -30,8 +30,8 @@ smooth.default = function(x, ...){
 #' \code{smooth} runs each spectrum by a smoothing and returns the spectra
 #'
 #' @param x spectra object. bands must be strictly increasing
-#' @param method Choose smoothing method: "gaussian" (default), "spline", or "moving_average"
-#' @param ... additional parameters passed to methods \code{smooth_fwhm}, \code{smooth_spline}, \code{smooth_moving_avg}
+#' @param method Choose smoothing method: "gaussian" (default), "spline", "moving_average", or "sgolay"
+#' @param ... additional parameters passed to methods \code{smooth_fwhm}, \code{smooth_spline}, \code{smooth_moving_avg}, \code{smooth_sgolay}
 #' @return a spectra object of with smoothed spectra
 #'
 #' @author Jose Eduardo Meireles
@@ -50,12 +50,15 @@ smooth.spectra = function(x, method = "gaussian", ...){
 
     if(method == "gaussian"){
         smooth_fwhm(x, ...)
-    }
-    else if(method == "spline") {
+    } else if(method == "spline") {
         smooth_spline(x, ...)
-        return(x)
     } else if (method == "moving_average") {
         smooth_moving_avg(x, ...)
+    } else if (method == "sgolay") {
+        smooth_sgolay(x, ...)
+    } else {
+        stop("unknown smoothing method: '", method,
+             "'. Choose 'gaussian', 'spline', 'moving_average', or 'sgolay'.")
     }
 }
 

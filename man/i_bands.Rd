@@ -4,21 +4,32 @@
 \alias{i_bands}
 \title{Internal band constructor for spectra}
 \usage{
-i_bands(x, nbands = NULL, warn_dup_band = FALSE)
+i_bands(x, nbands = NULL)
 }
 \arguments{
 \item{x}{vector of bands. Either numeric or character}
 
 \item{nbands}{Integer of expected number of bands.
 If NULL (default) checking is skipped.}
-
-\item{warn_dup_band}{Warn about duplicated bands?}
 }
 \value{
-vector of bands
+numeric vector of bands, with any duplicates preserved
 }
 \description{
-\code{i_bands} constructs band labels in the appropriate format
+\code{i_bands} coerces band labels to a numeric vector.
+}
+\details{
+Band labels are \strong{not} required to be unique. Duplicate wavelengths ---
+for example where two detectors of a full-range spectrometer overlap in a raw,
+un-spliced spectrum --- are preserved exactly as given, just like duplicate
+sample names. Label-based band selection (\code{x[, 600]}) returns every
+matching band, and the internal splice functions select columns positionally
+so duplicates never corrupt them.
+
+(Earlier versions nudged duplicate wavelengths by a tiny amount to force
+uniqueness. That silently altered the data --- a physical wavelength like 600
+became 600.0012 --- was buggy for three or more identical values, and is no
+longer done. See ai_reviews/DUPLICATE_BANDS_ANALYSIS.md.)
 }
 \author{
 Jose Eduardo Meireles

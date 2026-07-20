@@ -122,6 +122,24 @@ print.spectra = function(x, ...){
     cat(paste(n_met, collapse = ", "), "\n", sep = "")
   }
 
+  ## Report captured sensor / detector-splice provenance, if any (see
+  ## R/sensor_info.R). Summarises the instrument(s) and, for SVC, whether the
+  ## overlap was preserved/removed and whether a matching factor was applied.
+  si = sensor_info(x)
+  if( !is.null(si) && nrow(si) > 0 ){
+    instr = unique(stats::na.omit(si[["instrument"]]))
+    if(length(instr) > 0){
+      extra = ""
+      modes = unique(stats::na.omit(si[["overlap_mode"]]))
+      if(length(modes) > 0){
+        matched = any(isTRUE(si[["matched"]]) | si[["matched"]] %in% TRUE, na.rm = TRUE)
+        extra = paste0(" (overlap: ", paste(modes, collapse = "/"),
+                       ", matched: ", ifelse(matched, "yes", "no"), ")")
+      }
+      cat("instrument: ", paste(instr, collapse = ", "), extra, "\n", sep = "")
+    }
+  }
+
   rw = min(nrow(x), 5L)
   l  = ncol(x)
   m  = 7L

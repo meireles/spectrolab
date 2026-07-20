@@ -9,7 +9,8 @@ i_match_label_or_idx(
   i,
   full = FALSE,
   allow_empty_lookup = FALSE,
-  allow_negative = FALSE
+  allow_negative = FALSE,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -23,6 +24,9 @@ i_match_label_or_idx(
 to false}
 
 \item{allow_negative}{boolean. Allow indices to be negative? Defaults to FALSE}
+
+\item{verbose}{boolean. Emit diagnostic messages while resolving the fallback
+label-vs-index match? Defaults to FALSE (quiet in normal pipelines).}
 }
 \value{
 matched indices

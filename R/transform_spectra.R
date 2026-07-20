@@ -51,7 +51,8 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
     f  = f_na_wrap(fun, na.rm)
     fm = ifelse(keep_txt_meta, try_keep_txt(f), f)
 
-    r  = apply(as.matrix(x), 2, f, ...)
+    X  = value(x)
+    r  = apply(X, 2, f, ...)
     w  = bands(x)
     m0 = meta(x)
     m  = m0
@@ -66,8 +67,19 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
     if(ncol(m) != 0){
         m = lapply(m, fm, ...)  # Calling lapply because meta is always a data.frame
         m = do.call(cbind, m)
+
+        # # If the metadata resulting from the function fm does not produce the same
+        # # number of rows as the reflectance data does, then repeat the metadata to
+        # # match. One way this can happen if the metadata info is the same for all
+        # # samples but the result from the reflectance transformation by function f
+        # # isn't.
+        # if(nrow(m) == 1){
+        #     m = m[rep(1, nrow(r)), ]
+        # }
+    } else {
+        m = NULL
     }
-    spectra(value = r, bands = w, names = n, meta = m)
+    spectra(value = r, bands = w, names = n, meta = m, extend_meta = TRUE)
 }
 
 
@@ -171,7 +183,10 @@ combine.spectra = function(s1, s2){
         stop("Object `b` must be of class spectra")
     }
 
-    if(any( suppressWarnings(bands(s1) != bands(s2)) )){
+    ## Bands must match in *length* first: comparing with `!=` alone would
+    ## recycle the shorter vector and could spuriously pass (see combine tests).
+    if(length(bands(s1)) != length(bands(s2)) ||
+       ! isTRUE(all.equal(bands(s1), bands(s2)))){
         stop("Spectra must have the same bands. Consider using `resample()` first")
     }
 
@@ -192,7 +207,20 @@ combine.spectra = function(s1, s2){
     m3[1 : nrow(m1), names(m1)] = m1
     m3[(1 + nrow(m1)) : nrow(m3), names(m2)] = m2
 
-    spectra(r, w, n, m3)
+    out = spectra(r, w, n, m3)
+
+    ## Row-bind the per-sample sensor_info provenance if either input carries it
+    ## (they share a canonical column schema, so rbind lines up). Missing side is
+    ## filled with an all-NA record so the row count still matches the samples.
+    si1 = sensor_info(s1)
+    si2 = sensor_info(s2)
+    if( !is.null(si1) || !is.null(si2) ){
+        if(is.null(si1)){ si1 = i_new_sensor_info(NA_character_, nrow(s1)) }
+        if(is.null(si2)){ si2 = i_new_sensor_info(NA_character_, nrow(s2)) }
+        attr(out, "sensor_info") = rbind(si1, si2)
+    }
+
+    out
 }
 
 
@@ -278,13 +306,13 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
     }
 
     if( ! is.numeric(n_min) || n_min <= 0 ){
-        stop("n_min must be a positive interger, i.e. at least 1.")
+        stop("n_min must be a positive integer, i.e. at least 1.")
     } else {
         n_min = ceiling( n_min[[1]] )
     }
 
     if( ! is.numeric(n_max) || n_max <= 0 ){
-        stop("n_max must be a positive interger.")
+        stop("n_max must be a positive integer.")
     } else {
         n_max = ceiling( n_max[[1]] )
     }
@@ -379,7 +407,7 @@ normalize.spectra = function(x, quiet = FALSE, ...){
     }
 
     if(!quiet){
-        message("Vector nomalizing spectra...")
+        message("Vector normalizing spectra...")
         message("Note that y values will not be true values anymore!")
 
         if( "normalization_magnitude" %in% names(meta(x)) ){

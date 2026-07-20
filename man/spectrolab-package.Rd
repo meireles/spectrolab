@@ -20,6 +20,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Jose Eduardo Meireles \email{jemeireles@gmail.com}
   \item Anna K. Schweiger \email{anna.k.schweiger@gmail.com}
   \item Jeannine Cavender-Bares \email{cavender@umn.edu}
 }

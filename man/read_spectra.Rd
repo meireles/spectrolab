@@ -10,7 +10,8 @@ read_spectra(
   type = "target_reflectance",
   extract_metadata = FALSE,
   exclude_if_matches = NULL,
-  ignore_extension = FALSE
+  ignore_extension = FALSE,
+  max_header_lines = 40
 )
 }
 \arguments{
@@ -32,6 +33,11 @@ Example: "BAD"}
 
 \item{ignore_extension}{Boolean. If TRUE, the parser will try to read every
 file in path regardless of the expected extension.}
+
+\item{max_header_lines}{Integer. Number of lines to scan at the top of ASCII
+(.sig/.sed) files when looking for the data tag and
+metadata. Increase it for files with unusually long
+headers. Defaults to 40.}
 }
 \value{
 a single `spectra` or a list of `spectra` (in case files have

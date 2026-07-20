@@ -140,7 +140,7 @@ resample = function(spec,
     within_range = which(new_bands > band_range[1] & new_bands < band_range[2])
 
     if(length(within_range) < length(new_bands)){
-        message("trimmed new band values to fall within the range of the orignial bands.")
+        message("trimmed new band values to fall within the range of the original bands.")
     }
 
     new_bands = new_bands[within_range]
