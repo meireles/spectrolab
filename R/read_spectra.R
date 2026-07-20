@@ -626,14 +626,19 @@ i_read_asd_spectra = function(file_paths,
     ########################################
 
     if(type == "target_reflectance"){
-      result = cbind(bands, relative_reflectance, spec_name)
+      value = relative_reflectance
     } else if (type == "target_radiance") {
-      result = spectra(bands, spectrum, spec_name)
+      value = spectrum
     } else if (type == "reference_radiance") {
-      result = spectra(bands, white_ref, spec_name)
+      value = white_ref
     } else {
       stop("type must be either target_reflectance, target_radiance or reference_radiance")
     }
+
+    ## Build a matrix with columns band, value, name so that all `type`s share
+    ## the same downstream construction (see below). cbind coerces to character,
+    ## but the spectra() constructor coerces band and value back to numeric.
+    result = cbind(bands, value / divide_refl_by, spec_name)
   })
 
   # Wavelengths
