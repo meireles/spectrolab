@@ -183,7 +183,10 @@ combine.spectra = function(s1, s2){
         stop("Object `b` must be of class spectra")
     }
 
-    if(any( suppressWarnings(bands(s1) != bands(s2)) )){
+    ## Bands must match in *length* first: comparing with `!=` alone would
+    ## recycle the shorter vector and could spuriously pass (see combine tests).
+    if(length(bands(s1)) != length(bands(s2)) ||
+       ! isTRUE(all.equal(bands(s1), bands(s2)))){
         stop("Spectra must have the same bands. Consider using `resample()` first")
     }
 
@@ -290,13 +293,13 @@ subset_by.spectra = function(x, by, n_min, n_max, random = TRUE){
     }
 
     if( ! is.numeric(n_min) || n_min <= 0 ){
-        stop("n_min must be a positive interger, i.e. at least 1.")
+        stop("n_min must be a positive integer, i.e. at least 1.")
     } else {
         n_min = ceiling( n_min[[1]] )
     }
 
     if( ! is.numeric(n_max) || n_max <= 0 ){
-        stop("n_max must be a positive interger.")
+        stop("n_max must be a positive integer.")
     } else {
         n_max = ceiling( n_max[[1]] )
     }
@@ -391,7 +394,7 @@ normalize.spectra = function(x, quiet = FALSE, ...){
     }
 
     if(!quiet){
-        message("Vector nomalizing spectra...")
+        message("Vector normalizing spectra...")
         message("Note that y values will not be true values anymore!")
 
         if( "normalization_magnitude" %in% names(meta(x)) ){
