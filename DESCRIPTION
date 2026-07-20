@@ -21,6 +21,9 @@ Suggests:
     rmarkdown (>= 2.5),
     shiny (>= 1.5.0),
     shinyjs (>= 1.1),
+    signal,
+    tibble,
+    ggplot2,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Imports:

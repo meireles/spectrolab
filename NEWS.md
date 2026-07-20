@@ -1,6 +1,19 @@
 # spectrolab 0.0.20 (development)
 
 ## major
+* Added Savitzky-Golay smoothing (`smooth_sgolay`, or `smooth(method = "sgolay")`)
+  and spectral derivatives (`deriv_spectra`). Both require the `signal` package
+  (now in Suggests).
+* Added `continuum_removal()`, which divides each spectrum by its upper convex
+  hull (the continuum).
+* Added two-band normalized-difference spectral indices: `make_spectral_index()`
+  builds a two-band index function, and `spectral_index` is a list of built-in
+  ones (`spectral_index$ndvi`, `spectral_index$pri`); `spectral_indices()`
+  computes several at once. NDVI/PRI are intentionally not their own top-level
+  exports, to keep the namespace small.
+* Added a tidy/long bridge: `to_long()` (dependency-free), `as_tibble.spectra`
+  (requires `tibble`), and `autoplot.spectra` (requires `ggplot2`). `tibble`
+  and `ggplot2` are now in Suggests.
 * Duplicate band labels are now allowed and preserved. Previously the constructor
   silently nudged duplicate wavelengths (e.g. 600 -> 600.0012) to force
   uniqueness, which altered the data and was buggy for 3+ identical values. Bands

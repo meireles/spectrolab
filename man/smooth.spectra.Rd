@@ -9,9 +9,9 @@
 \arguments{
 \item{x}{spectra object. bands must be strictly increasing}
 
-\item{method}{Choose smoothing method: "gaussian" (default), "spline", or "moving_average"}
+\item{method}{Choose smoothing method: "gaussian" (default), "spline", "moving_average", or "sgolay"}
 
-\item{...}{additional parameters passed to methods \code{smooth_fwhm}, \code{smooth_spline}, \code{smooth_moving_avg}}
+\item{...}{additional parameters passed to methods \code{smooth_fwhm}, \code{smooth_spline}, \code{smooth_moving_avg}, \code{smooth_sgolay}}
 }
 \value{
 a spectra object of with smoothed spectra
