@@ -747,10 +747,9 @@ i_read_asd_spectra = function(file_paths,
     s
   })
 
-  if(length(spec) > 1){
-    warning("Returning a list of `spectra` because some files had different number of bands or band values. If you want to make those data compatible, consider resampling (with resample) and then combining them (with combine)")
-    return(spec)
-  } else {
-    return(spec[[1]])
-  }
+  ## Always return a list of `spectra` (even when it holds a single element),
+  ## same contract as the sig/sed readers -- read_spectra()'s shared code at
+  ## the end of the function handles the list-vs-single unwrapping (and its
+  ## own message) uniformly for every format.
+  spec
 }
