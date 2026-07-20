@@ -12,7 +12,7 @@
 \item{...}{other arguments passed to print. not implemented for spectra}
 }
 \value{
-nothing. called for side effect
+`x`, invisibly (called for its side effect of printing)
 }
 \description{
 \code{print} prints basic information about the spectra obj to the console

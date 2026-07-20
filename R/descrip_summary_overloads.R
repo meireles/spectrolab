@@ -97,7 +97,7 @@ dim.spectra = function(x){
 #'
 #' @param x spectra object
 #' @param ... other arguments passed to print. not implemented for spectra
-#' @return nothing. called for side effect
+#' @return `x`, invisibly (called for its side effect of printing)
 #'
 #' @importFrom utils head
 #'
@@ -173,6 +173,8 @@ print.spectra = function(x, ...){
   }
   cat("\n")
   print(s, quote = FALSE)
+
+  invisible(x)
 }
 
 
@@ -180,7 +182,7 @@ print.spectra = function(x, ...){
 #'
 #' @param object spectra object
 #' @param ... additional params to summary. not used yet
-#' @return nothing yet (just prints to console)
+#' @return the spectra object, invisibly (prints a summary as a side effect)
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -191,6 +193,7 @@ print.spectra = function(x, ...){
 #' summary(spec)
 summary.spectra = function(object, ...){
   print(object, ...)
+  invisible(object)
 }
 
 

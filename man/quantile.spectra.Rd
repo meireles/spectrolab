@@ -8,7 +8,7 @@
   x,
   probs = c(0.025, 0.25, 0.5, 0.75, 0.975),
   na.rm = TRUE,
-  names = NULL,
+  sample_names = NULL,
   ...
 )
 }
@@ -22,8 +22,10 @@ Duplicated probs will be removed.}
 
 \item{na.rm}{remove NAs before computing quantiles? Defaults to TRUE}
 
-\item{names}{names for each quantile spectrum. If NULL (default), names are set
-to `probs`. A char vector should otherwise be given. Recycled.}
+\item{sample_names}{names for each quantile spectrum. If NULL (default), names
+are set to `probs`. A char vector should otherwise be given.
+Named `sample_names` (not `names`) so as not to clash with the
+base `quantile` argument of the same name, which is a logical.}
 
 \item{...}{other arguments passed to quantile.}
 }

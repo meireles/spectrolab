@@ -74,7 +74,9 @@ Ops.spectra = function(e1, e2) {
                 return(e1)
             }
             if(.Generic %in% boolop){
-                return(do.call(.Generic, list( value(e1), e2) ))
+                # as.matrix() carries band/sample labels as dimnames so the
+                # logical result says *which* band/sample matched; value() drops them.
+                return(do.call(.Generic, list( as.matrix(e1), e2) ))
             }
         }
         # spectra is second
@@ -84,7 +86,7 @@ Ops.spectra = function(e1, e2) {
                 return(e2)
             }
             if(.Generic %in% boolop){
-                return(do.call(.Generic, list( e1, value(e2)) ))
+                return(do.call(.Generic, list( e1, as.matrix(e2)) ))
             }
         }
         # both arguments are spectra
@@ -114,7 +116,7 @@ Ops.spectra = function(e1, e2) {
             return(e1)
         }
         if(.Generic %in% boolop){
-            return(do.call(.Generic, list(value(e1), value(e2)) ))
+            return(do.call(.Generic, list(as.matrix(e1), as.matrix(e2)) ))
         }
     }
 }

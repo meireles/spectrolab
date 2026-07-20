@@ -12,7 +12,7 @@
 \item{...}{additional params to summary. not used yet}
 }
 \value{
-nothing yet (just prints to console)
+the spectra object, invisibly (prints a summary as a side effect)
 }
 \description{
 Summarize spectra

@@ -105,6 +105,12 @@ var.default = stats::var
 #' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' var(spec)
 var.spectra = function(x, y = NULL, na.rm = TRUE, use){
+    if( !is.null(y) ){
+        stop("var() on a spectra computes the per-band variance and does not accept `y`.")
+    }
+    if( !missing(use) ){
+        warning("`use` is ignored when computing the variance of a spectra object.")
+    }
     apply_by_band(x, stats::var, na.rm = na.rm, keep_txt_meta = TRUE)
 }
 
@@ -171,8 +177,10 @@ sd.spectra = function(x, na.rm = TRUE){
 #'              between 0.0 and 1.0. Defaults to c(0.025, 0.25, 0.5, 0.75, 0.975).
 #'              Duplicated probs will be removed.
 #' @param na.rm remove NAs before computing quantiles? Defaults to TRUE
-#' @param names names for each quantile spectrum. If NULL (default), names are set
-#'              to `probs`. A char vector should otherwise be given. Recycled.
+#' @param sample_names names for each quantile spectrum. If NULL (default), names
+#'              are set to `probs`. A char vector should otherwise be given.
+#'              Named `sample_names` (not `names`) so as not to clash with the
+#'              base `quantile` argument of the same name, which is a logical.
 #' @param ... other arguments passed to quantile.
 #' @return spectra object with one spectrum for each prob
 #'
@@ -188,7 +196,7 @@ sd.spectra = function(x, na.rm = TRUE){
 quantile.spectra = function(x,
                             probs = c(0.025, 0.25, 0.5, 0.75, 0.975),
                             na.rm = TRUE,
-                            names = NULL,
+                            sample_names = NULL,
                             ...){
 
     ## probs must be between 0 and 1
@@ -204,10 +212,10 @@ quantile.spectra = function(x,
     }
 
     ## Construct sample names
-    if(is.null(names) | any(is.na(names))){
+    if(is.null(sample_names) || any(is.na(sample_names))){
         n = as.character(probs)
     } else {
-        n = as.character(names)
+        n = as.character(sample_names)
     }
 
     ## Return spectra quantile object
