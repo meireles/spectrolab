@@ -24,21 +24,24 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
         }
     }
 
+    r_idx = i_match_label_or_idx( names(x) , i, allow_negative = allow_negative)
 
+    ## A logical `j` is inherently positional: convert the mask straight to
+    ## column indices. Do NOT round-trip it through band labels --- a mask that
+    ## selects one of several duplicated overlap wavelengths would otherwise
+    ## return every column sharing that label (see the duplicate-band contract).
     if(is.logical(j)){
         if(length(j) != ncol(x)){
-            stop("boolean vector i must have the same length as the number of samples")
+            stop("boolean vector j must have the same length as the number of bands")
         }
-
         if(any(j)){
-            j = bands(x)[ which(j) ]
+            c_idx = which(j)
         } else {
             stop("All boolean values are FALSE (no bands matched)")
         }
+    } else {
+        c_idx = i_match_label(bands(x), j, allow_negative = allow_negative)
     }
-
-    r_idx = i_match_label_or_idx( names(x) , i, allow_negative = allow_negative)
-    c_idx = i_match_label(bands(x), j, allow_negative = allow_negative)
 
     list(r_idx = r_idx, c_idx = c_idx)
 }
@@ -108,7 +111,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
         }
     }
 
-    if(simplify && length(m[["c_idx"]]) == 1) {
+    if(simplify && j_given && length(m[["c_idx"]]) == 1) {
         out        = value(x)[ m[["r_idx"]] , m[["c_idx"]], drop = TRUE ]
         names(out) = names(x)[ m[["r_idx"]] ]
         return(out)
@@ -171,7 +174,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
             stop("wavelengths not compatible")
         }
 
-        if( any(colnames(meta(x)) !=  colnames(meta(value))) ){
+        if( !identical(colnames(meta(x)), colnames(meta(value))) ){
             stop("metadata columns not compatible. names must be exactly the same")
         }
 

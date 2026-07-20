@@ -163,10 +163,21 @@ smooth_moving_avg = function(x, n = NULL, save_bands_to_meta = TRUE){
 
     r   = value(x)
     s   = t(apply(r, 1, i_mav, n = n))
-    w   = which(apply(is.na(s), 2, all))
+    w   = which(apply(is.na(s), 2, all))   # column INDICES fully NA'd by smoothing
     ww  = bands(x)[w]
-    x[] = s
-    x   = x[ , setdiff(bands(x), ww) ]
+
+    ## Drop the NA'd bands by column index, never by label: a duplicated overlap
+    ## wavelength would make label selection pull the wrong (or extra) columns.
+    ## See the duplicate-band contract in R/getters_and_setters.R.
+    keep = if(length(w) == 0){ seq_len(ncol(x)) } else { seq_len(ncol(x))[-w] }
+    out  = new_spectra(value = s[ , keep, drop = FALSE],
+                       bands = bands(x)[keep],
+                       names = names(x),
+                       meta  = meta(x))
+    attr(out, "sensor_info") = attr(x, "sensor_info")
+    quantity(out)            = quantity(x)
+    wavelength_unit(out)     = wavelength_unit(x)
+    x = out
 
     if(length(w) != 0){
 

@@ -188,7 +188,7 @@ plot_regions = function(spec,
 
     m_regions = as.matrix(regions)
 
-    if( any(rownames(m_regions) != c("begin", "end")) ){
+    if( !identical(rownames(m_regions), c("begin", "end")) ){
         stop("regions matrix must have two rows named 'begin' and 'end'.")
     }
 

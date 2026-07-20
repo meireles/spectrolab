@@ -98,7 +98,7 @@ Ops.spectra = function(e1, e2) {
         if(.Generic %in% mathop){
             e1[] = do.call(.Generic, list(value(e1), value(e2)) )
 
-            if(any(names(e1) != names(e2))){
+            if(!identical(names(e1), names(e2))){
                 warning("sample names not identical: removing sample names...")
                 names(e1) = rep(NA, dim(e1)["n_samples"])
             }

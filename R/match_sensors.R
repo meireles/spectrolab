@@ -173,7 +173,7 @@ i_trim_sensor_overlap = function(x, splice_at){
 
     list("spectra" = out,
          "sensor"  = sensor,
-         "overlap" = ifelse(no_over, NA, bb))
+         "overlap" = if(no_over){ NA } else { bb })
 }
 
 
@@ -373,7 +373,14 @@ match_sensors.spectra = function(x,
     })
 
 
-    if(is.na(y$overlap) | length(factor_mat) == 1){
+    ## `y$overlap` is a scalar NA when the sensors don't overlap, otherwise the
+    ## overlap-bounds data.frame; test it without letting is.na() return a matrix.
+    ## NOTE (legacy "scale" path): with real overlap and >1 junction (3+ sensors)
+    ## only the first factor matrix is applied, so the far sensor is left
+    ## unmatched. Preserved as-is; use a vendor preset via match_sensors(method=)
+    ## for correct multi-junction splicing.
+    no_overlap = length(y$overlap) == 1L && all(is.na(y$overlap))
+    if(no_overlap || length(factor_mat) == 1){
         iter = seq_along(factor_mat)
     } else {
         iter = 1

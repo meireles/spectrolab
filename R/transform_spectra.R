@@ -49,7 +49,7 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
     }
 
     f  = f_na_wrap(fun, na.rm)
-    fm = ifelse(keep_txt_meta, try_keep_txt(f), f)
+    fm = if(keep_txt_meta){ try_keep_txt(f) } else { f }
 
     X  = value(x)
     r  = apply(X, 2, f, ...)
@@ -57,16 +57,18 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
     m0 = meta(x)
     m  = m0
 
-    l = ifelse(is.vector(r), 1L, nrow(r))
+    l = if(is.vector(r)){ 1L } else { nrow(r) }
     if(is.null(name)){
-        n = seq(l)
+        n = seq_len(l)
     } else {
         n = rep(name, length.out = l)
     }
 
     if(ncol(m) != 0){
-        m = lapply(m, fm, ...)  # Calling lapply because meta is always a data.frame
-        m = do.call(cbind, m)
+        # Keep meta a data.frame: do.call(cbind, ...) builds a matrix, which would
+        # coerce every metadata column to character as soon as one column yields
+        # text (the whole point of keep_txt_meta / try_keep_txt).
+        m = as.data.frame(lapply(m, fm, ...), check.names = FALSE)
 
         # # If the metadata resulting from the function fm does not produce the same
         # # number of rows as the reflectance data does, then repeat the metadata to
@@ -142,7 +144,7 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
         })
 
     s = as_spectra(r, 1)
-    meta(s) = m[ , -1]
+    meta(s) = m[ , -seq_along(by), drop = FALSE]
 
     quantity(s)        = quantity(x)
     wavelength_unit(s) = wavelength_unit(x)

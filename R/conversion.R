@@ -62,7 +62,22 @@ as_spectra.matrix = function(x, name_idx = NULL, meta_idxs = NULL){
 #' @author Jose Eduardo Meireles
 #' @export
 as_spectra.data.frame = function(x, name_idx = NULL, meta_idxs = NULL){
-    as_spectra(as.matrix(x), name_idx = name_idx, meta_idxs = meta_idxs)
+
+    ## Pull name + metadata columns out BEFORE matrix coercion. Routing the whole
+    ## data.frame through as.matrix() would coerce numeric metadata to character
+    ## the moment any non-numeric column is present. The value columns are numeric
+    ## and coerce cleanly on their own.
+    s = if(is.null(name_idx) || name_idx == 0){ NULL } else { x[[name_idx]] }
+    m = if(is.null(meta_idxs)){ NULL } else { x[ , meta_idxs, drop = FALSE] }
+    p = setdiff(seq_len(ncol(x)), c(name_idx, meta_idxs))
+    r = as.matrix(x[ , p, drop = FALSE])
+
+    if(is.null(s)){
+        s = rownames(x)
+        if(is.null(s)){ s = seq_len(nrow(x)) }
+    }
+
+    spectra(r, colnames(r), s, m)
 }
 
 
@@ -94,11 +109,11 @@ as.matrix.spectra = function(x, fix_names = "none", ...) {
     }
 
     if(fix_names %in% c("row", "both")){
-        s = sapply(s, make.names, unique = TRUE)
+        s = make.names(s, unique = TRUE)
     }
 
     if(fix_names %in% c("col", "both")){
-        w = sapply(w, make.names, unique = TRUE)
+        w = make.names(w, unique = TRUE)
     }
 
     dimnames(r) = list(s, w)

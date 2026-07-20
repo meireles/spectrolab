@@ -148,7 +148,7 @@ i_meta = function(x, nsample, allow_null = TRUE, match_nsample = FALSE){
     if(nsample == nrow(x)){
         NULL
     } else if (match_nsample){
-        x = x[ rep(seq.int(nrow(x)), length.out = nsample), ]
+        x = x[ rep(seq_len(nrow(x)), length.out = nsample), , drop = FALSE ]
     } else {
         stop("The number of rows of meta must be the same as nsample")
     }

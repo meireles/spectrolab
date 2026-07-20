@@ -1,10 +1,16 @@
-#' Minimum value
+#' Summary group generic for spectra
 #'
-#' \code{min} Returns the minimum  value in a spectra object
+#' Handles \code{min}, \code{max}, \code{range}, \code{sum}, \code{prod},
+#' \code{any} and \code{all} for spectra by applying the operation to the value
+#' matrix. Non-spectra arguments are passed through unchanged, so mixed calls
+#' such as \code{min(spec, 0.2)} or \code{max(spec1, spec2)} work exactly as they
+#' do for base numeric objects --- unlike the previous per-function methods,
+#' which errored on any extra argument.
 #'
-#' @param ... spectra object
+#' @param ... spectra and/or other objects accepted by the underlying generic
 #' @param na.rm boolean. remove NAs? Defaults to FALSE
-#' @return single numeric value
+#' @return whatever the corresponding base generic returns (a single value, or a
+#'         length-2 vector for \code{range})
 #'
 #' @author Jose Eduardo Meireles
 #' @export
@@ -13,47 +19,11 @@
 #' library(spectrolab)
 #' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' min(spec)
-min.spectra = function(..., na.rm = FALSE){
-  min(value(...), na.rm = na.rm)
-}
-
-#' Maximum value
-#'
-#' \code{max} Returns the maximum value in a spectra object
-#'
-#' @param ... spectra object
-#' @param na.rm boolean. remove NAs? Defaults to FALSE
-#' @return single numeric value
-#'
-#' @author Jose Eduardo Meireles
-#' @export
-#'
-#' @examples
-#' library(spectrolab)
-#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' max(spec)
-max.spectra = function(..., na.rm = FALSE){
-  max(value(...), na.rm = na.rm)
-}
-
-#' Range of spectral values
-#'
-#' \code{range} Returns the range of (min, max) values in spectra
-#'
-#' @param ... spectra object
-#' @param na.rm boolean. remove NAs? Defaults to FALSE
-#' @return tuple of numeric values (min, max)
-#'
-#' @author Jose Eduardo Meireles
-#' @export
-#'
-#' @examples
-#'
-#' library(spectrolab)
-#' spec = as_spectra(spec_matrix_example, name_idx = 1)
 #' range(spec)
-range.spectra = function(..., na.rm = FALSE){
-  range(value(...), na.rm = na.rm)
+Summary.spectra = function(..., na.rm = FALSE){
+  args = lapply(list(...), function(z){ if(is_spectra(z)){ value(z) } else { z } })
+  do.call(.Generic, c(args, list(na.rm = na.rm)))
 }
 
 

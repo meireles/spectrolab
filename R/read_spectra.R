@@ -295,11 +295,13 @@ i_verify_path_and_format = function(path,
 
   if( ! is.null(format) ){
 
+    ## pmatch returns NA (not length 0) for an unknown or ambiguous format, so
+    ## test for NA -- otherwise a bad `format=` slips through and dies later with
+    ## an opaque "missing value where TRUE/FALSE needed".
     format_match = pmatch(tolower(format), format_lookup)
 
-    ## Error if format isn't found
-    if(length(format_match) == 0){
-      stop("Files did not match any known format")
+    if(is.na(format_match)){
+      stop("format must be one of: ", paste(format_lookup, collapse = ", "))
     }
 
     format = format_lookup[format_match]
@@ -571,6 +573,7 @@ i_read_asd_spectra = function(file_paths,
   result = lapply(file_paths, FUN = function(f){
 
     con = file(f, open = "rb")
+    on.exit(close(con), add = TRUE)   # close even if a corrupt file errors mid-parse
 
     ####################
     # Version tag
@@ -668,8 +671,6 @@ i_read_asd_spectra = function(file_paths,
     seek(con, ASD_OFFSETS$WHITE_REF_START + comment_nchar)
     white_ref = readBin(con, what = data_what, n = n_bands, size = data_size, endian = ENDIAN)
 
-    close(con)
-
 
     ########################################
     # Process
@@ -711,44 +712,36 @@ i_read_asd_spectra = function(file_paths,
       stop("type must be either target_reflectance, target_radiance or reference_radiance")
     }
 
-    ## Build a matrix with columns band, value, name so that all `type`s share
-    ## the same downstream construction (see below). cbind coerces to character,
-    ## but the spectra() constructor coerces band and value back to numeric.
-    result = cbind(bands, value / divide_refl_by, spec_name)
-
-    ## Carry the file's two splice wavelengths (the VNIR/SWIR1 and SWIR1/SWIR2
-    ## detector joins, stored per-file in the .asd header) alongside the data so
-    ## read_spectra can surface them as sensor_info. ASD's actual splice
-    ## *algorithm* is not recoverable, but these two wavelengths are exactly what
-    ## the file records.
-    attr(result, "splice") = c(splice1, splice2)
-    result
+    ## Keep everything typed. The two splice wavelengths (VNIR/SWIR1 and
+    ## SWIR1/SWIR2 detector joins, stored per-file in the .asd header) travel
+    ## alongside the data so read_spectra can surface them as sensor_info. ASD's
+    ## actual splice *algorithm* is not recoverable, but these two wavelengths are
+    ## exactly what the file records.
+    list(bands  = bands,
+         value  = value / divide_refl_by,
+         name   = spec_name,
+         splice = c(splice1, splice2))
   })
 
   # Wavelengths
-  wl = lapply(result, function(x){ x[ , 1] })
+  wl = lapply(result, function(x){ x$bands })
 
   ## there mabye files with different number of bands or band values
   ## check for them and split the data if needed
-  wl_factor = unlist(
-    lapply(wl, function(x){
-      paste0(x, collapse = "")
-    })
-  )
+  wl_factor = vapply(wl, function(b){ paste0(b, collapse = "") }, character(1))
 
   data = unname(split(result, wl_factor))
 
   ## Construct spectra, surfacing the per-file ASD splice wavelengths as
   ## sensor_info (see R/sensor_info.R).
   spec = lapply(data, function(x) {
-    rf = lapply(x, function(y){ y[ , 2 ] })
-    rf = do.call(rbind, rf)
-    wl = x[[1]][ , 1 ]
-    nm = sapply(x, function(y){ y[1 , 3 ] })
+    rf = do.call(rbind, lapply(x, function(y){ y$value }))
+    wl = x[[1]]$bands
+    nm = vapply(x, function(y){ y$name }, character(1))
 
     s  = spectra(rf, wl, nm)
 
-    splice        = vapply(x, function(y){ attr(y, "splice") }, numeric(2))  # 2 x nfiles
+    splice        = vapply(x, function(y){ y$splice }, numeric(2))  # 2 x nfiles
     si            = i_new_sensor_info("asd", nrow(s))
     si$splice_1   = splice[1, ]
     si$splice_2   = splice[2, ]
