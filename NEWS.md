@@ -1,3 +1,15 @@
+# spectrolab 0.0.20 (development)
+
+## major
+* Duplicate band labels are now allowed and preserved. Previously the constructor
+  silently nudged duplicate wavelengths (e.g. 600 -> 600.0012) to force
+  uniqueness, which altered the data and was buggy for 3+ identical values. Bands
+  now behave like sample names: selecting a duplicated label returns all matching
+  bands and emits a message. The sensor-splice trimmer was made positional so
+  duplicates cannot corrupt a join. **This may change results for scripts that
+  relied on the old nudged band values; the vast majority of data (unique bands)
+  is unaffected.**
+
 # spectrolab 0.0.19 (2025-01-07)
 
 ## major

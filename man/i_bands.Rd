@@ -13,10 +13,23 @@ i_bands(x, nbands = NULL)
 If NULL (default) checking is skipped.}
 }
 \value{
-vector of bands
+numeric vector of bands, with any duplicates preserved
 }
 \description{
-\code{i_bands} constructs band labels in the appropriate format
+\code{i_bands} coerces band labels to a numeric vector.
+}
+\details{
+Band labels are \strong{not} required to be unique. Duplicate wavelengths ---
+for example where two detectors of a full-range spectrometer overlap in a raw,
+un-spliced spectrum --- are preserved exactly as given, just like duplicate
+sample names. Label-based band selection (\code{x[, 600]}) returns every
+matching band, and the internal splice functions select columns positionally
+so duplicates never corrupt them.
+
+(Earlier versions nudged duplicate wavelengths by a tiny amount to force
+uniqueness. That silently altered the data --- a physical wavelength like 600
+became 600.0012 --- was buggy for three or more identical values, and is no
+longer done. See ai_reviews/DUPLICATE_BANDS_ANALYSIS.md.)
 }
 \author{
 Jose Eduardo Meireles

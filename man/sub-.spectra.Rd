@@ -14,8 +14,8 @@
 \item{j}{band labels, as numeric or character
 or a logical vector of length ncol(x). Do not use indexes!}
 
-\item{simplify}{Boolean. If TRUE (default), single band selections
-are returned as a named vector of values}
+\item{simplify}{Boolean. If TRUE (default), a selection matching exactly one
+band is returned as a named vector of values.}
 }
 \value{
 usually a spectra object, but see param `simplify`
@@ -32,6 +32,14 @@ first and second samples in the `spectra` object. Subsetting based on bands
 will give you the value data for the 600nm band and not the 600th
 band. Boolean vectors of the appropriate length can be used to subset samples
 and bands.
+
+Band labels need not be unique. A raw, un-spliced full-range spectrum can carry
+the same wavelength twice where two detectors overlap. Selecting a duplicated
+band label (e.g. \code{x[, 975.6]} when 975.6 is sampled by two detectors)
+returns \strong{all} matching bands --- exactly as selecting a duplicated
+sample name returns all matching rows --- and emits a message so the
+duplication is not silent. Splice the sensors with \code{\link{match_sensors}}
+to obtain unique, strictly increasing bands.
 }
 \examples{
 library(spectrolab)

@@ -136,19 +136,40 @@ i_trim_sensor_overlap = function(x, splice_at){
         stop("number of cut_points must be equal to the number of overlaps.")
     }
 
-    s = lapply(b, function(y){
-        w[ seq.int(y[[1]], y[[2]]) ]
-    })
+    ## Work with COLUMN INDICES, not band values. A duplicated wavelength in a
+    ## sensor overlap (e.g. 975.6 sampled by both detectors) would otherwise make
+    ## label-based selection `x[, values]` match columns in BOTH detectors and
+    ## corrupt the join. Indices are unambiguous. See
+    ## ai_reviews/DUPLICATE_BANDS_ANALYSIS.md.
+    idx = lapply(b, function(y){ seq.int(y[[1]], y[[2]]) })
 
-    ## trim wavelength lists
+    ## Trim the overlap: at each splice keep the right sensor at/above splice_at,
+    ## and the left sensor strictly below the lowest kept right-sensor wavelength.
     for(i in 1:length(splice_at) ){
-        right      = which(s[[i + 1]] >=  splice_at[i])
-        s[[i + 1]] = s[[i + 1]][ right ]
-        s[[i]]     = s[[i]][ s[[i]] < min(s[[i + 1]]) ]
+        keep_right   = idx[[i + 1]][ w[idx[[i + 1]]] >= splice_at[i] ]
+        idx[[i + 1]] = keep_right
+        min_right    = min(w[keep_right])
+        idx[[i]]     = idx[[i]][ w[idx[[i]]] < min_right ]
     }
 
-    list("spectra" = x[ , unlist(s) ],
-         "sensor"  = rep(names(s), sapply(s, length)),
+    keep0   = unlist(idx, use.names = FALSE)
+    sensor0 = rep(names(idx), vapply(idx, length, integer(1)))
+    ord     = order(w[keep0])                 # guarantee strictly increasing output
+    keep    = keep0[ord]
+    sensor  = sensor0[ord]
+
+    ## Rebuild positionally, preserving samples, metadata and sensor provenance.
+    out = new_spectra(value = value(x)[ , keep, drop = FALSE],
+                      bands = w[keep],
+                      names = names(x),
+                      meta  = meta(x))
+    si = sensor_info(x)
+    if( !is.null(si) ){
+        attr(out, "sensor_info") = si
+    }
+
+    list("spectra" = out,
+         "sensor"  = sensor,
          "overlap" = ifelse(no_over, NA, bb))
 }
 

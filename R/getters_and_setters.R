@@ -57,12 +57,20 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #' band. Boolean vectors of the appropriate length can be used to subset samples
 #' and bands.
 #'
+#' Band labels need not be unique. A raw, un-spliced full-range spectrum can carry
+#' the same wavelength twice where two detectors overlap. Selecting a duplicated
+#' band label (e.g. \code{x[, 975.6]} when 975.6 is sampled by two detectors)
+#' returns \strong{all} matching bands --- exactly as selecting a duplicated
+#' sample name returns all matching rows --- and emits a message so the
+#' duplication is not silent. Splice the sensors with \code{\link{match_sensors}}
+#' to obtain unique, strictly increasing bands.
+#'
 #' @param x spectra object
 #' @param i Sample names (preferred), index, or a logical vector of length nrow(x)
 #' @param j band labels, as numeric or character
 #'          or a logical vector of length ncol(x). Do not use indexes!
-#' @param simplify Boolean. If TRUE (default), single band selections
-#'                 are returned as a named vector of values
+#' @param simplify Boolean. If TRUE (default), a selection matching exactly one
+#'                 band is returned as a named vector of values.
 #' @return usually a spectra object, but see param `simplify`
 #'
 #' @author Jose Eduardo Meireles
@@ -80,10 +88,25 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
 #' spec2
 `[.spectra` = function(x, i, j, simplify = TRUE){
 
+    j_given = !missing(j)
     if(missing(i)){ i = NULL }
     if(missing(j)){ j = NULL }
 
     m = i_match_ij_spectra(x = x, i = i, j = j, allow_negative = TRUE)
+
+    ## When the user explicitly selects bands and the selection lands on
+    ## duplicated labels, all matching bands are returned (as for duplicated
+    ## sample names). Say so rather than surprise the user with extra columns.
+    if( j_given ){
+        sel_bands = bands(x)[ m[["c_idx"]] ]
+        dups      = unique(sel_bands[ duplicated(sel_bands) ])
+        if( length(dups) > 0 ){
+            message("Selected band label(s) ", paste(dups, collapse = ", "),
+                    " match more than one band (duplicated wavelengths); all ",
+                    "matching bands were returned. Run match_sensors() to splice ",
+                    "overlapping sensors into unique, increasing bands.")
+        }
+    }
 
     if(simplify && length(m[["c_idx"]]) == 1) {
         out        = value(x)[ m[["r_idx"]] , m[["c_idx"]], drop = TRUE ]

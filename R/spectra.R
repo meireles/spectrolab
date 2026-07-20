@@ -78,14 +78,24 @@ i_names = function(x, nsample = NULL){
 
 #' Internal band constructor for spectra
 #'
-#' \code{i_bands} constructs band labels in the appropriate format
+#' \code{i_bands} coerces band labels to a numeric vector.
+#'
+#' Band labels are \strong{not} required to be unique. Duplicate wavelengths ---
+#' for example where two detectors of a full-range spectrometer overlap in a raw,
+#' un-spliced spectrum --- are preserved exactly as given, just like duplicate
+#' sample names. Label-based band selection (\code{x[, 600]}) returns every
+#' matching band, and the internal splice functions select columns positionally
+#' so duplicates never corrupt them.
+#'
+#' (Earlier versions nudged duplicate wavelengths by a tiny amount to force
+#' uniqueness. That silently altered the data --- a physical wavelength like 600
+#' became 600.0012 --- was buggy for three or more identical values, and is no
+#' longer done. See ai_reviews/DUPLICATE_BANDS_ANALYSIS.md.)
 #'
 #' @param x vector of bands. Either numeric or character
 #' @param nbands Integer of expected number of bands.
 #'                     If NULL (default) checking is skipped.
-#' @return vector of bands
-#'
-#' @importFrom stats runif
+#' @return numeric vector of bands, with any duplicates preserved
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
@@ -102,31 +112,6 @@ i_bands = function(x, nbands = NULL) {
     n = is.na(y)
     if( any(n) ){
         stop("band cannot be converted to numeric: ", x[n])
-    }
-
-    d = which(duplicated(y))
-
-    if(length(d) > 0){
-
-        position = d
-        original = y[d]
-
-        # Need to add a tiny percent (0.0012357%) of the smallest band diff
-        # to the duplicated bands.
-        # This technique should work if a certain band value is duplicated once.
-        # If the data has three bands of value 680nm, for example, then the code
-        # will not perform as intended because a duplication will remain.
-        #
-        # Sort ensures that dups that show up later (order-wise) will have larger values
-        # when a band has more than one duplicate
-
-        # scalars  = sort(runif(length(d), min = 0.00001, max = 0.00012))
-        scalars  = sort(rep(0.000012357, length(d)))
-
-        y[d] = y[d] + scalars * min(abs(diff(y[-d])))
-
-        updated = y[d]
-
     }
 
     y

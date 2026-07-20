@@ -548,16 +548,18 @@ i_splice_ramp = function(x, splice_at, config){
         bk   = b[cols]
         vk   = v[, cols, drop = FALSE]
 
-        ## trim the low end if this sensor is the RIGHT side of a junction
+        ## If this sensor is the RIGHT side of a junction, keep only what lies
+        ## ABOVE that junction's blend window (the window itself is blended below).
         if(k >= 2 && (k - 1L) <= nj){
-            wlo = i_ramp_window(b, seg_cols, splice_at[k - 1L], k - 1L, config)[1]
-            keep = bk > wlo
+            whi  = i_ramp_window(b, seg_cols, splice_at[k - 1L], k - 1L, config)[2]
+            keep = bk > whi
             bk = bk[keep]; vk = vk[, keep, drop = FALSE]
         }
-        ## trim the high end if this sensor is the LEFT side of a junction
+        ## If this sensor is the LEFT side of a junction, keep only what lies
+        ## BELOW that junction's blend window.
         if(k <= nj){
-            whi = i_ramp_window(b, seg_cols, splice_at[k], k, config)[2]
-            keep = bk < whi
+            wlo  = i_ramp_window(b, seg_cols, splice_at[k], k, config)[1]
+            keep = bk < wlo
             bk = bk[keep]; vk = vk[, keep, drop = FALSE]
         }
 
