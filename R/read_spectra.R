@@ -72,14 +72,21 @@ read_spectra = function(path,
                                   divide_refl_by    = 100,
                                   max_header_lines  = max_header_lines)
 
-    ## Construct spectra
+    ## Construct spectra. We also capture the SVC detector-overlap provenance
+    ## (what the header says was done: Preserve/Remove, splice wavelengths,
+    ## matching factors) onto the object as the "sensor_info" attribute. This is
+    ## done unconditionally (not gated on extract_metadata) because match_sensors
+    ## relies on it. See R/sensor_info.R.
     spec = lapply(result, function(x) {
+      files = names(x)
       rf = sapply(x, `[`, "value")
       rf = do.call(rbind, rf)
       wl = x[[1]][ , "band" ]
-      nm = basename(names(x))
+      nm = basename(files)
 
-      spectra(rf, wl, nm)
+      s = spectra(rf, wl, nm)
+      attr(s, "sensor_info") = i_svc_sensor_info(files, max_header_lines)
+      s
     })
 
 
@@ -140,14 +147,19 @@ read_spectra = function(path,
                                   max_header_lines  = max_header_lines,
                                   check.names       = FALSE)
 
-    ## Construct spectra
+    ## Construct spectra. PSR/Spectral Evolution `.sed` headers do NOT record the
+    ## per-instrument stitch anchors (they live in the live-instrument CNFG
+    ## response), so the provenance we can capture here is minimal: the vendor
+    ## tag. match_sensors will therefore require explicit splice points for PSR.
     spec = lapply(result, function(x) {
       rf = sapply(x, `[`, "value")
       rf = do.call(rbind, rf)
       wl = x[[1]][ , "band" ]
       nm = basename(names(x))
 
-      spectra(rf, wl, nm)
+      s = spectra(rf, wl, nm)
+      attr(s, "sensor_info") = i_new_sensor_info("psr", nrow(s))
+      s
     })
 
     if(extract_metadata){
@@ -694,6 +706,14 @@ i_read_asd_spectra = function(file_paths,
     ## the same downstream construction (see below). cbind coerces to character,
     ## but the spectra() constructor coerces band and value back to numeric.
     result = cbind(bands, value / divide_refl_by, spec_name)
+
+    ## Carry the file's two splice wavelengths (the VNIR/SWIR1 and SWIR1/SWIR2
+    ## detector joins, stored per-file in the .asd header) alongside the data so
+    ## read_spectra can surface them as sensor_info. ASD's actual splice
+    ## *algorithm* is not recoverable, but these two wavelengths are exactly what
+    ## the file records.
+    attr(result, "splice") = c(splice1, splice2)
+    result
   })
 
   # Wavelengths
@@ -709,13 +729,22 @@ i_read_asd_spectra = function(file_paths,
 
   data = unname(split(result, wl_factor))
 
-  ## Construct spectra
+  ## Construct spectra, surfacing the per-file ASD splice wavelengths as
+  ## sensor_info (see R/sensor_info.R).
   spec = lapply(data, function(x) {
     rf = lapply(x, function(y){ y[ , 2 ] })
     rf = do.call(rbind, rf)
     wl = x[[1]][ , 1 ]
     nm = sapply(x, function(y){ y[1 , 3 ] })
-    spectra(rf, wl, nm)
+
+    s  = spectra(rf, wl, nm)
+
+    splice        = vapply(x, function(y){ attr(y, "splice") }, numeric(2))  # 2 x nfiles
+    si            = i_new_sensor_info("asd", nrow(s))
+    si$splice_1   = splice[1, ]
+    si$splice_2   = splice[2, ]
+    attr(s, "sensor_info") = si
+    s
   })
 
   if(length(spec) > 1){

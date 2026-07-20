@@ -96,6 +96,14 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
                       names = names(x)[ m[["r_idx"]] ],
                       meta  = meta(x, label = NULL, sample =  m[["r_idx"]])
         )
+
+        ## Carry the per-sample sensor_info provenance through the subset (rows
+        ## follow the selected samples). See R/sensor_info.R.
+        si = sensor_info(x)
+        if( !is.null(si) ){
+            attr(out, "sensor_info") = si[ m[["r_idx"]], , drop = FALSE ]
+        }
+
         return(out)
     }
 }

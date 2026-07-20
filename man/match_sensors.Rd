@@ -5,47 +5,96 @@
 \alias{match_sensors.spectra}
 \title{Match spectra at sensor transitions}
 \usage{
-match_sensors(x, splice_at, fixed_sensor = 2, interpolate_wvl = c(5, 1))
+match_sensors(
+  x,
+  splice_at = NULL,
+  fixed_sensor = 2,
+  interpolate_wvl = c(5, 2),
+  method = NULL,
+  config = NULL
+)
 
-\method{match_sensors}{spectra}(x, splice_at, fixed_sensor = 2, interpolate_wvl = c(5, 2))
+\method{match_sensors}{spectra}(
+  x,
+  splice_at = NULL,
+  fixed_sensor = 2,
+  interpolate_wvl = c(5, 2),
+  method = NULL,
+  config = NULL
+)
 }
 \arguments{
 \item{x}{spectra object}
 
-\item{splice_at}{bands that serve as splice points, i.e the beginnings
-of the rightmost sensor. Must be length 1 or 2 (max 3 sensors)}
+\item{splice_at}{splice-point wavelengths (length 1 or 2), or \code{NULL}
+(default) to use the splice points recorded in
+\code{\link{sensor_info}} provenance.}
 
-\item{fixed_sensor}{sensor to keep fixed. Can be 1 or 2 if matching 2 sensors.
-If matching 3 sensors, `fixed_sensor` must be 2 (default).}
+\item{fixed_sensor}{sensor to keep fixed (legacy algorithm only). Can be 1 or 2
+when matching 2 sensors. When matching 3 sensors, must be 2.}
 
-\item{interpolate_wvl}{extent around splice_at values over which the splicing
-factors will be calculated. Defaults to 5}
+\item{interpolate_wvl}{extent around each \code{splice_at} over which the
+legacy splicing factors are computed. Defaults to
+\code{c(5, 2)}.}
+
+\item{method}{optional preset name selecting the splice engine: one of
+\code{"svc"}, \code{"naturaspec"}, \code{"asd"}, \code{"cut"},
+\code{"ramp"}, \code{"concatenate"}, or \code{"scale"} (legacy).}
+
+\item{config}{optional \code{\link{splice_config}} for full control; overrides
+\code{method}.}
 }
 \value{
-spectra object
+spectra object with matched sensors (strictly increasing bands)
 }
 \description{
-\code{match_sensors} scales values of sensors 1 (VIS) and 3 (SWIR 2)
+\code{match_sensors} joins the detector segments of a full-range spectrum by
+rescaling the sensors on either side of each splice so they line up, and
+returns a spectrum with strictly increasing bands.
 }
 \details{
-Splice_at has no default because sensor transition points vary between vendors
-and individual instruments.
-The function \code{guess_splice_at} can help you guess what those values could
-be. However, \code{splice_at} is an important parameter though, so you should
-visually inspect your spectra before assigning it.
-Typical values in our own individual instruments were:
-SVC ~ c(990, 1900),
-ASD ~ c(1001, 1801).
+\strong{Splice points.} \code{splice_at} gives the wavelength(s) where sensors
+meet (the beginning of the rightmost sensor); length 1 or 2 (up to 3 sensors).
+When \code{splice_at = NULL} (the default), \code{match_sensors} uses splice
+points captured from the instrument file at read time (see
+\code{\link{sensor_info}}). Two guard rails make this safe rather than
+guess-y:
+\itemize{
+  \item If the bands are already strictly increasing, the vendor already
+        spliced the data (e.g. an SVC file saved in "Remove" mode, or a
+        standard ASD spectrum), so the spectra are returned \emph{unchanged}.
+  \item If no splice points are available and none were supplied, an error is
+        raised asking for them rather than silently inventing values.
+}
+\code{\link{guess_splice_at}} can suggest values, but visually inspect your
+spectra before trusting them. Typical values on our own instruments were
+SVC ~ c(990, 1900), ASD ~ c(1001, 1801).
 
-If the factors used to match spectra are unreasonable, \code{match_sensors}
-will throw. Unreasonable factors (f) are defined as 0.5 > f > 3 or NaN,
-which happens when the value for the right sensor is 0.
+\strong{What this does (and does not) do.} This is a general, instrument-
+agnostic join: one scaling factor per junction spread with a linear ramp. It
+is \emph{not} a faithful reproduction of any single vendor's stitching
+algorithm (SVC deletes the overlap, Spectral Evolution ramp-blends it, ASD's
+algorithm is not recoverable). Vendor-specific splice presets that consume the
+captured \code{\link{sensor_info}} provenance are planned for a later release
+(see the package's match_sensors redesign notes). If the computed factors are
+unreasonable (f < 0.5, f > 3, or NaN when a right-sensor value is 0) it throws.
+
+\strong{Methods / presets.} Passing \code{method} (or a \code{config} built
+with \code{\link{splice_config}}) selects a vendor-aware splice via the splice
+engine (see \code{\link{splice_config}}): \code{"svc"} (graded scalar match +
+cut), \code{"naturaspec"} (ramp blend), \code{"asd"} (additive step correction
+on already-joined data), or the generic \code{"cut"}/\code{"ramp"}/
+\code{"concatenate"}. \code{method = NULL} (default) or \code{"scale"} uses the
+legacy algorithm documented above.
 }
 \section{Methods (by class)}{
 \itemize{
 \item \code{match_sensors(spectra)}: Match sensor overlap regions
 
 }}
+\seealso{
+\code{\link{splice_config}}, \code{\link{sensor_info}}
+}
 \author{
 Jose Eduardo Meireles and Anna Schweiger
 }

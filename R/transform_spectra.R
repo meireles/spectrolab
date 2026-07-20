@@ -207,7 +207,20 @@ combine.spectra = function(s1, s2){
     m3[1 : nrow(m1), names(m1)] = m1
     m3[(1 + nrow(m1)) : nrow(m3), names(m2)] = m2
 
-    spectra(r, w, n, m3)
+    out = spectra(r, w, n, m3)
+
+    ## Row-bind the per-sample sensor_info provenance if either input carries it
+    ## (they share a canonical column schema, so rbind lines up). Missing side is
+    ## filled with an all-NA record so the row count still matches the samples.
+    si1 = sensor_info(s1)
+    si2 = sensor_info(s2)
+    if( !is.null(si1) || !is.null(si2) ){
+        if(is.null(si1)){ si1 = i_new_sensor_info(NA_character_, nrow(s1)) }
+        if(is.null(si2)){ si2 = i_new_sensor_info(NA_character_, nrow(s2)) }
+        attr(out, "sensor_info") = rbind(si1, si2)
+    }
+
+    out
 }
 
 
