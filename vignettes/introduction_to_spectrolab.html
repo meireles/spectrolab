@@ -378,6 +378,9 @@ allowed</a></li>
 <li><a href="#comparison-operators-return-a-bare-matrix-not-a-spectra" id="toc-comparison-operators-return-a-bare-matrix-not-a-spectra">Comparison
 operators return a bare matrix, not a <code>spectra</code></a></li>
 </ul></li>
+<li><a href="#beyond---other-overloaded-operators" id="toc-beyond---other-overloaded-operators">Beyond
+<code>+</code>/<code>-</code>/<code>*</code>/<code>/</code>: other
+overloaded operators</a></li>
 <li><a href="#provenance-quantity-and-wavelength_unit" id="toc-provenance-quantity-and-wavelength_unit">Provenance:
 <code>quantity()</code> and <code>wavelength_unit()</code></a></li>
 <li><a href="#where-to-go-next" id="toc-where-to-go-next">Where to go
@@ -759,10 +762,10 @@ default (unless you set the <code>metadata</code> argument to
 <span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a>spec_as_df <span class="ot">=</span> <span class="fu">as.data.frame</span>(achillea_spec, <span class="at">fix_names =</span> <span class="st">&quot;none&quot;</span>, <span class="at">metadata =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb21-12"><a href="#cb21-12" tabindex="-1"></a>spec_as_df[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
 <span id="cb21-13"><a href="#cb21-13" tabindex="-1"></a><span class="co">#&gt;   sample_name ident                   ssp N_percent        400</span></span>
-<span id="cb21-14"><a href="#cb21-14" tabindex="-1"></a><span class="co">#&gt; 1     ACHMI_1 10526 Achillea millefolium   1.671581 0.03734791</span></span>
-<span id="cb21-15"><a href="#cb21-15" tabindex="-1"></a><span class="co">#&gt; 2     ACHMI_2 10527 Achillea millefolium   2.874802 0.04608409</span></span>
-<span id="cb21-16"><a href="#cb21-16" tabindex="-1"></a><span class="co">#&gt; 3     ACHMI_3 10528 Achillea millefolium   1.009525 0.04058113</span></span>
-<span id="cb21-17"><a href="#cb21-17" tabindex="-1"></a><span class="co">#&gt; 4     ACHMI_4 10529 Achillea millefolium   2.548951 0.04063730</span></span></code></pre></div>
+<span id="cb21-14"><a href="#cb21-14" tabindex="-1"></a><span class="co">#&gt; 1     ACHMI_1 10526 Achillea millefolium   2.434877 0.03734791</span></span>
+<span id="cb21-15"><a href="#cb21-15" tabindex="-1"></a><span class="co">#&gt; 2     ACHMI_2 10527 Achillea millefolium   2.146734 0.04608409</span></span>
+<span id="cb21-16"><a href="#cb21-16" tabindex="-1"></a><span class="co">#&gt; 3     ACHMI_3 10528 Achillea millefolium   1.804239 0.04058113</span></span>
+<span id="cb21-17"><a href="#cb21-17" tabindex="-1"></a><span class="co">#&gt; 4     ACHMI_4 10529 Achillea millefolium   1.859368 0.04063730</span></span></code></pre></div>
 <p>If you’d rather work with a long/tidy data.frame (one row per
 sample-and-band) or a <code>tibble</code>, see <code>to_long()</code>
 and <code>as_tibble()</code> in the <a href="tidy_bridge.html">Tidy data
@@ -838,6 +841,83 @@ meaningful. Only the four arithmetic operators (plus unary
 <code>-</code>/<code>+</code>) return <code>spectra</code>.</p>
 </div>
 </div>
+<div id="beyond---other-overloaded-operators" class="section level2">
+<h2>Beyond <code>+</code>/<code>-</code>/<code>*</code>/<code>/</code>:
+other overloaded operators</h2>
+<p>A <code>spectra</code> object behaves like ordinary numeric data for
+several more base R functions, all returning a <code>spectra</code> (or,
+where that wouldn’t make sense, a plain matrix/vector) rather than
+erroring or – worse – silently returning something wrong:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="fu">length</span>(achillea_spec)   <span class="co"># number of samples, same as nrow()</span></span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="co">#&gt; n_samples </span></span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a><span class="co">#&gt;        10</span></span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">is.na</span>(achillea_spec))   <span class="co"># elementwise check of the value matrix</span></span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a><span class="co">#&gt; [1] FALSE</span></span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a><span class="fu">sqrt</span>(achillea_spec)   <span class="co"># Math group generic: abs, sqrt, log, round, exp, ...</span></span>
+<span id="cb24-8"><a href="#cb24-8" tabindex="-1"></a><span class="co">#&gt; spectra object </span></span>
+<span id="cb24-9"><a href="#cb24-9" tabindex="-1"></a><span class="co">#&gt; number of samples: 10 </span></span>
+<span id="cb24-10"><a href="#cb24-10" tabindex="-1"></a><span class="co">#&gt; bands: 400 to 2400 nm (2001 bands)</span></span>
+<span id="cb24-11"><a href="#cb24-11" tabindex="-1"></a><span class="co">#&gt; metadata (3): ident, ssp, N_percent</span></span>
+<span id="cb24-12"><a href="#cb24-12" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb24-13"><a href="#cb24-13" tabindex="-1"></a><span class="co">#&gt;         400               401               402               403              </span></span>
+<span id="cb24-14"><a href="#cb24-14" tabindex="-1"></a><span class="co">#&gt; ACHMI_1 0.193256073643236 0.192318251863935 0.195038765377553 0.198713965286791</span></span>
+<span id="cb24-15"><a href="#cb24-15" tabindex="-1"></a><span class="co">#&gt; ACHMI_2 0.214672052209877 0.212987581797625 0.21063105184184  0.208691446877921</span></span>
+<span id="cb24-16"><a href="#cb24-16" tabindex="-1"></a><span class="co">#&gt; ACHMI_3 0.201447586235229 0.200640923044129 0.198950370695809 0.199241210596603</span></span>
+<span id="cb24-17"><a href="#cb24-17" tabindex="-1"></a><span class="co">#&gt; ACHMI_4 0.201586953942957 0.199835432293675 0.194767938840046 0.193466560418073</span></span>
+<span id="cb24-18"><a href="#cb24-18" tabindex="-1"></a><span class="co">#&gt; ACHMI_5 0.197493012534621 0.200327007664968 0.202592818234013 0.202205440085078</span></span>
+<span id="cb24-19"><a href="#cb24-19" tabindex="-1"></a><span class="co">#&gt;         404               405               406               ...</span></span>
+<span id="cb24-20"><a href="#cb24-20" tabindex="-1"></a><span class="co">#&gt; ACHMI_1 0.198801685103522 0.196147903379057 0.195067603666011    </span></span>
+<span id="cb24-21"><a href="#cb24-21" tabindex="-1"></a><span class="co">#&gt; ACHMI_2 0.21012965045419  0.210346285919196 0.20517804463441     </span></span>
+<span id="cb24-22"><a href="#cb24-22" tabindex="-1"></a><span class="co">#&gt; ACHMI_3 0.199468944951338 0.195418141430114 0.187607968913903    </span></span>
+<span id="cb24-23"><a href="#cb24-23" tabindex="-1"></a><span class="co">#&gt; ACHMI_4 0.194908824838692 0.194725832903598 0.191227848390343    </span></span>
+<span id="cb24-24"><a href="#cb24-24" tabindex="-1"></a><span class="co">#&gt; ACHMI_5 0.197111795689654 0.191724202958312 0.192178406695445</span></span>
+<span id="cb24-25"><a href="#cb24-25" tabindex="-1"></a><span class="sc">-</span>achillea_spec        <span class="co"># unary minus</span></span>
+<span id="cb24-26"><a href="#cb24-26" tabindex="-1"></a><span class="co">#&gt; spectra object </span></span>
+<span id="cb24-27"><a href="#cb24-27" tabindex="-1"></a><span class="co">#&gt; number of samples: 10 </span></span>
+<span id="cb24-28"><a href="#cb24-28" tabindex="-1"></a><span class="co">#&gt; bands: 400 to 2400 nm (2001 bands)</span></span>
+<span id="cb24-29"><a href="#cb24-29" tabindex="-1"></a><span class="co">#&gt; metadata (3): ident, ssp, N_percent</span></span>
+<span id="cb24-30"><a href="#cb24-30" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb24-31"><a href="#cb24-31" tabindex="-1"></a><span class="co">#&gt;         400         401         402         403         404         405        </span></span>
+<span id="cb24-32"><a href="#cb24-32" tabindex="-1"></a><span class="co">#&gt; ACHMI_1 -0.03734791 -0.03698631 -0.03804012 -0.03948724 -0.03952211 -0.038474  </span></span>
+<span id="cb24-33"><a href="#cb24-33" tabindex="-1"></a><span class="co">#&gt; ACHMI_2 -0.04608409 -0.04536371 -0.04436544 -0.04355212 -0.04415447 -0.04424556</span></span>
+<span id="cb24-34"><a href="#cb24-34" tabindex="-1"></a><span class="co">#&gt; ACHMI_3 -0.04058113 -0.04025678 -0.03958125 -0.03969706 -0.03978786 -0.03818825</span></span>
+<span id="cb24-35"><a href="#cb24-35" tabindex="-1"></a><span class="co">#&gt; ACHMI_4 -0.0406373  -0.0399342  -0.03793455 -0.03742931 -0.03798945 -0.03791815</span></span>
+<span id="cb24-36"><a href="#cb24-36" tabindex="-1"></a><span class="co">#&gt; ACHMI_5 -0.03900349 -0.04013091 -0.04104385 -0.04088704 -0.03885306 -0.03675817</span></span>
+<span id="cb24-37"><a href="#cb24-37" tabindex="-1"></a><span class="co">#&gt;         406         ...</span></span>
+<span id="cb24-38"><a href="#cb24-38" tabindex="-1"></a><span class="co">#&gt; ACHMI_1 -0.03805137    </span></span>
+<span id="cb24-39"><a href="#cb24-39" tabindex="-1"></a><span class="co">#&gt; ACHMI_2 -0.04209803    </span></span>
+<span id="cb24-40"><a href="#cb24-40" tabindex="-1"></a><span class="co">#&gt; ACHMI_3 -0.03519675    </span></span>
+<span id="cb24-41"><a href="#cb24-41" tabindex="-1"></a><span class="co">#&gt; ACHMI_4 -0.03656809    </span></span>
+<span id="cb24-42"><a href="#cb24-42" tabindex="-1"></a><span class="co">#&gt; ACHMI_5 -0.03693254</span></span>
+<span id="cb24-43"><a href="#cb24-43" tabindex="-1"></a></span>
+<span id="cb24-44"><a href="#cb24-44" tabindex="-1"></a>achillea_spec <span class="sc">%*%</span> <span class="fu">t</span>(<span class="fu">as.matrix</span>(achillea_spec))   <span class="co"># matrix algebra -&gt; a plain matrix</span></span>
+<span id="cb24-45"><a href="#cb24-45" tabindex="-1"></a><span class="co">#&gt;           ACHMI_1  ACHMI_2  ACHMI_3  ACHMI_4  ACHMI_5   ACHMI_6   ACHMI_7</span></span>
+<span id="cb24-46"><a href="#cb24-46" tabindex="-1"></a><span class="co">#&gt; ACHMI_1  127.0305 127.6823 128.2813 134.0310 135.7314 105.47709 100.02367</span></span>
+<span id="cb24-47"><a href="#cb24-47" tabindex="-1"></a><span class="co">#&gt; ACHMI_2  127.6823 128.5969 128.9275 134.6777 136.3994 106.17054 100.56598</span></span>
+<span id="cb24-48"><a href="#cb24-48" tabindex="-1"></a><span class="co">#&gt; ACHMI_3  128.2813 128.9275 129.5567 135.3443 137.0714 106.51445 101.00454</span></span>
+<span id="cb24-49"><a href="#cb24-49" tabindex="-1"></a><span class="co">#&gt; ACHMI_4  134.0310 134.6777 135.3443 141.4637 143.2047 111.24614 105.50726</span></span>
+<span id="cb24-50"><a href="#cb24-50" tabindex="-1"></a><span class="co">#&gt; ACHMI_5  135.7314 136.3994 137.0714 143.2047 145.0401 112.69128 106.88050</span></span>
+<span id="cb24-51"><a href="#cb24-51" tabindex="-1"></a><span class="co">#&gt; ACHMI_6  105.4771 106.1705 106.5145 111.2461 112.6913  87.68176  83.08112</span></span>
+<span id="cb24-52"><a href="#cb24-52" tabindex="-1"></a><span class="co">#&gt; ACHMI_7  100.0237 100.5660 101.0045 105.5073 106.8805  83.08112  78.78585</span></span>
+<span id="cb24-53"><a href="#cb24-53" tabindex="-1"></a><span class="co">#&gt; ACHMI_8  155.2960 156.0744 156.7933 163.9409 165.9182 128.89165 122.24254</span></span>
+<span id="cb24-54"><a href="#cb24-54" tabindex="-1"></a><span class="co">#&gt; ACHMI_9  131.6882 132.3034 132.9723 138.9854 140.7091 109.29272 103.67492</span></span>
+<span id="cb24-55"><a href="#cb24-55" tabindex="-1"></a><span class="co">#&gt; ACHMI_10 120.3804 120.8913 121.5732 126.9914 128.6524  99.91246  94.80806</span></span>
+<span id="cb24-56"><a href="#cb24-56" tabindex="-1"></a><span class="co">#&gt;           ACHMI_8  ACHMI_9  ACHMI_10</span></span>
+<span id="cb24-57"><a href="#cb24-57" tabindex="-1"></a><span class="co">#&gt; ACHMI_1  155.2960 131.6882 120.38035</span></span>
+<span id="cb24-58"><a href="#cb24-58" tabindex="-1"></a><span class="co">#&gt; ACHMI_2  156.0744 132.3034 120.89125</span></span>
+<span id="cb24-59"><a href="#cb24-59" tabindex="-1"></a><span class="co">#&gt; ACHMI_3  156.7933 132.9723 121.57316</span></span>
+<span id="cb24-60"><a href="#cb24-60" tabindex="-1"></a><span class="co">#&gt; ACHMI_4  163.9409 138.9854 126.99141</span></span>
+<span id="cb24-61"><a href="#cb24-61" tabindex="-1"></a><span class="co">#&gt; ACHMI_5  165.9182 140.7091 128.65239</span></span>
+<span id="cb24-62"><a href="#cb24-62" tabindex="-1"></a><span class="co">#&gt; ACHMI_6  128.8916 109.2927  99.91246</span></span>
+<span id="cb24-63"><a href="#cb24-63" tabindex="-1"></a><span class="co">#&gt; ACHMI_7  122.2425 103.6749  94.80806</span></span>
+<span id="cb24-64"><a href="#cb24-64" tabindex="-1"></a><span class="co">#&gt; ACHMI_8  190.0907 161.0776 147.10753</span></span>
+<span id="cb24-65"><a href="#cb24-65" tabindex="-1"></a><span class="co">#&gt; ACHMI_9  161.0776 136.5663 124.79667</span></span>
+<span id="cb24-66"><a href="#cb24-66" tabindex="-1"></a><span class="co">#&gt; ACHMI_10 147.1075 124.7967 114.17341</span></span></code></pre></div>
+<p><code>quantity()</code>/<code>wavelength_unit()</code> – minimal
+provenance describing what a <code>spectra</code> object measures – are
+covered next.</p>
+</div>
 <div id="provenance-quantity-and-wavelength_unit" class="section level2">
 <h2>Provenance: <code>quantity()</code> and
 <code>wavelength_unit()</code></h2>
@@ -846,10 +926,10 @@ meaningful. Only the four arithmetic operators (plus unary
 <code>type</code> argument) and the wavelength unit (<code>&quot;nm&quot;</code>
 for every currently supported instrument) as light-touch attributes on
 the object:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="fu">quantity</span>(acer_spectra)</span>
-<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;reflectance&quot;</span></span>
-<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a><span class="fu">wavelength_unit</span>(acer_spectra)</span>
-<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a><span class="co">#&gt; [1] &quot;nm&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">quantity</span>(acer_spectra)</span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;reflectance&quot;</span></span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a><span class="fu">wavelength_unit</span>(acer_spectra)</span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a><span class="co">#&gt; [1] &quot;nm&quot;</span></span></code></pre></div>
 <p>Objects without this recorded (e.g. built by hand with
 <code>as_spectra()</code>) return <code>NA</code> for
 <code>quantity()</code> and default to <code>&quot;nm&quot;</code> for

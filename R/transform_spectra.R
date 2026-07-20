@@ -237,6 +237,38 @@ combine.spectra = function(s1, s2){
 }
 
 
+#' Combine spectra with c() or rbind()
+#'
+#' \code{c.spectra} and \code{rbind.spectra} both combine two or more spectra
+#' objects by repeatedly applying \code{\link{combine}}. Without these
+#' methods, \code{c(s1, s2)} silently degrades to a plain \code{list} and
+#' \code{rbind(s1, s2)} silently degrades to a bare \code{matrix} -- both
+#' lose the \code{spectra} class rather than erroring, which is easy to miss.
+#'
+#' @param ... two or more spectra objects
+#' @return a combined spectra object
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' s1 = as_spectra(spec_matrix_example, name_idx = 1)[1:2, ]
+#' s2 = as_spectra(spec_matrix_example, name_idx = 1)[3:4, ]
+#' c(s1, s2)
+#' rbind(s1, s2)
+c.spectra = function(...){
+    Reduce(combine, list(...))
+}
+
+
+#' @describeIn c.spectra Combine spectra with rbind()
+#' @export
+rbind.spectra = function(...){
+    Reduce(combine, list(...))
+}
+
+
 ################################################################################
 # Split spectral datasets
 ################################################################################

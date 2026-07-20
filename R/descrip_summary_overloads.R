@@ -57,6 +57,51 @@ range.spectra = function(..., na.rm = FALSE){
 }
 
 
+#' Number of samples in a spectra object
+#'
+#' \code{length} returns the number of samples (rows), matching \code{nrow()}
+#' and the first element of \code{dim()}. Without this method, \code{length()}
+#' would fall back to counting spectra's four internal slots (value, bands,
+#' names, meta) and always return 4, regardless of how many samples are in
+#' the object.
+#'
+#' @param x spectra object
+#' @return integer, the number of samples
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
+#' length(spec) == nrow(spec)
+length.spectra = function(x){
+  nrow(x)
+}
+
+
+#' Find missing values in a spectra object
+#'
+#' \code{is.na} checks the value matrix for \code{NA}s, element by element.
+#' Without this method, \code{is.na()} would check spectra's four internal
+#' slots instead (always returning 4 \code{FALSE}s), which looks like "no
+#' missing data" regardless of what the value matrix actually contains.
+#'
+#' @param x spectra object
+#' @return logical matrix, same shape as \code{value(x)}
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
+#' any(is.na(spec))
+is.na.spectra = function(x){
+  is.na(value(x))
+}
+
+
 #' Get dimension of spectra
 #'
 #' \code{dim} returns a vector with number of samples and bands (bands)

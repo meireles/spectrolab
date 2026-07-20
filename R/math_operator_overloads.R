@@ -118,3 +118,67 @@ Ops.spectra = function(e1, e2) {
         }
     }
 }
+
+
+#' Math group generic for spectra
+#'
+#' Applies base math functions (\code{abs}, \code{sqrt}, \code{log},
+#' \code{round}, etc. -- see \code{?Math}) to the value matrix of a spectra
+#' object, keeping bands/names/metadata/provenance. \code{cumsum},
+#' \code{cumprod}, \code{cummax}, and \code{cummin} are applied row-wise
+#' (cumulative across bands, per sample) since their default methods would
+#' otherwise flatten the value matrix into a single vector.
+#'
+#' @param x spectra
+#' @param ... additional arguments passed to the underlying math function
+#'            (e.g. \code{digits} for \code{round}/\code{signif})
+#' @return spectra object
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
+#' spec_abs  = abs(spec)
+#' spec_sqrt = sqrt(spec)
+Math.spectra = function(x, ...){
+    cum_generics = c("cumsum", "cumprod", "cummax", "cummin")
+
+    if(.Generic %in% cum_generics){
+        x[] = t(apply(value(x), 1, .Generic))
+    } else {
+        x[] = do.call(.Generic, list(value(x), ...))
+    }
+
+    x
+}
+
+
+#' Matrix multiplication for spectra
+#'
+#' \code{spectra \%*\% y} or \code{y \%*\% spectra} multiplies the value matrix
+#' (with band/sample dimnames from \code{\link{as.matrix.spectra}}) against
+#' \code{y}, returning a plain matrix -- not a \code{spectra} object, since the
+#' result's rows/columns generally no longer correspond to samples/bands (e.g.
+#' after projecting onto PCA loadings). Requires R >= 4.3, where \code{\%*\%}
+#' became properly S3-generic in both argument positions (previously, a
+#' spectra-on-the-right multiplication like \code{mat \%*\% spec} could not
+#' dispatch to this method).
+#'
+#' @param x lhs
+#' @param y rhs
+#' @return a plain matrix
+#'
+#' @author Jose Eduardo Meireles
+#' @export
+#'
+#' @examples
+#' library(spectrolab)
+#' spec = as_spectra(spec_matrix_example, name_idx = 1)
+#' spec %*% t(as.matrix(spec))
+`%*%.spectra` = function(x, y){
+    if(is_spectra(x)){ x = as.matrix(x) }
+    if(is_spectra(y)){ y = as.matrix(y) }
+    x %*% y
+}

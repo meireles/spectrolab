@@ -199,6 +199,16 @@ ncol(meta(r))   # 0 -- cleared, because s1 and s2's metadata disagreed
 
 
 ## ----eval = TRUE--------------------------------------------------------------
+length(achillea_spec)   # number of samples, same as nrow()
+any(is.na(achillea_spec))   # elementwise check of the value matrix
+
+sqrt(achillea_spec)   # Math group generic: abs, sqrt, log, round, exp, ...
+-achillea_spec        # unary minus
+
+achillea_spec %*% t(as.matrix(achillea_spec))   # matrix algebra -> a plain matrix
+
+
+## ----eval = TRUE--------------------------------------------------------------
 quantity(acer_spectra)
 wavelength_unit(acer_spectra)
 

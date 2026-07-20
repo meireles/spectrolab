@@ -16,6 +16,24 @@
   sides agree and clears it (with a warning) when they don't -- the same
   rule already used for sample names. Unary `-x`/`+x` (e.g. `-spec`), which
   previously errored ("argument e2 is missing"), are now supported too.
+* **[BREAKING]** Minimum R version raised to 4.3 (from 4.0), needed for `%*%.spectra`
+  (see below) -- R 4.3 made `%*%` properly S3-generic in both argument positions.
+* Fixed several base-R generics that silently misbehaved on `spectra` objects
+  instead of erroring or working correctly:
+  - `length(x)` returned 4 (the object's internal slot count) instead of the
+    number of samples.
+  - `is.na(x)` checked the 4 internal slots (always `FALSE`) instead of the
+    value matrix, so `any(is.na(x))` could never detect real missing data.
+  - `abs()`/`sqrt()`/`log()`/`round()` etc. either silently returned garbage
+    or errored outright; a `Math` group generic now covers them (`cumsum`/
+    `cumprod`/`cummax`/`cummin` are applied row-wise, since their default
+    method would otherwise flatten the value matrix to a vector).
+  - `c(s1, s2)` and `rbind(s1, s2)` silently degraded to a plain `list`/
+    `matrix` instead of combining the spectra; both now wrap `combine()`.
+* Added `%*%.spectra`: `spectra %*% y` or `y %*% spectra` now works (returns
+  a plain matrix, not a `spectra`, since the result's shape/meaning varies).
+  The previous attempt was abandoned in 2016 because `%*%` wasn't
+  S3-dispatchable from the right-hand side; R 4.3 fixed that.
 * Added Savitzky-Golay smoothing (`smooth_sgolay`, or `smooth(method = "sgolay")`)
   and spectral derivatives (`deriv_spectra`). Both require the `signal` package
   (now in Suggests).

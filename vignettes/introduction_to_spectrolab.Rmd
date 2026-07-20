@@ -385,6 +385,26 @@ bands) rather than a `spectra` object, since a boolean "spectrum" isn't
 meaningful. Only the four arithmetic operators (plus unary `-`/`+`) return
 `spectra`.
 
+## Beyond `+`/`-`/`*`/`/`: other overloaded operators
+
+A `spectra` object behaves like ordinary numeric data for several more base R
+functions, all returning a `spectra` (or, where that wouldn't make sense, a
+plain matrix/vector) rather than erroring or -- worse -- silently returning
+something wrong:
+
+```{r, eval = TRUE}
+length(achillea_spec)   # number of samples, same as nrow()
+any(is.na(achillea_spec))   # elementwise check of the value matrix
+
+sqrt(achillea_spec)   # Math group generic: abs, sqrt, log, round, exp, ...
+-achillea_spec        # unary minus
+
+achillea_spec %*% t(as.matrix(achillea_spec))   # matrix algebra -> a plain matrix
+```
+
+`quantity()`/`wavelength_unit()` -- minimal provenance describing what a
+`spectra` object measures -- are covered next.
+
 ## Provenance: `quantity()` and `wavelength_unit()`
 
 `read_spectra()` records the physical quantity it read (`"reflectance"` or
