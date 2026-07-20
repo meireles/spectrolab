@@ -3,7 +3,7 @@
 \name{guess_splice_at}
 \alias{guess_splice_at}
 \alias{guess_splice_at.spectra}
-\title{Guess splice bands (bounds between senors)}
+\title{Guess splice bands (bounds between sensors)}
 \usage{
 guess_splice_at(x)
 
@@ -16,11 +16,11 @@ guess_splice_at(x)
 vector of band values
 }
 \description{
-Guess splice bands (bounds between senors)
+Guess splice bands (bounds between sensors)
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{guess_splice_at(spectra)}: Guess splice bands (bounds between senors)
+\item \code{guess_splice_at(spectra)}: Guess splice bands (bounds between sensors)
 
 }}
 \author{

@@ -132,7 +132,7 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
     ## In case "value" is a spectra object, every component of spectra must be updated
     if(is_spectra(value)){
         if( !identical(bands(x)[m$c_idx], bands(value))){
-            stop("wavelenegths not compatible")
+            stop("wavelengths not compatible")
         }
 
         if( any(colnames(meta(x)) !=  colnames(meta(value))) ){

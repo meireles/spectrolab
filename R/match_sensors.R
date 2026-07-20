@@ -26,7 +26,7 @@ i_find_sensor_overlap_bounds = function(x, idx = TRUE){
 }
 
 
-#' Guess splice bands (bounds between senors)
+#' Guess splice bands (bounds between sensors)
 #'
 #' @param x spectra object
 #' @return vector of band values
@@ -38,7 +38,7 @@ guess_splice_at = function(x){
 }
 
 
-#' @describeIn guess_splice_at Guess splice bands (bounds between senors)
+#' @describeIn guess_splice_at Guess splice bands (bounds between sensors)
 #' @export
 guess_splice_at.spectra = function(x){
 
