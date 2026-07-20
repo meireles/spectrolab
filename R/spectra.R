@@ -179,8 +179,41 @@ i_meta = function(x, nsample, allow_null = TRUE, match_nsample = FALSE){
 
 
 ########################################
-# Public constructor interface
+# Constructor interface
 ########################################
+
+#' Assemble a spectra object from already-validated components
+#'
+#' \code{new_spectra} is the low-level constructor: it assembles the four
+#' components into a \code{spectra} object WITHOUT coercion or validation.
+#' Callers are responsible for passing correctly-typed components: a numeric
+#' matrix \code{value} (N samples x M bands, no dimnames), a numeric
+#' \code{bands} vector of length M, a character \code{names} vector of length N,
+#' and a \code{data.frame} \code{meta} with N rows. The public, validating,
+#' user-facing constructor is \code{\link{spectra}}, which coerces its inputs
+#' via the \code{i_*} helpers and then delegates here.
+#'
+#' Splitting a fast internal assembler from the validating public constructor is
+#' a common pattern in modern R packages (e.g. vctrs) and gives internal code a
+#' cheap, allocation-light way to rebuild spectra while keeping user-facing
+#' construction safe.
+#'
+#' @param value numeric matrix, N samples by M bands, no dimnames
+#' @param bands numeric vector of length M
+#' @param names character vector of length N
+#' @param meta data.frame with N rows (0 or more columns)
+#' @return spectra object
+#'
+#' @keywords internal
+#' @author Jose Eduardo Meireles
+new_spectra = function(value, bands, names, meta){
+    structure(list(value = value,
+                   bands = bands,
+                   names = names,
+                   meta  = meta),
+              class = "spectra")
+}
+
 
 #' Spectra object constructor
 #'
@@ -228,14 +261,16 @@ spectra = function(value,
     wl_l  = length(bands)
     spl_l = length(names)
 
-    s = list( value  = i_value(value,
-                               nbands = wl_l,
-                               nsample = spl_l),
-              bands  = i_bands(bands),
-              names  = i_names(names),
-              meta   = i_meta(meta, nsample = spl_l, match_nsample = extend_meta)
-    )
+    s = new_spectra(value = i_value(value, nbands = wl_l, nsample = spl_l),
+                    bands = i_bands(bands),
+                    names = i_names(names),
+                    meta  = i_meta(meta, nsample = spl_l, match_nsample = extend_meta))
 
-    s = structure(s, class = c("spectra"))
+    ## Opt-in invariant check. Off by default (performance); enable with
+    ## options(spectrolab.debug = TRUE).
+    if(isTRUE(getOption("spectrolab.debug", FALSE))){
+        validate_spectra(s, stop = TRUE)
+    }
+
     s
 }
