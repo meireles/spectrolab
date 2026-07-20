@@ -22,6 +22,14 @@ t.spectra = function(x){
 #'
 #' Overloads arithmetic operators for spectra using `Ops.`
 #'
+#' Unary \code{+}/\code{-} (e.g. \code{-spec}) are supported. When both sides
+#' of a binary math operator are \code{spectra}, sample names and metadata
+#' are kept from the result only when they agree between \code{e1} and
+#' \code{e2}; when they disagree, they are cleared (with a warning) rather
+#' than one side's values winning silently. The \code{quantity} and
+#' \code{wavelength_unit} provenance (see \code{\link{quantity}}) are
+#' reconciled the same way.
+#'
 #' @param e1 lhs
 #' @param e2 rhs
 #' @return Depends on the operator. math operators will return spectra and logical
@@ -41,6 +49,17 @@ Ops.spectra = function(e1, e2) {
     boolop = c("==", "!=", "<", "<=", ">=", ">")
 
     if( ! .Generic %in% c(mathop, boolop) ){ stop("Not implemented") }
+
+    ## Unary +/- (e.g. -spec): e2 is not supplied at all in that case.
+    if( missing(e2) ){
+        if( ! .Generic %in% c("+", "-") ){
+            stop("Unary '", .Generic, "' is not implemented for spectra")
+        }
+        if( .Generic == "-" ){
+            e1[] = -value(e1)
+        }
+        return(e1)
+    }
 
     is_spec   = c(is_spectra(e1), is_spectra(e2))
     w_is_spec = which(is_spec)
@@ -78,10 +97,20 @@ Ops.spectra = function(e1, e2) {
         }
         if(.Generic %in% mathop){
             e1[] = do.call(.Generic, list(value(e1), value(e2)) )
+
             if(any(names(e1) != names(e2))){
                 warning("sample names not identical: removing sample names...")
                 names(e1) = rep(NA, dim(e1)["n_samples"])
             }
+
+            if(!identical(meta(e1), meta(e2))){
+                warning("metadata not identical: removing metadata...")
+                e1$meta = i_meta(NULL, nrow(e1))
+            }
+
+            quantity(e1)        = i_reconcile_provenance_scalar(quantity(e1), quantity(e2), "quantity")
+            wavelength_unit(e1) = i_reconcile_provenance_scalar(wavelength_unit(e1), wavelength_unit(e2), "wavelength_unit")
+
             return(e1)
         }
         if(.Generic %in% boolop){
@@ -89,55 +118,3 @@ Ops.spectra = function(e1, e2) {
         }
     }
 }
-
-################################################################################
-# Matrix multiplication operator is BROKEN
-# Dudu -- 2016-11-19
-#
-# Because S3 methods dispatch on the first argument, spec %*% mat works but
-# mat %*% spec doesn't.
-# I am also not so sure how to properly implement this overload because `%*%`
-# is a primitive without S3 generic. The current implementation draws from
-# http://stackoverflow.com/questions/40580149/overload-matrix-multiplication-for-s3-class-in-r
-#
-# This feature will be put on hold until I figure this out
-################################################################################
-
-# #' Matrix multiplication
-# #' @export
-# `%*%.default` = .Primitive("%*%")
-#
-# #' S3 matrix multiplication method
-# #'
-# #' Defines a generic martix multiplication method
-# #'
-# #' @param x input
-# #' @param ... additional args to matrix multiplication
-# #' @export
-# `%*%` = function(x, ...){
-#     UseMethod("%*%", x)
-# }
-#
-# #' spectra matrix multiplication
-# #'
-# #' Defines matrix multiplication for spectra
-# #'
-# #' @param x lhs
-# #' @param y rhs
-# #'
-# #' @return matrix product
-# #' @export
-# `%*%.spectra` = function(x, y){
-#     if( is_spectra(x)){ x = as.matrix(x) }
-#     if( is_spectra(y)){ y = as.matrix(y) }
-#
-#     # The as.matrix() may keep some dimname info in the result matrix
-#     # in contrast to value()
-#     # Also, benchmark and decide.
-#
-#     # x = if(is_spectra(x)) value(x)
-#     # y = if( is_spectra(y)) value(y)
-#
-#     x %*% y
-#
-# }

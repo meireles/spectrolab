@@ -111,9 +111,16 @@ print.spectra = function(x, ...){
 
   cat("spectra object", "\n")
   cat("number of samples:", nrow(x),"\n")
-  cat("bands: ", r_wvl[1], " to ", r_wvl[2], " (", ncol(x), " bands",
+  cat("bands: ", r_wvl[1], " to ", r_wvl[2], " ", wavelength_unit(x),
+      " (", ncol(x), " bands",
       ifelse(!o_wvl, ", **overlap not matched**", ""),
       ")", "\n", sep = "")
+
+  ## Minimal provenance (see R/provenance.R): only shown when known.
+  q = quantity(x)
+  if( !is.na(q) ){
+    cat("quantity:", q, "\n")
+  }
 
   if(l_met == 0){
     cat("metadata: none", "\n")

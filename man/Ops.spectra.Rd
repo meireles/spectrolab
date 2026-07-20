@@ -18,6 +18,15 @@ Depends on the operator. math operators will return spectra and logical
 \description{
 Overloads arithmetic operators for spectra using `Ops.`
 }
+\details{
+Unary \code{+}/\code{-} (e.g. \code{-spec}) are supported. When both sides
+of a binary math operator are \code{spectra}, sample names and metadata
+are kept from the result only when they agree between \code{e1} and
+\code{e2}; when they disagree, they are cleared (with a warning) rather
+than one side's values winning silently. The \code{quantity} and
+\code{wavelength_unit} provenance (see \code{\link{quantity}}) are
+reconciled the same way.
+}
 \examples{
 library(spectrolab)
 spec  = as_spectra(spec_matrix_example, name_idx = 1)

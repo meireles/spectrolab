@@ -89,5 +89,9 @@ continuum_removal.spectra = function(x, ...){
     s   = t(apply(r, 1, i_continuum_remove_one, w = w))
     x[] = s
 
+    ## No longer a raw reflectance/radiance quantity -- clear rather than carry
+    ## a now-misleading label forward. See R/provenance.R.
+    quantity(x) = NA_character_
+
     x
 }

@@ -166,6 +166,10 @@ resample = function(spec,
                 bands = new_bands,
                 names = names(spec),
                 meta  = meta(spec))
+
+    quantity(s)        = quantity(spec)
+    wavelength_unit(s) = wavelength_unit(spec)
+
     s
 }
 

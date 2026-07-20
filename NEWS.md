@@ -1,6 +1,21 @@
 # spectrolab 0.0.20 (development)
 
 ## major
+* Added minimal provenance: `quantity()`/`quantity<-` (e.g. "reflectance",
+  "radiance") and `wavelength_unit()`/`wavelength_unit<-` (default "nm").
+  `read_spectra()` sets both from its `type` argument; they carry through
+  subsetting, `apply_by_band`, `aggregate`, `resample`, and `match_sensors`.
+  `combine()` and the arithmetic operators (`+`, `-`, etc.) keep the value
+  when both sides agree and clear it (with a warning) when they don't, rather
+  than silently keeping one side. `deriv_spectra()` and `continuum_removal()`
+  clear `quantity` since their output is no longer raw reflectance/radiance.
+  `print.spectra` shows `quantity` when known.
+* `Ops.spectra` (`+`, `-`, `*`, `/`, `^` between two spectra) previously kept
+  metadata from the left-hand side only, silently dropping the right-hand
+  side's metadata even when they differed. It now keeps metadata when both
+  sides agree and clears it (with a warning) when they don't -- the same
+  rule already used for sample names. Unary `-x`/`+x` (e.g. `-spec`), which
+  previously errored ("argument e2 is missing"), are now supported too.
 * Added Savitzky-Golay smoothing (`smooth_sgolay`, or `smooth(method = "sgolay")`)
   and spectral derivatives (`deriv_spectra`). Both require the `signal` package
   (now in Suggests).

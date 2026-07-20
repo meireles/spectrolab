@@ -131,5 +131,9 @@ deriv_spectra = function(x, order = 1, p = 3, n = p + 3 - p %% 2, quiet = FALSE)
     s   = i_sgolay_apply(r, p = p, n = n, m = order, ts = ts)
     x[] = s
 
+    ## No longer a raw reflectance/radiance quantity -- clear rather than carry
+    ## a now-misleading label forward. See R/provenance.R.
+    quantity(x) = NA_character_
+
     x
 }

@@ -174,11 +174,18 @@ they are, like derivatives, no longer reflectance.
   lost, just relocated. `smooth_sgolay()` does not have this issue -- its
   polynomial fit is defined at the edges too.
 * **Derivative and continuum-removed values are not reflectance/radiance
-  anymore**, even though they're still stored in a `spectra` object and will
-  happily flow into any function that doesn't check units (e.g.
-  `normalize()`, the two-band spectral indices). `spectrolab` does not track
-  this for you -- keep your own naming/metadata discipline once you start
-  transforming values this way.
+  anymore.** Both `deriv_spectra()` and `continuum_removal()` clear the
+  object's `quantity()` to reflect that (see the
+  [Introduction](introduction_to_spectrolab.html#provenance-quantity-and-wavelength_unit)
+  vignette), but the values still happily flow into any function that
+  doesn't check `quantity()` itself (e.g. `normalize()`, the two-band
+  spectral indices) -- the attribute documents the change, it doesn't block
+  further processing.
+
+```{r}
+quantity(one) = "reflectance"
+quantity(suppressMessages(deriv_spectra(one, order = 1)))
+```
 * **Choose the Savitzky-Golay window (`n`) relative to your spectral
   resolution**, not in the abstract: 5 bands means something very different
   on 1nm-resolution data than on 10nm data. The default is intentionally

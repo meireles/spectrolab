@@ -86,3 +86,8 @@ abline(h = 1, col = "grey", lty = 2)
 
 par(oldpar)
 
+
+## -----------------------------------------------------------------------------
+quantity(one) = "reflectance"
+quantity(suppressMessages(deriv_spectra(one, order = 1)))
+

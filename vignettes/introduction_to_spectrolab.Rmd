@@ -355,36 +355,58 @@ Bear in mind that most transform functions (`smooth()`, `normalize()`,
 unspliced data with an overlap. Run `match_sensors()` first (see the
 [Matching sensor overlap](match_sensors.html) vignette).
 
-### Combining and aggregating keep different halves of your data {#combining-and-aggregating-keep-different-halves-of-your-data}
+### Combining spectra: `spec1 + spec2` vs. `combine()`
 
 `spec1 + spec2` (or `-`, `*`, `/`, `^`) works element-wise once both operands
-are `spectra` with identical dimensions and band labels, but the two sides
-are **not symmetric** in what they keep:
-
-* if the sample names differ between `spec1` and `spec2`, the result's names
-  are cleared to `NA` (with a warning) rather than silently picking one side;
-* metadata is **only** kept from the left-hand side -- `spec2`'s metadata is
-  silently dropped.
+are `spectra` with identical dimensions and band labels. The result keeps
+sample names and metadata **only when both sides agree** -- if they differ,
+the result's names/metadata are cleared (with a warning) rather than one side
+silently winning:
 
 ```{r, eval = TRUE}
 s1 = s2 = achillea_spec
 meta(s1, "source") = "s1"
 meta(s2, "source") = "s2"
 
-r = s1 + s2
-meta(r, "source", simplify = TRUE)[1:3]   # "s1", not "s2" -- s2's metadata is gone
+r = suppressWarnings(s1 + s2)
+ncol(meta(r))   # 0 -- cleared, because s1 and s2's metadata disagreed
 ```
 
 `combine()`, by contrast, requires bands to match exactly (checked by length
 *and* value) and merges the metadata columns from both sides by name, filling
 gaps with `NA` -- it is usually what you want when stacking datasets rather
-than doing arithmetic on them.
+than doing arithmetic on them. `c(s1, s2)` and `rbind(s1, s2)` are shorthands
+for `combine()` when you have several objects to stack.
 
 ### Comparison operators return a bare matrix, not a `spectra`
 
 `spec1 > spec2`, `spec1 == spec2`, etc. return a logical matrix (samples x
 bands) rather than a `spectra` object, since a boolean "spectrum" isn't
-meaningful. Only the four arithmetic operators return `spectra`.
+meaningful. Only the four arithmetic operators (plus unary `-`/`+`) return
+`spectra`.
+
+## Provenance: `quantity()` and `wavelength_unit()`
+
+`read_spectra()` records the physical quantity it read (`"reflectance"` or
+`"radiance"`, from the `type` argument) and the wavelength unit (`"nm"` for
+every currently supported instrument) as light-touch attributes on the
+object:
+
+```{r, eval = TRUE}
+quantity(acer_spectra)
+wavelength_unit(acer_spectra)
+```
+
+Objects without this recorded (e.g. built by hand with `as_spectra()`) return
+`NA` for `quantity()` and default to `"nm"` for `wavelength_unit()`. You can
+set both yourself with `quantity(x) <- "reflectance"` /
+`wavelength_unit(x) <- "nm"`. `combine()` and the arithmetic operators keep
+these values when both sides agree and clear them (with a warning) when they
+don't -- the same reconciliation rule used for names and metadata above.
+Functions that change what the values fundamentally *mean* -- `deriv_spectra()`,
+`continuum_removal()` -- clear `quantity` for you, since the output is no
+longer raw reflectance/radiance (see the
+[Smoothing, derivatives, and continuum removal](preprocessing.html) vignette).
 
 ## Where to go next
 

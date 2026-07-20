@@ -127,6 +127,11 @@ i_match_ij_spectra = function(x, i = NULL, j = NULL, allow_negative = FALSE){
             attr(out, "sensor_info") = si[ m[["r_idx"]], , drop = FALSE ]
         }
 
+        ## quantity/wavelength_unit are whole-object provenance, unaffected by
+        ## subsetting rows or bands. See R/provenance.R.
+        attr(out, "quantity")        = attr(x, "quantity")
+        attr(out, "wavelength_unit") = attr(x, "wavelength_unit")
+
         return(out)
     }
 }

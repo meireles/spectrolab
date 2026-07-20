@@ -373,11 +373,13 @@ a <code>spectra</code> object into a matrix or data.frame</a></li>
 <li><a href="#duplicate-sample-names-and-duplicate-band-labels-are-both-allowed" id="toc-duplicate-sample-names-and-duplicate-band-labels-are-both-allowed">Duplicate
 sample names <em>and</em> duplicate band labels are both
 allowed</a></li>
-<li><a href="#combining-and-aggregating-keep-different-halves-of-your-data" id="toc-combining-and-aggregating-keep-different-halves-of-your-data">Combining
-and aggregating keep different halves of your data</a></li>
+<li><a href="#combining-spectra-spec1-spec2-vs.-combine" id="toc-combining-spectra-spec1-spec2-vs.-combine">Combining spectra:
+<code>spec1 + spec2</code> vs. <code>combine()</code></a></li>
 <li><a href="#comparison-operators-return-a-bare-matrix-not-a-spectra" id="toc-comparison-operators-return-a-bare-matrix-not-a-spectra">Comparison
 operators return a bare matrix, not a <code>spectra</code></a></li>
 </ul></li>
+<li><a href="#provenance-quantity-and-wavelength_unit" id="toc-provenance-quantity-and-wavelength_unit">Provenance:
+<code>quantity()</code> and <code>wavelength_unit()</code></a></li>
 <li><a href="#where-to-go-next" id="toc-where-to-go-next">Where to go
 next</a></li>
 </ul>
@@ -525,7 +527,7 @@ argument.</p>
 <span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>achillea_spec</span>
 <span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#&gt; spectra object </span></span>
 <span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co">#&gt; number of samples: 10 </span></span>
-<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co">#&gt; bands: 400 to 2400 (2001 bands)</span></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co">#&gt; bands: 400 to 2400 nm (2001 bands)</span></span>
 <span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt; metadata (2): ident, ssp</span></span>
 <span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt;         400        401        402        403        404        405       </span></span>
@@ -552,21 +554,22 @@ but that topic gets its own section further down.</p>
 <span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>acer_spectra</span>
 <span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; spectra object </span></span>
 <span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; number of samples: 7 </span></span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; bands: 340.5 to 2522.8 (1024 bands, **overlap not matched**)</span></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; metadata: none </span></span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; instrument: svc (overlap: Preserve, matched: no)</span></span>
-<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt;                        340.5  342    343.4  344.9  346.3  347.8  349.3  ...</span></span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; ACPL_D2_P1_B_1_001.sig 0.0613 0.075  0.1011 0.1    0.066  0.0614 0.0574    </span></span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; ACPL_D2_P1_B_2_001.sig 0.0613 0.0833 0.1167 0.1143 0.0991 0.0737 0.0459    </span></span>
-<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt; ACPL_D2_P1_M_1_000.sig 0.07   0.0889 0.083  0.0762 0.0616 0.0655 0.0765    </span></span>
-<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt; ACPL_D2_P1_M_2_000.sig 0.0963 0.0917 0.0544 0.05   0.0528 0.0614 0.0459    </span></span>
-<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt; ACPL_D2_P1_T_1_000.sig 0.0788 0.0917 0.0778 0.0857 0.0925 0.0737 0.0746</span></span>
-<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a></span>
-<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co"># Get the dataset&#39;s dimensions</span></span>
-<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="fu">dim</span>(acer_spectra)</span>
-<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a><span class="co">#&gt; n_samples   n_bands </span></span>
-<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a><span class="co">#&gt;         7      1024</span></span></code></pre></div>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; bands: 340.5 to 2522.8 nm (1024 bands, **overlap not matched**)</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; quantity: reflectance </span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; metadata: none </span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; instrument: svc (overlap: Preserve, matched: no)</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt;                        340.5  342    343.4  344.9  346.3  347.8  349.3  ...</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; ACPL_D2_P1_B_1_001.sig 0.0613 0.075  0.1011 0.1    0.066  0.0614 0.0574    </span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt; ACPL_D2_P1_B_2_001.sig 0.0613 0.0833 0.1167 0.1143 0.0991 0.0737 0.0459    </span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt; ACPL_D2_P1_M_1_000.sig 0.07   0.0889 0.083  0.0762 0.0616 0.0655 0.0765    </span></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt; ACPL_D2_P1_M_2_000.sig 0.0963 0.0917 0.0544 0.05   0.0528 0.0614 0.0459    </span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co">#&gt; ACPL_D2_P1_T_1_000.sig 0.0788 0.0917 0.0778 0.0857 0.0925 0.0737 0.0746</span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="co"># Get the dataset&#39;s dimensions</span></span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a><span class="fu">dim</span>(acer_spectra)</span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a><span class="co">#&gt; n_samples   n_bands </span></span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a><span class="co">#&gt;         7      1024</span></span></code></pre></div>
 <p><code>spectrolab</code> also lets you access the individual
 components of the <code>spectra</code>. This is done with the functions
 <code>names()</code> for sample names, <code>bands()</code> for band
@@ -756,10 +759,10 @@ default (unless you set the <code>metadata</code> argument to
 <span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a>spec_as_df <span class="ot">=</span> <span class="fu">as.data.frame</span>(achillea_spec, <span class="at">fix_names =</span> <span class="st">&quot;none&quot;</span>, <span class="at">metadata =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb21-12"><a href="#cb21-12" tabindex="-1"></a>spec_as_df[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
 <span id="cb21-13"><a href="#cb21-13" tabindex="-1"></a><span class="co">#&gt;   sample_name ident                   ssp N_percent        400</span></span>
-<span id="cb21-14"><a href="#cb21-14" tabindex="-1"></a><span class="co">#&gt; 1     ACHMI_1 10526 Achillea millefolium   3.061419 0.03734791</span></span>
-<span id="cb21-15"><a href="#cb21-15" tabindex="-1"></a><span class="co">#&gt; 2     ACHMI_2 10527 Achillea millefolium   2.322885 0.04608409</span></span>
-<span id="cb21-16"><a href="#cb21-16" tabindex="-1"></a><span class="co">#&gt; 3     ACHMI_3 10528 Achillea millefolium   2.316851 0.04058113</span></span>
-<span id="cb21-17"><a href="#cb21-17" tabindex="-1"></a><span class="co">#&gt; 4     ACHMI_4 10529 Achillea millefolium   1.318500 0.04063730</span></span></code></pre></div>
+<span id="cb21-14"><a href="#cb21-14" tabindex="-1"></a><span class="co">#&gt; 1     ACHMI_1 10526 Achillea millefolium   1.671581 0.03734791</span></span>
+<span id="cb21-15"><a href="#cb21-15" tabindex="-1"></a><span class="co">#&gt; 2     ACHMI_2 10527 Achillea millefolium   2.874802 0.04608409</span></span>
+<span id="cb21-16"><a href="#cb21-16" tabindex="-1"></a><span class="co">#&gt; 3     ACHMI_3 10528 Achillea millefolium   1.009525 0.04058113</span></span>
+<span id="cb21-17"><a href="#cb21-17" tabindex="-1"></a><span class="co">#&gt; 4     ACHMI_4 10529 Achillea millefolium   2.548951 0.04063730</span></span></code></pre></div>
 <p>If you’d rather work with a long/tidy data.frame (one row per
 sample-and-band) or a <code>tibble</code>, see <code>to_long()</code>
 and <code>as_tibble()</code> in the <a href="tidy_bridge.html">Tidy data
@@ -789,7 +792,7 @@ duplicated label: you get <em>all</em> matches back, and
 <span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a><span class="co">#&gt; Selected band label(s) 400 match more than one band (duplicated wavelengths); all matching bands were returned. Run match_sensors() to splice overlapping sensors into unique, increasing bands.</span></span>
 <span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a><span class="co">#&gt; spectra object </span></span>
 <span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a><span class="co">#&gt; number of samples: 1 </span></span>
-<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a><span class="co">#&gt; bands: 400 to 400 (2 bands, **overlap not matched**)</span></span>
+<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a><span class="co">#&gt; bands: 400 to 400 nm (2 bands, **overlap not matched**)</span></span>
 <span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a><span class="co">#&gt; metadata (3): ident, ssp, N_percent</span></span>
 <span id="cb22-11"><a href="#cb22-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb22-12"><a href="#cb22-12" tabindex="-1"></a><span class="co">#&gt;                400        400</span></span>
@@ -801,31 +804,29 @@ duplicated label: you get <em>all</em> matches back, and
 them raw, unspliced data with an overlap. Run
 <code>match_sensors()</code> first (see the <a href="match_sensors.html">Matching sensor overlap</a> vignette).</p>
 </div>
-<div id="combining-and-aggregating-keep-different-halves-of-your-data" class="section level3">
-<h3>Combining and aggregating keep different halves of your data</h3>
+<div id="combining-spectra-spec1-spec2-vs.-combine" class="section level3">
+<h3>Combining spectra: <code>spec1 + spec2</code>
+vs. <code>combine()</code></h3>
 <p><code>spec1 + spec2</code> (or <code>-</code>, <code>*</code>,
 <code>/</code>, <code>^</code>) works element-wise once both operands
-are <code>spectra</code> with identical dimensions and band labels, but
-the two sides are <strong>not symmetric</strong> in what they keep:</p>
-<ul>
-<li>if the sample names differ between <code>spec1</code> and
-<code>spec2</code>, the result’s names are cleared to <code>NA</code>
-(with a warning) rather than silently picking one side;</li>
-<li>metadata is <strong>only</strong> kept from the left-hand side –
-<code>spec2</code>’s metadata is silently dropped.</li>
-</ul>
+are <code>spectra</code> with identical dimensions and band labels. The
+result keeps sample names and metadata <strong>only when both sides
+agree</strong> – if they differ, the result’s names/metadata are cleared
+(with a warning) rather than one side silently winning:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>s1 <span class="ot">=</span> s2 <span class="ot">=</span> achillea_spec</span>
 <span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a><span class="fu">meta</span>(s1, <span class="st">&quot;source&quot;</span>) <span class="ot">=</span> <span class="st">&quot;s1&quot;</span></span>
 <span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a><span class="fu">meta</span>(s2, <span class="st">&quot;source&quot;</span>) <span class="ot">=</span> <span class="st">&quot;s2&quot;</span></span>
 <span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a></span>
-<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>r <span class="ot">=</span> s1 <span class="sc">+</span> s2</span>
-<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a><span class="fu">meta</span>(r, <span class="st">&quot;source&quot;</span>, <span class="at">simplify =</span> <span class="cn">TRUE</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]   <span class="co"># &quot;s1&quot;, not &quot;s2&quot; -- s2&#39;s metadata is gone</span></span>
-<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a><span class="co">#&gt; [1] &quot;s1&quot; &quot;s1&quot; &quot;s1&quot;</span></span></code></pre></div>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>r <span class="ot">=</span> <span class="fu">suppressWarnings</span>(s1 <span class="sc">+</span> s2)</span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a><span class="fu">ncol</span>(<span class="fu">meta</span>(r))   <span class="co"># 0 -- cleared, because s1 and s2&#39;s metadata disagreed</span></span>
+<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 <p><code>combine()</code>, by contrast, requires bands to match exactly
 (checked by length <em>and</em> value) and merges the metadata columns
 from both sides by name, filling gaps with <code>NA</code> – it is
 usually what you want when stacking datasets rather than doing
-arithmetic on them.</p>
+arithmetic on them. <code>c(s1, s2)</code> and
+<code>rbind(s1, s2)</code> are shorthands for <code>combine()</code>
+when you have several objects to stack.</p>
 </div>
 <div id="comparison-operators-return-a-bare-matrix-not-a-spectra" class="section level3">
 <h3>Comparison operators return a bare matrix, not a
@@ -833,9 +834,35 @@ arithmetic on them.</p>
 <p><code>spec1 &gt; spec2</code>, <code>spec1 == spec2</code>, etc.
 return a logical matrix (samples x bands) rather than a
 <code>spectra</code> object, since a boolean “spectrum” isn’t
-meaningful. Only the four arithmetic operators return
-<code>spectra</code>.</p>
+meaningful. Only the four arithmetic operators (plus unary
+<code>-</code>/<code>+</code>) return <code>spectra</code>.</p>
 </div>
+</div>
+<div id="provenance-quantity-and-wavelength_unit" class="section level2">
+<h2>Provenance: <code>quantity()</code> and
+<code>wavelength_unit()</code></h2>
+<p><code>read_spectra()</code> records the physical quantity it read
+(<code>&quot;reflectance&quot;</code> or <code>&quot;radiance&quot;</code>, from the
+<code>type</code> argument) and the wavelength unit (<code>&quot;nm&quot;</code>
+for every currently supported instrument) as light-touch attributes on
+the object:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="fu">quantity</span>(acer_spectra)</span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;reflectance&quot;</span></span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a><span class="fu">wavelength_unit</span>(acer_spectra)</span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a><span class="co">#&gt; [1] &quot;nm&quot;</span></span></code></pre></div>
+<p>Objects without this recorded (e.g. built by hand with
+<code>as_spectra()</code>) return <code>NA</code> for
+<code>quantity()</code> and default to <code>&quot;nm&quot;</code> for
+<code>wavelength_unit()</code>. You can set both yourself with
+<code>quantity(x) &lt;- &quot;reflectance&quot;</code> /
+<code>wavelength_unit(x) &lt;- &quot;nm&quot;</code>. <code>combine()</code> and
+the arithmetic operators keep these values when both sides agree and
+clear them (with a warning) when they don’t – the same reconciliation
+rule used for names and metadata above. Functions that change what the
+values fundamentally <em>mean</em> – <code>deriv_spectra()</code>,
+<code>continuum_removal()</code> – clear <code>quantity</code> for you,
+since the output is no longer raw reflectance/radiance (see the <a href="preprocessing.html">Smoothing, derivatives, and continuum
+removal</a> vignette).</p>
 </div>
 <div id="where-to-go-next" class="section level2">
 <h2>Where to go next</h2>

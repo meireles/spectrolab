@@ -537,12 +537,19 @@ bands than the input. The dropped values are stashed into metadata
 lost, just relocated. <code>smooth_sgolay()</code> does not have this
 issue – its polynomial fit is defined at the edges too.</li>
 <li><strong>Derivative and continuum-removed values are not
-reflectance/radiance anymore</strong>, even though they’re still stored
-in a <code>spectra</code> object and will happily flow into any function
-that doesn’t check units (e.g. <code>normalize()</code>, the two-band
-spectral indices). <code>spectrolab</code> does not track this for you –
-keep your own naming/metadata discipline once you start transforming
-values this way.</li>
+reflectance/radiance anymore.</strong> Both <code>deriv_spectra()</code>
+and <code>continuum_removal()</code> clear the object’s
+<code>quantity()</code> to reflect that (see the <a href="introduction_to_spectrolab.html#provenance-quantity-and-wavelength_unit">Introduction</a>
+vignette), but the values still happily flow into any function that
+doesn’t check <code>quantity()</code> itself
+(e.g. <code>normalize()</code>, the two-band spectral indices) – the
+attribute documents the change, it doesn’t block further
+processing.</li>
+</ul>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">quantity</span>(one) <span class="ot">=</span> <span class="st">&quot;reflectance&quot;</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">quantity</span>(<span class="fu">suppressMessages</span>(<span class="fu">deriv_spectra</span>(one, <span class="at">order =</span> <span class="dv">1</span>)))</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; [1] NA</span></span></code></pre></div>
+<ul>
 <li><strong>Choose the Savitzky-Golay window (<code>n</code>) relative
 to your spectral resolution</strong>, not in the abstract: 5 bands means
 something very different on 1nm-resolution data than on 10nm data. The

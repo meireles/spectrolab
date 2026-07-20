@@ -194,6 +194,11 @@ s1 = s2 = achillea_spec
 meta(s1, "source") = "s1"
 meta(s2, "source") = "s2"
 
-r = s1 + s2
-meta(r, "source", simplify = TRUE)[1:3]   # "s1", not "s2" -- s2's metadata is gone
+r = suppressWarnings(s1 + s2)
+ncol(meta(r))   # 0 -- cleared, because s1 and s2's metadata disagreed
+
+
+## ----eval = TRUE--------------------------------------------------------------
+quantity(acer_spectra)
+wavelength_unit(acer_spectra)
 

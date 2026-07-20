@@ -592,10 +592,15 @@ i_splice_ramp = function(x, splice_at, config){
     all_vals  = do.call(cbind, c(out_vals, blend_vals))
     ord       = order(all_bands)
 
-    new_spectra(value = i_value(all_vals[, ord, drop = FALSE]),
-                bands = i_bands(all_bands[ord]),
-                names = names(x),
-                meta  = meta(x))
+    out = new_spectra(value = i_value(all_vals[, ord, drop = FALSE]),
+                      bands = i_bands(all_bands[ord]),
+                      names = names(x),
+                      meta  = meta(x))
+
+    quantity(out)        = quantity(x)
+    wavelength_unit(out) = wavelength_unit(x)
+
+    out
 }
 
 
