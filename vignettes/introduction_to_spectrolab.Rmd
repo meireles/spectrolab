@@ -2,25 +2,50 @@
 title: "Introduction to spectrolab"
 author: "Jose Eduardo Meireles, Anna K. Schweiger, and Jeannine Cavender-Bares"
 date: "`r format(Sys.time(), '%B %Y')`"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
 vignette: >
   %\VignetteIndexEntry{Introduction to spectrolab}
-  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-`spectrolab` provides methods to read, process, and visualize data from portable spectroradiometers. The package also establishes a common interface for spectra by introducing a `spectra` S3 class.
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+    collapse    = TRUE,
+    comment     = "#>",
+    fig.align   = "center",
+    fig.retina  = 2,
+    dpi         = 150
+)
+```
 
-`spectrolab` packs a ton of functionality:
+`spectrolab` provides methods to read, process, and visualize data from portable
+spectroradiometers. The package establishes a common interface for spectra by
+introducing a `spectra` S3 class -- a lightweight container that plays well
+with base R while staying dependency-light.
 
-* Read spectra from raw spectral files or matrices
+`spectrolab` packs a lot of functionality:
+
+* Read spectra from raw spectral files (SVC, ASD, PSR/Spectral Evolution) or matrices
 * Access, aggregate, subset, split or combine spectra
-* Seamlessly link and manipulate metadata (such as chemistry or insrument metadata)
+* Seamlessly link and manipulate metadata (such as chemistry or instrument metadata)
 * Plot spectra or spectral quantiles, shade spectral regions (e.g. SWIR)
-* Interactively scroll through and zoom in spectra. 
-* Perform tasks such as vector normalization, smoothing, resampling, and sensor overlap matching.
+* Interactively scroll through and zoom in on spectra
+* Smooth, resample, normalize, differentiate, and remove the continuum from spectra
+* Splice sensor overlaps and compute two-band vegetation indices (e.g. NDVI, PRI)
+* Reshape spectra into tidy/long data and plot them with `ggplot2`
 
-The source code can be found on our [GitHub repository](https://github.com/meireles/spectrolab). Please report any bugs and ask us your questions through the [issue tracker](https://github.com/meireles/spectrolab/issues).
+This vignette covers the foundations: reading data in, inspecting and
+subsetting a `spectra` object, plotting, and converting to/from matrices and
+data.frames. Everything past that -- sensor-overlap splicing, resampling,
+smoothing/derivatives/continuum removal, spectral indices, and the tidy
+bridge -- has its own focused vignette; see [Where to go next](#where-to-go-next).
+
+The source code can be found on our [GitHub repository](https://github.com/meireles/spectrolab).
+Please report any bugs and ask us your questions through the [issue tracker](https://github.com/meireles/spectrolab/issues).
 
 
 ## Installing and loading `spectrolab`
@@ -48,7 +73,7 @@ library("spectrolab")
 
 There are two ways to get spectra into R using `spectrolab`:
 
-  1. Reading spectra from raw data files (formats: SVC's `sig`, Spectral Evolution's `sed` and ASD's `asd`).
+  1. Reading spectra from raw data files (formats: SVC's `sig`, Spectral Evolution's `sed`, and ASD's `asd`).
   2. Converting a matrix or data.frame to `spectra`.
 
 ### Reading spectra from raw data files: Example with SVC's `.sig`
@@ -94,6 +119,15 @@ acer_spectra_with_meta = read_spectra(path = dir_path,
 meta(acer_spectra_with_meta)[1:3, 2:6]
 ```
 
+> **Where did that come from?** Instruments that use more than one detector
+> (e.g. SVC's HR1024, which uses separate Si/InGaAs sensors for VIS, SWIR1 and
+> SWIR2) also record splice provenance at read time -- the wavelengths where
+> detectors meet and, for some vendors, the matching factors applied. That
+> information rides along as the `sensor_info(x)` attribute rather than as a
+> `spectra` slot, and it is what lets `match_sensors()` know how to re-splice
+> the data without you having to remember the boundaries; see the
+> [Matching sensor overlap](match_sensors.html) vignette.
+
 ### Create spectra from a matrix or data.frame
 
 If you already have your spectra in a matrix or data frame (e.g. when you read your data from a .csv file), you can use the function `as_spectra()` to convert it to a `spectra` object. The matrix **must** have samples in rows and bands in columns. The header of the bands columns must be (numeric) band labels. You also should declare which column has the sample names (which are mandatory) using the `name_idx` argument. If other columns are present (other than sample name and values), their indices must be passed to `as_spectra` as the `meta_idxs` argument.
@@ -104,7 +138,7 @@ Here is an example using a dataset matrix named `spec_matrix_meta.csv` provided 
 dir_path = system.file("extdata/spec_matrix_meta.csv", package = "spectrolab")
 
 # Read data from the CSV file. If you don't use `check.names` = FALSE when reading
-# the csv, R will usually add a letter to the column names (e.g. 'X650') which will 
+# the csv, R will usually add a letter to the column names (e.g. 'X650') which will
 # cause problems when converting the matrix to spectra.
 spec_csv = read.csv(dir_path, check.names = FALSE)
 
@@ -135,7 +169,7 @@ dim(acer_spectra)
 # Vector of all sample names. Note: Duplicated sample names are permitted
 n = names(achillea_spec)
 
-# Vector of bands
+# Vector of bands. Note: Duplicated band labels are permitted too (see "Gotchas" below)
 w = bands(achillea_spec)
 
 # value matrix
@@ -147,13 +181,13 @@ m = meta(achillea_spec, "ssp", simplify = TRUE)
 
 ## Subsetting spectra
 
-You can subset the `spectra` using a notation *similar* to the `[i, j]` function used in matrices and data.frames. The first argument in `[i, ]` matches *sample names*, whereas the second argument `[ , j]` matches the *band names*. Here are some examples of how `[` works in `spectra`:
+You can subset the `spectra` using a notation *similar* to the `[i, j]` function used in matrices and data.frames. The first argument in `[i, ]` matches *sample names*, whereas the second argument `[ , j]` matches the *band labels* (not column position). Here are some examples of how `[` works in `spectra`:
 
   - `x[1:3, ]` will keep the first three samples of `x`, i.e. `1:3` are indexes.
   - `x["sp_1", ]` keeps **all** entries in `x` where sample names match `"sp_1"`
   - `x[ , 800:900]` will keep bands labeled `800`, `801`, `802`, ..., `900`.
   - `x[ , bands(x, 800, 900)]` will keep bands between `800` and `900`, including those with non-integer labels, e.g. `876.32`.
-  - `x[ , 1:5] ` will **fail**!. *bands __cannot__ be subset by indexes!*
+  - `x[ , 1:5] ` will **fail**! *bands __cannot__ be subset by column position!*
 
 Subsetting lets you, for instance, exclude noisy regions at the beginning and end of the spectrum or limit the data to specific entries.
 
@@ -173,21 +207,20 @@ The resolution of some spectra may be different from 1nm. In those cases, the be
 acer_spectra_trim = acer_spectra[ , bands(acer_spectra, 400, 2400) ]
 ```
 
-Note that you can (1) subset samples using indexes and (2) use characters or numerics to subset bands. As said before, you cannot use indexes to subset bands though.
+Note that you can (1) subset samples using indexes and (2) use characters or numerics to subset bands. As said before, you cannot use column position to subset bands though.
 
 ```{r, eval=TRUE}
 # Subsetting samples by indexes works and so does subsetting bands by numerics or characters.
 spec_sub_byidx[1, "405"] == spec_sub_byidx[1, 405]
 ```
 
-*But remember that you CANNOT use indexes to subset bands!*
+*But remember that you CANNOT use a column position to subset bands!*
 
-```{r, eval=T, error=T}
-# Something that is obvioulsy an index, like using 2 instead of 401 (the 2nd band 
-# in our case), will fail.
+```{r, eval=TRUE, error=TRUE}
+# Something that is obviously a column position, like 2 instead of 401
+# (the actual label of the 2nd band in our data), will fail with an
+# informative error rather than silently returning the wrong band.
 spec_sub_byidx[ , 2]
-
-`Error in i_match_ij_spectra(this = this, i = i, j = j) : band subscript out of bounds. Use band labels instead of raw indices.`
 ```
 
 ## Plotting
@@ -217,13 +250,13 @@ plot_regions(achillea_spec, regions = default_spec_regions(), add = TRUE)
 par(oldpar)
 ```
 
-Last but not least, spectrolab also allows you to interactively explore spectra through a `shiny` app with the `plot_interactive()` function.
+Last but not least, spectrolab also allows you to interactively explore spectra through a `shiny` app with the `plot_interactive()` function. If you'd rather work with `ggplot2`, see `autoplot()` in the [Tidy data and ggplot2](tidy_bridge.html) vignette.
 
-## Manipulating samples names, band labels, metadata and value
+## Manipulating sample names, band labels, metadata and value
 
-You may want to edit certain simple attributes of `spectra`, such as making all sample names lowercase This is easily attainable in `spectrolab`.
+You may want to edit certain simple attributes of `spectra`, such as making all sample names lowercase. This is easily attainable in `spectrolab`.
 
-```{r, eval=T}
+```{r, eval=TRUE}
 spec_new = achillea_spec
 
 # Replace names with a lowercase version
@@ -233,8 +266,11 @@ names(spec_new) = tolower(names(achillea_spec))
 names(spec_new)[1:5]
 ```
 
-If you want to fiddle with the value itself, this is easy, too.
-```{r,  fig.height=3, fig.width=4, fig.align="center", eval=T}
+If you want to fiddle with the value itself, this is easy, too -- arithmetic
+operators (`+`, `-`, `*`, `/`, `^`) and comparisons are all overloaded for
+`spectra`.
+
+```{r,  fig.height=3, fig.width=4, fig.align="center", eval=TRUE}
 # Scale value by 0.75
 spec_new = spec_new * 0.75
 
@@ -250,16 +286,33 @@ n_content = rnorm(n = nrow(achillea_spec), mean = 2, sd = 0.5)
 meta(achillea_spec, label = "N_percent") = n_content
 ```
 
+Beyond simple arithmetic, `spectrolab` has verbs for the classic "split many
+spectra into groups, summarize, and put back together" workflow:
+`aggregate()` collapses spectra into per-group means (or another summary
+function); `combine()` row-binds two `spectra` objects (bands must match
+exactly, see the [gotcha](#combining-and-aggregating-keep-different-halves-of-your-data) below);
+`split()` breaks a `spectra` into a list by a grouping factor; and
+`subset_by()` keeps only groups that have between `n_min` and `n_max`
+members (handy for dropping species with too few replicates). All four
+operate on the whole object -- value, names, and metadata move together.
+
+```{r, eval = TRUE, message = FALSE}
+# Average reflectance per species (metadata columns get FUN applied too, when
+# possible -- non-numeric metadata, like species names, becomes NA rather
+# than erroring, with a message)
+spec_species_mean = aggregate(achillea_spec, by = names(achillea_spec), FUN = mean)
+dim(spec_species_mean)
+```
 
 ### Converting a `spectra` object into a matrix or data.frame
 
-It is also possible to convert a `spectra` object to a matrix or data.frame using the `as.matrix()` or `as.data.frame()` functions. This is useful if you want to export your data in a particular format, such as csv. 
+It is also possible to convert a `spectra` object to a matrix or data.frame using the `as.matrix()` or `as.data.frame()` functions. This is useful if you want to export your data in a particular format, such as csv.
 
 If you're converting spectra to a matrix, `spectrolab` will (1) place bands in columns, assigning band labels to `colnames`, and (2) samples in rows, assigning sample names to `rownames`. Since `R` imposes strict rules on column name formats and sometimes on row names, `as.matrix()` will try to fix potential dimname issues if `fix_names != "none"`. Note that `as.matrix()` will not keep metadata.
 
 Conversion to data.frame is similar, but keeps the metadata by default (unless you set the `metadata` argument to `FALSE`).
 
-```{r, eval=T}
+```{r, eval=TRUE}
 # Make a matrix from a `spectra` object
 spec_as_mat = as.matrix(achillea_spec, fix_names = "none")
 spec_as_mat[1:4, 1:3]
@@ -268,3 +321,77 @@ spec_as_mat[1:4, 1:3]
 spec_as_df = as.data.frame(achillea_spec, fix_names = "none", metadata = TRUE)
 spec_as_df[1:4, 1:5]
 ```
+
+If you'd rather work with a long/tidy data.frame (one row per
+sample-and-band) or a `tibble`, see `to_long()` and `as_tibble()` in the
+[Tidy data and ggplot2](tidy_bridge.html) vignette.
+
+## Gotchas
+
+A few behaviors are intentional but easy to be surprised by. Worth reading
+once before you hit them in the wild.
+
+### Duplicate sample names *and* duplicate band labels are both allowed
+
+Duplicate sample names have always been allowed (e.g. several scans of the
+same individual). As of the current version, **duplicate band labels are
+allowed too**, for the same reason: raw SVC files legitimately carry an
+identical wavelength on both sides of a sensor overlap (e.g. `975.6` measured
+by two detectors) before you've spliced them. Both work the same way when you
+subset by the duplicated label: you get *all* matches back, and `spectrolab`
+tells you so.
+
+```{r, eval = TRUE}
+dup = achillea_spec
+bands(dup)[2] = bands(dup)[1]   # force a duplicate band label
+
+# Selecting the duplicated label returns both matching columns -- not an error
+dup[1, bands(dup)[1]]
+```
+
+Bear in mind that most transform functions (`smooth()`, `normalize()`,
+`resample()`, `match_sensors()`, spectral indices, continuum removal, ...)
+*require* strictly increasing bands and will error if you hand them raw,
+unspliced data with an overlap. Run `match_sensors()` first (see the
+[Matching sensor overlap](match_sensors.html) vignette).
+
+### Combining and aggregating keep different halves of your data {#combining-and-aggregating-keep-different-halves-of-your-data}
+
+`spec1 + spec2` (or `-`, `*`, `/`, `^`) works element-wise once both operands
+are `spectra` with identical dimensions and band labels, but the two sides
+are **not symmetric** in what they keep:
+
+* if the sample names differ between `spec1` and `spec2`, the result's names
+  are cleared to `NA` (with a warning) rather than silently picking one side;
+* metadata is **only** kept from the left-hand side -- `spec2`'s metadata is
+  silently dropped.
+
+```{r, eval = TRUE}
+s1 = s2 = achillea_spec
+meta(s1, "source") = "s1"
+meta(s2, "source") = "s2"
+
+r = s1 + s2
+meta(r, "source", simplify = TRUE)[1:3]   # "s1", not "s2" -- s2's metadata is gone
+```
+
+`combine()`, by contrast, requires bands to match exactly (checked by length
+*and* value) and merges the metadata columns from both sides by name, filling
+gaps with `NA` -- it is usually what you want when stacking datasets rather
+than doing arithmetic on them.
+
+### Comparison operators return a bare matrix, not a `spectra`
+
+`spec1 > spec2`, `spec1 == spec2`, etc. return a logical matrix (samples x
+bands) rather than a `spectra` object, since a boolean "spectrum" isn't
+meaningful. Only the four arithmetic operators return `spectra`.
+
+## Where to go next
+
+This vignette covers the basics. Depending on what you're doing next:
+
+* Instrument data with more than one detector? See [Matching sensor overlap](match_sensors.html).
+* Need spectra on a different band grid? See [Resampling Spectra](resample.html).
+* Want to smooth, differentiate, or remove the continuum from spectra? See [Smoothing, derivatives, and continuum removal](preprocessing.html).
+* Computing NDVI, PRI, or a custom two-band index? See [Two-band spectral indices](spectral_indices.html).
+* Prefer tidy/long data.frames or `ggplot2`? See [Tidy data and ggplot2](tidy_bridge.html).

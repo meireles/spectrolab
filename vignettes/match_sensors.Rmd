@@ -1,29 +1,31 @@
 ---
 title: "Matching sensor overlap"
 author: "Jose Eduardo Meireles"
-output: rmarkdown::html_vignette
-vignette: > 
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+vignette: >
   %\VignetteIndexEntry{Matching sensor overlap}
-  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
 library("spectrolab")
 knitr::opts_chunk$set(
-echo = TRUE,
-collapse = TRUE,
-comment = "#>",
-fig.retina = 2,
-dpi = 150
+    echo       = TRUE,
+    collapse   = TRUE,
+    comment    = "#>",
+    fig.align  = "center",
+    fig.retina = 2,
+    dpi        = 150
 )
-
-
 ```
 
-# The problem
+## The problem
 
-Instruments may measure different spectral ranges using different sensors, resulting in abrupt "jumps" in the reflectance or radiance data. In such cases, the regions between sensors need to be matched, i.e. spliced together. Unmatched spectra collected with a 3-sensor instrument, such as the SVC HR1024, may look like this:
+Instruments may measure different spectral ranges using different detectors, resulting in abrupt "jumps" in the reflectance or radiance data. In such cases, the regions between sensors need to be matched, i.e. spliced together. Unmatched spectra collected with a 3-sensor instrument, such as the SVC HR1024, may look like this:
 
 ```{r, fig.height=8, fig.width=5, fig.align='center', echo=TRUE, out.width="100%"}
 # Path to raw (unmatched) spectra
@@ -53,14 +55,36 @@ abline(v = c(990, 1900), col = "red", lty = 2, lwd = lwd)
 par(oldpar)
 ```
 
-# The solution
+Every instrument -- and every *vendor* -- handles this differently: SVC
+**deletes** the overlapping points (optionally after a scalar match), Spectral
+Evolution/NaturaSpec **ramp-blends** across the overlap, and ASD ships data
+that is *already* joined (it only records where the splice happened, not how).
+`spectrolab` therefore offers two ways to splice: a single general-purpose
+**legacy algorithm** that works reasonably on any instrument, and a **preset
+engine** that mimics each vendor's own approach more closely. Both live behind
+`match_sensors()`.
 
-Use the function `match_sensors` to splice the sensor overlap regions. You must pass the boundary between sensors using the `splice_at` argument. It is **critical** that you get those bands right (or very close) and every instrument (even from the same vendor) is different. 
+## Where do the splice points come from?
 
-You can use `plot_interactive` zoom into a particular spectral region and decide what the `splice_at` values should be. You can also use the function `guess_splice_at` to estimates these bands for you but keep in mind that these are **guesses**.
+`read_spectra()` captures per-sample provenance about the detector splice at
+read time -- into the `sensor_info(x)` attribute -- whenever the source file
+records it:
+
+```{r}
+sensor_info(reflect_raw)[1:2, ]
+```
+
+Here `overlap_mode` is `"Preserve"`, meaning this particular SVC file was
+saved *before* splicing, so no splice wavelengths are recorded yet (`splice_1`/
+`splice_2` are `NA`) -- you must supply `splice_at` yourself (or estimate it,
+see below). Files saved by the instrument *after* on-board splicing (mode
+`"Remove"`) *do* record the splice wavelengths, and `match_sensors(x)` will
+use them automatically without any arguments -- see
+[Provenance-aware defaults](#provenance-aware-defaults).
+
+You can use `plot_interactive()` to zoom into a particular spectral region and decide what the `splice_at` values should be. You can also use the function `guess_splice_at()` to estimate these bands for you, but keep in mind that these are **guesses**.
 
 ```{r, fig.height=8, fig.width=5, fig.align='center', echo=TRUE, out.width="100%"}
-
 # Spectrolab's guess of what the splice bands are.
 # However, you should also visually inspect the spectra to determine what the
 # boundaries between sensors are.
@@ -68,9 +92,23 @@ splice_bands_guess = guess_splice_at(reflect_raw)
 splice_bands_guess
 
 # Finally, if you know what those sensor bounds should be (say, they're given by
-# the manufacturer), just use those numbers instead of spectrolab's guess.
+# the manufacturer, or read off the instrument's own header), use those numbers
+# instead of spectrolab's guess. This file's own header records 970/1901 (see
+# sensor_info() of the matched reference file below) rather than the nominal
+# 990/1900 from the manual -- always prefer what the file says over the manual.
 splice_bands = c(990, 1900)
+```
 
+## The legacy algorithm
+
+Passing `splice_at` (and, optionally, `interpolate_wvl`) without a `method`
+runs the original, vendor-agnostic algorithm: it deletes the overlap and
+rescales one whole sensor by a single factor computed from a small window on
+either side of each splice, linearly ramping that factor to 1 across the
+rescaled sensor. It is a reasonable default when you don't know (or don't
+need) vendor-specific behavior.
+
+```{r, fig.height=8, fig.width=5, fig.align='center', echo=TRUE, out.width="100%"}
 # Match the reflectance and radiance data
 reflect_matched = match_sensors(x = reflect_raw, splice_at = splice_bands,
                                 interpolate_wvl = c(5, 1))
@@ -100,7 +138,7 @@ plot(radiance_matched, col = "red", add = TRUE,
 par(oldpar)
 ```
 
-And we can check the results from spectrolab's `match_sensors` against SVC's proprietary matching algorithm. 
+And we can check the results from spectrolab's legacy algorithm against SVC's proprietary matching algorithm (a file the instrument itself already spliced, shipped alongside the raw one for this example).
 
 ```{r, fig.height=8, fig.width=5, fig.align='center', echo=TRUE, out.width="100%"}
 path_moc = system.file("extdata/svc_raw_and_overlap_matched_serbin/SVC_Files_moc/",
@@ -131,3 +169,97 @@ plot(radiance_matched, col = "red", add = TRUE,
 
 par(oldpar)
 ```
+
+## The splice engine: vendor-aware presets
+
+The legacy algorithm above is one whole-sensor scalar match. The splice
+*engine* instead decomposes a splice into three independent stages -- exactly
+how SVC's own software models it -- so each vendor's behavior can be
+expressed as a small, named preset:
+
+```
+detect junctions  ->  (optional) GAIN-match one side  ->  JOIN (cut | ramp | concatenate)
+```
+
+Pass a preset name via `method`:
+
+| preset        | gain                                   | join        | mimics |
+|---------------|----------------------------------------|-------------|--------|
+| `"svc"`       | multiplicative, clamped [0.8, 1.2], graded | cut     | SVC HR1024 |
+| `"naturaspec"`| SSD-winner (additive or multiplicative) | ramp (linear) | Spectral Evolution / NaturaSpec |
+| `"asd"`       | additive, slope-aware (`linear_extrap`) | concatenate | ASD (data already joined) |
+| `"cut"` / `"ramp"` / `"concatenate"` | none (generic building blocks) | matching name | -- |
+
+```{r}
+reflect_svc_preset = match_sensors(reflect_raw, splice_at = c(970, 1901), method = "svc")
+
+cat("legacy join kept", ncol(reflect_matched), "bands\n")
+cat("svc preset kept ", ncol(reflect_svc_preset), "bands (vendor-matched file has", ncol(reflect_moc), ")\n")
+```
+
+The `"svc"` preset's clean cut lands much closer to the vendor's own band
+count than the legacy ramp does, because it mimics *what SVC actually does*
+(delete the overlap) rather than a generic rescale.
+
+For full control -- a non-standard instrument, or tweaking one parameter of a
+preset -- build your own `splice_config()` and pass it as `config` (which
+overrides `method`):
+
+```{r}
+custom_cfg = splice_config(gain_type = "multiplicative", reference = "right",
+                           clamp = c(0.8, 1.2), graded = TRUE, join = "cut")
+custom_cfg
+
+reflect_custom = match_sensors(reflect_raw, splice_at = c(970, 1901), config = custom_cfg)
+```
+
+## Provenance-aware defaults
+
+Because `read_spectra()` records splice provenance, `match_sensors(x)` with no
+`splice_at` at all does the sensible thing depending on what it finds:
+
+* **Already spliced** (bands already strictly increasing, e.g. a standard ASD
+  spectrum, or an SVC file saved in `"Remove"` mode after on-board splicing):
+  returned unchanged, with a message -- it's a safe no-op, not silently
+  re-splicing data that doesn't need it.
+
+```{r}
+match_sensors(reflect_moc)
+```
+
+* **Splice points on file** (an SVC file saved in `"Remove"` mode records
+  where it cut): those wavelengths are used automatically.
+
+* **Nothing recorded and nothing supplied** (our raw `"Preserve"`-mode file
+  above): a clear error asking you to supply `splice_at`, rather than a guess.
+
+```{r, error=TRUE}
+match_sensors(reflect_raw)
+```
+
+## Gotchas
+
+* **This is not a bit-exact replay of vendor firmware.** SVC applies its
+  matching factor to the reference *and* target radiance with slightly
+  different values, so the correction does not fully cancel out of a single
+  reflectance column the way it does inside the instrument's own software.
+  `spectrolab` reproduces the *removal* structure exactly and applies a
+  correct, general gain -- it does not claim to reproduce vendor reflectance
+  byte-for-byte. Similarly, the ASD gain is spectrolab's own choice (not a
+  documented ASD algorithm), and the Spectral Evolution ramp is a
+  single-source (derived) reconstruction. See `?splice_config` for the full
+  documentation of these caveats.
+* **`interpolate_wvl` only affects the legacy algorithm.** It's silently
+  ignored when you pass `method` or `config` -- the engine derives its own
+  crossover window from the detected overlap (override it with
+  `splice_config(window = c(lo, hi))` if needed).
+* **Order of `splice_at` matters less than getting the values right.**
+  `match_sensors()` sorts `splice_at` for you, but it cannot tell if you
+  handed it the wrong wavelengths for *this* file -- always cross-check
+  against `sensor_info(x)` or a visual inspection rather than trusting a
+  manual's nominal crossover points (this file's own header says 970/1901,
+  not the SVC manual's nominal 990/1900).
+* **Everything downstream expects strictly increasing bands.** `smooth()`,
+  `normalize()`, `resample()`, continuum removal, and the two-band spectral
+  indices all check for this and will error on raw, unspliced data -- run
+  `match_sensors()` first.
