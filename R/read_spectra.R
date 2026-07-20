@@ -13,6 +13,10 @@
 #'                           Example: "BAD"
 #' @param ignore_extension Boolean. If TRUE, the parser will try to read every
 #'                         file in path regardless of the expected extension.
+#' @param max_header_lines Integer. Number of lines to scan at the top of ASCII
+#'                         (.sig/.sed) files when looking for the data tag and
+#'                         metadata. Increase it for files with unusually long
+#'                         headers. Defaults to 40.
 #' @return a single `spectra` or a list of `spectra` (in case files have
 #'         incompatible band number or bands values)
 #'
@@ -29,7 +33,8 @@ read_spectra = function(path,
                         type               = "target_reflectance",
                         extract_metadata   = FALSE,
                         exclude_if_matches = NULL,
-                        ignore_extension   = FALSE) {
+                        ignore_extension   = FALSE,
+                        max_header_lines   = 40) {
 
   path_and_format = i_verify_path_and_format(path               = path,
                                              format             = format,
@@ -64,7 +69,8 @@ read_spectra = function(path,
                                   header            = FALSE,
                                   wl_col            = 1,
                                   refl_cols         = refl_cols,
-                                  divide_refl_by    = 100)
+                                  divide_refl_by    = 100,
+                                  max_header_lines  = max_header_lines)
 
     ## Construct spectra
     spec = lapply(result, function(x) {
@@ -91,7 +97,7 @@ read_spectra = function(path,
        i_read_ascii_metadata(file_paths  = names(x),
                              sample_type = sample_type,
                              sep_char    = ",",
-                             max_lines   = 40,
+                             max_lines   = max_header_lines,
                              meta_tags   = svc_meta_tags,
                              tag_sep     = "=")
      })
@@ -131,6 +137,7 @@ read_spectra = function(path,
                                   wl_col            = "Wvl",
                                   refl_cols         = refl_cols,
                                   divide_refl_by    = divide_refl_by,
+                                  max_header_lines  = max_header_lines,
                                   check.names       = FALSE)
 
     ## Construct spectra
@@ -156,7 +163,7 @@ read_spectra = function(path,
         i_read_ascii_metadata(file_paths  = names(x),
                               sample_type = sample_type,
                               sep_char    = ",",
-                              max_lines   = 40,
+                              max_lines   = max_header_lines,
                               meta_tags   = psr_meta_tags,
                               tag_sep     = ":")
       })
@@ -336,6 +343,7 @@ i_verify_path_and_format = function(path,
 #' @param wl_col idx or name of band column
 #' @param refl_cols idx or name of value columns. MULTIPLE
 #' @param divide_refl_by divide values by this. MULTIPLE
+#' @param max_header_lines number of lines to scan for the data tag. Defaults to 40.
 #' @param ... additional arguments passed to read table
 #' @return single `spectra` or list of `spectra`
 #'
@@ -350,6 +358,7 @@ i_read_ascii_spectra = function(file_paths,
                                 wl_col,
                                 refl_cols,
                                 divide_refl_by,
+                                max_header_lines = 40,
                                 ...){
 
   ############################################################
@@ -357,7 +366,7 @@ i_read_ascii_spectra = function(file_paths,
   ############################################################
 
   parse = function(x, tag = skip_until_tag) {
-    max_l = 40
+    max_l = max_header_lines
     skip  = grep(tag, trimws(readLines(x, n = max_l)), fixed = TRUE)
 
     if(length(skip) == 1){
@@ -379,7 +388,7 @@ i_read_ascii_spectra = function(file_paths,
   ## Deal with cases where multiple value columns or multiple value
   ## scalars (divide_refl_by) are given
   if(length(refl_cols) < length(divide_refl_by)) {
-    warning("Length of divide_refl_by should be either 1 or equals to the length of refl_cols. divide_refl_by has been prunned to length ", length(refl_cols), ".")
+    warning("Length of divide_refl_by should be either 1 or equal to the length of refl_cols. divide_refl_by has been pruned to length ", length(refl_cols), ".")
     divide_refl_by = rep(divide_refl_by, length.out = length(refl_cols))
   }
 
@@ -514,15 +523,50 @@ i_read_asd_spectra = function(file_paths,
                   "qi", "transmittance", "unknown", "absorbance")
   DATA_FORMAT = c("numeric", "integer", "double", "unknown")
 
+  ## Named byte offsets into the ASD binary header (format-version specific;
+  ## validated against ASD version tags "as7"/"as8"). Replaces the magic numbers
+  ## that were previously scattered through the reader.
+  ASD_OFFSETS = list(VERSION          = 0L,
+                     DATA_TYPE        = 186L,
+                     BAND_START       = 191L,
+                     BAND_STEP        = 195L,
+                     DATA_FORMAT      = 199L,
+                     N_BANDS          = 204L,
+                     INTEGRATION_TIME = 390L,
+                     SWIR1_GAIN       = 436L,
+                     SWIR2_GAIN       = 438L,
+                     SPLICE1          = 444L,
+                     SPLICE2          = 448L,
+                     SPECTRUM_START   = 484L,
+                     COMMENT_NCHAR    = 17710L,
+                     WHITE_REF_START  = 17712L)
+
+  ## Bytes per stored spectrum value, indexed by the raw data-format code + 1L:
+  ##   0 = float (4 bytes), 1 = integer (2 bytes), 2 = double (8 bytes).
+  ## Reading with the wrong width silently yields plausible-but-wrong numbers,
+  ## so we decode the width from the header instead of trusting readBin's default.
+  DATA_SIZE = c(4L, 2L, 8L, NA_integer_)
+
   result = lapply(file_paths, FUN = function(f){
 
     con = file(f, open = "rb")
 
     ####################
+    # Version tag
+    ####################
+
+    seek(con, ASD_OFFSETS$VERSION)
+    asd_version = readBin(con, "character", n = 1L)
+    if( ! grepl("^(ASD|as)", asd_version) ){
+      warning("File does not look like a supported ASD binary ",
+              "(version tag: '", asd_version, "'): ", f)
+    }
+
+    ####################
     # Data Type
     ####################
 
-    seek(con, 186)
+    seek(con, ASD_OFFSETS$DATA_TYPE)
     data_type = readBin(con, integer(), size = 1)
     data_type = TYPES[data_type + 1L]
 
@@ -530,52 +574,63 @@ i_read_asd_spectra = function(file_paths,
     # Bands
     ####################
 
-    seek(con, 191)
+    seek(con, ASD_OFFSETS$BAND_START)
     band_start = readBin(con, numeric(), size = 4, endian = ENDIAN)
 
-    seek(con, 195)
+    seek(con, ASD_OFFSETS$BAND_STEP)
     band_step  = readBin(con, numeric(), size = 4, endian = ENDIAN)
 
-    seek(con, 204)
+    seek(con, ASD_OFFSETS$N_BANDS)
     n_bands = readBin(con, integer(), size = 2, endian = ENDIAN)
 
-    bands = seq(from = band_start,
-                to   = band_start + n_bands * band_step - 1L,
-                by   = band_step)
+    ## Emit exactly n_bands values. The previous `to = start + n*step - 1L`
+    ## form was only correct when band_step == 1 (B3).
+    bands = band_start + (seq_len(n_bands) - 1L) * band_step
 
     ####################
     # Data Format
     ####################
 
-    seek(con, 199)
-    data_format = readBin(con, integer(), size = 1)
-    data_format = DATA_FORMAT[data_format + 1L]
+    seek(con, ASD_OFFSETS$DATA_FORMAT)
+    data_format_code = readBin(con, integer(), size = 1)
+    data_format      = DATA_FORMAT[data_format_code + 1L]
+
+    ## Decode how many bytes each spectrum value occupies (B4). R has no float
+    ## type, so 4-byte floats are still read into doubles via `size = 4`.
+    data_size = DATA_SIZE[data_format_code + 1L]
+    data_what = if(identical(data_format, "integer")) "integer" else "double"
+    if(is.na(data_size)){
+      warning("Unknown ASD data format code (", data_format_code,
+              ") in ", f, "; assuming 8-byte double.")
+      data_size = 8L
+      data_what = "double"
+    }
 
     ####################
     # Integration Time
     ####################
 
-    seek(con, 390)
+    seek(con, ASD_OFFSETS$INTEGRATION_TIME)
     integration_time = readBin(con, integer(), size = 4, endian = ENDIAN)
 
     ####################
     # SWIR Gain
     ####################
 
-    seek(con, 436)
+    seek(con, ASD_OFFSETS$SWIR1_GAIN)
     swir1_gain = readBin(con, integer(), size = 2, endian = ENDIAN)
 
-    seek(con, 438)
+    seek(con, ASD_OFFSETS$SWIR2_GAIN)
     swir2_gain = readBin(con, integer(), size = 2, endian = ENDIAN)
 
     ####################
     # Splice Bands
     ####################
 
-    seek(con, 444)
+    seek(con, ASD_OFFSETS$SPLICE1)
     splice1 = readBin(con, numeric(), size = 4, endian = ENDIAN)
 
-    seek(con, 448)
+    seek(con, ASD_OFFSETS$SPLICE2)
     splice2 = readBin(con, numeric(), size = 4, endian = ENDIAN)
 
     ####################
@@ -583,14 +638,14 @@ i_read_asd_spectra = function(file_paths,
     # White Reference
     ####################
 
-    seek(con, where = 484)
-    spectrum = readBin(con, what = data_format, n = n_bands, endian = ENDIAN)
+    seek(con, where = ASD_OFFSETS$SPECTRUM_START)
+    spectrum = readBin(con, what = data_what, n = n_bands, size = data_size, endian = ENDIAN)
 
-    seek(con, 17710)
+    seek(con, ASD_OFFSETS$COMMENT_NCHAR)
     comment_nchar = readBin(con, integer(), size = 2, endian = ENDIAN)
 
-    seek(con, 17712 + comment_nchar)
-    white_ref = readBin(con, what = data_format, n = n_bands, endian = ENDIAN)
+    seek(con, ASD_OFFSETS$WHITE_REF_START + comment_nchar)
+    white_ref = readBin(con, what = data_what, n = n_bands, size = data_size, endian = ENDIAN)
 
     close(con)
 
