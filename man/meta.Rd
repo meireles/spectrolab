@@ -18,7 +18,9 @@ meta(x, label = NULL, sample = NULL, simplify = FALSE, quiet = TRUE)
 
 \item{simplify}{boolean. defaults to FALSE}
 
-\item{quiet}{boolean. warn about non-existent metadata? defaults to TRUE}
+\item{quiet}{boolean. If TRUE (default), a request for a non-existent metadata
+column emits a warning and returns the columns that did match; if FALSE
+it is a hard error. Either way it never silently returns NULL.}
 }
 \value{
 data frame or vector

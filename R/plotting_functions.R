@@ -197,8 +197,6 @@ plot_regions = function(spec,
     }
 
     xx_mat = m_regions[ c("begin", "begin", "end", "end"),  , drop = FALSE]
-    yy_mat = i_plot_boundaries(return_mat = TRUE)
-    yy_vec = yy_mat[ c("min", "max", "max", "min") , "y"]
 
     if(!add){
         plot(spec, type = "n")
@@ -209,7 +207,13 @@ plot_regions = function(spec,
         plot(spec, type = "n")
     }
 
-    for(i in 1:ncol(xx_mat)) {
+    ## Read the plot's y-extent AFTER the plot exists. Reading par("usr") earlier
+    ## returns the *previous* device's range (or c(0,1) on a fresh device), which
+    ## made the region polygons span the wrong height.
+    yy_mat = i_plot_boundaries(return_mat = TRUE)
+    yy_vec = yy_mat[ c("min", "max", "max", "min") , "y"]
+
+    for(i in seq_len(ncol(xx_mat))) {
         graphics::polygon(xx_mat[ , i], yy_vec, col = col[i], border = border, ...)
     }
 

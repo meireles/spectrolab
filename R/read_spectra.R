@@ -442,15 +442,33 @@ i_read_ascii_spectra = function(file_paths,
       stop("refl_cols matched more than one column.")
     }
 
-    # Update refl cols and divide by
-    # subset 1st as a safeguard in case m matches more than one column
-    refl_cols      = which(m)
+    # Keep the matched column NAME (not a positional index taken from the first
+    # file). Selecting by name below stays correct even if another file in the
+    # batch has extra or reordered columns -- a positional index would silently
+    # extract the wrong column.
+    refl_cols      = colnames(d)[m]
     divide_refl_by = divide_refl_by[n]
   }
 
   data = lapply(data, function(x){
+    ## Resolve the value column per file. A NAME is matched against each file's
+    ## own columns (so a reordered/extra column can't be silently mis-extracted);
+    ## a numeric index is used positionally, as the reader intends for fixed
+    ## vendor layouts.
+    if(is.character(refl_cols)){
+      j = match(refl_cols, colnames(x))
+      if(anyNA(j)){
+        stop("Value column '", paste(refl_cols[is.na(j)], collapse = ", "),
+             "' not found in a file whose columns are: ",
+             paste(colnames(x), collapse = ", "),
+             ". All files in a batch must share the same column layout.",
+             call. = FALSE)
+      }
+    } else {
+      j = refl_cols
+    }
     data.frame("band"  = x[ , wl_col],
-               "value" = x[ , refl_cols] / divide_refl_by )
+               "value" = x[ , j] / divide_refl_by )
   })
 
   ## There mabye files with different number of bands or band values

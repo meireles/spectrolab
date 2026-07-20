@@ -75,9 +75,8 @@ agnostic join: one scaling factor per junction spread with a linear ramp. It
 is \emph{not} a faithful reproduction of any single vendor's stitching
 algorithm (SVC deletes the overlap, Spectral Evolution ramp-blends it, ASD's
 algorithm is not recoverable). Vendor-specific splice presets that consume the
-captured \code{\link{sensor_info}} provenance are planned for a later release
-(see the package's match_sensors redesign notes). If the computed factors are
-unreasonable (f < 0.5, f > 3, or NaN when a right-sensor value is 0) it throws.
+captured \code{\link{sensor_info}} provenance are available via \code{method}
+(see below).
 
 \strong{Methods / presets.} Passing \code{method} (or a \code{config} built
 with \code{\link{splice_config}}) selects a vendor-aware splice via the splice

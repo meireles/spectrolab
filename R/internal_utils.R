@@ -206,6 +206,15 @@ i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE, 
         }
     }
 
+    ## An explicit empty selection (e.g. x[integer(0), ]) has no valid result: a
+    ## zero-sample spectra can't be printed or carry metadata. Fail clearly here
+    ## rather than falling through to the index path, where all(logical(0)) is
+    ## TRUE and would dereference an unassigned `r` ("object 'r' not found").
+    ## NULL means "select all" and is handled above, so it is excluded.
+    if( !is.null(i) && length(i) == 0 ){
+        stop("empty selection: cannot select zero samples.", call. = FALSE)
+    }
+
     ########################################
     # First try to match to label
     ########################################
@@ -223,7 +232,11 @@ i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE, 
     ########################################
     # Now match to index
     ########################################
-    d = i_is_index(x = i, max_value = l, allow_negative = allow_negative)
+    ## Probe whether `i` looks like indices. Suppress i_is_index's "not whole
+    ## numbers" diagnostic: here a non-numeric `i` just means "it was a label",
+    ## not a user-facing warning (it would otherwise leak on every typo'd name or
+    ## missing meta label). i_is_index keeps that warning for direct callers.
+    d = suppressWarnings(i_is_index(x = i, max_value = l, allow_negative = allow_negative))
 
     if (any(d)){
         r = i_match_index(ii = i, dd = d, ll = l)
@@ -247,7 +260,8 @@ i_match_label_or_idx = function(x, i, full = FALSE, allow_empty_lookup = FALSE, 
         if(full){
             return(m)
         } else {
-            warning("Following label not found:", i[m$not_element])
+            warning("Following label(s) not found: ",
+                    paste(m$not_element, collapse = ", "))
             return(m$matched)
         }
     }
@@ -299,7 +313,14 @@ i_plot_boundaries = function(return_mat = FALSE) {
 #' @author Jose Eduardo Meireles
 #' @keywords internal
 i_plot_exists = function(){
-    tryCatch( {graphics::par(new = TRUE); TRUE}, warning = function(x){FALSE})
+    ## par(new = TRUE) warns when there's no active plot. Probe for that warning,
+    ## but restore the previous `new` value so this test doesn't leave the device
+    ## in overlay mode (which would make the caller's next plot() overplot).
+    tryCatch({
+        old = graphics::par(new = TRUE)
+        graphics::par(old)
+        TRUE
+    }, warning = function(x){ FALSE })
 }
 
 

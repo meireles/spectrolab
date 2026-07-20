@@ -394,7 +394,9 @@ bands.spectra = function(x, min = NULL, max = NULL, return_num = TRUE) {
 #' @param label metadata column index or label
 #' @param sample sample index or name
 #' @param simplify boolean. defaults to FALSE
-#' @param quiet boolean. warn about non-existent metadata? defaults to TRUE
+#' @param quiet boolean. If TRUE (default), a request for a non-existent metadata
+#'        column emits a warning and returns the columns that did match; if FALSE
+#'        it is a hard error. Either way it never silently returns NULL.
 #' @return data frame or vector
 #'
 #' @author Jose Eduardo Meireles
@@ -437,20 +439,29 @@ meta = function(x, label = NULL, sample = NULL, simplify = FALSE, quiet = TRUE){
 meta.spectra = function(x, label = NULL, sample = NULL, simplify = FALSE, quiet = TRUE){
 
     m = i_match_label_or_idx(names(x), i = sample)
-    l = i_match_label_or_idx(colnames(x$meta),
-                             label,
-                             full = TRUE,
-                             allow_empty_lookup = TRUE)
 
-    ## Case: User provided a non-existent label
-    if( length(l[["not_element"]]) != 0 ){
-        if(!quiet){
-            message("Following label(s) do(es) not exist: ", label)
+    if( is.null(label) ){
+        cols = seq_len(ncol(x$meta))
+    } else if ( is.numeric(label) ){
+        ## Numeric label: resolve as a column index (documented feature).
+        cols = i_match_label_or_idx(colnames(x$meta), label, allow_empty_lookup = TRUE)
+    } else {
+        ## Character label: match by name. Use i_match_label (not the label-or-idx
+        ## resolver) so an unknown label is reported here instead of throwing a
+        ## generic "No match.", and so the columns that DID match are still
+        ## returned. A missing label is never a silent NULL: `quiet = TRUE`
+        ## (default) warns and returns the matched columns; FALSE is a hard error.
+        lm   = i_match_label(colnames(x$meta), label, full = TRUE, allow_empty_lookup = TRUE)
+        cols = lm[["matched"]]
+
+        if( length(lm[["not_element"]]) != 0 ){
+            msg = paste0("metadata column(s) not found: ",
+                         paste(lm[["not_element"]], collapse = ", "))
+            if(quiet){ warning(msg, call. = FALSE) } else { stop(msg, call. = FALSE) }
         }
-        return(NULL)
     }
 
-    x$meta[ m, l[["matched"]], drop = simplify]
+    x$meta[ m, cols, drop = simplify]
 }
 
 #' @describeIn meta<- set metadata
