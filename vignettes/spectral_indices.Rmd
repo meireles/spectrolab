@@ -52,11 +52,12 @@ Both return a named numeric vector, one value per sample (names come from
 `names(x)`), not a `spectra` object -- an index is a per-sample summary
 statistic, not a spectrum.
 
-To compute several at once and get a tidy data.frame back, use
-`spectral_indices()`:
+To compute several at once, call the ones you want and assemble a data.frame
+yourself -- there is no wrapper for this because it is a one-liner:
 
 ```{r}
-idx = spectral_indices(spec)   # defaults to all of names(spectral_index)
+idx = data.frame(ndvi = spectral_index$ndvi(spec),
+                 pri  = spectral_index$pri(spec))
 head(idx)
 ```
 

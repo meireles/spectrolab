@@ -126,38 +126,3 @@ spectral_index = list(
     ndvi = make_spectral_index(800, 680),
     pri  = make_spectral_index(570, 531)
 )
-
-
-#' Compute multiple spectral indices at once
-#'
-#' \code{spectral_indices} computes one or more named entries from
-#' \code{\link{spectral_index}} and returns them side by side.
-#'
-#' @param x spectra object. bands must be strictly increasing
-#' @param which character vector of names in \code{spectral_index} to compute.
-#'        Defaults to all of them
-#' @return data.frame with sample_name and one column per requested index
-#'
-#' @author Jose Eduardo Meireles
-#' @export
-#'
-#' @examples
-#' library(spectrolab)
-#' spec = as_spectra(spec_matrix_example, name_idx = 1)
-#' spectral_indices(spec)
-spectral_indices = function(x, which = names(spectral_index)){
-
-    if(!is_spectra(x)){
-        stop("x must be a spectra object")
-    }
-
-    unknown = setdiff(which, names(spectral_index))
-    if(length(unknown) > 0){
-        stop("unknown index/indices: ", paste(unknown, collapse = ", "),
-             ". Known indices: ", paste(names(spectral_index), collapse = ", "))
-    }
-
-    out = lapply(spectral_index[which], function(f){ f(x) })
-
-    data.frame(sample_name = names(x), out, check.names = FALSE, row.names = NULL)
-}

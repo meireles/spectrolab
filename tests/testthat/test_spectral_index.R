@@ -38,15 +38,3 @@ test_that("spectral_index$ndvi is make_spectral_index(800, 680)", {
 test_that("spectral_index$pri is make_spectral_index(570, 531)", {
     expect_equal(spectral_index$pri(spec), make_spectral_index(570, 531)(spec))
 })
-
-test_that("spectral_indices returns ndvi and pri side by side", {
-    out = spectral_indices(spec)
-    expect_s3_class(out, "data.frame")
-    expect_equal(nrow(out), unname(nrow(spec)))
-    expect_equal(out$ndvi, unname(spectral_index$ndvi(spec)))
-    expect_equal(out$pri, unname(spectral_index$pri(spec)))
-})
-
-test_that("spectral_indices errors on an unknown index name", {
-    expect_error(spectral_indices(spec, which = "not_an_index"))
-})
