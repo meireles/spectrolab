@@ -597,9 +597,6 @@ i_splice_ramp = function(x, splice_at, config){
                       names = names(x),
                       meta  = meta(x))
 
-    quantity(out)        = quantity(x)
-    wavelength_unit(out) = wavelength_unit(x)
-
     out
 }
 

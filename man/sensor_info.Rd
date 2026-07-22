@@ -15,18 +15,17 @@ a data.frame with one row per sample (see the package's sensor_info
         built by hand, or read before this information was recorded)
 }
 \description{
-\code{sensor_info} returns the per-sample record of what the instrument's
-software did (or recorded) about detector splicing: the vendor, whether the
-overlap was removed or preserved, the splice wavelengths, and any matching
-factors. It is captured at read time by \code{\link{read_spectra}} and used by
-\code{\link{match_sensors}} to avoid re-splicing already-processed data and to
-find splice points without guessing.
+\code{sensor_info} returns the per-sample record captured at read time about
+detector splicing: the vendor (\code{instrument}) and the two detector-splice
+wavelengths (\code{splice_1}, \code{splice_2}), when the file records them. It
+is captured by \code{\link{read_spectra}} and used by
+\code{\link{match_sensors}} to find splice points without guessing.
 }
 \details{
 This provenance is \strong{read-only}: it is captured at read time and there
-is deliberately no \code{sensor_info<-} setter (unlike \code{\link{bands}},
-\code{\link{meta}}, or \code{\link{quantity}}). It is carried automatically
-through subsetting and \code{\link{combine}}.
+is deliberately no \code{sensor_info<-} setter (unlike \code{\link{bands}} or
+\code{\link{meta}}). It is carried automatically through subsetting and
+\code{\link{combine}}.
 }
 \examples{
 library(spectrolab)

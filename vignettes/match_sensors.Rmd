@@ -74,12 +74,11 @@ records it:
 sensor_info(reflect_raw)[1:2, ]
 ```
 
-Here `overlap_mode` is `"Preserve"`, meaning this particular SVC file was
-saved *before* splicing, so no splice wavelengths are recorded yet (`splice_1`/
-`splice_2` are `NA`) -- you must supply `splice_at` yourself (or estimate it,
-see below). Files saved by the instrument *after* on-board splicing (mode
-`"Remove"`) *do* record the splice wavelengths, and `match_sensors(x)` will
-use them automatically without any arguments -- see
+Here the file records no splice wavelengths (`splice_1`/`splice_2` are `NA`):
+this particular SVC file was saved *before* on-board splicing, so you must
+supply `splice_at` yourself (or estimate it, see below). Files saved by the
+instrument *after* splicing *do* record the splice wavelengths, and
+`match_sensors(x)` will use them automatically without any arguments -- see
 [Provenance-aware defaults](#provenance-aware-defaults).
 
 You can use `plot_interactive()` to zoom into a particular spectral region and decide what the `splice_at` values should be. You can also use the function `guess_splice_at()` to estimate these bands for you, but keep in mind that these are **guesses**.
@@ -260,6 +259,6 @@ match_sensors(reflect_raw)
   manual's nominal crossover points (this file's own header says 970/1901,
   not the SVC manual's nominal 990/1900).
 * **Everything downstream expects strictly increasing bands.** `smooth()`,
-  `normalize()`, `resample()`, continuum removal, and the two-band spectral
+  `normalize()`, `resample()`, and the two-band spectral
   indices all check for this and will error on raw, unspliced data -- run
   `match_sensors()` first.

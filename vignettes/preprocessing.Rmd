@@ -1,5 +1,5 @@
 ---
-title: "Smoothing, derivatives, and continuum removal"
+title: "Smoothing and derivatives"
 author: "Jose Eduardo Meireles"
 date: "`r format(Sys.time(), '%B %Y')`"
 output:
@@ -7,7 +7,7 @@ output:
     toc: true
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{Smoothing, derivatives, and continuum removal}
+  %\VignetteIndexEntry{Smoothing and derivatives}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -23,8 +23,7 @@ knitr::opts_chunk$set(
 ```
 
 This vignette covers `spectrolab`'s spectral preprocessing tools: smoothing
-(including a Savitzky-Golay filter), spectral derivatives, and continuum
-removal. All of them are transform functions -- they take a `spectra` object
+(including a Savitzky-Golay filter) and spectral derivatives. All of them are transform functions -- they take a `spectra` object
 and return one -- and all of them **require strictly increasing bands**
 (splice sensor overlaps with `match_sensors()` first if needed; see the
 [Matching sensor overlap](match_sensors.html) vignette).
@@ -119,44 +118,6 @@ par(oldpar)
 the output is **no longer reflectance/radiance** -- the y-axis units have
 changed. Pass `quiet = TRUE` once you know that.
 
-## Continuum removal
-
-The "continuum" of a spectrum is its upper convex hull in wavelength/value
-space -- essentially the smooth envelope you'd draw connecting the local
-reflectance peaks. Dividing a spectrum by its continuum, `continuum_removal()`,
-suppresses broad absorption features and emphasizes the depth of local ones
-(a standard technique in mineral and vegetation spectroscopy for comparing
-absorption features across samples that otherwise differ in overall
-brightness/albedo).
-
-```{r, fig.height=3.5, fig.width=7}
-one_cr = continuum_removal(one)
-
-# Compute the hull the same way continuum_removal() does internally, purely
-# to visualize it -- this is NOT required to use continuum_removal() itself.
-w = bands(one)
-r = as.numeric(value(one))
-h = grDevices::chull(w, r)
-chord = r[[1]] + (r[[length(r)]] - r[[1]]) * (w[h] - w[[1]]) / (w[[length(w)]] - w[[1]])
-h = sort(h[r[h] >= chord - sqrt(.Machine$double.eps)])
-hull = stats::approx(w[h], r[h], xout = w)$y
-
-oldpar = par(no.readonly = TRUE)
-par(mfrow = c(1, 2))
-
-plot(one, lwd = 1, col = "grey30", main = "Spectrum and its continuum")
-lines(w, hull, col = "firebrick", lwd = 1.5)
-
-plot(one_cr, lwd = 1, col = "darkorange", main = "Continuum-removed")
-abline(h = 1, col = "grey", lty = 2)
-
-par(oldpar)
-```
-
-Continuum-removed values are always at or below 1 by construction (they are
-a spectrum divided by an envelope that sits at or above it everywhere), and
-they are, like derivatives, no longer reflectance.
-
 ## Gotchas
 
 * **The `signal` package is required for `smooth_sgolay()` and
@@ -173,19 +134,11 @@ they are, like derivatives, no longer reflectance.
   into metadata (`save_bands_to_meta = TRUE`, the default) so they aren't
   lost, just relocated. `smooth_sgolay()` does not have this issue -- its
   polynomial fit is defined at the edges too.
-* **Derivative and continuum-removed values are not reflectance/radiance
-  anymore.** Both `deriv_spectra()` and `continuum_removal()` clear the
-  object's `quantity()` to reflect that (see the
-  [Introduction](introduction_to_spectrolab.html#provenance-quantity-and-wavelength_unit)
-  vignette), but the values still happily flow into any function that
-  doesn't check `quantity()` itself (e.g. `normalize()`, the two-band
-  spectral indices) -- the attribute documents the change, it doesn't block
-  further processing.
-
-```{r}
-quantity(one) = "reflectance"
-quantity(suppressMessages(deriv_spectra(one, order = 1)))
-```
+* **Derivative values are not reflectance/radiance anymore.**
+  `deriv_spectra()` (and `smooth_sgolay()` with a derivative order > 0) change
+  what the y-axis means. The values still flow into any downstream function
+  (e.g. `normalize()`, the two-band spectral indices) -- nothing blocks further
+  processing, so it is on you to remember that the units have changed.
 * **Choose the Savitzky-Golay window (`n`) relative to your spectral
   resolution**, not in the abstract: 5 bands means something very different
   on 1nm-resolution data than on 10nm data. The default is intentionally

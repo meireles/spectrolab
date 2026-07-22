@@ -6,40 +6,31 @@ library("spectrolab")
 
 ## ---- SVC header parser (unit) ---------------------------------------------
 
-test_that("i_parse_svc_overlap reads a Preserve/None header", {
+test_that("i_parse_svc_overlap returns no crossovers for a Preserve header", {
     p = spectrolab:::i_parse_svc_overlap(
         "factors= 0.800, 0.844, 1.000 [Overlap: Preserve, Matching Type: None]")
-    expect_equal(p$overlap_mode, "Preserve")
-    expect_false(p$matched)
-    expect_equal(p$matching_type, "None")
     expect_true(is.na(p$splice_1) && is.na(p$splice_2))
-    expect_equal(c(p$factor_ref, p$factor_target, p$factor_refl), c(0.800, 0.844, 1.000))
 })
 
-test_that("i_parse_svc_overlap reads a Remove + Matching header (first record only)", {
+test_that("i_parse_svc_overlap reads splice crossovers from a Remove header (first record only)", {
     ## Reprocessed files carry two bracketed records; only the first (applied)
     ## one should be parsed.
     p = spectrolab:::i_parse_svc_overlap(
         paste0("factors= 0.795, 0.848, 1.000 [Overlap: Remove @ 970,1901, ",
                "Matching Type: Radiance @ 976 - 1010 / NIR-SWIR On]",
                "0.800, 0.844, 1.000 [Overlap: Preserve, Matching Type: None]"))
-    expect_equal(p$overlap_mode, "Remove")
     expect_equal(c(p$splice_1, p$splice_2), c(970, 1901))
-    expect_true(p$matched)
-    expect_equal(p$matching_type, "Radiance")
-    expect_equal(c(p$match_zone_lo, p$match_zone_hi), c(976, 1010))
-    expect_equal(c(p$factor_ref, p$factor_target), c(0.795, 0.848))
 })
 
 test_that("i_parse_svc_overlap is robust to a missing/blank line", {
     p = spectrolab:::i_parse_svc_overlap(NA_character_)
-    expect_true(is.na(p$overlap_mode))
-    expect_true(is.na(p$factor_ref))
+    expect_true(is.na(p$splice_1))
+    expect_true(is.na(p$splice_2))
 })
 
 ## ---- provenance captured at read time -------------------------------------
 
-test_that("SVC read captures Preserve/None provenance aligned to samples", {
+test_that("SVC read captures provenance aligned to samples", {
     d = system.file("extdata", "svc_raw_and_overlap_matched_serbin", "SVC_Files",
                     package = "spectrolab")
     skip_if(d == "", "serbin raw extdata not installed")
@@ -49,20 +40,16 @@ test_that("SVC read captures Preserve/None provenance aligned to samples", {
     expect_false(is.null(si))
     expect_equal(nrow(si), unname(nrow(s)))
     expect_true(all(si$instrument == "svc"))
-    expect_true(all(si$overlap_mode == "Preserve"))
-    expect_true(all(!si$matched))
+    expect_named(si, c("instrument", "splice_1", "splice_2"))
 })
 
-test_that("SVC 'Remove @ 970,1901' matched files expose splice points + factors", {
+test_that("SVC 'Remove @ 970,1901' matched files expose splice points", {
     d = system.file("extdata", "svc_raw_and_overlap_matched_serbin", "SVC_Files_moc",
                     package = "spectrolab")
     skip_if(d == "", "serbin moc extdata not installed")
     si = sensor_info(suppressWarnings(suppressMessages(read_spectra(d, format = "sig"))))
 
-    expect_true(all(si$overlap_mode == "Remove"))
     expect_true(all(si$splice_1 == 970 & si$splice_2 == 1901))
-    expect_true(all(si$matched))
-    expect_true(all(si$matching_type == "Radiance"))
 })
 
 test_that("ASD read surfaces the file's splice wavelengths", {

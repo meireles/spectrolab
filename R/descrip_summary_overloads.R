@@ -126,16 +126,10 @@ print.spectra = function(x, ...){
 
   cat("spectra object", "\n")
   cat("number of samples:", nrow(x),"\n")
-  cat("bands: ", r_wvl[1], " to ", r_wvl[2], " ", wavelength_unit(x),
+  cat("bands: ", r_wvl[1], " to ", r_wvl[2],
       " (", ncol(x), " bands",
       ifelse(!o_wvl, ", **overlap not matched**", ""),
       ")", "\n", sep = "")
-
-  ## Minimal provenance (see R/provenance.R): only shown when known.
-  q = quantity(x)
-  if( !is.na(q) ){
-    cat("quantity:", q, "\n")
-  }
 
   if(l_met == 0){
     cat("metadata: none", "\n")
@@ -144,21 +138,13 @@ print.spectra = function(x, ...){
     cat(paste(n_met, collapse = ", "), "\n", sep = "")
   }
 
-  ## Report captured sensor / detector-splice provenance, if any (see
-  ## R/sensor_info.R). Summarises the instrument(s) and, for SVC, whether the
-  ## overlap was preserved/removed and whether a matching factor was applied.
+  ## Report the captured sensor / detector-splice provenance, if any (see
+  ## R/sensor_info.R): just the instrument(s).
   si = sensor_info(x)
   if( !is.null(si) && nrow(si) > 0 ){
     instr = unique(stats::na.omit(si[["instrument"]]))
     if(length(instr) > 0){
-      extra = ""
-      modes = unique(stats::na.omit(si[["overlap_mode"]]))
-      if(length(modes) > 0){
-        matched = any(isTRUE(si[["matched"]]) | si[["matched"]] %in% TRUE, na.rm = TRUE)
-        extra = paste0(" (overlap: ", paste(modes, collapse = "/"),
-                       ", matched: ", ifelse(matched, "yes", "no"), ")")
-      }
-      cat("instrument: ", paste(instr, collapse = ", "), extra, "\n", sep = "")
+      cat("instrument: ", paste(instr, collapse = ", "), "\n", sep = "")
     }
   }
 

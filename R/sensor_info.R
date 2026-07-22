@@ -35,17 +35,9 @@
 ## Canonical column schema for the per-sample sensor_info record. Keeping every
 ## instrument on the same columns (NA where a field does not apply) is what lets
 ## combine() rbind two records and `[` subset one.
-i_sensor_info_cols = c("instrument",
-                       "overlap_mode",    # SVC: "Preserve"/"Remove"; else NA
+i_sensor_info_cols = c("instrument",     # vendor tag ("svc", "psr", "asd")
                        "splice_1",        # first  detector join wavelength (nm)
-                       "splice_2",        # second detector join wavelength (nm)
-                       "matched",         # was a magnitude match applied? logical
-                       "matching_type",   # SVC: "None"/"Radiance"; else NA
-                       "match_zone_lo",   # SVC matching window low  (nm)
-                       "match_zone_hi",   # SVC matching window high (nm)
-                       "factor_ref",      # SVC reference-radiance factor
-                       "factor_target",   # SVC target-radiance factor
-                       "factor_refl")     # SVC reflectance factor (typically 1.0)
+                       "splice_2")        # second detector join wavelength (nm)
 
 
 #' Build an empty canonical sensor_info data.frame
@@ -61,63 +53,40 @@ i_sensor_info_cols = c("instrument",
 #' @keywords internal
 #' @author Jose Eduardo Meireles
 i_new_sensor_info = function(instrument, n){
-    df = data.frame(instrument    = rep(as.character(instrument), length.out = n),
-                    overlap_mode  = rep(NA_character_, n),
-                    splice_1      = rep(NA_real_,      n),
-                    splice_2      = rep(NA_real_,      n),
-                    matched       = rep(NA,            n),
-                    matching_type = rep(NA_character_, n),
-                    match_zone_lo = rep(NA_real_,      n),
-                    match_zone_hi = rep(NA_real_,      n),
-                    factor_ref    = rep(NA_real_,      n),
-                    factor_target = rep(NA_real_,      n),
-                    factor_refl   = rep(NA_real_,      n),
+    df = data.frame(instrument = rep(as.character(instrument), length.out = n),
+                    splice_1   = rep(NA_real_, n),
+                    splice_2   = rep(NA_real_, n),
                     stringsAsFactors = FALSE)
     rownames(df) = NULL
     df
 }
 
 
-#' Parse an SVC `.sig` "factors=" / "[Overlap: ...]" header line
+#' Parse the detector-splice wavelengths from an SVC `.sig` "factors=" line
 #'
-#' \code{i_parse_svc_overlap} extracts the vendor's detector-overlap decision
+#' \code{i_parse_svc_overlap} extracts the two detector-crossover wavelengths
 #' from the single most information-rich line in an SVC header, e.g.
 #'
 #' \preformatted{
 #' factors= 0.795, 0.848, 1.000 [Overlap: Remove @ 970,1901, Matching Type: Radiance @ 976 - 1010 / NIR-SWIR On]
 #' }
 #'
-#' When a file has been reprocessed the line can carry more than one bracketed
-#' record (the applied one followed by the original); only the FIRST (applied)
-#' record is parsed. The three leading numbers are the reference / target /
-#' reflectance matching factors (the reflectance factor is essentially always
-#' 1.0 because matching is applied before the reflectance ratio).
+#' The crossovers are the COMMA pair ("@ 970,1901"); the DASH pair
+#' ("@ 976 - 1010") is the matching zone and is deliberately ignored. When a
+#' file has been reprocessed the line can carry more than one bracketed record;
+#' only the FIRST (applied) record is parsed.
 #'
 #' @param line a single character string (one header line), or NA
-#' @return a named list with the canonical fields (see \code{i_sensor_info_cols});
-#'         fields that are absent from the header are returned as NA
+#' @return a named list with \code{splice_1} and \code{splice_2} (NA if absent)
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
 i_parse_svc_overlap = function(line){
 
-    out = list(overlap_mode  = NA_character_, splice_1      = NA_real_,
-               splice_2      = NA_real_,      matched       = NA,
-               matching_type = NA_character_, match_zone_lo = NA_real_,
-               match_zone_hi = NA_real_,      factor_ref    = NA_real_,
-               factor_target = NA_real_,      factor_refl   = NA_real_)
+    out = list(splice_1 = NA_real_, splice_2 = NA_real_)
 
     if(length(line) != 1 || is.na(line) || !grepl("factors=", line, fixed = TRUE)){
         return(out)
-    }
-
-    ## Matching factors: the three numbers before the first bracket
-    pre  = sub("\\[.*$", "", line)
-    nums = suppressWarnings(as.numeric(regmatches(pre, gregexpr("[0-9]+\\.?[0-9]*", pre))[[1]]))
-    if(length(nums) >= 3){
-        out$factor_ref    = nums[1]
-        out$factor_target = nums[2]
-        out$factor_refl   = nums[3]
     }
 
     ## Applied record = FIRST bracketed block
@@ -126,29 +95,14 @@ i_parse_svc_overlap = function(line){
         return(out)
     }
 
-    if(grepl("Overlap:", blk)){
-        out$overlap_mode = sub(".*Overlap:[[:space:]]*([A-Za-z]+).*", "\\1", blk)
-    }
-    if(grepl("Matching Type:", blk)){
-        out$matching_type = sub(".*Matching Type:[[:space:]]*([A-Za-z-]+).*", "\\1", blk)
-    }
-    out$matched = !is.na(out$matching_type) && !identical(out$matching_type, "None")
-
     ## Splice crossovers are recorded as a COMMA pair ("@ 970,1901"); the
     ## matching zone as a DASH pair ("@ 976 - 1010"). That comma-vs-dash
-    ## distinction is what lets us pull them apart from the same block.
+    ## distinction is what lets us pull the crossovers out of the same block.
     sp = regmatches(blk, regexpr("@[[:space:]]*[0-9.]+[[:space:]]*,[[:space:]]*[0-9.]+", blk))
     if(length(sp) == 1){
         v = as.numeric(regmatches(sp, gregexpr("[0-9.]+", sp))[[1]])
         out$splice_1 = v[1]
         out$splice_2 = v[2]
-    }
-
-    mz = regmatches(blk, regexpr("@[[:space:]]*[0-9.]+[[:space:]]*-[[:space:]]*[0-9.]+", blk))
-    if(length(mz) == 1){
-        v = as.numeric(regmatches(mz, gregexpr("[0-9.]+", mz))[[1]])
-        out$match_zone_lo = v[1]
-        out$match_zone_hi = v[2]
     }
 
     out
@@ -186,17 +140,16 @@ i_svc_sensor_info = function(file_paths, max_header_lines = 40){
 
 #' Get the sensor / detector-splice provenance of a spectra object
 #'
-#' \code{sensor_info} returns the per-sample record of what the instrument's
-#' software did (or recorded) about detector splicing: the vendor, whether the
-#' overlap was removed or preserved, the splice wavelengths, and any matching
-#' factors. It is captured at read time by \code{\link{read_spectra}} and used by
-#' \code{\link{match_sensors}} to avoid re-splicing already-processed data and to
-#' find splice points without guessing.
+#' \code{sensor_info} returns the per-sample record captured at read time about
+#' detector splicing: the vendor (\code{instrument}) and the two detector-splice
+#' wavelengths (\code{splice_1}, \code{splice_2}), when the file records them. It
+#' is captured by \code{\link{read_spectra}} and used by
+#' \code{\link{match_sensors}} to find splice points without guessing.
 #'
 #' This provenance is \strong{read-only}: it is captured at read time and there
-#' is deliberately no \code{sensor_info<-} setter (unlike \code{\link{bands}},
-#' \code{\link{meta}}, or \code{\link{quantity}}). It is carried automatically
-#' through subsetting and \code{\link{combine}}.
+#' is deliberately no \code{sensor_info<-} setter (unlike \code{\link{bands}} or
+#' \code{\link{meta}}). It is carried automatically through subsetting and
+#' \code{\link{combine}}.
 #'
 #' @param x a spectra object
 #' @return a data.frame with one row per sample (see the package's sensor_info

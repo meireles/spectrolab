@@ -171,8 +171,6 @@ smooth_moving_avg = function(x, n = NULL, save_bands_to_meta = TRUE){
                        names = names(x),
                        meta  = meta(x))
     attr(out, "sensor_info") = attr(x, "sensor_info")
-    quantity(out)            = quantity(x)
-    wavelength_unit(out)     = wavelength_unit(x)
     x = out
 
     if(length(w) != 0){

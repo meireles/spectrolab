@@ -83,9 +83,6 @@ apply_by_band.spectra = function(x, fun, na.rm = TRUE, keep_txt_meta = TRUE, nam
     }
     out = spectra(value = r, bands = w, names = n, meta = m, extend_meta = TRUE)
 
-    quantity(out)        = quantity(x)
-    wavelength_unit(out) = wavelength_unit(x)
-
     out
 }
 
@@ -145,9 +142,6 @@ aggregate.spectra = function(x, by, FUN, FUN_meta = NULL, ...){
 
     s = as_spectra(r, 1)
     meta(s) = m[ , -seq_along(by), drop = FALSE]
-
-    quantity(s)        = quantity(x)
-    wavelength_unit(s) = wavelength_unit(x)
 
     s
 }
@@ -229,11 +223,6 @@ combine.spectra = function(s1, s2){
         if(is.null(si2)){ si2 = i_new_sensor_info(NA_character_, nrow(s2)) }
         attr(out, "sensor_info") = rbind(si1, si2)
     }
-
-    ## Reconcile whole-object provenance: keep it when both sides agree, clear
-    ## it (with a warning) when they don't. See R/provenance.R.
-    quantity(out)        = i_reconcile_provenance_scalar(quantity(s1), quantity(s2), "quantity")
-    wavelength_unit(out) = i_reconcile_provenance_scalar(wavelength_unit(s1), wavelength_unit(s2), "wavelength_unit")
 
     out
 }

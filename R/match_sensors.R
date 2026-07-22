@@ -168,9 +168,6 @@ i_trim_sensor_overlap = function(x, splice_at){
         attr(out, "sensor_info") = si
     }
 
-    quantity(out)        = quantity(x)
-    wavelength_unit(out) = wavelength_unit(x)
-
     list("spectra" = out,
          "sensor"  = sensor,
          "overlap" = if(no_over){ NA } else { bb })

@@ -34,14 +34,14 @@ with base R while staying dependency-light.
 * Seamlessly link and manipulate metadata (such as chemistry or instrument metadata)
 * Plot spectra or spectral quantiles, shade spectral regions (e.g. SWIR)
 * Interactively scroll through and zoom in on spectra
-* Smooth, resample, normalize, differentiate, and remove the continuum from spectra
+* Smooth, resample, normalize, and differentiate spectra
 * Splice sensor overlaps and compute two-band vegetation indices (e.g. NDVI, PRI)
 * Reshape spectra into tidy/long data and plot them with `ggplot2`
 
 This vignette covers the foundations: reading data in, inspecting and
 subsetting a `spectra` object, plotting, and converting to/from matrices and
 data.frames. Everything past that -- sensor-overlap splicing, resampling,
-smoothing/derivatives/continuum removal, spectral indices, and the tidy
+smoothing/derivatives, spectral indices, and the tidy
 bridge -- has its own focused vignette; see [Where to go next](#where-to-go-next).
 
 The source code can be found on our [GitHub repository](https://github.com/meireles/spectrolab).
@@ -122,10 +122,9 @@ meta(acer_spectra_with_meta)[1:3, 2:6]
 > **Where did that come from?** Instruments that use more than one detector
 > (e.g. SVC's HR1024, which uses separate Si/InGaAs sensors for VIS, SWIR1 and
 > SWIR2) also record splice provenance at read time -- the wavelengths where
-> detectors meet and, for some vendors, the matching factors applied. That
-> information rides along as the `sensor_info(x)` attribute rather than as a
-> `spectra` slot, and it is what lets `match_sensors()` know how to re-splice
-> the data without you having to remember the boundaries; see the
+> detectors meet. That information rides along as the `sensor_info(x)` attribute
+> rather than as a `spectra` slot, and it is what lets `match_sensors()` find
+> the splice points without you having to remember the boundaries; see the
 > [Matching sensor overlap](match_sensors.html) vignette.
 
 ### Create spectra from a matrix or data.frame
@@ -350,7 +349,7 @@ dup[1, bands(dup)[1]]
 ```
 
 Bear in mind that most transform functions (`smooth()`, `normalize()`,
-`resample()`, `match_sensors()`, spectral indices, continuum removal, ...)
+`resample()`, `match_sensors()`, spectral indices, ...)
 *require* strictly increasing bands and will error if you hand them raw,
 unspliced data with an overlap. Run `match_sensors()` first (see the
 [Matching sensor overlap](match_sensors.html) vignette).
@@ -402,38 +401,12 @@ sqrt(achillea_spec)   # Math group generic: abs, sqrt, log, round, exp, ...
 achillea_spec %*% t(as.matrix(achillea_spec))   # matrix algebra -> a plain matrix
 ```
 
-`quantity()`/`wavelength_unit()` -- minimal provenance describing what a
-`spectra` object measures -- are covered next.
-
-## Provenance: `quantity()` and `wavelength_unit()`
-
-`read_spectra()` records the physical quantity it read (`"reflectance"` or
-`"radiance"`, from the `type` argument) and the wavelength unit (`"nm"` for
-every currently supported instrument) as light-touch attributes on the
-object:
-
-```{r, eval = TRUE}
-quantity(acer_spectra)
-wavelength_unit(acer_spectra)
-```
-
-Objects without this recorded (e.g. built by hand with `as_spectra()`) return
-`NA` for `quantity()` and default to `"nm"` for `wavelength_unit()`. You can
-set both yourself with `quantity(x) <- "reflectance"` /
-`wavelength_unit(x) <- "nm"`. `combine()` and the arithmetic operators keep
-these values when both sides agree and clear them (with a warning) when they
-don't -- the same reconciliation rule used for names and metadata above.
-Functions that change what the values fundamentally *mean* -- `deriv_spectra()`,
-`continuum_removal()` -- clear `quantity` for you, since the output is no
-longer raw reflectance/radiance (see the
-[Smoothing, derivatives, and continuum removal](preprocessing.html) vignette).
-
 ## Where to go next
 
 This vignette covers the basics. Depending on what you're doing next:
 
 * Instrument data with more than one detector? See [Matching sensor overlap](match_sensors.html).
 * Need spectra on a different band grid? See [Resampling Spectra](resample.html).
-* Want to smooth, differentiate, or remove the continuum from spectra? See [Smoothing, derivatives, and continuum removal](preprocessing.html).
+* Want to smooth or differentiate spectra? See [Smoothing and derivatives](preprocessing.html).
 * Computing NDVI, PRI, or a custom two-band index? See [Two-band spectral indices](spectral_indices.html).
 * Prefer tidy/long data.frames or `ggplot2`? See [Tidy data and ggplot2](tidy_bridge.html).

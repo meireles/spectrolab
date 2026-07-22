@@ -2,7 +2,7 @@
 % Please edit documentation in R/math_operator_overloads.R
 \name{Ops.spectra}
 \alias{Ops.spectra}
-\title{Arithmetic operators for spectra}
+\title{Arithmetic and comparison operators for spectra}
 \usage{
 \method{Ops}{spectra}(e1, e2)
 }
@@ -12,20 +12,35 @@
 \item{e2}{rhs}
 }
 \value{
-Depends on the operator. math operators will return spectra and logical
-        or comparison operators will return boolean matrices
+a spectra for arithmetic operators; a logical matrix for comparison
+        operators
 }
 \description{
-Overloads arithmetic operators for spectra using `Ops.`
+Overloads arithmetic (\code{+ - * / ^}) and comparison
+(\code{== != < <= >= >}) operators for spectra via \code{Ops.}. Arithmetic
+returns a spectra; comparison returns a logical matrix carrying sample and
+band dimnames. Unary \code{+}/\code{-} (e.g. \code{-spec}) are supported.
 }
 \details{
-Unary \code{+}/\code{-} (e.g. \code{-spec}) are supported. When both sides
-of a binary math operator are \code{spectra}, sample names and metadata
-are kept from the result only when they agree between \code{e1} and
-\code{e2}; when they disagree, they are cleared (with a warning) rather
-than one side's values winning silently. The \code{quantity} and
-\code{wavelength_unit} provenance (see \code{\link{quantity}}) are
-reconciled the same way.
+\strong{Shapes.} For \code{x OP z} (or \code{z OP x}) where \code{x} is an
+\eqn{n \times m} spectra (n samples, m bands), \code{z} must be one of:
+\itemize{
+  \item a scalar -- applied elementwise;
+  \item a length-\eqn{m} vector (or \eqn{1 \times m} matrix) -- applied per
+        band, i.e. the same value to every sample;
+  \item a length-\eqn{n} vector (or \eqn{n \times 1} matrix) -- applied per
+        sample, i.e. the same value across every band;
+  \item an \eqn{n \times m} matrix, or another spectra with identical bands
+        -- applied elementwise.
+}
+Any other shape is an error rather than being silently recycled. When
+\eqn{n = m} a bare length-\eqn{n} vector is ambiguous and is read as
+per-sample (R's native recycling); pass a \eqn{1 \times m} matrix to force
+the per-band reading.
+
+When both sides are spectra, sample names and metadata are kept only when
+they agree between \code{e1} and \code{e2}; when they disagree they are
+cleared (with a warning) rather than one side winning silently.
 }
 \examples{
 library(spectrolab)

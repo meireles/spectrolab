@@ -193,15 +193,6 @@ read_spectra = function(path,
                               divide_refl_by    = 1)
   }
 
-  ## Minimal provenance: record what physical quantity was read (from `type`)
-  ## and the wavelength unit (nm for every currently supported format).
-  quantity_read = if(type == "target_reflectance") "reflectance" else "radiance"
-  spec = lapply(spec, function(s){
-      quantity(s)        = quantity_read
-      wavelength_unit(s)  = "nm"
-      s
-  })
-
   if(length(spec) > 1){
     message("Returning a list of `spectra` because some files had different number of bands or band values. If you want to make those data compatible, consider resampling (with resample) and then combining them (with combine)")
     return(spec)

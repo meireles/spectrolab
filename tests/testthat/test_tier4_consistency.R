@@ -5,16 +5,6 @@ context("Tier 4 interface-consistency fixes")
 
 s = as_spectra(spec_matrix_example, name_idx = 1)
 
-test_that("provenance setters accept a bare NA (documented 'unknown' marker)", {
-    q = s
-    expect_silent(quantity(q) <- NA)
-    expect_true(is.na(quantity(q)))
-
-    w = s
-    expect_silent(wavelength_unit(w) <- NA)
-    expect_true(is.na(wavelength_unit(w)))
-})
-
 test_that("subset_by accepts a factor `by` (its docs promise 'coercible to factor')", {
     out = subset_by(s, by = factor(names(s)), n_min = 1, n_max = Inf)
     expect_true(is_spectra(out))

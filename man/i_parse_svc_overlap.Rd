@@ -2,7 +2,7 @@
 % Please edit documentation in R/sensor_info.R
 \name{i_parse_svc_overlap}
 \alias{i_parse_svc_overlap}
-\title{Parse an SVC `.sig` "factors=" / "[Overlap: ...]" header line}
+\title{Parse the detector-splice wavelengths from an SVC `.sig` "factors=" line}
 \usage{
 i_parse_svc_overlap(line)
 }
@@ -10,11 +10,10 @@ i_parse_svc_overlap(line)
 \item{line}{a single character string (one header line), or NA}
 }
 \value{
-a named list with the canonical fields (see \code{i_sensor_info_cols});
-        fields that are absent from the header are returned as NA
+a named list with \code{splice_1} and \code{splice_2} (NA if absent)
 }
 \description{
-\code{i_parse_svc_overlap} extracts the vendor's detector-overlap decision
+\code{i_parse_svc_overlap} extracts the two detector-crossover wavelengths
 from the single most information-rich line in an SVC header, e.g.
 }
 \details{
@@ -22,11 +21,10 @@ from the single most information-rich line in an SVC header, e.g.
 factors= 0.795, 0.848, 1.000 [Overlap: Remove @ 970,1901, Matching Type: Radiance @ 976 - 1010 / NIR-SWIR On]
 }
 
-When a file has been reprocessed the line can carry more than one bracketed
-record (the applied one followed by the original); only the FIRST (applied)
-record is parsed. The three leading numbers are the reference / target /
-reflectance matching factors (the reflectance factor is essentially always
-1.0 because matching is applied before the reflectance ratio).
+The crossovers are the COMMA pair ("@ 970,1901"); the DASH pair
+("@ 976 - 1010") is the matching zone and is deliberately ignored. When a
+file has been reprocessed the line can carry more than one bracketed record;
+only the FIRST (applied) record is parsed.
 }
 \author{
 Jose Eduardo Meireles
