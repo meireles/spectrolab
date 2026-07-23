@@ -24,6 +24,7 @@ Suggests:
     signal,
     tibble,
     ggplot2,
+    pls,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Imports:

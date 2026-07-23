@@ -1,0 +1,213 @@
+---
+title: "Combining and harmonizing datasets"
+author: "Jose Eduardo Meireles, Anna K. Schweiger, and Jeannine Cavender-Bares"
+date: "`r format(Sys.time(), '%B %Y')`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Combining and harmonizing datasets}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+source("_common.R")
+library("spectrolab")
+```
+
+A field campaign is rarely one tidy file. It is a folder (or several) of
+per-scan files, sometimes from more than one instrument, often on different
+wavelength grids, and usually with several scans per leaf. The goal of this
+vignette is to turn that mess into a single, analysis-ready `spectra` object:
+put everything on a common band grid, stack the samples, and collapse replicate
+scans into per-sample means -- without silently mixing things that should not
+be mixed.
+
+We use a small, real SVC (`.sig`) dataset shipped with the package: seven leaf
+scans of a single species, *Acer platanoides*, read as **radiance**. The
+filenames encode the sampling design -- a plot (`D2`, `F3`) and a canopy
+position (`_B_`, `_M_`, `_T_` for bottom, middle, top) -- which gives us a clean
+replicate structure to aggregate over.
+
+```{r read-acer}
+acer = read_spectra(system.file("extdata/Acer_example", package = "spectrolab"),
+                    type               = "target_radiance",
+                    exclude_if_matches = c("BAD", "WR"))
+
+# Turn the filename design into metadata columns we can group by later.
+parts = strsplit(names(acer), "_")
+meta(acer, "plot")     = sapply(parts, `[`, 2)
+meta(acer, "position") = sapply(parts, `[`, 4)
+
+acer
+```
+
+## The problem
+
+Two things get in the way of simply stacking a campaign together: the band
+grids differ, and the *quantities* differ. Reading two more datasets that ship
+with the package makes the point. The Acer scans are SVC radiance on a
+1024-band grid; a second SVC dataset is **reflectance**; a PSR (`.sed`) dataset
+is raw **digital numbers** on a 2151-band grid.
+
+```{r heterogeneity}
+serbin = read_spectra(system.file("extdata/svc_raw_and_overlap_matched_serbin/SVC_Files",
+                                   package = "spectrolab"),
+                      format = "sig")                        # SVC reflectance
+
+psr    = read_spectra(system.file("extdata/psr_DN_brett", package = "spectrolab"),
+                      format = "sed", type = "target_radiance")   # PSR digital numbers
+
+# Same campaign spirit, three different band grids:
+data.frame(
+    dataset  = c("acer (radiance)", "serbin (reflectance)", "psr (DN)"),
+    n_bands  = c(length(bands(acer)), length(bands(serbin)), length(bands(psr))),
+    min_band = c(min(bands(acer)),    min(bands(serbin)),    min(bands(psr))),
+    max_band = c(max(bands(acer)),    max(bands(serbin)),    max(bands(psr)))
+)
+```
+
+The grids disagree in length (1024 vs. 2151) and, even where the lengths match,
+in the actual wavelengths sampled. `combine()` refuses to guess: it stacks two
+`spectra` only when their band labels are identical -- checked by both length
+**and** `all.equal()`. That guard is exactly why harmonization comes first.
+(The quantity mismatch -- radiance vs. reflectance vs. DN -- is a second, deeper
+problem that no amount of resampling fixes; see
+[An honest caveat](#an-honest-caveat).)
+
+From here on we work entirely within the Acer radiance dataset, one species and
+one quantity, so every operation is legitimate.
+
+## Put everything on a common grid
+
+Raw SVC data carries three overlapping detectors, so its bands are not strictly
+increasing. `resample()` (like `normalize()`) requires strictly increasing
+bands, so we first resolve the detector overlap with `match_sensors()` -- see
+the dedicated *Matching sensor overlap* vignette for what that step does and how
+to control it.
+
+```{r match, message=FALSE}
+acm = match_sensors(acer, splice_at = guess_splice_at(acer))
+```
+
+Now resample onto a target grid. `resample()` is not linear interpolation: it
+models each output band as a Gaussian over the input bands, and `make_fwhm()`
+picks a sensible full-width-half-maximum for each new band from the original
+spacing. The key idea for harmonization is that **every dataset is resampled to
+the same `new_bands`** -- that shared target is what makes them combinable.
+
+```{r resample, message=FALSE}
+new_bands = seq(400, 2400, by = 5)                       # one common target grid
+acer_rs   = resample(acm, new_bands = new_bands, fwhm = make_fwhm(acm, new_bands))
+
+acer_rs
+```
+
+## Combine
+
+`combine()` stacks the samples of two `spectra` that share a band grid. If they
+do not, it stops rather than producing a corrupt object -- the guard from the
+problem section, seen here directly:
+
+```{r combine-guard, error=TRUE}
+# acm is on the native (997-band) grid; acer_rs is on the 5-nm grid.
+combine(acm, acer_rs)
+```
+
+Once the grids agree, combining is trivial. Pretend the two plots were collected
+as separate batches (different days, different folders); we split them, then
+stack them back together. Metadata columns are carried through and merged by
+name, so the reassembled object is identical to the original.
+
+```{r combine}
+batch_d2 = acer_rs[meta(acer_rs)$plot == "D2", ]
+batch_f3 = acer_rs[meta(acer_rs)$plot == "F3", ]
+
+campaign = combine(batch_d2, batch_f3)
+campaign
+
+# c() and rbind() are the idiomatic shorthands -- both just repeatedly
+# apply combine(), so they preserve the spectra class and merge metadata.
+identical(dim(c(batch_d2, batch_f3)), dim(campaign))
+```
+
+For more than two objects, `Reduce(combine, list(...))` (or `c()` / `rbind()`
+with all of them) folds the whole list into one.
+
+## Aggregate replicate scans
+
+The campaign still holds replicate scans -- two per canopy position within plot
+D2, plus one bottom scan from F3. `aggregate()` collapses those replicates into
+per-group means. Grouping by canopy position turns seven scans into three
+per-position mean spectra.
+
+The subtlety is metadata. Averaging a numeric column is obvious, but text
+columns (like `plot`) have no mean. Wrapping the metadata function in
+`try_keep_txt()` tells `aggregate()` to fall back to the unique text values
+instead of erroring or producing `NA` -- so the bottom-position mean correctly
+records that it came from plots `D2, F3`.
+
+```{r aggregate}
+agg = aggregate(acer_rs,
+                by       = meta(acer_rs)$position,
+                FUN      = mean,
+                FUN_meta = try_keep_txt(mean))
+
+agg
+meta(agg)
+```
+
+`split()` is the inverse operation: `split(acer_rs, meta(acer_rs)$position)`
+returns a list of one `spectra` per group, which is handy when you want to
+process groups independently before recombining them.
+
+## An honest caveat
+
+`spectrolab` deliberately does **not** track a `quantity` attribute on a
+`spectra` object. Nothing in `combine()` or `aggregate()` will stop you from
+stacking radiance on top of reflectance, or reflectance on top of digital
+numbers -- the band-grid guard checks wavelengths, not physical units. That
+responsibility is yours.
+
+The worked example above is safe because it lives entirely inside one dataset:
+Acer radiance, one species, one instrument. The three datasets from *The
+problem* are **not** mutually combinable -- `acer` is radiance, `serbin` is
+reflectance, `psr` is digital numbers -- and no resampling changes that.
+Merging across instruments is an advanced case that requires matching the
+quantity (convert to a common physical unit first) **and** the grid (resample
+to shared `new_bands`) before `combine()` is meaningful.
+
+## Before and after
+
+The payoff: ragged per-scan inputs on the left, one harmonized object on the
+right -- per-position mean spectra with 95% quantile ribbons, colored by canopy
+position.
+
+```{r payoff, fig.width=7.2, fig.height=3.8, message=FALSE}
+gp = group_palette(acer_rs, by = "position")   # named colors, by position level
+
+op = par(mfrow = c(1, 2), mar = c(4, 4, 2.5, 0.5))
+
+## Before: raw scans, overlapping detectors, colored by position
+plot(acer, col = species_cols(acer, by = "position"), lwd = 0.7,
+     cex.axis = 0.8, main = "Before: 7 raw scans")
+
+## After: harmonized per-position means with quantile ribbons
+plot(acer_rs, type = "n", cex.axis = 0.8, main = "After: harmonized means")
+for(p in names(gp$pal)){
+    sp = acer_rs[meta(acer_rs)$position == p, ]
+    plot_quantile(sp, col = adjustcolor(gp$pal[[p]], 0.25),
+                  border = FALSE, add = TRUE)
+}
+plot(agg, col = gp$pal[names(agg)], lwd = 2, add = TRUE)
+legend("topright", legend = names(gp$pal), col = gp$pal,
+       lwd = 2, bty = "n", cex = 0.8)
+
+par(op)
+```
+
+From a folder of overlapping-detector scans on a vendor grid to a single object
+on a clean 5-nm grid, with replicate scans averaged and their design metadata
+intact -- ready for analysis.

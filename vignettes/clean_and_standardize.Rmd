@@ -1,0 +1,325 @@
+---
+title: "Cleaning and standardizing spectra"
+author: "Jose Eduardo Meireles"
+date: "`r format(Sys.time(), '%B %Y')`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Cleaning and standardizing spectra}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+source("_common.R")
+library("spectrolab")
+```
+
+Raw leaf spectra are rarely analysis-ready. They carry sensor noise, they arrive
+on whatever band grid the instrument used, and they differ in overall brightness
+because of illumination geometry, leaf angle, and specular glare that have
+nothing to do with the biochemistry you care about. This vignette walks through
+`spectrolab`'s tools for fixing those three problems -- **smoothing**,
+**resampling**, and **normalizing** (plus **derivatives** along the way) -- and
+closes with the order in which to apply them.
+
+Every transform here takes a `spectra` object and returns one, and every one
+**requires strictly increasing bands**. If your data still carries overlapping
+sensor ranges, splice them with `match_sensors()` first (see the
+[Matching sensor overlap](match_sensors.html) vignette).
+
+We use the simulated `spec_matrix_example` dataset throughout -- 50 spectra,
+400-2500 nm, with 10 species encoded in the sample names. Because it is
+simulated, it is convenient for illustration but is not a substitute for real
+measurements.
+
+```{r, message = FALSE}
+s = as_spectra(spec_matrix_example, name_idx = 1)   # simulated: 50 samples, 10 species
+s
+
+one = s[1, ]   # a single spectrum, for the before/after smoothing panels
+```
+
+## Smoothing
+
+Smoothing suppresses band-to-band noise while preserving the shape of the
+spectrum. `smooth()` dispatches to four methods via its `method` argument:
+
+| `method`          | function             | idea |
+|-------------------|----------------------|------|
+| `"gaussian"` (default) | `smooth_fwhm()` | resample onto the same bands using a wider Gaussian FWHM (see [Resampling](#resampling-to-a-common-grid) below) |
+| `"spline"`         | `smooth_spline()`    | fit `stats::smooth.spline()` per sample |
+| `"moving_average"` | `smooth_moving_avg()`| simple moving average over `n` adjacent bands |
+| `"sgolay"`         | `smooth_sgolay()`    | Savitzky-Golay filter: a local polynomial fit over a moving window (requires the `signal` package) |
+
+```{r, fig.height=3.5, fig.width=7, eval = requireNamespace("signal", quietly = TRUE)}
+s_gauss = smooth(one, method = "gaussian")
+s_sg    = suppressMessages(smooth(one, method = "sgolay"))
+
+oldpar = par(no.readonly = TRUE)
+par(mfrow = c(1, 2))
+
+plot(one, lwd = 1, col = spec_muted, main = "Gaussian (default)")
+plot(s_gauss, add = TRUE, col = spec_pal[6], lwd = 1)
+
+plot(one, lwd = 1, col = spec_muted, main = "Savitzky-Golay")
+plot(s_sg, add = TRUE, col = spec_pal[1], lwd = 1)
+
+par(oldpar)
+```
+
+### The Savitzky-Golay filter in more detail
+
+`smooth_sgolay(x, p, n)` fits a degree-`p` polynomial over a moving window of
+`n` bands and replaces the center value with the fitted one. `n` must be odd
+and greater than `p`; the default, `n = p + 3 - p %% 2`, is deliberately small
+(5 bands, for the default `p = 3`) so it does very little smoothing until you
+widen the window:
+
+```{r, fig.height=3.5, fig.width=7, eval = requireNamespace("signal", quietly = TRUE)}
+s_narrow = smooth_sgolay(one, p = 3, n = 5)    # default-sized window
+s_wide   = smooth_sgolay(one, p = 3, n = 51)   # a much wider window
+
+oldpar = par(no.readonly = TRUE)
+par(mfrow = c(1, 2))
+
+plot(one, lwd = 1, col = spec_muted, main = "n = 5 (default-sized)")
+plot(s_narrow, add = TRUE, col = spec_pal[1], lwd = 1)
+
+plot(one, lwd = 1, col = spec_muted, main = "n = 51")
+plot(s_wide, add = TRUE, col = spec_pal[1], lwd = 1)
+
+par(oldpar)
+```
+
+Unlike a simple moving average, the Savitzky-Golay filter has full-length output
+at the edges (no bands are dropped there) because its polynomial fit is defined
+at every point in the window, including the boundary -- see the
+[Gotchas](#smoothing-gotchas) below for how `smooth_moving_avg()` differs.
+
+### Smoothing gotchas
+
+* **The `signal` package is required for `smooth_sgolay()` and
+  `deriv_spectra()`**, but it is only in `Suggests` -- if it is not installed
+  you get a clear error telling you to install it, rather than a cryptic one.
+* **The method name is `"sgolay"`**, not `"savitzky_golay"` or `"savgol"` --
+  matching the naming of the underlying `signal::sgolay()`/`sgolayfilt()`
+  functions it wraps.
+* **`smooth_moving_avg()` can silently drop bands.** Its moving average produces
+  `NA` at the edges (there are not enough neighbors to average there), and those
+  edge bands are then *removed* from the result -- your output can have fewer
+  bands than the input. The dropped values are stashed into metadata
+  (`save_bands_to_meta = TRUE`, the default) so they are not lost, just
+  relocated. `smooth_sgolay()` does not have this issue.
+* **Choose the Savitzky-Golay window (`n`) relative to your spectral
+  resolution**, not in the abstract: 5 bands means something very different on
+  1 nm-resolution data than on 10 nm data. The default is intentionally small;
+  widen it deliberately, and check the result visually as we did above.
+
+## Derivatives and the red edge
+
+`deriv_spectra(x, order)` computes the order-`order` derivative of each spectrum
+using the same Savitzky-Golay machinery (also requires `signal`). Derivatives
+emphasize subtle inflection points that are hard to see in raw reflectance.
+
+The classic example is the **red edge**: the steep rise in reflectance between
+the chlorophyll absorption in the red (~680 nm) and the bright NIR plateau
+(~750 nm). Its inflection point -- the wavelength of steepest slope -- shows up
+as a sharp peak in the **first derivative**, and its position shifts with
+chlorophyll content and physiological stress. That is exactly what a derivative
+exposes:
+
+```{r, fig.height=3.5, fig.width=7, eval = requireNamespace("signal", quietly = TRUE)}
+d1 = suppressMessages(deriv_spectra(one, order = 1))
+d2 = suppressMessages(deriv_spectra(one, order = 2))
+
+# The red-edge position: wavelength of the largest 1st-derivative value in the
+# red/NIR transition (roughly 680-760 nm).
+red_edge_win = bands(d1) >= 680 & bands(d1) <= 760
+rep_nm       = bands(d1)[red_edge_win][which.max(value(d1)[1, red_edge_win])]
+
+oldpar = par(no.readonly = TRUE)
+par(mfrow = c(1, 2))
+
+plot(d1, main = "1st derivative", col = spec_pal[4],
+     ylab = "dReflectance/dWavelength")
+abline(h = 0, col = spec_grid, lty = 2)
+abline(v = rep_nm, col = spec_pal[6], lwd = 1.5)
+text(rep_nm, max(value(d1)[1, ]), labels = paste0("red edge\n~", rep_nm, " nm"),
+     pos = 4, col = spec_pal[6], cex = 0.8)
+
+plot(d2, main = "2nd derivative", col = spec_pal[5],
+     ylab = "d2Reflectance/dWavelength2")
+abline(h = 0, col = spec_grid, lty = 2)
+
+par(oldpar)
+```
+
+`deriv_spectra()` (like `smooth_sgolay()` with a derivative order > 0) emits a
+message reminding you that the output is **no longer reflectance/radiance** --
+the y-axis units have changed. Pass `quiet = TRUE` once you know that. The
+values still flow into any downstream function (`normalize()`, the two-band
+spectral indices), so nothing stops you from processing them further; it is on
+you to remember what the axis now means.
+
+## Resampling to a common grid
+
+Different instruments -- or the same instrument at different settings -- report
+spectra on different band grids: different starting wavelength, spacing, or
+count. Before you can compare or combine them, you must bring them onto a common
+grid. `resample()` does this, but it is **not** naive linear interpolation: it
+models each new band as a **Gaussian-weighted average of nearby original
+bands**, using the **Full Width at Half Maximum (FWHM)** of the new band as the
+Gaussian's spread. This mimics how a real detector integrates light over a small
+window, rather than pretending the instrument measured an infinitely narrow
+slice at each wavelength.
+
+```{r, out.width="100%"}
+new_bands = seq(400, 2400, 5)
+fwhm      = make_fwhm(s, new_bands)
+
+s_resamp  = resample(s, new_bands = new_bands, fwhm = fwhm)
+
+plot(s, lwd = 0.5, col = spec_muted, main = "Original (grey) vs resampled (red)")
+plot(s_resamp, add = TRUE, lwd = 0.25, col = spec_pal[6])
+```
+
+### Where the FWHM comes from
+
+`resample()` needs one FWHM value per new band. `make_fwhm()` estimates a
+sensible one from the spacing of the *original* bands, resampled (via the same
+Gaussian model) onto the *new* grid, so a new band is never narrower than the
+data that feeds it.
+
+```{r}
+length(fwhm) == length(new_bands)   # one value per new band
+range(fwhm)
+```
+
+You can also supply your own FWHM (e.g. straight from the instrument's specs) --
+a single number recycled across all new bands, or one value per new band.
+
+### Resampling gotchas
+
+**`make_fwhm()`'s default `k` bins the FWHM into just 3 clusters.** By default
+`make_fwhm(spec, new_bands, k = 3)` runs a k-means step over the estimated FWHM
+values and replaces each with its cluster's center. This keeps the number of
+distinct resampling kernels small (cheaper to compute) when your new bands have
+only a couple of natural resolutions, but it means the returned FWHM is **not** a
+smooth function of wavelength even when the true one would be -- easy to mistake
+the clustering artifact for a property of your data. The effect is invisible for
+evenly spaced bands but obvious when they are not:
+
+```{r}
+# Dense in the VIS/NIR (2 nm), sparse in the SWIR (10 nm)
+uneven_bands = c(seq(400, 1000, 2), seq(1005, 2400, 10))
+
+fwhm_default = make_fwhm(s, uneven_bands)          # k = 3 (default)
+fwhm_full    = make_fwhm(s, uneven_bands, k = 0)   # no clustering
+
+length(unique(round(fwhm_default, 3)))  # only 3 distinct values...
+length(unique(round(fwhm_full, 3)))     # ...vs the true band-to-band variation
+```
+
+Set `k = 0` for the uncollapsed, per-band FWHM estimate.
+
+**Requested bands outside the original range are silently trimmed.**
+`resample()` will not invent data beyond the edges of what you measured. Any
+`new_bands` that fall (approximately) outside the original range are dropped,
+with a message -- not extrapolated, and no error:
+
+```{r}
+too_wide = seq(330, 2525, 5)
+s_trim   = resample(s, new_bands = too_wide, fwhm = make_fwhm(s, too_wide))
+
+range(bands(s))       # what we actually measured
+range(bands(s_trim))  # what we got back -- trimmed to fit
+```
+
+(Asking for bands *far* outside the original range -- tens of nanometers or more
+-- does not just trim: the Gaussian weights in `make_fwhm()` underflow to zero
+and it errors rather than returning nonsense. Either way, `resample()` will not
+extrapolate.)
+
+**Upsampling does not add real spectral detail.** Asking for a finer spacing
+than your instrument records (e.g. 1 nm data to 0.1 nm) runs without error and
+produces smoothly interpolated values, but it cannot recover detail the sensor
+never captured. Treat upsampled data as a smoother *display* of the original
+measurement, not as new information.
+
+## Normalizing
+
+Two leaves of the same species, measured moments apart, can differ by tens of
+percent in overall brightness purely because of illumination geometry and
+specular glare -- variation that swamps the biochemical signal you want.
+**Vector normalization** removes it by dividing each spectrum by its own
+magnitude (`sqrt(sum(value^2))`), so every spectrum has unit length and only its
+*shape* remains.
+
+```{r}
+s_norm = normalize(s)
+```
+
+The payoff is clearest on the full dataset colored by species: before
+normalizing, spectra of one species fan out vertically by brightness; after, the
+within-species bands collapse and the species separate by shape alone.
+
+```{r, fig.height=4, fig.width=8}
+cols = species_cols(s)
+
+oldpar = par(no.readonly = TRUE)
+par(mfrow = c(1, 2))
+
+plot(s, lwd = 0.6, col = cols, main = "Raw (brightness scatter)")
+
+plot(s_norm, lwd = 0.6, col = cols, main = "Vector normalized (shape only)")
+
+par(oldpar)
+```
+
+The same tightening is visible as shrinking quantile envelopes. Here are the
+95% per-band ribbons for one species before and after -- the normalized ribbon
+is markedly narrower:
+
+```{r, fig.height=3.5, fig.width=7}
+sp        = names(s)[1]
+one_sp    = s[names(s) == sp, ]
+one_sp_n  = s_norm[names(s_norm) == sp, ]
+
+oldpar = par(no.readonly = TRUE)
+par(mfrow = c(1, 2))
+
+plot_quantile(one_sp, total_prob = 0.95, col = spec_region_tints[2],
+              border = spec_pal[2], main = paste(sp, "- raw"))
+plot_quantile(one_sp_n, total_prob = 0.95, col = spec_region_tints[1],
+              border = spec_pal[1], main = paste(sp, "- normalized"))
+
+par(oldpar)
+```
+
+`normalize()` messages that the y values are no longer true reflectance (pass
+`quiet = TRUE` to silence it) and stashes each spectrum's original magnitude in
+metadata as `normalization_magnitude`, so the brightness you divided out is
+recorded rather than lost.
+
+## Recommended order
+
+These steps compose, and the order matters. A sensible default pipeline is:
+
+1. **`match_sensors()`** -- splice overlapping detector ranges so bands become
+   strictly increasing. Everything downstream requires this.
+2. **`smooth()`** -- suppress band-to-band noise on the native grid.
+3. **`deriv_spectra()`** *(optional)* -- if your analysis works on derivatives
+   (e.g. red-edge position), compute them here, remembering the y-axis is no
+   longer reflectance.
+4. **`resample()`** -- bring every spectrum onto the common band grid you will
+   analyze on.
+5. **`normalize()`** *(optional)* -- remove overall brightness so comparisons
+   reflect spectral shape.
+
+Every one of steps 2-5 requires **strictly increasing bands**, which is why
+`match_sensors()` comes first. When in doubt, plot after each step: these
+transforms are cheap, and a quick before/after view catches most mistakes before
+they reach your analysis.

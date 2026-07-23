@@ -1,0 +1,339 @@
+---
+title: "Estimating leaf traits with PLSR"
+author: "Jose Eduardo Meireles"
+date: "`r format(Sys.time(), '%B %Y')`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Estimating leaf traits with PLSR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+source("_common.R")
+library("spectrolab")
+```
+
+```{r, echo=FALSE}
+if(!requireNamespace("pls", quietly = TRUE)){
+    knitr::asis_output("The **pls** package is required to build this vignette. Install it with `install.packages(\"pls\")`.")
+    knitr::knit_exit()
+}
+```
+
+```{r}
+library("pls")
+```
+
+## The idea
+
+Leaf reflectance carries a fingerprint of a plant's chemistry and structure:
+water and dry matter absorb in the shortwave infrared, pigments absorb in the
+visible, and internal structure scatters in the near infrared. Because those
+signals are spread across many strongly-correlated bands, the workhorse for
+turning spectra into trait estimates is **Partial Least Squares Regression
+(PLSR)**. PLSR builds a handful of latent components that capture the directions
+in the spectrum most predictive of the trait, side-stepping the fact that you
+have far more bands than samples.
+
+`spectrolab` is the **data layer** here: it reads, cleans, aligns, and carries
+your spectra as a tidy `spectra` object. The heavy modeling machinery
+(cross-validated component selection, jackknifed coefficients, ensembles) is
+intentionally *not* baked into `spectrolab` -- that belongs in the planned
+`spectrolab.models` companion. This vignette is the bridge: it shows how to hand
+a `spectra` object to `pls`, fit a model, and -- the part people get wrong --
+**apply the fitted coefficients back to new spectra correctly**.
+
+We use the bundled `spec_matrix_example` (50 samples, 400--2500 nm,
+reflectance-like) and **simulate** two traits so the whole workflow is
+reproducible and honest about what "recovering a trait" means.
+
+```{r}
+s = as_spectra(spec_matrix_example, name_idx = 1)
+s
+```
+
+## Simulating example traits
+
+We invent two traits as a **linear function of a few physically-motivated
+bands** plus calibrated Gaussian noise. LMA (leaf mass per area) is driven by
+shortwave-infrared dry-matter/water bands; chlorophyll by a green/red-edge
+contrast. The band predictors are mean-centered so the intercept reads as the
+mean trait value, and the noise is tuned so PLSR recovers the traits at a
+realistic test-set R² (~0.85--0.92), **not** a suspiciously perfect ~1.0.
+
+```{r}
+## #############################################################################
+## ## SIMULATED TRAITS -- replace this block with your measured LMA/Chl        ##
+## ## The weights and noise below are ILLUSTRATIVE, not real calibrations.     ##
+## #############################################################################
+simulate_traits = function(s){
+    set.seed(1)
+    X = as.matrix(s)                                   # 50 x 2101, cols named by band
+    b = function(nm) X[, which.min(abs(as.numeric(colnames(X)) - nm))]
+    n = nrow(X)
+
+    ## LMA (g/m^2): SWIR dry-matter / water bands
+    lma = 120 + 900*(b(1730) - mean(b(1730))) +
+                700*(b(1980) - mean(b(1980))) + rnorm(n, 0, 6)
+
+    ## Chl (ug/cm^2): green vs red-edge contrast
+    chl =  45 + 2100*(b(550) - mean(b(550))) -
+                2800*(b(705) - mean(b(705))) + rnorm(n, 0, 4)
+
+    data.frame(LMA = lma, Chl = chl)
+}
+
+traits = simulate_traits(s)
+summary(traits)
+```
+
+The simulated ranges (LMA ~85--145 g/m², Chl ~20--75 µg/cm²) are in the right
+ballpark for real leaves, but the numbers are fabricated. Everything downstream
+works identically on measured traits -- just drop your own `data.frame` in
+place of `traits`, with one row per sample in `s`.
+
+## Fitting
+
+We hold out a test set the model never sees, then fit a **multivariate** PLSR
+(both traits at once) on the training spectra. `pls::plsr()` accepts the trait
+matrix as the response and the spectral matrix as the predictor.
+
+```{r}
+set.seed(42)
+train = sort(sample(nrow(s), 35))
+test  = setdiff(seq_len(nrow(s)), train)
+
+Xtrain = as.matrix(s[train, ])       # 35 x 2101, bands as columns
+Ytrain = as.matrix(traits[train, ])  # 35 x 2   (LMA, Chl)
+Xtest  = as.matrix(s[test, ])
+Ytest  = as.matrix(traits[test, ])
+
+fit = pls::plsr(Ytrain ~ Xtrain, ncomp = 15, validation = "LOO")
+```
+
+### Choosing the number of components
+
+Too few components underfit; too many overfit. We pick the number that
+minimizes the cross-validated error. `pls::selectNcomp()`'s one-sigma heuristic
+only supports a *univariate* response, so for a multivariate fit we minimize the
+**average relative RMSEP** across traits directly (each trait's RMSEP is scaled
+by its own intercept-only error so the two traits, which live on different
+scales, count equally).
+
+```{r, fig.height = 4.2}
+pls::validationplot(fit, val.type = "RMSEP", legendpos = "topright")
+
+cv = pls::RMSEP(fit, estimate = "CV")$val[1, , ]   # traits x (0..ncomp)
+k  = which.min(colMeans(cv / cv[, 1])) - 1
+k
+```
+
+## Validating
+
+The honest performance number is on the **held-out test set**, not the training
+fit. We predict the test spectra and compare observed vs predicted.
+
+```{r}
+pred_test = predict(fit, ncomp = k, newdata = Xtest)[, , 1]   # 15 x 2
+
+perf = function(obs, prd){
+    c(R2   = cor(obs, prd)^2,
+      RMSE = sqrt(mean((obs - prd)^2)),
+      bias = mean(prd - obs))
+}
+round(t(sapply(colnames(Ytest), function(j) perf(Ytest[, j], pred_test[, j]))), 3)
+```
+
+```{r, fig.width = 7, fig.height = 3.8}
+op = par(mfrow = c(1, 2), mar = c(4, 4, 2, 1))
+for(j in seq_along(colnames(Ytest))){
+    tr = colnames(Ytest)[j]
+    o  = Ytest[, tr]; p = pred_test[, tr]
+    lim = range(o, p)
+    plot(o, p, xlim = lim, ylim = lim, pch = 19, col = spec_pal[j],
+         xlab = paste("observed", tr), ylab = paste("predicted", tr),
+         main = sprintf("%s  (R2 = %.2f)", tr, cor(o, p)^2))
+    abline(0, 1, col = spec_muted, lwd = 2)   # 1:1 line
+}
+par(op)
+```
+
+The points hug the 1:1 line with the scatter we deliberately built in -- a
+believable model, not a memorized one.
+
+## The coefficient spectra
+
+A fitted PLSR is, in the end, **one coefficient per band per trait**. Plotting
+those coefficients over wavelength shows *which* bands the model leans on. We
+color by sign with the diverging palette (`spec_div`) and shade the canonical
+spectral regions with `plot_regions()`.
+
+```{r, fig.width = 7, fig.height = 5}
+B = coef(fit, ncomp = k)          # 2101 x 2 x 1 array (no intercept)
+wl = bands(s)
+
+div_cols = function(v){
+    rng = max(abs(v))
+    idx = round((v / rng + 1) / 2 * 254) + 1     # -max -> 1 (blue), +max -> 255 (red)
+    spec_div(255)[idx]
+}
+
+op = par(mfrow = c(2, 1), mar = c(4, 4, 2, 1))
+for(j in seq_len(dim(B)[2])){
+    tr = dimnames(B)[[2]][j]
+    bc = B[, j, 1]
+    plot(wl, bc, type = "n", xlab = "wavelength (nm)",
+         ylab = paste(tr, "coefficient"), main = tr)
+    plot_regions(s, col = spec_region_tints)     # shaded VIS/NIR/SWIR1/SWIR2
+    abline(h = 0, col = spec_muted)
+    points(wl, bc, col = div_cols(bc), pch = 19, cex = 0.35)
+}
+par(op)
+```
+
+Read these as *where the trait signal lives*. The LMA coefficients carry weight
+in the SWIR (the dry-matter/water bands we built in), while the Chl coefficients
+concentrate in the visible / red-edge. Note that PLSR **smears** weight across
+neighboring, highly-correlated bands rather than spiking at a single wavelength
+-- so treat the coefficient spectrum as a region-level story, not a claim about
+individual bands.
+
+## Applying the model to new spectra
+
+This is the section people get wrong. A PLSR prediction is just
+`intercept + spectrum %*% slopes`. Get the intercept, the band alignment, or the
+matrix orientation wrong and you get confidently wrong numbers.
+
+Ask for the coefficients **with the intercept** via `intercept = TRUE`. For a
+multivariate fit this returns a `(p+1) x q x 1` array whose first row is the
+per-trait intercept.
+
+```{r}
+newspec = s[test, ]                              # pretend these are "new" leaves
+Bi   = coef(fit, ncomp = k, intercept = TRUE)    # (2101+1) x 2 x 1
+Bmat = Bi[, , 1]                                 # 2102 x 2 ; row 1 = intercept
+dim(Bmat)
+```
+
+Predict by prepending a column of 1s (for the intercept) to the spectral matrix
+and multiplying:
+
+```{r}
+Xnew = as.matrix(newspec)
+pred = cbind(1, Xnew) %*% Bmat                   # n x 2
+
+## Verify it is byte-for-byte what predict() computes.
+stopifnot(all.equal(unname(pred),
+                    unname(predict(fit, ncomp = k, newdata = Xnew)[, , 1]),
+                    tolerance = 1e-8))
+```
+
+The `stopifnot()` passes: our hand-rolled prediction equals `predict()`.
+
+### The spectrolab-native form
+
+`spectrolab` overloads `%*%` for `spectra` (see `?\`%*%.spectra\``), so you can
+multiply a `spectra` object directly by the *slope* block and then add the
+intercept. It returns a **plain matrix**, since rows are samples but columns are
+now traits, not bands.
+
+```{r}
+pred_native = newspec %*% Bmat[-1, ]             # spectra %*% slopes  -> matrix
+pred_native = sweep(pred_native, 2, Bmat[1, ], "+")   # add per-trait intercept
+
+stopifnot(all.equal(unname(pred_native), unname(pred), tolerance = 1e-8))
+class(pred_native)
+```
+
+### Band alignment is your job
+
+The coefficient vector is indexed **by position**, not by band label. If a new
+spectrum sits on a different band grid, the multiplication is either an error or
+-- worse -- silently meaningless. Suppose the new data came off a coarser
+instrument:
+
+```{r}
+coarse = resample(newspec, seq(400, 2500, by = 5), fwhm = 5)  # 5 nm grid
+c(coarse = length(bands(coarse)), model = length(bands(s)))
+```
+
+Predicting directly fails, because 421 bands cannot multiply a 2101-band
+coefficient block:
+
+```{r, error = TRUE}
+cbind(1, as.matrix(coarse)) %*% Bmat
+```
+
+The fix is to resample **back onto the model's band grid** before predicting:
+
+```{r}
+fixed      = resample(coarse, bands(s), fwhm = 1)   # back to the model's 1 nm grid
+pred_fixed = cbind(1, as.matrix(fixed)) %*% Bmat
+round(cor(Ytest[, "LMA"], pred_fixed[, "LMA"])^2, 3)
+```
+
+### Reattaching predictions
+
+`%*%` and the manual form both return a **plain matrix** with no sample names,
+so reattach identity yourself -- set row names from the spectra, then bind to a
+`data.frame` with any grouping you need.
+
+```{r}
+rownames(pred) = names(newspec)
+predicted = data.frame(species = names(newspec), pred, row.names = NULL)
+head(predicted)
+```
+
+## Predicted traits across species
+
+With predictions back in a `data.frame`, ordinary R plots the rest. Here are the
+predicted traits by species, colored with the shared `species_cols()` helper.
+
+```{r, fig.width = 7, fig.height = 4}
+sp   = factor(predicted$species)
+pal  = species_cols(newspec)[!duplicated(predicted$species)]
+names(pal) = predicted$species[!duplicated(predicted$species)]
+
+op = par(mfrow = c(1, 2), mar = c(6, 4, 2, 1))
+for(tr in c("LMA", "Chl")){
+    boxplot(predicted[[tr]] ~ sp, col = pal[levels(sp)],
+            xlab = "", ylab = tr, main = paste("predicted", tr),
+            las = 2, cex.axis = 0.7)
+}
+par(op)
+```
+
+(With only a couple of samples per species in this toy set, read the spread with
+caution -- the point is the *plumbing*, not the ecology.)
+
+## Gotchas
+
+- **The intercept is mandatory.** Dropping it does not just shift the answer a
+  little; it removes the entire baseline. Watch the bias explode:
+
+    ```{r}
+    pred_no_intercept = as.matrix(newspec) %*% Bmat[-1, ]     # forgot the 1s column
+    round(mean(pred_no_intercept[, "LMA"] - Ytest[, "LMA"]), 1)   # huge bias
+    ```
+
+- **Band alignment is on you.** Coefficients are position-indexed. Always
+  `resample()` new spectra onto the model's exact `bands()` grid first; a
+  mismatch is an error at best and nonsense at worst.
+- **`%*%` returns a plain matrix**, not a `spectra` -- because the columns are
+  traits, not bands. Reattach sample names and metadata yourself.
+- **Never apply a reflectance model to radiance or raw DN.** The bundled Acer
+  files, for instance, are *radiance*; a model trained on reflectance would
+  produce garbage. Match the physical quantity (`quantity()`), band grid, and
+  units before predicting.
+- **Small n.** With 35 training samples this is a demo, not a calibration. Real
+  trait models need many more samples, spatially/temporally independent
+  validation, and ideally jackknifed uncertainty.
+- **These traits are simulated.** The weights and noise were chosen to make the
+  workflow reproducible -- they are not a real LMA or chlorophyll calibration.
+- **A unified alternative.** `caret::train(method = "pls")` wraps `pls` with
+  built-in resampling and tuning if you want a single interface for
+  cross-validation and preprocessing.
