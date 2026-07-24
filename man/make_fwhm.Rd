@@ -2,24 +2,31 @@
 % Please edit documentation in R/resample.R
 \name{make_fwhm}
 \alias{make_fwhm}
-\title{Resample the FWHM to a new set of bands using a gaussian model}
+\title{Estimate the effective FWHM of resampled spectra}
 \usage{
-make_fwhm(spec, new_bands, new_fwhm = NULL, return_type = "max", k = 3)
+make_fwhm(spec, new_bands, new_fwhm = NULL, return_type = "max")
 }
 \arguments{
 \item{spec}{spectra object}
 
 \item{new_bands}{band values to resample the spectra to}
 
-\item{new_fwhm}{FWHM for the new bands}
+\item{new_fwhm}{FWHM for the new bands. When \code{NULL} (default) it is
+derived from the spacing of \code{new_bands} using the midpoint rule.}
 
-\item{return_type}{either "max" or "old". If "old" (default), it returns the fwhm inferred from the original's spectra bands. If max (default), it returns the max between the new and old fwhm.}
-
-\item{k}{number of unique FHWM to estimate}
+\item{return_type}{either "max" (default) or "old". If "old", returns the
+FWHM propagated from the original spectra's bands. If "max", returns the
+larger of the new and propagated FWHM for each band.}
 }
 \value{
-FWHM as a numeric vector
+FWHM as a numeric vector, one per new band
 }
 \description{
-Resample the FWHM to a new set of bands using a gaussian model
+Estimates the Full Width at Half Maximum that a spectrum resampled onto
+\code{new_bands} would effectively carry. This is a *metadata* heuristic
+describing the resampled bandpass; it is not part of the value resampling done
+by \code{\link{resample}}. The original sensor FWHM (derived from band spacing
+with the midpoint rule when not supplied) is smeared onto \code{new_bands}
+with a Gaussian weighting, and by default the larger of the requested and the
+propagated FWHM is returned for each band.
 }

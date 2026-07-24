@@ -4,18 +4,45 @@
 \alias{resample}
 \title{Resample spectra}
 \usage{
-resample(spec, new_bands, fwhm)
+resample(spec, new_bands, fwhm, src_fwhm = NULL, coverage_min = 0.5)
 }
 \arguments{
 \item{spec}{spectra object}
 
 \item{new_bands}{band values to resample the spectra to}
 
-\item{fwhm}{FWHM for the new bands}
+\item{fwhm}{FWHM for the new (destination) bands. Either a single value
+broadcast to every new band, or one value per new band.}
+
+\item{src_fwhm}{FWHM (boxcar width) of the *source* bands. When \code{NULL}
+(default) it is derived from the spacing of the source bands with the
+midpoint rule. Power users with known instrument bandpass metadata can pass
+a single value or one value per source band.}
+
+\item{coverage_min}{minimum fraction of a destination band's Gaussian
+response that must be covered by source bands for the resampled value to be
+returned; below it the band is set to \code{NA}. Defaults to 0.5.}
 }
 \value{
 resampled spectra
 }
 \description{
-Resample spectra
+Resamples spectra onto \code{new_bands} using an overlap-integral model: each
+*source* band is treated as a boxcar of width equal to its own FWHM, and each
+*destination* band as a Gaussian response centered at the new band with
+\code{sigma = fwhm / (2 * sqrt(2 * log(2)))}. The unnormalized weight of
+source band \eqn{i} in destination band \eqn{j} is the Gaussian mass that
+falls inside the source boxcar,
+\deqn{w_{ij} = \Phi\!\left(\frac{b_i + f_i/2 - t_j}{\sigma_j}\right) -
+              \Phi\!\left(\frac{b_i - f_i/2 - t_j}{\sigma_j}\right),}
+and the weights are then normalized per destination band. Carrying the source
+band width as a \eqn{\Delta\lambda} weight removes the bias that a pure
+point-sampled ("delta function") kernel shows at detector-boundary spacing
+jumps on non-uniform grids.
+}
+\details{
+Destination bands whose total (unnormalized) covered mass falls below
+\code{coverage_min} -- typically those beyond the source range or inside a
+gap -- are returned as \code{NA} with a single warning, rather than being
+silently trimmed away.
 }

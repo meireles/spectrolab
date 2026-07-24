@@ -203,45 +203,26 @@ a single number recycled across all new bands, or one value per new band.
 
 ### Resampling gotchas
 
-**`make_fwhm()`'s default `k` bins the FWHM into just 3 clusters.** By default
-`make_fwhm(spec, new_bands, k = 3)` runs a k-means step over the estimated FWHM
-values and replaces each with its cluster's center. This keeps the number of
-distinct resampling kernels small (cheaper to compute) when your new bands have
-only a couple of natural resolutions, but it means the returned FWHM is **not** a
-smooth function of wavelength even when the true one would be -- easy to mistake
-the clustering artifact for a property of your data. The effect is invisible for
-evenly spaced bands but obvious when they are not:
-
-```{r}
-# Dense in the VIS/NIR (2 nm), sparse in the SWIR (10 nm)
-uneven_bands = c(seq(400, 1000, 2), seq(1005, 2400, 10))
-
-fwhm_default = make_fwhm(s, uneven_bands)          # k = 3 (default)
-fwhm_full    = make_fwhm(s, uneven_bands, k = 0)   # no clustering
-
-length(unique(round(fwhm_default, 3)))  # only 3 distinct values...
-length(unique(round(fwhm_full, 3)))     # ...vs the true band-to-band variation
-```
-
-Set `k = 0` for the uncollapsed, per-band FWHM estimate.
-
-**Requested bands outside the original range are silently trimmed.**
-`resample()` will not invent data beyond the edges of what you measured. Any
-`new_bands` that fall (approximately) outside the original range are dropped,
-with a message -- not extrapolated, and no error:
+**Requested bands outside the original range come back as `NA`.**
+`resample()` will not invent data beyond the edges of what you measured. Each new
+band is a Gaussian response, and `resample()` checks how much of that response is
+actually covered by original bands. Any `new_bands` whose coverage falls below
+`coverage_min` (default `0.5`) -- those past the edges of the measured range, or
+inside a gap -- are returned as `NA` with a warning. The requested grid is always
+kept intact, so the result lines up with the grid you asked for:
 
 ```{r}
 too_wide = seq(330, 2525, 5)
-s_trim   = resample(s, new_bands = too_wide, fwhm = make_fwhm(s, too_wide))
+s_wide   = suppressWarnings(resample(s, new_bands = too_wide, fwhm = 5))
 
-range(bands(s))       # what we actually measured
-range(bands(s_trim))  # what we got back -- trimmed to fit
+range(bands(s))                  # what we actually measured
+range(bands(s_wide))             # the full requested grid is preserved ...
+sum(is.na(value(s_wide)[1, ]))   # ... but the out-of-range bands are NA
 ```
 
-(Asking for bands *far* outside the original range -- tens of nanometers or more
--- does not just trim: the Gaussian weights in `make_fwhm()` underflow to zero
-and it errors rather than returning nonsense. Either way, `resample()` will not
-extrapolate.)
+`NA` propagates honestly through downstream workflows instead of pretending the
+sensor measured something it did not -- drop the `NA` bands yourself if you want
+a compact object.
 
 **Upsampling does not add real spectral detail.** Asking for a finer spacing
 than your instrument records (e.g. 1 nm data to 0.1 nm) runs without error and

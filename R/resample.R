@@ -2,15 +2,32 @@
 # Internal Functions
 ################################################################################
 
-#' Get the FWHM from the difference between band values
+#' Derive per-band FWHM from band spacing using the midpoint rule
 #'
-#' @param bands band values. numeric
+#' Estimates the Full Width at Half Maximum of each band from the spacing of its
+#' neighbours: the interior bands get the centered difference
+#' \code{(b[i+1] - b[i-1]) / 2}, and the two end bands get the one-sided
+#' difference. On a uniform grid this is just the band spacing; on a non-uniform
+#' grid it doubles as the wavelength-interval (\eqn{\Delta\lambda}) weight used
+#' when resampling, which is what removes the bias at detector-boundary spacing
+#' jumps. This is the same default SpectralPython uses.
 #'
-#' @return FWHM as a numeric vector
+#' @param bands band values. numeric, length >= 2
+#'
+#' @return FWHM as a numeric vector, one per band
 #' @keywords internal
-fwhm_from_band_diff = function(bands){
-    wave_diff = diff(bands)
-    c(wave_diff[1], wave_diff)
+i_fwhm_midpoint = function(bands){
+    n = length(bands)
+    if(n < 2){
+        stop("need at least two bands to derive a FWHM from band spacing")
+    }
+    f      = numeric(n)
+    f[1]   = bands[2] - bands[1]
+    f[n]   = bands[n] - bands[n - 1]
+    if(n > 2){
+        f[2:(n - 1)] = (bands[3:n] - bands[1:(n - 2)]) / 2
+    }
+    f
 }
 
 #' Resample the FWHM to a new set of bands using a gaussian model
@@ -20,19 +37,17 @@ fwhm_from_band_diff = function(bands){
 #' @param new_bands band values for the resampled spectra
 #' @param new_fwhm FWHM for the resampled spectra
 #' @param return_type Either "max" (default) or "old". Max returns the maximum from either the old or the new FWHM for each band
-#' @param k number of FWHM categories. Defaults to 0, which means, return the FWHM in as much detail as possible.
 #'
 #' @return a numeric vector of FWHM estimates
 #'
-#' @importFrom stats dnorm kmeans
+#' @importFrom stats dnorm
 #'
 #' @keywords internal
 i_make_fwhm = function(old_bands,
                        old_fwhm,
                        new_bands,
                        new_fwhm,
-                       return_type = "max",
-                       k           = 0){
+                       return_type = "max"){
 
     # Standard deviation from FWHM
     sigma0 = new_fwhm / (2 * sqrt(2 * log(2)))
@@ -51,17 +66,6 @@ i_make_fwhm = function(old_bands,
         stop("return_type must be either 'max' or 'old'")
     }
 
-    # Optionally quantize the FWHM into k clusters (k = 0 leaves it untouched).
-    if(k > 0){
-        n_unique = length(unique(fwhm))
-        if(k > n_unique){
-            k = n_unique
-            message("setting k to the number of unique band diff values")
-        }
-        clust = stats::kmeans(fwhm, k)
-        fwhm  = clust$centers[clust$cluster, 1]
-    }
-
     names(fwhm)  = new_bands
     return(fwhm)
 }
@@ -70,36 +74,44 @@ i_make_fwhm = function(old_bands,
 # Exported Functions
 ################################################################################
 
-#' Resample the FWHM to a new set of bands using a gaussian model
+#' Estimate the effective FWHM of resampled spectra
+#'
+#' Estimates the Full Width at Half Maximum that a spectrum resampled onto
+#' \code{new_bands} would effectively carry. This is a *metadata* heuristic
+#' describing the resampled bandpass; it is not part of the value resampling done
+#' by \code{\link{resample}}. The original sensor FWHM (derived from band spacing
+#' with the midpoint rule when not supplied) is smeared onto \code{new_bands}
+#' with a Gaussian weighting, and by default the larger of the requested and the
+#' propagated FWHM is returned for each band.
 #'
 #' @param spec spectra object
 #' @param new_bands band values to resample the spectra to
-#' @param new_fwhm FWHM for the new bands
-#' @param return_type either "max" or "old". If "old" (default), it returns the fwhm inferred from the original's spectra bands. If max (default), it returns the max between the new and old fwhm.
-#' @param k number of unique FHWM to estimate
+#' @param new_fwhm FWHM for the new bands. When \code{NULL} (default) it is
+#'   derived from the spacing of \code{new_bands} using the midpoint rule.
+#' @param return_type either "max" (default) or "old". If "old", returns the
+#'   FWHM propagated from the original spectra's bands. If "max", returns the
+#'   larger of the new and propagated FWHM for each band.
 #'
-#' @return FWHM as a numeric vector
+#' @return FWHM as a numeric vector, one per new band
 #' @export
 make_fwhm = function(spec,
                      new_bands,
-                     new_fwhm = NULL,
-                     return_type     = "max",
-                     k               = 3){
+                     new_fwhm    = NULL,
+                     return_type = "max"){
     if( !is_spectra(spec) ){
         stop("Object must be of class spectra")
     }
     if(is.null(new_fwhm)){
-        new_fwhm = fwhm_from_band_diff(new_bands)
+        new_fwhm = i_fwhm_midpoint(new_bands)
     }
 
     b = bands(spec)
 
-    fwhm = i_make_fwhm(old_bands = b,
-                       old_fwhm = fwhm_from_band_diff(b),
-                       new_bands = new_bands,
-                       new_fwhm = new_fwhm,
-                       return_type     = return_type,
-                       k               = k)
+    fwhm = i_make_fwhm(old_bands   = b,
+                       old_fwhm    = i_fwhm_midpoint(b),
+                       new_bands   = new_bands,
+                       new_fwhm    = new_fwhm,
+                       return_type = return_type)
 
     return(fwhm)
 }
@@ -107,16 +119,46 @@ make_fwhm = function(spec,
 
 #' Resample spectra
 #'
+#' Resamples spectra onto \code{new_bands} using an overlap-integral model: each
+#' *source* band is treated as a boxcar of width equal to its own FWHM, and each
+#' *destination* band as a Gaussian response centered at the new band with
+#' \code{sigma = fwhm / (2 * sqrt(2 * log(2)))}. The unnormalized weight of
+#' source band \eqn{i} in destination band \eqn{j} is the Gaussian mass that
+#' falls inside the source boxcar,
+#' \deqn{w_{ij} = \Phi\!\left(\frac{b_i + f_i/2 - t_j}{\sigma_j}\right) -
+#'               \Phi\!\left(\frac{b_i - f_i/2 - t_j}{\sigma_j}\right),}
+#' and the weights are then normalized per destination band. Carrying the source
+#' band width as a \eqn{\Delta\lambda} weight removes the bias that a pure
+#' point-sampled ("delta function") kernel shows at detector-boundary spacing
+#' jumps on non-uniform grids.
+#'
+#' Destination bands whose total (unnormalized) covered mass falls below
+#' \code{coverage_min} -- typically those beyond the source range or inside a
+#' gap -- are returned as \code{NA} with a single warning, rather than being
+#' silently trimmed away.
+#'
 #' @param spec spectra object
 #' @param new_bands band values to resample the spectra to
-#' @param fwhm FWHM for the new bands
+#' @param fwhm FWHM for the new (destination) bands. Either a single value
+#'   broadcast to every new band, or one value per new band.
+#' @param src_fwhm FWHM (boxcar width) of the *source* bands. When \code{NULL}
+#'   (default) it is derived from the spacing of the source bands with the
+#'   midpoint rule. Power users with known instrument bandpass metadata can pass
+#'   a single value or one value per source band.
+#' @param coverage_min minimum fraction of a destination band's Gaussian
+#'   response that must be covered by source bands for the resampled value to be
+#'   returned; below it the band is set to \code{NA}. Defaults to 0.5.
 #'
 #' @return resampled spectra
+#'
+#' @importFrom stats pnorm
 #'
 #' @export
 resample = function(spec,
                     new_bands,
-                    fwhm) {
+                    fwhm,
+                    src_fwhm     = NULL,
+                    coverage_min = 0.5) {
 
     if( !is_spectra(spec) ){
         stop("Object must be of class spectra")
@@ -125,6 +167,7 @@ resample = function(spec,
     bands        = bands(spec)
     reflectance  = value(spec)
 
+    ## Broadcast or validate the destination FWHM
     if(length(fwhm) == 1){
         fwhm = rep(fwhm, length.out = length(new_bands))
     } else if (length(fwhm) == length(new_bands)){
@@ -138,31 +181,48 @@ resample = function(spec,
         stop("resample requires strictly increasing band values.\nMatch sensor overlap before attempting to resample the spectra.")
     }
 
-    margin       = fwhm/4
-    band_range   = range(bands(spec)) + c(-head(margin, 1), tail(margin, 1))
-    within_range = which(new_bands > band_range[1] & new_bands < band_range[2])
-
-    if(length(within_range) < length(new_bands)){
-        message("trimmed new band values to fall within the range of the original bands.")
+    ## Source-band widths (boxcar FWHM). Default: midpoint rule, which also acts
+    ## as the wavelength-interval weight.
+    if(is.null(src_fwhm)){
+        src_fwhm = i_fwhm_midpoint(bands)
+    } else if(length(src_fwhm) == 1){
+        src_fwhm = rep(src_fwhm, length.out = length(bands))
+    } else if(length(src_fwhm) != length(bands)){
+        stop("provide a single src_fwhm value or one for each source band")
     }
 
-    new_bands = new_bands[within_range]
-    fwhm      = fwhm[within_range]
-
-    # Standard deviation from FWHM
+    # Standard deviation from FWHM (destination Gaussian response)
     sigma = fwhm / (2 * sqrt(2 * log(2)))
 
-    # Gaussian kernel mapping bands to new bands
-    gauss_kernel = outer(bands,
-                         seq_along(new_bands) ,  # Indices to iterate over means and sds
-                         function(x, i){
-                             stats::dnorm(x, mean = new_bands[i], sd = sigma[i])
-                        })
-    # Normalize gaussian kernel weights
-    gauss_kernel = sweep(gauss_kernel, 2, colSums(gauss_kernel), "/")
+    # Overlap integral of each destination Gaussian with each source boxcar:
+    # w_ij = Phi((b_i + f_i/2 - t_j)/sigma_j) - Phi((b_i - f_i/2 - t_j)/sigma_j)
+    box_lo = bands - src_fwhm / 2
+    box_hi = bands + src_fwhm / 2
+
+    upper = outer(box_hi, seq_along(new_bands),
+                  function(x, j) stats::pnorm((x - new_bands[j]) / sigma[j]))
+    lower = outer(box_lo, seq_along(new_bands),
+                  function(x, j) stats::pnorm((x - new_bands[j]) / sigma[j]))
+    gauss_kernel = upper - lower
+
+    # Coverage = total unnormalized mass per destination band. A non-finite
+    # coverage (e.g. a NaN/NA fwhm from make_fwhm at a far out-of-range band)
+    # counts as uncovered rather than poisoning the logical index below.
+    coverage  = colSums(gauss_kernel)
+    uncovered = !is.finite(coverage) | coverage < coverage_min
+
+    # Normalize the weights per destination band.
+    gauss_kernel = sweep(gauss_kernel, 2, coverage, "/")
 
     # Compute the resampled reflectance
     resampled_reflectance = reflectance %*% gauss_kernel
+
+    # Under-covered destination bands are honestly NA, not silently trimmed.
+    if(any(uncovered)){
+        resampled_reflectance[ , uncovered] = NA
+        warning(sum(uncovered),
+                " new band(s) fell outside the source coverage and were set to NA.")
+    }
 
     # Create the resulting spectra object
     s = spectra(value = resampled_reflectance,

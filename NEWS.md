@@ -1,6 +1,26 @@
 # spectrolab 0.0.20 (development)
 
 ## major
+* **[BEHAVIOR CHANGE]** `resample()` now uses an overlap-integral model instead
+  of a point-sampled Gaussian kernel. Each source band is treated as a boxcar of
+  width equal to its own FWHM (defaulting to the midpoint rule from band
+  spacing), and each destination band as a Gaussian response; the weight is the
+  Gaussian mass falling inside each source boxcar (`pnorm` difference). Carrying
+  the source band width as a wavelength-interval weight removes a bias the old
+  "delta function" kernel showed at detector-boundary spacing jumps on
+  non-uniform grids -- up to ~2% at those transitions (~0.01% median elsewhere),
+  validated against quadrature-weighted SRF convolution and SpectralPython's
+  `BandResampler`. New optional `src_fwhm` argument lets power users supply known
+  instrument bandpass widths. Instead of silently trimming out-of-range bands,
+  destination bands whose covered response falls below `coverage_min` (default
+  0.5) are returned as `NA` with a single warning.
+* `make_fwhm()` dropped its `k`/k-means quantization path, which used a randomly
+  initialized `stats::kmeans` and was therefore nondeterministic run-to-run (the
+  old exported default `k = 3` meant `make_fwhm` changed each call). It now
+  returns full-detail, deterministic FWHM. Its default source-FWHM derivation
+  also switched to the midpoint rule, matching `resample()`.
+
+## major
 * Added minimal provenance: `quantity()`/`quantity<-` (e.g. "reflectance",
   "radiance") and `wavelength_unit()`/`wavelength_unit<-` (default "nm").
   `read_spectra()` sets both from its `type` argument; they carry through

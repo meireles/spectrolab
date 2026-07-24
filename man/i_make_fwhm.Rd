@@ -4,14 +4,7 @@
 \alias{i_make_fwhm}
 \title{Resample the FWHM to a new set of bands using a gaussian model}
 \usage{
-i_make_fwhm(
-  old_bands,
-  old_fwhm,
-  new_bands,
-  new_fwhm,
-  return_type = "max",
-  k = 0
-)
+i_make_fwhm(old_bands, old_fwhm, new_bands, new_fwhm, return_type = "max")
 }
 \arguments{
 \item{old_bands}{band values of the original spectra}
@@ -23,8 +16,6 @@ i_make_fwhm(
 \item{new_fwhm}{FWHM for the resampled spectra}
 
 \item{return_type}{Either "max" (default) or "old". Max returns the maximum from either the old or the new FWHM for each band}
-
-\item{k}{number of FWHM categories. Defaults to 0, which means, return the FWHM in as much detail as possible.}
 }
 \value{
 a numeric vector of FWHM estimates

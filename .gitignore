@@ -3,3 +3,6 @@
 .RData
 .Ruserdata
 
+# knitr vignette figures (regenerated on build)
+figure/
+
