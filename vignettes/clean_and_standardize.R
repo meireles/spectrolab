@@ -77,21 +77,12 @@ length(fwhm) == length(new_bands)   # one value per new band
 range(fwhm)
 
 ## -----------------------------------------------------------------------------
-# Dense in the VIS/NIR (2 nm), sparse in the SWIR (10 nm)
-uneven_bands = c(seq(400, 1000, 2), seq(1005, 2400, 10))
-
-fwhm_default = make_fwhm(s, uneven_bands)          # k = 3 (default)
-fwhm_full    = make_fwhm(s, uneven_bands, k = 0)   # no clustering
-
-length(unique(round(fwhm_default, 3)))  # only 3 distinct values...
-length(unique(round(fwhm_full, 3)))     # ...vs the true band-to-band variation
-
-## -----------------------------------------------------------------------------
 too_wide = seq(330, 2525, 5)
-s_trim   = resample(s, new_bands = too_wide, fwhm = make_fwhm(s, too_wide))
+s_wide   = suppressWarnings(resample(s, new_bands = too_wide, fwhm = 5))
 
-range(bands(s))       # what we actually measured
-range(bands(s_trim))  # what we got back -- trimmed to fit
+range(bands(s))                  # what we actually measured
+range(bands(s_wide))             # the full requested grid is preserved ...
+sum(is.na(value(s_wide)[1, ]))   # ... but the out-of-range bands are NA
 
 ## -----------------------------------------------------------------------------
 s_norm = normalize(s)
