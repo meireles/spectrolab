@@ -30,7 +30,8 @@ reflect_raw  = read_spectra(path = path_raw, type = "target_reflectance")
 
 radiance_raw = read_spectra(path = path_raw, type = "target_radiance")
 
-# Sensor overlaps marked with vertical dashed lines
+# Detector crossovers marked with vertical dashed lines (this file's own
+# header records 970 and 1901 nm -- see "Where do the splice points come from?")
 lwd = 0.5
 cex = 0.7
 
@@ -39,23 +40,21 @@ par(mfrow = c(2, 1))
 
 plot(reflect_raw, main = "Reflectance", col = spec_pal[1],
      lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
-abline(v = c(990, 1900), col = spec_pal[6], lty = 2, lwd = lwd)
+abline(v = c(970, 1901), col = spec_pal[6], lty = 2, lwd = lwd)
 
 plot(radiance_raw, main = "Radiance", col = spec_pal[1],
      lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
-abline(v = c(990, 1900), col = spec_pal[6], lty = 2, lwd = lwd)
+abline(v = c(970, 1901), col = spec_pal[6], lty = 2, lwd = lwd)
 
 par(oldpar)
 ```
 
 Every instrument -- and every *vendor* -- handles this differently: SVC
-**deletes** the overlapping points (optionally after a scalar match), Spectral
-Evolution/NaturaSpec **ramp-blends** across the overlap, and ASD ships data
-that is *already* joined (it only records where the splice happened, not how).
-`spectrolab` therefore offers two ways to splice: a single general-purpose
-**legacy algorithm** that works reasonably on any instrument, and a **preset
-engine** that mimics each vendor's own approach more closely. Both live behind
-`match_sensors()`.
+**deletes** the overlapping points after matching one detector to the other,
+Spectral Evolution/NaturaSpec **ramp-blends** across the overlap, and ASD ships
+data that is *already* joined (it only records where the splice happened, not
+how). `spectrolab` has **one** function for all of them, `match_sensors()`, and
+one algorithm behind it.
 
 ## Where do the splice points come from?
 
@@ -88,25 +87,31 @@ splice_bands_guess
 # instead of spectrolab's guess. This file's own header records 970/1901 (see
 # sensor_info() of the matched reference file below) rather than the nominal
 # 990/1900 from the manual -- always prefer what the file says over the manual.
-splice_bands = c(990, 1900)
+splice_bands = c(970, 1901)
 ```
 
-## The legacy algorithm
+## Matching the sensors
 
-Passing `splice_at` (and, optionally, `interpolate_wvl`) without a `method`
-runs the original, vendor-agnostic algorithm: it deletes the overlap and
-rescales one whole sensor by a single factor computed from a small window on
-either side of each splice, linearly ramping that factor to 1 across the
-rescaled sensor. It is a reasonable default when you don't know (or don't
-need) vendor-specific behavior.
+`match_sensors()` takes three steps, and takes them the same way for every
+instrument:
+
+1. **Gain match.** One factor per junction, estimated over the *crossover
+   window*: the detectors' physical overlap, inset off both ends where their
+   response is rolling off (or a small interval around `splice_at`, set by
+   `interpolate_wvl`, when the data carries no overlap at all). The factor is
+   applied **tapered** -- full at the junction, fading to no correction at the
+   far end of the corrected detector -- so a detector's well-calibrated end is
+   left alone.
+2. **Cut.** The overlapping measurements are deleted at `splice_at`, exactly as
+   the instrument does.
+3. **Crossfade.** Across the crossover window the output is a weighted mix of
+   both detectors, so the seam carries no step.
 
 ```{r, fig.height=8, fig.width=5, fig.align='center', echo=TRUE, out.width="100%"}
 # Match the reflectance and radiance data
-reflect_matched = match_sensors(x = reflect_raw, splice_at = splice_bands,
-                                interpolate_wvl = c(5, 1))
+reflect_matched  = match_sensors(x = reflect_raw,  splice_at = splice_bands)
 
-radiance_matched = match_sensors(x = radiance_raw, splice_at = splice_bands,
-                                 interpolate_wvl = c(5, 1))
+radiance_matched = match_sensors(x = radiance_raw, splice_at = splice_bands)
 
 lwd = 0.5
 cex = 0.7
@@ -130,81 +135,53 @@ legend("topright", legend = c("raw", "matched"),
 par(oldpar)
 ```
 
-And we can check the results from spectrolab's legacy algorithm against SVC's proprietary matching algorithm (a file the instrument itself already spliced, shipped alongside the raw one for this example).
+## How close is that to the instrument's own splice?
 
-```{r, fig.height=8, fig.width=5, fig.align='center', echo=TRUE, out.width="100%"}
+Close enough to measure, because this example ships the *same 14 scans twice*:
+raw, and reprocessed by SVC's own software. The vendor's file is ground truth.
+
+```{r}
 path_moc = system.file("extdata/svc_raw_and_overlap_matched_serbin/SVC_Files_moc/",
                        package = "spectrolab")
 
-reflect_moc  = read_spectra(path = path_moc, type = "target_reflectance")
+reflect_moc = read_spectra(path = path_moc, type = "target_reflectance")
 
-radiance_moc = read_spectra(path = path_moc, type = "target_radiance")
+# same 982 bands the vendor kept -- the overlap was removed the same way
+identical(bands(reflect_matched), bands(reflect_moc))
 
-lwd = 0.5
-cex = 0.7
+# and the values land on the vendor's
+rmse = function(fit, vendor, lo = -Inf, hi = Inf){
+    k   = match(round(bands(vendor), 4), round(bands(fit), 4))
+    sel = bands(vendor) >= lo & bands(vendor) <= hi
+    sqrt(mean((value(fit)[, k[sel]] - value(vendor)[, sel])^2))
+}
 
-oldpar = par(no.readonly = TRUE)
-
-par(mfrow = c(2, 1))
-
-plot(reflect_moc, main = "Reflectance", col = spec_pal[4],
-     lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
-plot(reflect_matched, col = spec_pal[6], add = TRUE, lwd = lwd)
-legend("topleft", legend = c("vendor (SVC)", "spectrolab legacy"),
-       col = spec_pal[c(4, 6)], lwd = 1, bty = "n", cex = cex)
-
-plot(radiance_moc, main = "Radiance", col = spec_pal[4],
-     lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
-plot(radiance_matched, col = spec_pal[6], add = TRUE, lwd = lwd)
-legend("topright", legend = c("vendor (SVC)", "spectrolab legacy"),
-       col = spec_pal[c(4, 6)], lwd = 1, bty = "n", cex = cex)
-
-par(oldpar)
+round(c(overall    = rmse(reflect_matched, reflect_moc),
+        detector_1 = rmse(reflect_matched, reflect_moc, hi = 969),
+        detector_2 = rmse(reflect_matched, reflect_moc, lo = 970, hi = 1900),
+        detector_3 = rmse(reflect_matched, reflect_moc, lo = 1901)), 6)
 ```
 
-## The splice engine: vendor-aware presets
+For scale: cutting the overlap without any magnitude matching leaves an overall
+RMSE of 0.0077 against the same reference, roughly sixty times larger. Detector
+1 carries the correction; detector 2 is touched only where it is crossfaded into
+detector 1; detector 3 comes through the join untouched, exactly as the vendor's
+does (its residual is one band out of 3,570, differing by a single unit of the
+file's own rounding). The residuals are at the level of the two decimal places the `.sig` files
+store, and they are small because each of the three steps was measured against
+these files -- the taper's shape, the crossfade, and the way the gain amplitude
+is estimated were all chosen that way.
 
-The legacy algorithm above is one whole-sensor scalar match. The splice
-*engine* instead decomposes a splice into three independent stages -- exactly
-how SVC's own software models it -- so each vendor's behavior can be
-expressed as a small, named preset:
-
-```
-detect junctions  ->  (optional) GAIN-match one side  ->  JOIN (cut | ramp | concatenate)
-```
-
-Pass a preset name via `method`:
-
-| preset        | gain                                   | join        | mimics |
-|---------------|----------------------------------------|-------------|--------|
-| `"svc"`       | multiplicative, clamped [0.8, 1.2], graded | cut     | SVC HR1024 |
-| `"naturaspec"`| SSD-winner (additive or multiplicative) | ramp (linear) | Spectral Evolution / NaturaSpec |
-| `"asd"`       | additive, slope-aware (`linear_extrap`) | concatenate | ASD (data already joined) |
-| `"cut"` / `"ramp"` / `"concatenate"` | none (generic building blocks) | matching name | -- |
-
-```{r}
-reflect_svc_preset = match_sensors(reflect_raw, splice_at = c(970, 1901), method = "svc")
-
-cat("legacy join kept", ncol(reflect_matched), "bands\n")
-cat("svc preset kept ", ncol(reflect_svc_preset), "bands (vendor-matched file has", ncol(reflect_moc), ")\n")
-```
-
-The `"svc"` preset's clean cut lands much closer to the vendor's own band
-count than the legacy ramp does, because it mimics *what SVC actually does*
-(delete the overlap) rather than a generic rescale. The band count only tells
-half the story, though -- the real test is whether the joined curve tracks the
-vendor's. Overlaying raw, the `"svc"` preset, and the vendor-matched reference,
-with a zoom on the first splice, shows the preset landing essentially on top of
-SVC's own result where the legacy ramp visibly diverges:
+Overlaying raw, matched, and the vendor's reference -- with a zoom on the first
+splice -- shows where the work goes:
 
 ```{r, fig.height=4.2, fig.width=7, echo=TRUE, out.width="100%"}
 lwd = 0.6
 cex = 0.7
 
-# Three colors from the shared palette, reused in both panels
-col_raw    = spec_pal[1]   # blue   -- raw, unmatched
-col_preset = spec_pal[6]   # red    -- spectrolab "svc" preset
-col_vendor = spec_pal[4]   # green  -- vendor (SVC) matched reference
+col_raw     = spec_pal[1]   # blue   -- raw, unmatched
+col_matched = spec_pal[6]   # red    -- spectrolab
+col_vendor  = spec_pal[4]   # green  -- vendor (SVC) matched reference
 
 oldpar = par(no.readonly = TRUE)
 par(mfrow = c(1, 2))
@@ -212,32 +189,20 @@ par(mfrow = c(1, 2))
 # --- Full range -----------------------------------------------------------
 plot(reflect_raw, main = "Full range", col = col_raw,
      lwd = lwd, cex.main = cex, cex.lab = cex, cex.axis = cex)
-plot(reflect_moc,        col = col_vendor, add = TRUE, lwd = lwd)
-plot(reflect_svc_preset, col = col_preset, add = TRUE, lwd = lwd)
-legend("topleft", legend = c("raw", "svc preset", "vendor (SVC)"),
-       col = c(col_raw, col_preset, col_vendor), lwd = 1, bty = "n", cex = cex)
+plot(reflect_moc,     col = col_vendor,  add = TRUE, lwd = lwd)
+plot(reflect_matched, col = col_matched, add = TRUE, lwd = lwd)
+legend("topleft", legend = c("raw", "match_sensors()", "vendor (SVC)"),
+       col = c(col_raw, col_matched, col_vendor), lwd = 1, bty = "n", cex = cex)
 
 # --- Splice zoom (first junction, ~970 nm) --------------------------------
 plot(reflect_raw, main = "Splice zoom (~970 nm)", col = col_raw,
      xlim = c(930, 1010), lwd = lwd,
      cex.main = cex, cex.lab = cex, cex.axis = cex)
-plot(reflect_moc,        col = col_vendor, add = TRUE, lwd = lwd)
-plot(reflect_svc_preset, col = col_preset, add = TRUE, lwd = lwd)
+plot(reflect_moc,     col = col_vendor,  add = TRUE, lwd = lwd)
+plot(reflect_matched, col = col_matched, add = TRUE, lwd = lwd)
 abline(v = 970, col = spec_muted, lty = 2, lwd = lwd)
 
 par(oldpar)
-```
-
-For full control -- a non-standard instrument, or tweaking one parameter of a
-preset -- build your own `splice_config()` and pass it as `config` (which
-overrides `method`):
-
-```{r}
-custom_cfg = splice_config(gain_type = "multiplicative", reference = "right",
-                           clamp = c(0.8, 1.2), graded = TRUE, join = "cut")
-custom_cfg
-
-reflect_custom = match_sensors(reflect_raw, splice_at = c(970, 1901), config = custom_cfg)
 ```
 
 ## Provenance-aware defaults
@@ -272,14 +237,20 @@ match_sensors(reflect_raw)
   reflectance column the way it does inside the instrument's own software.
   `spectrolab` reproduces the *removal* structure exactly and applies a
   correct, general gain -- it does not claim to reproduce vendor reflectance
-  byte-for-byte. Similarly, the ASD gain is spectrolab's own choice (not a
-  documented ASD algorithm), and the Spectral Evolution ramp is a
-  single-source (derived) reconstruction. See `?splice_config` for the full
-  documentation of these caveats.
-* **`interpolate_wvl` only affects the legacy algorithm.** It's silently
-  ignored when you pass `method` or `config` -- the engine derives its own
-  crossover window from the detected overlap (override it with
-  `splice_config(window = c(lo, hi))` if needed).
+  byte-for-byte. And SVC is the only vendor that ships a reference to check
+  against: on ASD or Spectral Evolution data this is spectrolab's own,
+  documented correction, not the instrument's. See `?match_sensors`.
+* **`interpolate_wvl` only matters when the detectors do not overlap.** When
+  they do, the overlap itself is the crossover window (inset off both ends,
+  where detector response rolls off), which is a measurement rather than a
+  guess. `interpolate_wvl` is the fallback for already-joined data, where there
+  is nothing to measure.
+* **Only the first junction is gain-matched when the detectors overlap.** The
+  far crossover of a 3-detector instrument sits near 1900 nm, inside the deep
+  water band where both detectors are at the edge of their sensitivity; a factor
+  estimated there is noise, and applying it ramps a large error across a whole
+  detector. SVC's own software makes the same call -- it removes both overlaps
+  but matches only the near one.
 * **Order of `splice_at` matters less than getting the values right.**
   `match_sensors()` sorts `splice_at` for you, but it cannot tell if you
   handed it the wrong wavelengths for *this* file -- always cross-check

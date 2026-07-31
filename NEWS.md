@@ -1,42 +1,61 @@
 # spectrolab 0.0.20 (development)
 
 ## major
-* **[BUG FIX]** `match_sensors()` gain-matched *every* detector junction, which
-  made the `"svc"` preset worse than doing no matching at all. Validated against
-  the vendor-reprocessed files shipped in
-  `inst/extdata/svc_raw_and_overlap_matched_serbin/` (the same 14 scans raw and
-  after SVC's own overlap matching), RMSE against the vendor's output:
+* **[BREAKING]** `match_sensors()` is now the single public way to splice
+  detectors, and it runs a single algorithm. `splice_config()` (and its `print`
+  method) is no longer exported, and the `method` / `config` arguments are gone
+  along with the `"svc"`, `"naturaspec"`, `"asd"`, `"cut"`, `"ramp"`,
+  `"concatenate"` and `"scale"` presets they selected. The signature is back to
+  the 0.0.19 one: `match_sensors(x, splice_at, fixed_sensor, interpolate_wvl)`.
+  Code that passed `method` or `config` (introduced during 0.0.20 development,
+  never released) must drop those arguments; the default path now does more than
+  any preset did.
+* **[BEHAVIOR CHANGE]** The splice algorithm itself was rewritten, and validated
+  band by band against the vendor-reprocessed files shipped in
+  `inst/extdata/svc_raw_and_overlap_matched_serbin/` -- the same 14 SVC scans
+  raw and after the instrument's own overlap matching. RMSE against the vendor's
+  output, in reflectance units:
 
   | | overall | det 1 | det 2 | det 3 |
   |---|---|---|---|---|
-  | `method = "cut"` (join only, no gain) | 0.00771 | 0.01098 | 0.00218 | 0 |
-  | `method = "svc"`, before | 0.01395 | 0.00197 | **0.02741** | 0 |
-  | `method = "svc"`, now | **0.00116** | **0.00053** | 0.00218 | 0 |
+  | join only, no matching | 0.00771 | 0.01098 | 0.00218 | 0 |
+  | the previous algorithm (whole-sensor scalar + straight ramp) | 0.01121 | 0.01604 | 0.00218 | 0 |
+  | **now** | **0.00013** | **0.00015** | **0.00014** | ~0 |
 
-  The SWIR1/SWIR2 crossover near 1900 nm sits in the deep water band at the edge
-  of both detectors' sensitivity: the factor estimated there came out at
-  0.63--0.84 across the reference set, was silently floored to the 0.8 `clamp`,
-  and was then ramped across the whole of detector 2. SVC's own header records
-  two removals but only one matching zone
-  (`Overlap: Remove @ 970,1901, Matching Type: Radiance @ 976 - 1010`), and its
-  output leaves detectors 2 and 3 identical to the raw file. Four changes:
-  - `splice_config()` gains `gain_at` (`"all"`, `"first"`, or junction indices);
-    the `"svc"` preset now matches only the VNIR/SWIR1 junction. This restores,
-    and states outright, the `iter = 1` rule that 0.0.19 had in the legacy path
-    and that 0.0.20 removed as if it were a bug.
-  - `clamp` is now a plausibility **gate**, not a floor: a factor outside the
-    range leaves that junction uncorrected and warns, instead of quietly
-    applying a known-bad correction.
-  - `splice_config()` gains `window_inset` (default 0.10). The auto-detected
-    matching window is now inset off both ends of the overlap, where detector
-    response rolls off; on SVC data this reproduces the vendor's own 976--1010 nm
-    zone from a 971.8--1016.6 nm overlap, and cuts the detector-1 residual by
-    almost 4x.
-  - The legacy (`method = NULL`/`"scale"`) path had the same regression, ramping
-    detector 3 by a factor starting at 1.50 (RMSE there 0 -> 0.01915). The 0.0.19
-    guard is restored: with a physical detector overlap only the first junction is
-    matched; with no overlap (already-joined data split by `splice_at`) every
-    junction is, as before.
+  It joins in three steps -- gain match, cut, crossfade -- and each was derived
+  from that comparison:
+  - The gain is applied **tapered**: full at the junction, fading to no
+    correction at the far end of the corrected detector, over the detector's
+    whole wavelength extent. The taper is mildly convex (a power of 1.3 on the
+    wavelength fraction), which is what the vendor's own correction does --
+    fitting its output/input ratio gives 1.308 +/- 0.005 across all 14 scans,
+    and sweeping the exponent against RMSE independently bottoms out at 1.3.
+    A straight ramp costs about 4x overall (0.00013 -> 0.00059).
+  - The gain **amplitude is solved through the taper** rather than read off as a
+    ratio of window means. Inside the matching window the taper is already at
+    ~96% of full, so a plain ratio under-corrects by ~0.2%; solving costs
+    nothing and is worth 4x on detector 1.
+  - The seam is **crossfaded**: across the crossover window the output is a
+    weighted mix of both detectors, so no step is left where they meet. A bare
+    cut leaves a ~10% step at the SVC junction; this leaves 0.3%, and the
+    vendor's own output has 0.2%. Worth 8x overall.
+  - Only the **first** junction is gain-matched when the detectors physically
+    overlap. The far crossover of a 3-detector instrument sits near 1900 nm,
+    inside the deep water band where both detectors are at the edge of their
+    sensitivity: the factor estimated there is noise (0.63--0.84 across the
+    reference set), and applying it ramps a large error across a whole detector
+    (RMSE 0.00013 -> 0.02263). SVC's own header makes the same call -- it records
+    two removals but only one matching zone. With no overlap (already-joined
+    data split by `splice_at`) every junction is matched, as before.
+  - The plausibility check on the gain is a **gate, not a floor**: a factor
+    outside the plausible range leaves that junction uncorrected, and unblended,
+    with a warning, instead of quietly applying a known-bad correction. The range
+    is a wide, unit-agnostic sanity band, so radiance splices (which legitimately
+    need factors near 1.3) are not refused.
+  - `interpolate_wvl` now applies only when the detectors do *not* overlap. When
+    they do, the crossover window is the overlap itself, inset 10% off each end
+    where detector response rolls off -- on SVC that turns a 971.8--1016.6 nm
+    overlap into 976.3--1012.1 nm, essentially the vendor's own 976--1010 zone.
 * **[BEHAVIOR CHANGE]** `match_sensors()` now trims the left detector at
   `splice_at` itself rather than at the right detector's first wavelength. A
   band the left sensor recorded between the two (970.8 nm on the SVC reference
@@ -44,9 +63,9 @@
   the vendor produces 982. Output now matches the vendor grid exactly.
 * `sensor_info()` gains `match_lo`/`match_hi`, the vendor's magnitude-matching
   window, parsed from the SVC `factors=` header's dash pair. `match_sensors()`
-  uses it in preference to the auto-detected window when a file records one.
-  (Raw files saved as `Matching Type: None` do not, so the inset default above is
-  what does the work in the common case.)
+  falls back to it when there is no visible overlap to measure a window from.
+  (A visible overlap is the better estimate, and measurably so: using the
+  recorded zone instead costs 0.00013 -> 0.00032.)
 * **[BEHAVIOR CHANGE]** `resample()` now uses an overlap-integral model instead
   of a point-sampled Gaussian kernel. Each source band is treated as a boxcar of
   width equal to its own FWHM (defaulting to the midpoint rule from band
@@ -111,21 +130,13 @@
 
 ## bug fixes
 
-* **[BEHAVIOR CHANGE]** `match_sensors()` (the default, legacy "scale" algorithm)
-  only applied the *first* junction's correction whenever the data had a real
-  detector overlap and more than one junction. On a 3-detector spectrum the far
-  sensor came out bit-identical to applying no gain at all. On the bundled
-  `Acer_example` SVC data that left 25% of the bands uncorrected and the
-  SWIR1/SWIR2 step at 0.0167 instead of 0.0067. Every junction is now corrected.
-  **Results change for any 3-sensor data spliced with the default method.**
 * `match_sensors()` no longer silently discards a `fixed_sensor` it cannot
   honour (3 sensors force `fixed_sensor = 2`); it warns. An out-of-range value
   now errors clearly instead of dying with "argument is of length zero".
-* The splice engine's automatic crossover window was computed from the band
-  spacing of the two detector segments *concatenated*, so it measured the jump
-  between them rather than the spacing within one. The window came out around
-  22000 nm instead of ~22 nm, making every "local" mean in the multiplicative,
-  `ssd` and `mean_diff` gain estimators a whole-spectrum mean.
+* `match_sensors()` no longer drops a band when a splice point falls between two
+  bands of already-joined data. The segment boundary was `max(which(w <= splice_at))`
+  and the trim then excluded that column from both sides, so the band vanished
+  silently.
 * `resample()` now validates `new_bands`. Unsorted, duplicated, non-finite or
   empty destination grids were accepted and produced a `spectra` that violated
   the strictly-increasing invariant, failing much later with a misleading

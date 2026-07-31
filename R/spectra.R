@@ -104,7 +104,7 @@ i_names = function(x, nsample = NULL){
 #' (Earlier versions nudged duplicate wavelengths by a tiny amount to force
 #' uniqueness. That silently altered the data --- a physical wavelength like 600
 #' became 600.0012 --- was buggy for three or more identical values, and is no
-#' longer done. See ai_reviews/DUPLICATE_BANDS_ANALYSIS.md.)
+#' longer done.)
 #'
 #' @param x vector of bands. Either numeric or character
 #' @param nbands Integer of expected number of bands.
