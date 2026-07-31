@@ -6,3 +6,11 @@
 # knitr vignette figures (regenerated on build)
 figure/
 
+# build artifacts
+*.tar.gz
+*.Rcheck/
+
+# knitted vignette output (R CMD build regenerates these)
+vignettes/*.html
+vignettes/*.R
+
