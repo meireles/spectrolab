@@ -188,7 +188,6 @@ summary.spectra = function(object, ...){
 #' @param object spectra object
 #' @param ... additional args. not implemented
 #' @return prints to console
-#' @importFrom utils str
 #'
 #' @importFrom utils str
 #'

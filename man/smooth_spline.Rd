@@ -4,7 +4,13 @@
 \alias{smooth_spline}
 \title{Smooth spline functions for spectra}
 \usage{
-smooth_spline(x, parallel = TRUE, return_fn = FALSE, ...)
+smooth_spline(
+  x,
+  parallel = TRUE,
+  return_fn = FALSE,
+  cores = getOption("mc.cores", 2L),
+  ...
+)
 }
 \arguments{
 \item{x}{spectra object. bands must be strictly increasing}
@@ -14,6 +20,13 @@ Unfortunately, the parallelization does not work on Windows.}
 
 \item{return_fn}{Boolean. If TRUE, \code{smooth_spline} returns the spline
 functions instead of the smoothed spectra. Defaults to FALSE}
+
+\item{cores}{number of cores to fork when \code{parallel = TRUE}. Defaults to
+\code{getOption("mc.cores", 2L)}. The default is deliberately
+conservative (CRAN caps checks at two cores and forking as many
+processes as the machine has cores is rarely a win for this
+workload); raise it explicitly, or set \code{options(mc.cores=)},
+on a big machine with many spectra.}
 
 \item{...}{additional parameters passed to smooth.spline except nknots, which
 is computed internally}

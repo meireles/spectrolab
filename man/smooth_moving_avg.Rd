@@ -9,7 +9,8 @@ smooth_moving_avg(x, n = NULL, save_bands_to_meta = TRUE)
 \arguments{
 \item{x}{spectra object}
 
-\item{n}{= NULL}
+\item{n}{number of bands going into each moving average. When \code{NULL}
+(default) a window is chosen from the band resolution.}
 
 \item{save_bands_to_meta}{boolean. keep lost ends of original wvls in metadata}
 }

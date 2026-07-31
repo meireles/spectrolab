@@ -167,12 +167,25 @@ resample = function(spec,
     bands        = bands(spec)
     reflectance  = value(spec)
 
+    ## Validate the destination grid. Without this, unsorted or duplicated
+    ## `new_bands` produced a spectra that violates the strictly-increasing
+    ## invariant every downstream function requires, and the failure surfaced
+    ## much later as a misleading "match sensor overlap first" error.
+    if( !is.numeric(new_bands) || length(new_bands) == 0 ){
+        stop("`new_bands` must be a non-empty numeric vector", call. = FALSE)
+    }
+    if( anyNA(new_bands) || !all(is.finite(new_bands)) ){
+        stop("`new_bands` must be finite and contain no NAs", call. = FALSE)
+    }
+    if( ! i_is_increasing(new_bands) ){
+        stop("`new_bands` must be strictly increasing (no duplicates, sorted ",
+             "low to high). Try sort(unique(new_bands)).", call. = FALSE)
+    }
+
     ## Broadcast or validate the destination FWHM
     if(length(fwhm) == 1){
         fwhm = rep(fwhm, length.out = length(new_bands))
-    } else if (length(fwhm) == length(new_bands)){
-        NULL
-    } else {
+    } else if (length(fwhm) != length(new_bands)){
         stop("provide a single fwhm value or one for each new_band")
     }
 
@@ -229,6 +242,12 @@ resample = function(spec,
                 bands = new_bands,
                 names = names(spec),
                 meta  = meta(spec))
+
+    ## Resampling changes the band grid but not which sample came from which
+    ## instrument, so the per-sample provenance still applies. Carrying it here
+    ## also keeps it alive through smooth(method = "gaussian"), which routes
+    ## through resample(). See R/sensor_info.R.
+    attr(s, "sensor_info") = sensor_info(spec)
 
     s
 }

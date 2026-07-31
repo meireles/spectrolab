@@ -143,7 +143,7 @@ i_match_label = function(x, i, full = FALSE, allow_empty_lookup = FALSE, allow_n
         r[] = list(m, u, n)
         return(r)
     } else {
-        if( length(n) != 0 || length(n) == length(i) ){
+        if( length(n) != 0 ){
             stop(length(n), " labels not found: ", paste(n, collapse = ","), call. = FALSE)
         }
         return(m)
@@ -362,6 +362,11 @@ i_mind_the_gap_smoothing = function(x){
     d_thresh = 10
     big_jump = b_diff > diff_med * d_thresh
     if(any(big_jump)){
-        warning("Gap(s) between bands is too wide around band(s):", paste(b[big_jump], sep = ","), "\nSmoothing results may be unreliable.")
+        ## `collapse`, not `sep`: with sep= the band values arrive at warning()
+        ## as separate arguments and get glued into one nonsense token
+        ## (898, 599, 8 printed as "8985998").
+        warning("Gap(s) between bands is too wide around band(s): ",
+                paste(b[big_jump], collapse = ", "),
+                "\nSmoothing results may be unreliable.")
     }
 }

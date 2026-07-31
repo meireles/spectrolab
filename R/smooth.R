@@ -69,6 +69,12 @@ smooth.spectra = function(x, method = "gaussian", ...){
 #' @param x spectra object. bands must be strictly increasing
 #' @param parallel boolean. Do computation in parallel? Defaults to TRUE.
 #'                 Unfortunately, the parallelization does not work on Windows.
+#' @param cores number of cores to fork when \code{parallel = TRUE}. Defaults to
+#'              \code{getOption("mc.cores", 2L)}. The default is deliberately
+#'              conservative (CRAN caps checks at two cores and forking as many
+#'              processes as the machine has cores is rarely a win for this
+#'              workload); raise it explicitly, or set \code{options(mc.cores=)},
+#'              on a big machine with many spectra.
 #' @param ... additional parameters passed to smooth.spline except nknots, which
 #'            is computed internally
 #' @param return_fn Boolean. If TRUE, \code{smooth_spline} returns the spline
@@ -80,7 +86,11 @@ smooth.spectra = function(x, method = "gaussian", ...){
 #'
 #' @author Jose Eduardo Meireles
 #' @export
-smooth_spline = function(x, parallel = TRUE, return_fn = FALSE, ...) {
+smooth_spline = function(x,
+                         parallel  = TRUE,
+                         return_fn = FALSE,
+                         cores     = getOption("mc.cores", 2L),
+                         ...) {
 
     if( !is_spectra(x) ){
         stop("Object must be of class spectra")
@@ -109,7 +119,11 @@ smooth_spline = function(x, parallel = TRUE, return_fn = FALSE, ...) {
     p = p && parallel && l > 1 && .Platform$OS.type != "windows"
 
     if(p){
-        n = max(1L, parallel::detectCores() - 1L)
+        ## Never fork more workers than there are spectra, cores on the machine,
+        ## or the caller asked for. detectCores() - 1L used to be the hard-wired
+        ## default, which spawns e.g. 127 processes on a big host and exceeds the
+        ## two-core ceiling CRAN checks run under.
+        n = max(1L, min(as.integer(cores), l, parallel::detectCores()))
         f = parallel::mclapply(r, stats::smooth.spline, x = w, nknots = nknots, ...,
                                mc.cores = n)
     } else {
@@ -128,7 +142,8 @@ smooth_spline = function(x, parallel = TRUE, return_fn = FALSE, ...) {
 #' Smooth moving average for spectra
 #'
 #' @param x spectra object
-#' @param n = NULL
+#' @param n number of bands going into each moving average. When \code{NULL}
+#'          (default) a window is chosen from the band resolution.
 #' @param save_bands_to_meta boolean. keep lost ends of original wvls in metadata
 #' @return spectra object
 #'

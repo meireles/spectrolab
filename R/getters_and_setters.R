@@ -457,6 +457,15 @@ meta.spectra = function(x, label = NULL, sample = NULL, simplify = FALSE, quiet 
         lm   = i_match_label(colnames(x$meta), label, full = TRUE, allow_empty_lookup = TRUE)
         cols = lm[["matched"]]
 
+        ## An object with NO metadata columns makes i_match_label return NULL
+        ## early, so `not_element` would be empty and the miss went by in
+        ## silence -- even under quiet = FALSE, which is documented as a hard
+        ## error. Treat every requested label as unmatched in that case.
+        if( is.null(lm) ){
+            lm   = list(matched = integer(0), unmatched = NULL, not_element = label)
+            cols = integer(0)
+        }
+
         if( length(lm[["not_element"]]) != 0 ){
             msg = paste0("metadata column(s) not found: ",
                          paste(lm[["not_element"]], collapse = ", "))

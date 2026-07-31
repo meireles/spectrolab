@@ -84,7 +84,11 @@ Ops.spectra = function(e1, e2) {
         if( any(dim(e1) != dim(e2)) ){
             stop("incompatible spectra dimensions", call. = FALSE)
         }
-        if( any(bands(e1) != bands(e2)) ){
+        ## Same tolerance as combine(): an exact `!=` rejected band vectors that
+        ## differ only by floating-point noise (1e-12) while combine() happily
+        ## accepted them, so the two functions disagreed about what "the same
+        ## bands" means.
+        if( ! isTRUE(all.equal(bands(e1), bands(e2))) ){
             stop("band labels must be identical", call. = FALSE)
         }
 

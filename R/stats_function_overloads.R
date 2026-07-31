@@ -218,10 +218,9 @@ quantile.spectra = function(x,
         n = as.character(sample_names)
     }
 
-    ## Return spectra quantile object
-    x = apply_by_band(x, stats::quantile, probs = probs, na.rm = na.rm,
-                      name = n, ...)
-
-    class(x) = c(class(x), "spec_quantile")
-    x
+    ## Return spectra quantile object. (Up to 0.0.20 this also tacked a
+    ## "spec_quantile" class onto the result. Nothing ever dispatched on it and
+    ## the first `[` dropped it again, so it was a marker with no meaning.)
+    apply_by_band(x, stats::quantile, probs = probs, na.rm = na.rm,
+                  name = n, ...)
 }

@@ -42,8 +42,22 @@ i_value = function(x, nbands = NULL, nsample = NULL) {
     ## Clean up matrix dimension names
     dimnames(x) = NULL
 
-    ## Ensure that x is numeric
-    mode(x) = "numeric"
+    ## Ensure that x is numeric. Coercion must not INVENT missing data: a
+    ## character/factor column used to turn into a column of NAs behind a bare
+    ## "NAs introduced by coercion" warning, and the constructor then happily
+    ## returned an all-NA spectra. NAs already present in the input are fine and
+    ## are preserved.
+    was_na = is.na(x)
+    x      = suppressWarnings(`mode<-`(x, "numeric"))
+    now_na = is.na(x)
+
+    if( any(now_na & !was_na) ){
+        stop("`value` could not be coerced to numeric: ",
+             sum(now_na & !was_na), " element(s) are not numbers. ",
+             "Non-spectral columns (sample names, metadata) must be passed via ",
+             "`names`/`meta`, or excluded with `name_idx`/`meta_idxs`.",
+             call. = FALSE)
+    }
 
     x
 }

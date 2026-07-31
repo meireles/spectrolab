@@ -184,7 +184,20 @@ combine = function(s1, s2){
 #' @export
 combine.spectra = function(s1, s2){
     if( !is_spectra(s2) ){
-        stop("Object `b` must be of class spectra")
+        stop("Object `s2` must be of class spectra")
+    }
+
+    ## Vector-normalized and raw spectra are on different scales. combine() is
+    ## deliberately permissive about differing metadata, so the mismatch used to
+    ## go through silently, leaving a `normalization_magnitude` column that is NA
+    ## for exactly the half of the samples that were never normalized.
+    n1 = "normalization_magnitude" %in% names(meta(s1))
+    n2 = "normalization_magnitude" %in% names(meta(s2))
+    if( xor(n1, n2) ){
+        warning("combining vector-normalized spectra with spectra that are not ",
+                "normalized: the result mixes two different y scales and its ",
+                "`normalization_magnitude` will be NA for the un-normalized ",
+                "samples.", call. = FALSE)
     }
 
     ## Bands must match in *length* first: comparing with `!=` alone would
