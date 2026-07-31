@@ -2,9 +2,9 @@
 % Please edit documentation in R/splice.R
 \name{i_warn_rejected_gain}
 \alias{i_warn_rejected_gain}
-\title{Warn that a junction was left uncorrected because its factor was implausible}
+\title{Warn that a junction was left uncorrected because its gain was implausible}
 \usage{
-i_warn_rejected_gain(n_rejected, n_total, w, clamp)
+i_warn_rejected_gain(n_rejected, n_total, w, range)
 }
 \arguments{
 \item{n_rejected}{number of samples whose factor failed the check}
@@ -13,12 +13,12 @@ i_warn_rejected_gain(n_rejected, n_total, w, clamp)
 
 \item{w}{the junction wavelength}
 
-\item{clamp}{the plausible range}
+\item{range}{the plausible range}
 }
 \value{
 invisible NULL
 }
 \description{
-Warn that a junction was left uncorrected because its factor was implausible
+Warn that a junction was left uncorrected because its gain was implausible
 }
 \keyword{internal}

@@ -1,8 +1,8 @@
 library("testthat")
 library("spectrolab")
 
-## Phase 1 of the match_sensors redesign: read-layer capture of detector-splice
-## provenance (sensor_info) and the provenance-aware match_sensors dispatch.
+## Read-layer capture of detector-splice provenance (sensor_info) and the
+## provenance-aware match_sensors dispatch.
 
 ## ---- SVC header parser (unit) ---------------------------------------------
 

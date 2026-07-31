@@ -2,22 +2,23 @@
 % Please edit documentation in R/splice.R
 \name{i_gain_is_plausible}
 \alias{i_gain_is_plausible}
-\title{Is an estimated multiplicative gain plausible?}
+\title{Is an estimated gain plausible?}
 \usage{
-i_gain_is_plausible(fac, clamp)
+i_gain_is_plausible(fac, range)
 }
 \arguments{
-\item{fac}{estimated factor}
+\item{fac}{estimated factor (may be a vector)}
 
-\item{clamp}{numeric c(min, max), or NULL for no check}
+\item{range}{numeric c(min, max), or NULL for no check}
 }
 \value{
-TRUE if the factor should be applied
+logical, same length as \code{fac}
 }
 \description{
-\code{clamp} states the range a real detector-matching factor can fall in. A
-factor outside it does not mean "correct by the bound" --- it means the window
-the factor was estimated from carries no usable signal. Callers skip the
-junction instead.
+\code{range} states what a detector-matching gain can possibly be. A factor
+outside it does not mean "correct by the bound" --- it means the window the
+factor was estimated from carries no usable signal (the classic case is a
+junction sitting inside a deep water band). Callers skip the junction instead:
+applying a bound would apply a known-bad correction silently.
 }
 \keyword{internal}

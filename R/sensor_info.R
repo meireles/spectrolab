@@ -1,11 +1,11 @@
 ################################################################################
-# Sensor / detector-splice provenance  (Phase 1 of the match_sensors redesign)
+# Sensor / detector-splice provenance
 #
 # WHY THIS EXISTS
 # ---------------
 # A full-range spectroradiometer stitches several detector segments (VNIR/Si +
 # SWIR1 + SWIR2) into one spectrum, and the three vendors spectrolab supports do
-# *structurally different* things at that join (see ai_reviews/MATCH_SENSORS_PLAN.md):
+# *structurally different* things at that join:
 #
 #   * SVC  (.sig): by default DELETES the overlapping points (a clean edge, no
 #                  blend); optionally rescales the VIS side by a single factor.
@@ -27,9 +27,9 @@
 # schema across instruments so the record can be row-bound by combine() and
 # row-subset by `[`.
 #
-# NOTE ON SCOPE: this is the read-layer phase. The actual vendor-faithful
-# splicing engine (presets, ramp/cut/concatenate, gain estimators) is the next
-# phase and will *consume* the provenance captured here.
+# The splice itself lives in R/splice.R, which consumes what is captured here:
+# the splice wavelengths when the caller supplies none, and the recorded matching
+# window when there is no visible detector overlap to measure one from.
 ################################################################################
 
 ## Canonical column schema for the per-sample sensor_info record -- keeping every

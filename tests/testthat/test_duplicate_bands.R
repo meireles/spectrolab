@@ -66,7 +66,7 @@ test_that("match_sensors cut yields strictly increasing bands on duplicate raw d
     expect_true(anyDuplicated(bands(raw)) > 0)         # duplicates present pre-splice
 
     m = suppressWarnings(suppressMessages(
-        match_sensors(raw, method = "cut", splice_at = c(970, 1901))))
+        match_sensors(raw, splice_at = c(970, 1901))))
     expect_true(spectrolab:::i_is_increasing(bands(m)))
     expect_false(anyDuplicated(bands(m)) > 0)          # unique after splice
 })

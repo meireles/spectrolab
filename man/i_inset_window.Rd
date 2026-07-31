@@ -18,10 +18,12 @@ numeric c(lo, hi)
 The outermost wavelengths of a detector overlap are where both sensors'
 response is rolling off, so a gain factor estimated across the full overlap is
 biased by its own worst data. Insetting reproduces what vendors do when they
-record a matching zone narrower than the overlap it sits in.
+record a matching zone narrower than the overlap it sits in: SVC overlaps over
+971.8--1016.6 nm but matches over 976--1010 nm, which a 10\% inset recovers
+almost exactly.
 }
 \details{
-Degenerate cases (zero-width or an inset that would empty the window) return
+Degenerate cases (zero-width, or an inset that would empty the window) return
 the window unchanged rather than an invalid one.
 }
 \keyword{internal}

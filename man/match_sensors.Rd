@@ -5,23 +5,9 @@
 \alias{match_sensors.spectra}
 \title{Match spectra at sensor transitions}
 \usage{
-match_sensors(
-  x,
-  splice_at = NULL,
-  fixed_sensor = 2,
-  interpolate_wvl = c(5, 2),
-  method = NULL,
-  config = NULL
-)
+match_sensors(x, splice_at = NULL, fixed_sensor = 2, interpolate_wvl = c(5, 2))
 
-\method{match_sensors}{spectra}(
-  x,
-  splice_at = NULL,
-  fixed_sensor = 2,
-  interpolate_wvl = c(5, 2),
-  method = NULL,
-  config = NULL
-)
+\method{match_sensors}{spectra}(x, splice_at = NULL, fixed_sensor = 2, interpolate_wvl = c(5, 2))
 }
 \arguments{
 \item{x}{spectra object}
@@ -30,27 +16,23 @@ match_sensors(
 (default) to use the splice points recorded in
 \code{\link{sensor_info}} provenance.}
 
-\item{fixed_sensor}{sensor to keep fixed (legacy algorithm only). Can be 1 or 2
-when matching 2 sensors. When matching 3 sensors, must be 2.}
+\item{fixed_sensor}{sensor held fixed; the others are corrected toward it. Can
+be 1 or 2 when matching 2 sensors. When matching 3 sensors,
+must be 2.}
 
-\item{interpolate_wvl}{extent around each \code{splice_at} over which the
-legacy splicing factors are computed. Defaults to
-\code{c(5, 2)}.}
-
-\item{method}{optional preset name selecting the splice engine: one of
-\code{"svc"}, \code{"naturaspec"}, \code{"asd"}, \code{"cut"},
-\code{"ramp"}, \code{"concatenate"}, or \code{"scale"} (legacy).}
-
-\item{config}{optional \code{\link{splice_config}} for full control; overrides
-\code{method}.}
+\item{interpolate_wvl}{half width (nm) of the window used to estimate the gain
+\emph{when the detectors do not overlap}. Recycled over
+junctions; defaults to \code{c(5, 2)}. Ignored when there
+is a physical overlap, which is measured directly.}
 }
 \value{
 spectra object with matched sensors (strictly increasing bands)
 }
 \description{
-\code{match_sensors} joins the detector segments of a full-range spectrum by
-rescaling the sensors on either side of each splice so they line up, and
-returns a spectrum with strictly increasing bands.
+\code{match_sensors} joins the detector segments of a full-range spectrum into
+one continuous, strictly increasing spectrum: it magnitude-matches the outer
+detector(s) to the inner one, deletes the overlapping measurements, and
+crossfades the seam so no step is left where the detectors meet.
 }
 \details{
 \strong{Splice points.} \code{splice_at} gives the wavelength(s) where sensors
@@ -70,38 +52,56 @@ guess-y:
 spectra before trusting them. Typical values on our own instruments were
 SVC ~ c(990, 1900), ASD ~ c(1001, 1801).
 
-\strong{What this does (and does not) do.} This is a general, instrument-
-agnostic join: one scaling factor per junction spread with a linear ramp.
-Which junctions get that factor depends on the data. When the detectors still
-physically overlap (raw SVC, PSR), only the \emph{first} junction is matched:
-the far crossover of a 3-detector instrument sits near 1900 nm, inside the deep
-water band where both detectors are at the edge of their sensitivity, and a
-factor estimated there is noise rather than a gain. When the data carries no
-overlap (an already-joined spectrum split by \code{splice_at}), every junction
-is matched.
+\strong{What it does.} One algorithm, in three steps:
+\enumerate{
+  \item \emph{Gain match.} A single factor per junction is estimated over the
+        crossover window --- the detectors' physical overlap, inset off both
+        ends where their response rolls off, or a small interval around
+        \code{splice_at} (\code{interpolate_wvl}) when the data carries no
+        overlap. The factor is applied \emph{tapered}: full at the junction,
+        fading to no correction at the far end of the corrected detector, so a
+        detector's well-calibrated end is left alone. Its amplitude is solved
+        for, not read off as a ratio, because the taper is already below full
+        strength inside the window.
+  \item \emph{Cut.} The overlapping measurements are deleted at
+        \code{splice_at}, exactly as the instrument does.
+  \item \emph{Crossfade.} Across the crossover window the output is a weighted
+        mix of both detectors, so the seam carries no step.
+}
 
-It is \emph{not} a faithful reproduction of any single vendor's stitching
-algorithm (SVC deletes the overlap, Spectral Evolution ramp-blends it, ASD's
-algorithm is not recoverable). Vendor-specific splice presets that consume the
-captured \code{\link{sensor_info}} provenance are available via \code{method}
-(see below); on SVC data the \code{"svc"} preset lands considerably closer to
-the vendor's own overlap-matched output than this legacy path does.
+Which junctions get matched depends on the data. When the detectors still
+physically overlap (raw SVC, PSR), only the \emph{first} junction is: the far
+crossover of a 3-detector instrument sits near 1900 nm, inside the deep water
+band where both detectors are at the edge of their sensitivity, and a factor
+estimated there is noise rather than a gain --- applying it ramps a large error
+across a whole detector. When the data carries no overlap (an already-joined
+spectrum split by \code{splice_at}), every junction is matched.
 
-\strong{Methods / presets.} Passing \code{method} (or a \code{config} built
-with \code{\link{splice_config}}) selects a vendor-aware splice via the splice
-engine (see \code{\link{splice_config}}): \code{"svc"} (graded scalar match +
-cut), \code{"naturaspec"} (ramp blend), \code{"asd"} (additive step correction
-on already-joined data), or the generic \code{"cut"}/\code{"ramp"}/
-\code{"concatenate"}. \code{method = NULL} (default) or \code{"scale"} uses the
-legacy algorithm documented above.
+\strong{How close is it?} \code{inst/extdata/svc_raw_and_overlap_matched_serbin}
+ships 14 scans twice, raw and reprocessed by SVC's own software. Against that
+reference the RMSE of \code{match_sensors} is 0.00013 reflectance units, versus
+0.00771 for the bare join with no matching. The taper shape and the crossfade
+were both derived from that comparison. It is still \emph{not} a replay of
+vendor firmware: SVC applies its match to the reference and target radiance
+with slightly different factors, so it does not cancel out of the single
+reflectance column spectrolab reads, and no comparable reference exists for ASD
+or Spectral Evolution --- for those instruments this is spectrolab's own,
+documented correction.
 }
 \section{Methods (by class)}{
 \itemize{
 \item \code{match_sensors(spectra)}: Match sensor overlap regions
 
 }}
+\examples{
+library(spectrolab)
+dir_path = system.file("extdata/svc_raw_and_overlap_matched_serbin/SVC_Files",
+                       package = "spectrolab")
+raw = read_spectra(dir_path, format = "sig")
+matched = match_sensors(raw, splice_at = c(970, 1901))
+}
 \seealso{
-\code{\link{splice_config}}, \code{\link{sensor_info}}
+\code{\link{guess_splice_at}}, \code{\link{sensor_info}}
 }
 \author{
 Jose Eduardo Meireles and Anna Schweiger

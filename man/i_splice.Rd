@@ -2,25 +2,62 @@
 % Please edit documentation in R/splice.R
 \name{i_splice}
 \alias{i_splice}
-\title{Splice detector segments of a spectra object}
+\title{Splice detector segments into one strictly increasing spectrum}
 \usage{
-i_splice(x, splice_at, config)
+i_splice(
+  x,
+  splice_at,
+  fixed_sensor = 2,
+  interpolate_wvl = c(5, 2),
+  window = NULL,
+  taper_power = 1.3,
+  window_inset = 0.1,
+  gain_range = c(1/3, 3)
+)
 }
 \arguments{
 \item{x}{spectra object}
 
-\item{splice_at}{numeric junction wavelength(s)}
+\item{splice_at}{junction wavelength(s), sorted}
 
-\item{config}{a \code{\link{splice_config}}}
+\item{fixed_sensor}{index of the sensor held fixed; the others are corrected
+toward it}
+
+\item{interpolate_wvl}{half width (nm) of the window used to estimate the gain
+when the detectors do not overlap. Recycled over
+junctions}
+
+\item{window}{explicit crossover window \code{c(lo, hi)}, used only when there
+is no overlap to measure one from}
+
+\item{taper_power}{exponent of the taper (1 = straight ramp)}
+
+\item{window_inset}{fraction of a detected overlap dropped from each end before
+the gain is estimated}
+
+\item{gain_range}{plausible range for the gain; outside it the junction is left
+uncorrected, with a warning}
 }
 \value{
 spectra object with strictly increasing bands
 }
 \description{
-\code{i_splice} is the internal engine behind the vendor-aware
-\code{\link{match_sensors}} presets. It routes to the right handling depending
-on whether the data still carries a physical detector overlap (non-monotonic
-bands, e.g. raw SVC) or has already been joined (monotonic bands, e.g. ASD).
+\code{i_splice} is the engine behind \code{\link{match_sensors}}: detect the
+segments, gain-match the outer detector(s) with a tapered factor, then cut the
+overlap and crossfade the seam. See the header of \code{R/splice.R} for the
+evidence behind every default.
+}
+\details{
+\strong{Which junctions get matched.} When the detectors physically overlap,
+only the \emph{first} junction is. The far crossover of a 3-detector
+instrument sits near 1900 nm, inside the deep water band where both detectors
+are at the edge of their sensitivity: on the SVC reference set the ratio
+measured there is 0.63--0.84 over a handful of bands averaging 0.04
+reflectance, i.e. noise, and applying it ramps a large error across a whole
+detector (RMSE against the vendor goes from 0.00013 to 0.02263). The vendor
+agrees --- it removes both overlaps but matches only the near one. When there
+is no overlap (already-joined data split by \code{splice_at}) there is no such
+window problem and every junction is matched.
 }
 \author{
 Jose Eduardo Meireles

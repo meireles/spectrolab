@@ -13,10 +13,15 @@ i_trim_sensor_overlap(x, splice_at)
 beginning of sensors 2 and 3 should be.}
 }
 \value{
-spectra object
+list with the joined \code{spectra}, the \code{sensor} each output band
+        came from, and the detected \code{overlap} bounds (NA when the data was
+        already joined)
 }
 \description{
-Trim sensor overlap
+Joins the detector segments with no magnitude correction at all: each sensor
+keeps the bands between its neighbouring splice points. This is the bare cut
+that \code{\link{match_sensors}} builds on, and it is useful on its own to see
+what the gain match and the crossfade actually change.
 }
 \author{
 Jose Eduardo Meireles

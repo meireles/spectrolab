@@ -28,8 +28,9 @@ step_idx = function(x, k){
 
 test_that("match_sensors() corrects the first junction only when sensors overlap", {
     ## This block used to assert the opposite -- that EVERY junction is gain
-    ## matched -- on the reasoning that `iter = 1` silently left the far detector
-    ## unmatched. Validating against the vendor's own overlap-matched files
+    ## matched -- on the reasoning that the first-junction-only guard silently
+    ## left the far detector unmatched. Validating against the vendor's own
+    ## overlap-matched files
     ## (test_svc_vendor_match.R) showed that reasoning was wrong: SVC removes both
     ## overlaps but magnitude-matches only the VNIR/SWIR1 one, and its output
     ## leaves detectors 2 and 3 identical to the raw file.
@@ -37,7 +38,8 @@ test_that("match_sensors() corrects the first junction only when sensors overlap
     ## The far junction of a 3-detector instrument sits near 1900 nm, in the deep
     ## water band at the edge of both detectors' sensitivity. The factor
     ## estimated there is noise, so "correcting" it ramped a large error across a
-    ## whole detector. The `iter = 1` guard was right; it is back.
+    ## whole detector. The guard was right; it is back, and stated outright in
+    ## R/splice.R.
     skip_if(!nzchar(sig_path))
 
     expect_equal(ncol(spectrolab:::i_find_sensor_overlap_bounds(bands(sig))), 3)
@@ -46,14 +48,15 @@ test_that("match_sensors() corrects the first junction only when sensors overlap
     expect_equal(length(jx), 2)
 
     matched  = suppressMessages(match_sensors(sig, splice_at = c(990, 1900)))
-    cut_only = suppressMessages(match_sensors(sig, splice_at = c(990, 1900),
-                                              method = "cut"))
+    cut_only = spectrolab:::i_trim_sensor_overlap(sig, c(990, 1900))[["spectra"]]
 
     ## The first junction is tightened relative to a plain cut with no gain.
     expect_lt(step_idx(matched, jx[1]), step_idx(cut_only, jx[1]))
 
-    ## Everything above it comes through the join as cut, unmodified.
-    above = seq(jx[1] + 1L, ncol(matched))
+    ## Everything above the detectors' physical overlap (which tops out at
+    ## 1016.6 nm, above the last crossfaded band) comes through the join as cut,
+    ## unmodified -- including the whole of detector 3.
+    above = which(bands(matched) > 1016.6)
     expect_equal(value(matched)[ , above], value(cut_only)[ , above])
 })
 
@@ -61,8 +64,7 @@ test_that("match_sensors() corrects the first junction only when sensors overlap
 test_that("match_sensors() corrects every junction when there is no overlap", {
     ## The counterpart to the rule above: a spectrum that is already joined has
     ## no overlap window to estimate from, so splice_at splits it and each
-    ## junction is matched. This is the ASD-shaped case, and it is what
-    ## `is.na(overlap)` in the legacy path selects.
+    ## junction is matched. This is the ASD-shaped case.
     wl = 350:2000
     v  = 0.2 + 0.00005 * (wl - 350)
     v[wl >= 1000] = v[wl >= 1000] * 1.15         # step up at the first junction
@@ -89,8 +91,9 @@ test_that("match_sensors() corrects every junction when there is no overlap", {
 
 
 test_that("match_sensors() does not silently ignore fixed_sensor", {
-    ## With 2 splice points the legacy algorithm requires the middle detector to
-    ## be the fixed one. It used to overwrite the user's choice without a word.
+    ## With 2 splice points the middle detector has to be the fixed one --
+    ## correcting detector 2 toward detector 1 would leave detector 3 behind. It
+    ## used to overwrite the user's choice without a word.
     expect_warning(suppressMessages(match_sensors(sig, splice_at = c(990, 1900),
                                                   fixed_sensor = 1)),
                    "fixed_sensor")
@@ -108,21 +111,6 @@ test_that("match_sensors() rejects an out-of-range fixed_sensor", {
     expect_error(suppressMessages(match_sensors(two, splice_at = 990,
                                                 fixed_sensor = 9)),
                  "fixed_sensor")
-})
-
-
-test_that("the splice gain auto-window is local, not the whole spectrum", {
-    ## Was: span was measured across the concatenation of both segments, so it
-    ## picked up the jump BETWEEN them (~2000 nm instead of ~2 nm band spacing).
-    bands_fixed = seq(1000, 1100, by = 2)
-    bands_adj   = seq(880,  998,  by = 2)
-
-    steps = c(diff(bands_fixed), diff(bands_adj))
-    expect_equal(stats::median(steps), 2)
-
-    ## The buggy formula produced a span two orders of magnitude larger.
-    old_span = max(abs(diff(c(bands_fixed, bands_adj))), 1)
-    expect_gt(old_span, 100 * stats::median(steps))
 })
 
 
