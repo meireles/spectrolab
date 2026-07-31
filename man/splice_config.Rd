@@ -9,6 +9,8 @@ splice_config(
   gain_estimator = c("linear_extrap", "mean_diff"),
   reference = c("right", "left", "middle"),
   window = NULL,
+  window_inset = 0.1,
+  gain_at = "all",
   clamp = NULL,
   graded = FALSE,
   join = c("cut", "ramp", "concatenate"),
@@ -39,10 +41,29 @@ detector and correct the outer ones --- resolves per junction for 3 sensors).}
 
 \item{window}{Crossover window \code{c(lo, hi)} (nm) over which factors are
 computed and, for a ramp, the blend runs. \code{NULL} (default) auto-detects
-it from the sensor overlap.}
+it from the sensor overlap, inset by \code{window_inset}.}
 
-\item{clamp}{For \code{gain_type = "multiplicative"}, bounds \code{c(min, max)}
-on the factor (e.g. SVC's \code{c(0.8, 1.2)}). \code{NULL} = no clamp.}
+\item{window_inset}{Fraction of the detected overlap to drop from \emph{each}
+end before computing a gain factor (default 0.10). The extreme edges of an
+overlap are where both detectors' response is rolling off, so including them
+biases the factor; vendors inset their own matching zones for the same
+reason (SVC overlaps at 971.8--1016.6 nm but matches over 976--1010 nm,
+which a 10\% inset reproduces almost exactly). Ignored when \code{window} is
+given explicitly, and never applied to a ramp blend.}
+
+\item{gain_at}{Which junctions get a gain match: \code{"all"} (default),
+\code{"first"}, or an integer vector of junction indices. Not every junction
+should be matched --- SVC, for one, matches only the VNIR/SWIR1 crossover and
+simply removes the overlap at the SWIR1/SWIR2 one, where both detectors sit
+in the 1900 nm water band at the edge of their sensitivity and any ratio
+between them is noise. See \code{\link{match_sensors}}.}
+
+\item{clamp}{For a multiplicative or \code{"ssd"} gain, the plausible range
+\code{c(min, max)} for the factor (e.g. SVC's \code{c(0.8, 1.2)}).
+\code{NULL} = no check. A factor outside the range means the estimate itself
+is untrustworthy, so the junction is left \strong{uncorrected} with a
+warning; the bound is deliberately not used to floor the factor, which would
+apply a known-bad correction silently.}
 
 \item{graded}{For a multiplicative gain, taper the factor across the scaled
 segment (full at the junction, fading to 1 at the far end) rather than

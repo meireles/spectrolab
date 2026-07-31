@@ -78,9 +78,26 @@
 #'   detector and correct the outer ones --- resolves per junction for 3 sensors).
 #' @param window Crossover window \code{c(lo, hi)} (nm) over which factors are
 #'   computed and, for a ramp, the blend runs. \code{NULL} (default) auto-detects
-#'   it from the sensor overlap.
-#' @param clamp For \code{gain_type = "multiplicative"}, bounds \code{c(min, max)}
-#'   on the factor (e.g. SVC's \code{c(0.8, 1.2)}). \code{NULL} = no clamp.
+#'   it from the sensor overlap, inset by \code{window_inset}.
+#' @param window_inset Fraction of the detected overlap to drop from \emph{each}
+#'   end before computing a gain factor (default 0.10). The extreme edges of an
+#'   overlap are where both detectors' response is rolling off, so including them
+#'   biases the factor; vendors inset their own matching zones for the same
+#'   reason (SVC overlaps at 971.8--1016.6 nm but matches over 976--1010 nm,
+#'   which a 10\% inset reproduces almost exactly). Ignored when \code{window} is
+#'   given explicitly, and never applied to a ramp blend.
+#' @param gain_at Which junctions get a gain match: \code{"all"} (default),
+#'   \code{"first"}, or an integer vector of junction indices. Not every junction
+#'   should be matched --- SVC, for one, matches only the VNIR/SWIR1 crossover and
+#'   simply removes the overlap at the SWIR1/SWIR2 one, where both detectors sit
+#'   in the 1900 nm water band at the edge of their sensitivity and any ratio
+#'   between them is noise. See \code{\link{match_sensors}}.
+#' @param clamp For a multiplicative or \code{"ssd"} gain, the plausible range
+#'   \code{c(min, max)} for the factor (e.g. SVC's \code{c(0.8, 1.2)}).
+#'   \code{NULL} = no check. A factor outside the range means the estimate itself
+#'   is untrustworthy, so the junction is left \strong{uncorrected} with a
+#'   warning; the bound is deliberately not used to floor the factor, which would
+#'   apply a known-bad correction silently.
 #' @param graded For a multiplicative gain, taper the factor across the scaled
 #'   segment (full at the junction, fading to 1 at the far end) rather than
 #'   applying it flat. SVC does this; defaults to FALSE.
@@ -108,6 +125,8 @@ splice_config = function(gain_type      = c("none", "multiplicative", "additive"
                          gain_estimator = c("linear_extrap", "mean_diff"),
                          reference      = c("right", "left", "middle"),
                          window         = NULL,
+                         window_inset   = 0.10,
+                         gain_at        = "all",
                          clamp          = NULL,
                          graded         = FALSE,
                          join           = c("cut", "ramp", "concatenate"),
@@ -126,6 +145,14 @@ splice_config = function(gain_type      = c("none", "multiplicative", "additive"
     if( !is.null(clamp) && (length(clamp) != 2 || !is.numeric(clamp)) ){
         stop("`clamp` must be NULL or a numeric c(min, max)")
     }
+    if( !is.numeric(window_inset) || length(window_inset) != 1 ||
+        is.na(window_inset) || window_inset < 0 || window_inset >= 0.5 ){
+        stop("`window_inset` must be a single number in [0, 0.5)")
+    }
+    if( !( identical(gain_at, "all") || identical(gain_at, "first") ||
+           (is.numeric(gain_at) && length(gain_at) > 0 && all(gain_at >= 1)) ) ){
+        stop("`gain_at` must be \"all\", \"first\", or a vector of junction indices")
+    }
     if( !is.numeric(n_fit) || n_fit < 2 ){
         stop("`n_fit` must be an integer >= 2")
     }
@@ -134,12 +161,30 @@ splice_config = function(gain_type      = c("none", "multiplicative", "additive"
                    gain_estimator = gain_estimator,
                    reference      = reference,
                    window         = window,
+                   window_inset   = as.numeric(window_inset),
+                   gain_at        = if(is.numeric(gain_at)) as.integer(gain_at) else gain_at,
                    clamp          = clamp,
                    graded         = isTRUE(graded),
                    join           = join,
                    ramp_shape     = ramp_shape,
                    n_fit          = as.integer(n_fit)),
               class = "splice_config")
+}
+
+
+#' Does this junction get a gain match?
+#'
+#' Resolves \code{config$gain_at} against a junction index.
+#'
+#' @param config a splice_config
+#' @param j junction index (1-based)
+#' @return TRUE/FALSE
+#' @keywords internal
+i_gain_at_junction = function(config, j){
+    ga = config$gain_at
+    if(is.null(ga) || identical(ga, "all")){ return(TRUE) }
+    if(identical(ga, "first")){ return(j == 1L) }
+    j %in% ga
 }
 
 
@@ -151,8 +196,18 @@ print.splice_config = function(x, ...){
         if(x$gain_type == "multiplicative" && x$graded) " (graded)" else "",
         "\n", sep = "")
     cat("  fixed side  : ", x$reference, "\n", sep = "")
-    if(!is.null(x$clamp))  cat("  clamp       : [", x$clamp[1], ", ", x$clamp[2], "]\n", sep = "")
-    if(!is.null(x$window)) cat("  window      : [", x$window[1], ", ", x$window[2], "]\n", sep = "")
+    if(x$gain_type != "none"){
+        cat("  gain at     : ",
+            if(is.numeric(x$gain_at)) paste0("junction(s) ", paste(x$gain_at, collapse = ", "))
+            else x$gain_at,
+            "\n", sep = "")
+    }
+    if(!is.null(x$clamp))  cat("  plausible   : [", x$clamp[1], ", ", x$clamp[2], "]\n", sep = "")
+    if(!is.null(x$window)){
+        cat("  window      : [", x$window[1], ", ", x$window[2], "]\n", sep = "")
+    } else {
+        cat("  window      : auto (overlap inset ", 100 * x$window_inset, "%)\n", sep = "")
+    }
     cat("  join        : ", x$join,
         if(x$join == "ramp") paste0(" (", x$ramp_shape, ")") else "",
         "\n", sep = "")
@@ -175,9 +230,22 @@ print.splice_config = function(x, ...){
 i_splice_preset = function(name){
     switch(name,
         ## SVC: match the VIS side to the (temperature-stabilised) SWIR1 with a
-        ## graded, clamped scalar, then delete the overlap.
+        ## graded scalar, then delete the overlap.
+        ##
+        ## gain_at = 1 is not a detail -- it is the behaviour. SVC's own header
+        ## records TWO removals but only ONE matching zone
+        ## ("Overlap: Remove @ 970,1901, Matching Type: Radiance @ 976 - 1010"),
+        ## and its output leaves detectors 2 and 3 bit-identical to the raw file.
+        ## The SWIR1/SWIR2 crossover sits at ~1900 nm, in the deep water band at
+        ## the edge of both detectors' sensitivity (mean reflectance ~0.04 over a
+        ## handful of bands), so a ratio estimated there is noise: on the
+        ## reference data it lands at 0.63-0.84, outside any plausible range.
+        ## Matching there corrupts half the spectrum. spectrolab 0.0.19 avoided
+        ## this with an `iter = 1` guard in the legacy path; this is that rule,
+        ## stated rather than implied.
         "svc" = splice_config(gain_type = "multiplicative", reference = "right",
-                              clamp = c(0.8, 1.2), graded = TRUE, join = "cut"),
+                              clamp = c(0.8, 1.2), graded = TRUE, join = "cut",
+                              gain_at = 1L),
 
         ## Spectral Evolution / NaturaSpec: SSD-winner gain anchored to the low
         ## (Si) side, linear-ramp blend across the overlap. DERIVED; default
@@ -232,6 +300,82 @@ i_resolve_reference = function(reference, j, n_junctions){
 #' @keywords internal
 i_clamp = function(x, lo, hi){
     pmin(pmax(x, lo), hi)
+}
+
+
+#' Inset a window by a fraction of its width on each side
+#'
+#' The outermost wavelengths of a detector overlap are where both sensors'
+#' response is rolling off, so a gain factor estimated across the full overlap is
+#' biased by its own worst data. Insetting reproduces what vendors do when they
+#' record a matching zone narrower than the overlap it sits in.
+#'
+#' Degenerate cases (zero-width or an inset that would empty the window) return
+#' the window unchanged rather than an invalid one.
+#'
+#' @param win numeric c(lo, hi)
+#' @param inset fraction to drop from each end
+#' @return numeric c(lo, hi)
+#' @keywords internal
+i_inset_window = function(win, inset){
+    if(is.null(inset) || !is.finite(inset) || inset <= 0){
+        return(win)
+    }
+    pad = (win[2] - win[1]) * inset
+    if(!is.finite(pad) || pad <= 0){
+        return(win)
+    }
+    c(win[1] + pad, win[2] - pad)
+}
+
+
+#' Is an estimated multiplicative gain plausible?
+#'
+#' \code{clamp} states the range a real detector-matching factor can fall in. A
+#' factor outside it does not mean "correct by the bound" --- it means the window
+#' the factor was estimated from carries no usable signal. Callers skip the
+#' junction instead.
+#'
+#' @param fac estimated factor
+#' @param clamp numeric c(min, max), or NULL for no check
+#' @return TRUE if the factor should be applied
+#' @keywords internal
+i_gain_is_plausible = function(fac, clamp){
+    if(!is.finite(fac) || fac <= 0){
+        return(FALSE)
+    }
+    if(is.null(clamp)){
+        return(TRUE)
+    }
+    fac >= clamp[1] && fac <= clamp[2]
+}
+
+
+#' Warn that a junction was left uncorrected because its factor was implausible
+#'
+#' @param n_rejected number of samples whose factor failed the check
+#' @param n_total number of samples
+#' @param w the junction wavelength
+#' @param clamp the plausible range
+#' @return invisible NULL
+#' @keywords internal
+i_warn_rejected_gain = function(n_rejected, n_total, w, clamp){
+    if(n_rejected == 0){
+        return(invisible(NULL))
+    }
+    why = if(is.null(clamp)){
+        "the estimated factor was not a usable number"
+    } else {
+        paste0("the estimated factor fell outside the plausible range [",
+               clamp[1], ", ", clamp[2], "]")
+    }
+
+    warning("Detector matching skipped at ", w, " nm for ", n_rejected, " of ",
+            n_total, " sample(s): ", why, ", which means the matching window ",
+            "carries too little signal to estimate a gain (a junction inside a ",
+            "deep water band, typically). Those sensors were joined without a ",
+            "magnitude correction.", call. = FALSE)
+    invisible(NULL)
 }
 
 
@@ -294,6 +438,11 @@ i_splice_gain_across = function(x, splice_at, config){
     win = config$window
 
     for(j in seq_len(nj)){
+
+        if( !i_gain_at_junction(config, j) ){
+            next
+        }
+
         w     = splice_at[j]
         fixed = i_resolve_reference(config$reference, j, nj)
 
@@ -312,6 +461,7 @@ i_splice_gain_across = function(x, splice_at, config){
         }
 
         ## Per-sample correction
+        n_rejected = 0L
         for(i in seq_len(nrow(v))){
             corr = i_gain_correction(bands_fixed = b[fixed_cols],
                                      vals_fixed  = v[i, fixed_cols],
@@ -320,8 +470,13 @@ i_splice_gain_across = function(x, splice_at, config){
                                      w           = w,
                                      config      = config,
                                      fixed_side  = fixed)
-            v[i, adj_cols] = corr
+            if( isTRUE(attr(corr, "rejected")) ){
+                n_rejected = n_rejected + 1L
+            }
+            v[i, adj_cols] = as.numeric(corr)
         }
+
+        i_warn_rejected_gain(n_rejected, nrow(v), w, config$clamp)
     }
 
     x[] = v
@@ -338,15 +493,21 @@ i_splice_gain_across = function(x, splice_at, config){
 #' @param fixed_side "left" or "right"
 #' @return corrected \code{vals_adj}
 #' @keywords internal
-#' @importFrom stats lm predict
+#' @importFrom stats lm median predict
 i_gain_correction = function(bands_fixed, vals_fixed, bands_adj, vals_adj,
                              w, config, fixed_side){
 
     ## Window near the splice on each side (for mean/ssd estimators)
     win = config$window
     if(is.null(win)){
-        ## default: a few bands on each side of the splice
-        span      = max(abs(diff(c(bands_fixed, bands_adj))), 1)
+        ## Default: ~10 band steps on each side of the splice. The step must be
+        ## measured WITHIN a segment. Concatenating the two segments first
+        ## (`diff(c(bands_fixed, bands_adj))`) picks up the jump *between* them,
+        ## which on real data blew the half-window up from ~22 nm to ~22000 nm --
+        ## i.e. the "local" window became the whole spectrum.
+        steps     = c(diff(bands_fixed), diff(bands_adj))
+        steps     = steps[is.finite(steps) & steps > 0]
+        span      = if(length(steps) == 0){ 1 } else { stats::median(steps) }
         half      = 10 * span
         win       = c(w - half, w + half)
     }
@@ -362,7 +523,12 @@ i_gain_correction = function(bands_fixed, vals_fixed, bands_adj, vals_adj,
 
     if(config$gain_type == "multiplicative"){
         fac = mean_f / mean_a
-        if(!is.null(config$clamp)) fac = i_clamp(fac, config$clamp[1], config$clamp[2])
+        ## Implausible factor -> the window has no usable signal; leave it alone.
+        ## The "rejected" flag lets the caller report it instead of silently
+        ## returning an uncorrected segment.
+        if( !i_gain_is_plausible(fac, config$clamp) ){
+            return(structure(vals_adj, rejected = TRUE))
+        }
         return(vals_adj * fac)
     }
 
@@ -388,6 +554,9 @@ i_gain_correction = function(bands_fixed, vals_fixed, bands_adj, vals_adj,
         ## SSD-winner: pick additive vs multiplicative by whichever perturbs the
         ## adjusted side least (sum of squared changes).
         fac  = mean_f / mean_a
+        if( !i_gain_is_plausible(fac, config$clamp) ){
+            return(structure(vals_adj, rejected = TRUE))
+        }
         mult = vals_adj * fac
         add  = vals_adj + (mean_f - mean_a)
         ssd_mult = sum((mult - vals_adj)^2, na.rm = TRUE)
@@ -455,18 +624,25 @@ i_splice_overlap_gain = function(x, splice_at, config){
     })
 
     for(j in seq_len(min(nj, n_sensor - 1L))){
+
+        ## Not every junction is matchable -- see splice_config(gain_at).
+        if( !i_gain_at_junction(config, j) ){
+            next
+        }
+
         w     = splice_at[j]
         fixed = i_resolve_reference(config$reference, j, nj)
 
         left_cols  = seg_cols[[j]]
         right_cols = seg_cols[[j + 1L]]
 
-        ## overlap window (auto = the physically overlapping wavelengths)
+        ## Matching window: an explicit one wins, otherwise the physical overlap
+        ## inset off both ends (where detector response is rolling off).
         win = config$window
         if(is.null(win)){
             lo  = max(min(b[left_cols]),  min(b[right_cols]))
             hi  = min(max(b[left_cols]),  max(b[right_cols]))
-            win = c(lo, hi)
+            win = i_inset_window(c(lo, hi), config$window_inset)
         }
 
         lf = left_cols[  b[left_cols]  >= win[1] & b[left_cols]  <= win[2] ]
@@ -477,6 +653,8 @@ i_splice_overlap_gain = function(x, splice_at, config){
 
         if(fixed == "right"){ fixed_cols = rf; scaled_cols = lf; scaled_seg = left_cols }
         else               { fixed_cols = lf; scaled_cols = rf; scaled_seg = right_cols }
+
+        n_rejected = 0L
 
         for(i in seq_len(nrow(v))){
             mean_f = mean(v[i, fixed_cols],  na.rm = TRUE)
@@ -490,7 +668,14 @@ i_splice_overlap_gain = function(x, splice_at, config){
                 v[i, scaled_seg] = v[i, scaled_seg] + off
             } else {
                 fac = mean_f / mean_s                       # multiplicative / ssd default
-                if(!is.null(config$clamp)) fac = i_clamp(fac, config$clamp[1], config$clamp[2])
+
+                ## An implausible factor means the estimate is bad, not that the
+                ## correction should be shrunk to the bound: leave the sensor
+                ## alone rather than applying a known-bad gain.
+                if( !i_gain_is_plausible(fac, config$clamp) ){
+                    n_rejected = n_rejected + 1L
+                    next
+                }
 
                 if(config$graded){
                     ## Taper the factor across the scaled segment: full at the
@@ -508,6 +693,8 @@ i_splice_overlap_gain = function(x, splice_at, config){
                 }
             }
         }
+
+        i_warn_rejected_gain(n_rejected, nrow(v), w, config$clamp)
     }
 
     x[] = v

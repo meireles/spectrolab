@@ -71,12 +71,21 @@ spectra before trusting them. Typical values on our own instruments were
 SVC ~ c(990, 1900), ASD ~ c(1001, 1801).
 
 \strong{What this does (and does not) do.} This is a general, instrument-
-agnostic join: one scaling factor per junction spread with a linear ramp. It
-is \emph{not} a faithful reproduction of any single vendor's stitching
+agnostic join: one scaling factor per junction spread with a linear ramp.
+Which junctions get that factor depends on the data. When the detectors still
+physically overlap (raw SVC, PSR), only the \emph{first} junction is matched:
+the far crossover of a 3-detector instrument sits near 1900 nm, inside the deep
+water band where both detectors are at the edge of their sensitivity, and a
+factor estimated there is noise rather than a gain. When the data carries no
+overlap (an already-joined spectrum split by \code{splice_at}), every junction
+is matched.
+
+It is \emph{not} a faithful reproduction of any single vendor's stitching
 algorithm (SVC deletes the overlap, Spectral Evolution ramp-blends it, ASD's
 algorithm is not recoverable). Vendor-specific splice presets that consume the
 captured \code{\link{sensor_info}} provenance are available via \code{method}
-(see below).
+(see below); on SVC data the \code{"svc"} preset lands considerably closer to
+the vendor's own overlap-matched output than this legacy path does.
 
 \strong{Methods / presets.} Passing \code{method} (or a \code{config} built
 with \code{\link{splice_config}}) selects a vendor-aware splice via the splice

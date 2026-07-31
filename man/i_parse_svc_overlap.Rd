@@ -10,7 +10,8 @@ i_parse_svc_overlap(line)
 \item{line}{a single character string (one header line), or NA}
 }
 \value{
-a named list with \code{splice_1} and \code{splice_2} (NA if absent)
+a named list with \code{splice_1}, \code{splice_2}, \code{match_lo}
+        and \code{match_hi} (NA where absent)
 }
 \description{
 \code{i_parse_svc_overlap} extracts the two detector-crossover wavelengths
@@ -22,7 +23,7 @@ factors= 0.795, 0.848, 1.000 [Overlap: Remove @ 970,1901, Matching Type: Radianc
 }
 
 The crossovers are the COMMA pair ("@ 970,1901"); the DASH pair
-("@ 976 - 1010") is the matching zone and is deliberately ignored. When a
+("@ 976 - 1010") is the magnitude-matching zone. Both are captured. When a
 file has been reprocessed the line can carry more than one bracketed record;
 only the FIRST (applied) record is parsed.
 }

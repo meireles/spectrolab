@@ -32,12 +32,23 @@
 # phase and will *consume* the provenance captured here.
 ################################################################################
 
-## Canonical column schema for the per-sample sensor_info record. Keeping every
+## Canonical column schema for the per-sample sensor_info record -- keeping every
 ## instrument on the same columns (NA where a field does not apply) is what lets
-## combine() rbind two records and `[` subset one.
-i_sensor_info_cols = c("instrument",     # vendor tag ("svc", "psr", "asd")
-                       "splice_1",        # first  detector join wavelength (nm)
-                       "splice_2")        # second detector join wavelength (nm)
+## combine() rbind two records and `[` subset one. The schema lives in
+## i_new_sensor_info() below, which is the single place that builds it:
+##
+##   instrument  vendor tag ("svc", "psr", "asd")
+##   splice_1    first  detector join wavelength (nm)
+##   splice_2    second detector join wavelength (nm)
+##   match_lo    low  edge of the vendor's magnitude-matching zone (nm)
+##   match_hi    high edge of the vendor's magnitude-matching zone (nm)
+##
+## match_lo/match_hi are the window over which the vendor computed its detector
+## matching factor. They are NOT the splice points: SVC records them separately
+## ("Remove @ 970,1901" vs "Matching Type: Radiance @ 976 - 1010") because a
+## matching zone is deliberately inset from the overlap edges, where detector
+## response rolls off and a ratio of the two sensors is unreliable. match_sensors
+## consumes them when present -- see i_match_window_from_provenance().
 
 
 #' Build an empty canonical sensor_info data.frame
@@ -56,6 +67,8 @@ i_new_sensor_info = function(instrument, n){
     df = data.frame(instrument = rep(as.character(instrument), length.out = n),
                     splice_1   = rep(NA_real_, n),
                     splice_2   = rep(NA_real_, n),
+                    match_lo   = rep(NA_real_, n),
+                    match_hi   = rep(NA_real_, n),
                     stringsAsFactors = FALSE)
     rownames(df) = NULL
     df
@@ -72,18 +85,20 @@ i_new_sensor_info = function(instrument, n){
 #' }
 #'
 #' The crossovers are the COMMA pair ("@ 970,1901"); the DASH pair
-#' ("@ 976 - 1010") is the matching zone and is deliberately ignored. When a
+#' ("@ 976 - 1010") is the magnitude-matching zone. Both are captured. When a
 #' file has been reprocessed the line can carry more than one bracketed record;
 #' only the FIRST (applied) record is parsed.
 #'
 #' @param line a single character string (one header line), or NA
-#' @return a named list with \code{splice_1} and \code{splice_2} (NA if absent)
+#' @return a named list with \code{splice_1}, \code{splice_2}, \code{match_lo}
+#'         and \code{match_hi} (NA where absent)
 #'
 #' @keywords internal
 #' @author Jose Eduardo Meireles
 i_parse_svc_overlap = function(line){
 
-    out = list(splice_1 = NA_real_, splice_2 = NA_real_)
+    out = list(splice_1 = NA_real_, splice_2 = NA_real_,
+               match_lo = NA_real_, match_hi = NA_real_)
 
     if(length(line) != 1 || is.na(line) || !grepl("factors=", line, fixed = TRUE)){
         return(out)
@@ -103,6 +118,13 @@ i_parse_svc_overlap = function(line){
         v = as.numeric(regmatches(sp, gregexpr("[0-9.]+", sp))[[1]])
         out$splice_1 = v[1]
         out$splice_2 = v[2]
+    }
+
+    mz = regmatches(blk, regexpr("@[[:space:]]*[0-9.]+[[:space:]]*-[[:space:]]*[0-9.]+", blk))
+    if(length(mz) == 1){
+        v = sort(as.numeric(regmatches(mz, gregexpr("[0-9.]+", mz))[[1]]))
+        out$match_lo = v[1]
+        out$match_hi = v[2]
     }
 
     out
@@ -191,4 +213,37 @@ i_splice_from_provenance = function(si){
         return(NULL)
     }
     sort(as.numeric(sp))
+}
+
+
+#' Recover the vendor's magnitude-matching window from sensor provenance
+#'
+#' \code{i_match_window_from_provenance} returns the \code{c(lo, hi)} window over
+#' which the instrument computed its detector-matching factor, when the file
+#' recorded one (SVC's "Matching Type: ... @ 976 - 1010"). Returns NULL when the
+#' record is absent or the samples disagree --- notably, SVC files saved in
+#' "Preserve / Matching Type: None" mode (the usual raw case) carry no window, so
+#' callers must fall back to the auto-detected one.
+#'
+#' @param si a sensor_info data.frame, or NULL
+#' @return numeric \code{c(lo, hi)}, or NULL
+#'
+#' @keywords internal
+#' @author Jose Eduardo Meireles
+i_match_window_from_provenance = function(si){
+    if(is.null(si) || nrow(si) == 0 ||
+       is.null(si[["match_lo"]]) || is.null(si[["match_hi"]])){
+        return(NULL)
+    }
+
+    lo = unique(stats::na.omit(si[["match_lo"]]))
+    hi = unique(stats::na.omit(si[["match_hi"]]))
+
+    ## One window or nothing: samples read from files with different matching
+    ## zones must not be silently collapsed into one.
+    if(length(lo) != 1 || length(hi) != 1 || !is.finite(lo) || !is.finite(hi) || lo >= hi){
+        return(NULL)
+    }
+
+    c(as.numeric(lo), as.numeric(hi))
 }

@@ -22,6 +22,37 @@ test_that("i_parse_svc_overlap reads splice crossovers from a Remove header (fir
     expect_equal(c(p$splice_1, p$splice_2), c(970, 1901))
 })
 
+test_that("i_parse_svc_overlap reads the matching zone as well as the crossovers", {
+    ## The crossovers are a COMMA pair, the matching zone a DASH pair, in the
+    ## same bracketed block. They are different things: the zone is deliberately
+    ## inset from the overlap, so it must not be confused with a splice point.
+    p = spectrolab:::i_parse_svc_overlap(
+        paste0("factors= 0.795, 0.848, 1.000 [Overlap: Remove @ 970,1901, ",
+               "Matching Type: Radiance @ 976 - 1010 / NIR-SWIR On]"))
+    expect_equal(c(p$match_lo, p$match_hi), c(976, 1010))
+    expect_equal(c(p$splice_1, p$splice_2), c(970, 1901))
+})
+
+test_that("a Preserve header has no matching zone", {
+    p = spectrolab:::i_parse_svc_overlap(
+        "factors= 0.800, 0.844, 1.000 [Overlap: Preserve, Matching Type: None]")
+    expect_true(is.na(p$match_lo) && is.na(p$match_hi))
+})
+
+test_that("i_match_window_from_provenance needs one unambiguous window", {
+    si = spectrolab:::i_new_sensor_info("svc", 2)
+    expect_null(spectrolab:::i_match_window_from_provenance(si))      # all NA
+
+    si$match_lo = c(976, 976); si$match_hi = c(1010, 1010)
+    expect_equal(spectrolab:::i_match_window_from_provenance(si), c(976, 1010))
+
+    ## samples read from files with different matching zones must not be merged
+    si$match_hi = c(1010, 1020)
+    expect_null(spectrolab:::i_match_window_from_provenance(si))
+
+    expect_null(spectrolab:::i_match_window_from_provenance(NULL))
+})
+
 test_that("i_parse_svc_overlap is robust to a missing/blank line", {
     p = spectrolab:::i_parse_svc_overlap(NA_character_)
     expect_true(is.na(p$splice_1))
@@ -40,7 +71,7 @@ test_that("SVC read captures provenance aligned to samples", {
     expect_false(is.null(si))
     expect_equal(nrow(si), unname(nrow(s)))
     expect_true(all(si$instrument == "svc"))
-    expect_named(si, c("instrument", "splice_1", "splice_2"))
+    expect_named(si, c("instrument", "splice_1", "splice_2", "match_lo", "match_hi"))
 })
 
 test_that("SVC 'Remove @ 970,1901' matched files expose splice points", {

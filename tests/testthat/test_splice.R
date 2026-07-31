@@ -20,6 +20,44 @@ test_that("splice_config validates arguments", {
     expect_error(splice_config(clamp = 1))                     # bad clamp
     expect_error(splice_config(window = c(1, 2, 3)))          # bad window
     expect_error(splice_config(n_fit = 1))                     # too few
+    expect_error(splice_config(window_inset = 0.5))            # would empty the window
+    expect_error(splice_config(window_inset = -0.1))
+    expect_error(splice_config(gain_at = "sometimes"))
+    expect_error(splice_config(gain_at = 0))                   # junctions are 1-based
+})
+
+test_that("gain_at selects which junctions get matched", {
+    all_j = splice_config(gain_type = "multiplicative")
+    expect_true(spectrolab:::i_gain_at_junction(all_j, 1))
+    expect_true(spectrolab:::i_gain_at_junction(all_j, 2))
+
+    first = splice_config(gain_type = "multiplicative", gain_at = "first")
+    expect_true(spectrolab:::i_gain_at_junction(first, 1))
+    expect_false(spectrolab:::i_gain_at_junction(first, 2))
+
+    second = splice_config(gain_type = "multiplicative", gain_at = 2L)
+    expect_false(spectrolab:::i_gain_at_junction(second, 1))
+    expect_true(spectrolab:::i_gain_at_junction(second, 2))
+})
+
+test_that("i_inset_window trims both ends and degrades gracefully", {
+    expect_equal(spectrolab:::i_inset_window(c(0, 100), 0.10), c(10, 90))
+    expect_equal(spectrolab:::i_inset_window(c(0, 100), 0),    c(0, 100))
+    ## a zero-width window has nothing to inset
+    expect_equal(spectrolab:::i_inset_window(c(5, 5), 0.10), c(5, 5))
+
+    ## the default inset reproduces SVC's own matching zone from its overlap
+    w = spectrolab:::i_inset_window(c(971.8, 1016.6), 0.10)
+    expect_lt(abs(w[1] - 976),  2)
+    expect_lt(abs(w[2] - 1010), 3)
+})
+
+test_that("i_gain_is_plausible rejects rather than floors", {
+    expect_true(spectrolab:::i_gain_is_plausible(0.95, c(0.8, 1.2)))
+    expect_false(spectrolab:::i_gain_is_plausible(0.67, c(0.8, 1.2)))
+    expect_false(spectrolab:::i_gain_is_plausible(NaN,  c(0.8, 1.2)))
+    expect_false(spectrolab:::i_gain_is_plausible(-1,   NULL))
+    expect_true(spectrolab:::i_gain_is_plausible(0.01,  NULL))   # no clamp, no check
 })
 
 test_that("presets expand to sensible configs; unknown errors", {
@@ -28,6 +66,8 @@ test_that("presets expand to sensible configs; unknown errors", {
     expect_equal(svc$join, "cut")
     expect_equal(svc$reference, "right")
     expect_equal(svc$clamp, c(0.8, 1.2))
+    ## SVC removes both overlaps but matches only the VNIR/SWIR1 one
+    expect_equal(svc$gain_at, 1L)
 
     ns = spectrolab:::i_splice_preset("naturaspec")
     expect_equal(ns$join, "ramp")

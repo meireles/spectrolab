@@ -143,13 +143,18 @@ i_trim_sensor_overlap = function(x, splice_at){
     ## ai_reviews/DUPLICATE_BANDS_ANALYSIS.md.
     idx = lapply(b, function(y){ seq.int(y[[1]], y[[2]]) })
 
-    ## Trim the overlap: at each splice keep the right sensor at/above splice_at,
-    ## and the left sensor strictly below the lowest kept right-sensor wavelength.
+    ## Trim the overlap at splice_at itself: the right sensor keeps what is at or
+    ## above it, the left sensor keeps what is strictly below it. splice_at is
+    ## documented as the point where one detector takes over from the other, so
+    ## it -- not the right sensor's first wavelength -- is the cut.
+    ##
+    ## Trimming the left sensor at `min(kept right)` instead used to let left-hand
+    ## bands lying between splice_at and the right sensor's start survive: on the
+    ## SVC reference data that kept 970.8 nm, one band the vendor deletes, so a
+    ## "Remove @ 970" file came back with 983 bands against the vendor's 982.
     for(i in 1:length(splice_at) ){
-        keep_right   = idx[[i + 1]][ w[idx[[i + 1]]] >= splice_at[i] ]
-        idx[[i + 1]] = keep_right
-        min_right    = min(w[keep_right])
-        idx[[i]]     = idx[[i]][ w[idx[[i]]] < min_right ]
+        idx[[i + 1]] = idx[[i + 1]][ w[idx[[i + 1]]] >= splice_at[i] ]
+        idx[[i]]     = idx[[i]][     w[idx[[i]]]     <  splice_at[i] ]
     }
 
     keep0   = unlist(idx, use.names = FALSE)
@@ -171,6 +176,44 @@ i_trim_sensor_overlap = function(x, splice_at){
     list("spectra" = out,
          "sensor"  = sensor,
          "overlap" = if(no_over){ NA } else { bb })
+}
+
+
+#' Adopt the vendor's recorded matching window into a splice_config
+#'
+#' When the instrument file says which window it computed its detector-matching
+#' factor over (SVC's "Matching Type: Radiance @ 976 - 1010"), prefer it over the
+#' auto-detected one --- it is the vendor's own statement about where the two
+#' detectors are comparable. An explicit \code{config$window} always wins.
+#'
+#' A recorded window describes ONE junction (the one the vendor matched), so it
+#' is only adopted when the config gains at exactly one junction. Otherwise the
+#' same window would be imposed on crossovers hundreds of nm away, where it
+#' selects no bands at all.
+#'
+#' @param config a splice_config
+#' @param si a sensor_info data.frame, or NULL
+#' @return the config, possibly with \code{window} filled in
+#'
+#' @keywords internal
+#' @author Jose Eduardo Meireles
+i_config_window_from_provenance = function(config, si){
+
+    if( !is.null(config$window) || config$gain_type == "none" ){
+        return(config)
+    }
+    if( !(is.numeric(config$gain_at) && length(config$gain_at) == 1) &&
+        !identical(config$gain_at, "first") ){
+        return(config)
+    }
+
+    win = i_match_window_from_provenance(si)
+    if( is.null(win) ){
+        return(config)
+    }
+
+    config$window = win
+    config
 }
 
 
@@ -198,12 +241,21 @@ i_trim_sensor_overlap = function(x, splice_at){
 #' SVC ~ c(990, 1900), ASD ~ c(1001, 1801).
 #'
 #' \strong{What this does (and does not) do.} This is a general, instrument-
-#' agnostic join: one scaling factor per junction spread with a linear ramp. It
-#' is \emph{not} a faithful reproduction of any single vendor's stitching
+#' agnostic join: one scaling factor per junction spread with a linear ramp.
+#' Which junctions get that factor depends on the data. When the detectors still
+#' physically overlap (raw SVC, PSR), only the \emph{first} junction is matched:
+#' the far crossover of a 3-detector instrument sits near 1900 nm, inside the deep
+#' water band where both detectors are at the edge of their sensitivity, and a
+#' factor estimated there is noise rather than a gain. When the data carries no
+#' overlap (an already-joined spectrum split by \code{splice_at}), every junction
+#' is matched.
+#'
+#' It is \emph{not} a faithful reproduction of any single vendor's stitching
 #' algorithm (SVC deletes the overlap, Spectral Evolution ramp-blends it, ASD's
 #' algorithm is not recoverable). Vendor-specific splice presets that consume the
 #' captured \code{\link{sensor_info}} provenance are available via \code{method}
-#' (see below).
+#' (see below); on SVC data the \code{"svc"} preset lands considerably closer to
+#' the vendor's own overlap-matched output than this legacy path does.
 #'
 #' \strong{Methods / presets.} Passing \code{method} (or a \code{config} built
 #' with \code{\link{splice_config}}) selects a vendor-aware splice via the splice
@@ -288,20 +340,36 @@ match_sensors.spectra = function(x,
 
     ## Engine path (vendor presets / custom config)
     if( use_engine ){
+        config = i_config_window_from_provenance(config, sensor_info(x))
         return(i_splice(x, splice_at, config))
     }
 
     ## ----------------------------------------------------------------------
     ## Legacy "scale" algorithm (unchanged): whole-sensor scalar + linear ramp.
     ## ----------------------------------------------------------------------
-    x            = x
-    w            = bands(x)
-    splice_at    = unlist(splice_at)
-    fixed_sensor = ifelse( length(splice_at) == 2, 2, fixed_sensor)
+    splice_at = unlist(splice_at)
+
+    ## Guard the fixed sensor: an out-of-range value used to fall through to
+    ## `names(y[match(fixed_sensor, y)])` returning NULL and dying with the
+    ## opaque "argument is of length zero".
+    if( length(fixed_sensor) != 1 || ! fixed_sensor %in% seq_len(length(splice_at) + 1L) ){
+        stop("`fixed_sensor` must be one of 1:", length(splice_at) + 1L,
+             " for ", length(splice_at) + 1L, " sensors.", call. = FALSE)
+    }
+
+    ## Three sensors: the legacy ramp only makes sense with the middle detector
+    ## held fixed. That was already forced, but silently -- say so instead of
+    ## quietly discarding what the caller asked for.
+    if( length(splice_at) == 2 && fixed_sensor != 2 ){
+        warning("`fixed_sensor` must be 2 when matching 3 sensors with the legacy ",
+                "algorithm; ignoring fixed_sensor = ", fixed_sensor, ".",
+                call. = FALSE)
+        fixed_sensor = 2
+    }
 
     y = i_trim_sensor_overlap(x = x, splice_at = splice_at)
-    x = y$spectra              # reassign x
-    w = bands(x)               # reassign w
+    x = y$spectra              # trimmed spectra, strictly increasing bands
+    w = bands(x)
     s = split(w, y$sensor)
 
     interpolate_wvl = rep(interpolate_wvl, length.out = length(splice_at))
@@ -369,20 +437,28 @@ match_sensors.spectra = function(x,
     })
 
 
-    ## `y$overlap` is a scalar NA when the sensors don't overlap, otherwise the
-    ## overlap-bounds data.frame; test it without letting is.na() return a matrix.
-    ## NOTE (legacy "scale" path): with real overlap and >1 junction (3+ sensors)
-    ## only the first factor matrix is applied, so the far sensor is left
-    ## unmatched. Preserved as-is; use a vendor preset via match_sensors(method=)
-    ## for correct multi-junction splicing.
+    ## Which junctions actually get their factor applied.
+    ##
+    ## Data with a REAL detector overlap gets only the first junction matched.
+    ## This looks like a bug -- the far sensor is left alone -- and 0.0.20 briefly
+    ## "fixed" it by looping over every junction. That was the wrong call: on
+    ## overlapping instruments the far crossover sits at ~1900 nm, inside the deep
+    ## water band at the edge of both detectors' sensitivity, and the factor
+    ## estimated there is noise (0.63-1.50 across the SVC reference set). Applying
+    ## it ramped a 50% error across a whole detector. Validated against the vendor
+    ## overlap-matched files, matching only the first junction is right: SVC
+    ## itself removes both overlaps but matches only the VNIR/SWIR1 one.
+    ##
+    ## Data with NO overlap (a joined ASD spectrum, split by splice_at) has no
+    ## such window problem, so every junction is matched, as before.
     no_overlap = length(y$overlap) == 1L && all(is.na(y$overlap))
+
     if(no_overlap || length(factor_mat) == 1){
         iter = seq_along(factor_mat)
     } else {
         iter = 1
     }
 
-    ## Transform data
     for(i in iter){
         x[ , s[[i]]] = value(x[ , s[[i]] ] ) * t( factor_mat[[i]] )
     }

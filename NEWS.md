@@ -1,6 +1,52 @@
 # spectrolab 0.0.20 (development)
 
 ## major
+* **[BUG FIX]** `match_sensors()` gain-matched *every* detector junction, which
+  made the `"svc"` preset worse than doing no matching at all. Validated against
+  the vendor-reprocessed files shipped in
+  `inst/extdata/svc_raw_and_overlap_matched_serbin/` (the same 14 scans raw and
+  after SVC's own overlap matching), RMSE against the vendor's output:
+
+  | | overall | det 1 | det 2 | det 3 |
+  |---|---|---|---|---|
+  | `method = "cut"` (join only, no gain) | 0.00771 | 0.01098 | 0.00218 | 0 |
+  | `method = "svc"`, before | 0.01395 | 0.00197 | **0.02741** | 0 |
+  | `method = "svc"`, now | **0.00116** | **0.00053** | 0.00218 | 0 |
+
+  The SWIR1/SWIR2 crossover near 1900 nm sits in the deep water band at the edge
+  of both detectors' sensitivity: the factor estimated there came out at
+  0.63--0.84 across the reference set, was silently floored to the 0.8 `clamp`,
+  and was then ramped across the whole of detector 2. SVC's own header records
+  two removals but only one matching zone
+  (`Overlap: Remove @ 970,1901, Matching Type: Radiance @ 976 - 1010`), and its
+  output leaves detectors 2 and 3 identical to the raw file. Four changes:
+  - `splice_config()` gains `gain_at` (`"all"`, `"first"`, or junction indices);
+    the `"svc"` preset now matches only the VNIR/SWIR1 junction. This restores,
+    and states outright, the `iter = 1` rule that 0.0.19 had in the legacy path
+    and that 0.0.20 removed as if it were a bug.
+  - `clamp` is now a plausibility **gate**, not a floor: a factor outside the
+    range leaves that junction uncorrected and warns, instead of quietly
+    applying a known-bad correction.
+  - `splice_config()` gains `window_inset` (default 0.10). The auto-detected
+    matching window is now inset off both ends of the overlap, where detector
+    response rolls off; on SVC data this reproduces the vendor's own 976--1010 nm
+    zone from a 971.8--1016.6 nm overlap, and cuts the detector-1 residual by
+    almost 4x.
+  - The legacy (`method = NULL`/`"scale"`) path had the same regression, ramping
+    detector 3 by a factor starting at 1.50 (RMSE there 0 -> 0.01915). The 0.0.19
+    guard is restored: with a physical detector overlap only the first junction is
+    matched; with no overlap (already-joined data split by `splice_at`) every
+    junction is, as before.
+* **[BEHAVIOR CHANGE]** `match_sensors()` now trims the left detector at
+  `splice_at` itself rather than at the right detector's first wavelength. A
+  band the left sensor recorded between the two (970.8 nm on the SVC reference
+  data) used to survive, so a file spliced at 970 came back with 983 bands where
+  the vendor produces 982. Output now matches the vendor grid exactly.
+* `sensor_info()` gains `match_lo`/`match_hi`, the vendor's magnitude-matching
+  window, parsed from the SVC `factors=` header's dash pair. `match_sensors()`
+  uses it in preference to the auto-detected window when a file records one.
+  (Raw files saved as `Matching Type: None` do not, so the inset default above is
+  what does the work in the common case.)
 * **[BEHAVIOR CHANGE]** `resample()` now uses an overlap-integral model instead
   of a point-sampled Gaussian kernel. Each source band is treated as a boxcar of
   width equal to its own FWHM (defaulting to the midpoint rule from band
@@ -20,16 +66,6 @@
   returns full-detail, deterministic FWHM. Its default source-FWHM derivation
   also switched to the midpoint rule, matching `resample()`.
 
-## major
-* Added minimal provenance: `quantity()`/`quantity<-` (e.g. "reflectance",
-  "radiance") and `wavelength_unit()`/`wavelength_unit<-` (default "nm").
-  `read_spectra()` sets both from its `type` argument; they carry through
-  subsetting, `apply_by_band`, `aggregate`, `resample`, and `match_sensors`.
-  `combine()` and the arithmetic operators (`+`, `-`, etc.) keep the value
-  when both sides agree and clear it (with a warning) when they don't, rather
-  than silently keeping one side. `deriv_spectra()` and `continuum_removal()`
-  clear `quantity` since their output is no longer raw reflectance/radiance.
-  `print.spectra` shows `quantity` when known.
 * `Ops.spectra` (`+`, `-`, `*`, `/`, `^` between two spectra) previously kept
   metadata from the left-hand side only, silently dropping the right-hand
   side's metadata even when they differed. It now keeps metadata when both
@@ -57,13 +93,10 @@
 * Added Savitzky-Golay smoothing (`smooth_sgolay`, or `smooth(method = "sgolay")`)
   and spectral derivatives (`deriv_spectra`). Both require the `signal` package
   (now in Suggests).
-* Added `continuum_removal()`, which divides each spectrum by its upper convex
-  hull (the continuum).
 * Added two-band normalized-difference spectral indices: `make_spectral_index()`
   builds a two-band index function, and `spectral_index` is a list of built-in
-  ones (`spectral_index$ndvi`, `spectral_index$pri`); `spectral_indices()`
-  computes several at once. NDVI/PRI are intentionally not their own top-level
-  exports, to keep the namespace small.
+  ones (`spectral_index$ndvi`, `spectral_index$pri`). NDVI/PRI are intentionally
+  not their own top-level exports, to keep the namespace small.
 * Added a tidy/long bridge: `to_long()` (dependency-free), `as_tibble.spectra`
   (requires `tibble`), and `autoplot.spectra` (requires `ggplot2`). `tibble`
   and `ggplot2` are now in Suggests.
@@ -75,6 +108,54 @@
   duplicates cannot corrupt a join. **This may change results for scripts that
   relied on the old nudged band values; the vast majority of data (unique bands)
   is unaffected.**
+
+## bug fixes
+
+* **[BEHAVIOR CHANGE]** `match_sensors()` (the default, legacy "scale" algorithm)
+  only applied the *first* junction's correction whenever the data had a real
+  detector overlap and more than one junction. On a 3-detector spectrum the far
+  sensor came out bit-identical to applying no gain at all. On the bundled
+  `Acer_example` SVC data that left 25% of the bands uncorrected and the
+  SWIR1/SWIR2 step at 0.0167 instead of 0.0067. Every junction is now corrected.
+  **Results change for any 3-sensor data spliced with the default method.**
+* `match_sensors()` no longer silently discards a `fixed_sensor` it cannot
+  honour (3 sensors force `fixed_sensor = 2`); it warns. An out-of-range value
+  now errors clearly instead of dying with "argument is of length zero".
+* The splice engine's automatic crossover window was computed from the band
+  spacing of the two detector segments *concatenated*, so it measured the jump
+  between them rather than the spacing within one. The window came out around
+  22000 nm instead of ~22 nm, making every "local" mean in the multiplicative,
+  `ssd` and `mean_diff` gain estimators a whole-spectrum mean.
+* `resample()` now validates `new_bands`. Unsorted, duplicated, non-finite or
+  empty destination grids were accepted and produced a `spectra` that violated
+  the strictly-increasing invariant, failing much later with a misleading
+  "match sensor overlap first" message.
+* `resample()` now carries `sensor_info` provenance through, which also keeps it
+  alive across `smooth(method = "gaussian")`.
+* `meta(x, "no_such_label")` was completely silent when the object had no
+  metadata columns -- including under `quiet = FALSE`, documented as a hard
+  error. It now warns (or errors) consistently.
+* `combine()` warns when one side is vector-normalized and the other is not,
+  instead of silently returning an object that mixes two y scales.
+* `Ops.spectra` compared band labels with an exact `!=` while `combine()` used
+  `all.equal()`, so a floating-point difference of 1e-12 errored in one and
+  passed in the other. Both now use `all.equal()`.
+* The `spectra` constructor no longer turns non-numeric input into a matrix of
+  `NA`s behind a bare coercion warning; it errors and points at `name_idx` /
+  `meta_idxs`. `NA`s already present in numeric input are still preserved.
+* `smooth_spline()` forked `parallel::detectCores() - 1L` workers unconditionally
+  (127 processes on a large host, and above the two-core ceiling CRAN checks run
+  under). It gained a `cores` argument defaulting to `getOption("mc.cores", 2L)`
+  and never forks more workers than there are spectra.
+* The "gap between bands is too wide" warning used `paste(sep = ",")` instead of
+  `collapse`, printing bands 898, 599 and 8 as the single token `8985998`.
+* `quantile()` no longer tags its result with a `spec_quantile` class that
+  nothing dispatched on and that the first `[` dropped anyway.
+* Removed dead code: the unused `i_sensor_info_cols` constant, a no-op `x = x`
+  self-assignment and an immediately-overwritten `bands()` call in
+  `match_sensors()`, an unreachable `||` clause in `i_match_label()`, and a
+  `NULL` no-op branch in `resample()`. `combine()`'s type error named a
+  parameter (`b`) that does not exist.
 
 # spectrolab 0.0.19 (2025-01-07)
 
